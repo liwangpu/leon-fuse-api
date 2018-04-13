@@ -33,27 +33,46 @@ namespace ApiServer.Controllers.Asset
             hostEnv = env;
 
             uploadPath = hostEnv.WebRootPath + "/upload/";
-            if(Directory.Exists(uploadPath) == false)
+            if (Directory.Exists(uploadPath) == false)
                 Directory.CreateDirectory(uploadPath);
         }
 
         [HttpGet]
-        public PagedData<FileAsset> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<FileAsset>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return repo.Get(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-                string.IsNullOrEmpty(search) ? (Func<FileAsset, bool>)null : d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
+            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+                d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 
         [HttpGet("{id}")]
         [Produces(typeof(FileAsset))]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
-            var res = repo.Get(AuthMan.GetAccountId(this), id);
+            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
             return Ok(res);//return Forbid();
         }
+
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(string id)
+        //{
+        //    var res = repo.Get(AuthMan.GetAccountId(this), id);
+        //    if (res == null)
+        //        return NotFound();
+        //    string wwwrootPath = hostEnv.WebRootPath;
+        //    var fileName = Path.Combine(wwwrootPath, res.Url);
+        //    //FileInfo file = new FileInfo(Path.Combine(wwwrootPath, res.Url));
+
+        //    //if (file.Exists)
+        //    //{
+        //    //    file.Delete();
+        //    //    file = new FileInfo(Path.Combine(wwwrootPath, fileName));
+        //    //}
+        //    var response = File(fileName, "application/octet-stream"); // FileStreamResult
+        //    return response;
+        //}
 
         [Route("NewOne")]
         [HttpGet]
@@ -64,32 +83,32 @@ namespace ApiServer.Controllers.Asset
 
         [HttpPost]
         [Produces(typeof(FileAsset))]
-        public IActionResult Post([FromBody]FileAsset value)
+        public async Task<IActionResult> Post([FromBody]FileAsset value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            value = repo.Create(AuthMan.GetAccountId(this), value);
+            value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
             return CreatedAtAction("Get", value);
         }
 
         [HttpPut]
         [Produces(typeof(FileAsset))]
-        public IActionResult Put([FromBody]FileAsset value)
+        public async Task<IActionResult> Put([FromBody]FileAsset value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            var res = repo.Update(AuthMan.GetAccountId(this), value);
+            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
             if (res == null)
                 return NotFound();
             return Ok(value);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            bool bOk = repo.Delete(AuthMan.GetAccountId(this), id);
+            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
             if (bOk)
                 return Ok();
             return NotFound();//return Forbid();
@@ -102,7 +121,7 @@ namespace ApiServer.Controllers.Asset
         /// <returns></returns>
         [Route("Upload")]
         [HttpPost]
-        public FileAsset Upload()
+        public async Task<FileAsset> Upload()
         {
             string name = Guid.NewGuid().ToString();
             FileAsset res = new FileAsset();
@@ -119,36 +138,36 @@ namespace ApiServer.Controllers.Asset
             FileInfo fi = new FileInfo(localPath);
             res.Size = fi.Length;
             res.Md5 = Md5.CalcFile(localPath);
-            repo.Create(AuthMan.GetAccountId(this), res, false);
+            await repo.CreateAsync(AuthMan.GetAccountId(this), res, false);
 
             return res;
         }
 
-        [Route("UploadFormFile")]
-        [HttpPost]
-        public IActionResult UploadFormFile(IFormFile file)
-        {
-            if (file == null)
-                return BadRequest();
+        //[Route("UploadFormFile")]
+        //[HttpPost]
+        //public IActionResult UploadFormFile(IFormFile file)
+        //{
+        //    if (file == null)
+        //        return BadRequest();
 
-            // 原文件名（包括路径）
-            var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
-            // 扩展名
-            var extName = filename.Substring(filename.LastIndexOf('.')).Replace("\"", "");
-            // 新文件名
-            string shortfilename = $"{Guid.NewGuid()}{extName}";
-            // 新文件名（包括路径）
-            filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
-            // 设置文件大小
-            long size = file.Length;
-            // 创建新文件
-            using (FileStream fs = System.IO.File.Create(filename))
-            {
-                file.CopyTo(fs);
-                // 清空缓冲区数据
-                fs.Flush();
-            }
-            return Ok();
-        }
+        //    // 原文件名（包括路径）
+        //    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
+        //    // 扩展名
+        //    var extName = filename.Substring(filename.LastIndexOf('.')).Replace("\"", "");
+        //    // 新文件名
+        //    string shortfilename = $"{Guid.NewGuid()}{extName}";
+        //    // 新文件名（包括路径）
+        //    filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
+        //    // 设置文件大小
+        //    long size = file.Length;
+        //    // 创建新文件
+        //    using (FileStream fs = System.IO.File.Create(filename))
+        //    {
+        //        file.CopyTo(fs);
+        //        // 清空缓冲区数据
+        //        fs.Flush();
+        //    }
+        //    return Ok();
+        //}
     }
 }

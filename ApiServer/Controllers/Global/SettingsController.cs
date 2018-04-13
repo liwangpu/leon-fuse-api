@@ -20,41 +20,41 @@ namespace ApiServer.Controllers.Global
         {
             this.context = context;
         }
-        
+
         [HttpGet]
         public IEnumerable<SettingsItem> Get()
         {
             return context.Settings;
         }
-        
+
         [HttpGet("{key}")]
         public string Get(string key)
         {
             return Services.SiteConfig.Instance.GetItem(key);
         }
-        
+
         [HttpPost]
-        public IActionResult Post([FromBody]SettingsItem value)
+        public async Task<IActionResult> Post([FromBody]SettingsItem value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            
-            Services.SiteConfig.Instance.SetItem(value.Key, value.Value, context);
+
+            await Services.SiteConfig.Instance.SetItem(value.Key, value.Value, context);
             return Ok();
         }
-        
+
         [HttpPut("{key}")]
-        public void Put(string key, [FromBody]string value)
+        public async Task Put(string key, [FromBody]string value)
         {
             if (value == null)
                 value = "";
-            Services.SiteConfig.Instance.SetItem(key, value, context);
+            await Services.SiteConfig.Instance.SetItem(key, value, context);
         }
-        
+
         [HttpDelete("{key}")]
-        public IActionResult Delete(string key)
+        public async Task<IActionResult> Delete(string key)
         {
-            bool bOk = Services.SiteConfig.Instance.DeleteItem(key, context);
+            bool bOk =await Services.SiteConfig.Instance.DeleteItem(key, context);
             if (bOk)
                 return Ok();
             return NotFound();

@@ -22,20 +22,20 @@ namespace ApiServer.Controllers
         {
             repo = new Repository<Order>(context);
         }
-        
+
         [HttpGet]
-        public PagedData<Order> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<Order>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return repo.Get(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-                string.IsNullOrEmpty(search) ? (Func<Order, bool>)null : d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Content.HaveSubStr(search));
+            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+                d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Content.HaveSubStr(search));
         }
-        
+
         [HttpGet("{id}")]
         [Produces(typeof(Order))]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
-            var res = repo.Get(AuthMan.GetAccountId(this), id);
+            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
             //加载Order的依赖数据，OrderStates
@@ -43,9 +43,9 @@ namespace ApiServer.Controllers
             return Ok(res);
         }
 
-        
+
         [HttpPost]
-        public IActionResult Post([FromBody]Order value)
+        public async Task<IActionResult> Post([FromBody]Order value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
@@ -56,15 +56,15 @@ namespace ApiServer.Controllers
             value.CreateTime = DateTime.UtcNow;
             value.ModifyTime = value.CreateTime;
 
-            value = repo.Create(accid, value);
+            value = await repo.CreateAsync(accid, value);
             return CreatedAtAction("Get", value);
         }
-        
+
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            bool bOk = repo.Delete(AuthMan.GetAccountId(this), id);
-            if(bOk)
+            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
+            if (bOk)
             {
                 return Ok();
             }
@@ -73,21 +73,22 @@ namespace ApiServer.Controllers
 
         [Route("ChangeState")]
         [HttpPost]
-        public IActionResult ChangeState(string id, [FromBody]OrderStateItem state)
+        public async Task<IActionResult> ChangeState(string id, [FromBody]OrderStateItem state)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
             string accid = AuthMan.GetAccountId(this);
-            if (repo.CanUpdate(accid, id) == false)
+            var ok = await repo.CanUpdateAsync(accid, id);
+            if (ok == false)
                 return Forbid();
 
-            var res = repo.Get(accid, id);
+            var res = await repo.GetAsync(accid, id);
             if (res == null)
                 return NotFound();
 
             res.StateTime = DateTime.UtcNow;
-            if(res.OrderStates == null)
+            if (res.OrderStates == null)
             {
                 res.OrderStates = new List<OrderStateItem>();
             }
@@ -98,29 +99,30 @@ namespace ApiServer.Controllers
             state.OperateTime = DateTime.UtcNow;
             res.State = state.NewState;
             res.OrderStates.Add(state);
-            repo.SaveChangesAsync();
+            await repo.SaveChangesAsync();
             return Ok();
         }
 
 
         [Route("ChangeContent")]
         [HttpPost]
-        public IActionResult ChangeContent(string id, [FromBody]OrderContent content)
+        public async Task<IActionResult> ChangeContent(string id, [FromBody]OrderContent content)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
             string accid = AuthMan.GetAccountId(this);
-            if (repo.CanUpdate(accid, id) == false)
+            var ok = await repo.CanUpdateAsync(accid, id);
+            if (ok == false)
                 return Forbid();
 
-            var res = repo.Get(accid, id);
+            var res = await repo.GetAsync(accid, id);
             if (res == null)
                 return NotFound();
 
             res.Content = Newtonsoft.Json.JsonConvert.SerializeObject(content);
             res.ModifyTime = DateTime.UtcNow;
-            repo.SaveChangesAsync();
+            await repo.SaveChangesAsync();
             return Ok();
         }
 

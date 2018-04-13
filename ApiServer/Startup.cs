@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using ApiModel;
-using ApiServer.Data;
-using System.Net;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
+﻿using ApiServer.Data;
 using ApiServer.Services;
 using BambooCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
+using System;
+using System.Linq;
+using System.Text;
 
 namespace ApiServer
 {
@@ -43,9 +35,12 @@ namespace ApiServer
                                                                  .AllowAnyHeader()
                                                                  .AllowCredentials()));
 
+
             services.AddEntityFrameworkNpgsql();
             services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
-                        
+            //services.AddEntityFrameworkSqlServer();
+            //services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -94,8 +89,21 @@ namespace ApiServer
             //{
             //    app.UseDeveloperExceptionPage();
             //}
-            
-            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });//支持所有文件类型，否则会出现404
+
+            //app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });//支持所有文件类型，否则会出现404
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true,
+                OnPrepareResponse = ctx =>
+                {
+                    // Requires the following import:
+                    // using Microsoft.AspNetCore.Http;
+                    ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
+                }
+            });
+
+
             //app.UseDirectoryBrowser();//调试用，访问/upload时显示文件夹清单
 
             //app.UseExceptionHandler(
@@ -137,7 +145,7 @@ namespace ApiServer
             });
 
             //初始化站点服务
-            InitSiteServices(serviceProvider);
+            //InitSiteServices(serviceProvider);
         }
 
         /// <summary>
@@ -146,7 +154,7 @@ namespace ApiServer
         /// <param name="serviceProvider"></param>
         void InitSiteServices(IServiceProvider serviceProvider)
         {
-            var dbContext = serviceProvider.GetService<ApiDbContext>();            
+            var dbContext = serviceProvider.GetService<ApiDbContext>();
 
             SiteConfig.JsonConfig json = SiteConfig.Instance.Json;
 

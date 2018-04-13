@@ -34,18 +34,17 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult RequestToken([FromBody] TokenRequestModel request)
+        public async Task<IActionResult> RequestToken([FromBody] TokenRequestModel request)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            Account acc = null;
-            var result = authman.LoginRequest(request.Account, request.Password, out acc);
+            var result = await authman.LoginRequest(request.Account, request.Password);
 
-            if (result == Services.AuthMan.LoginResult.Ok)
-                return MakeToken(acc.Id);
+            if (result.loginResult == Services.AuthMan.LoginResult.Ok)
+                return MakeToken(result.acc.Id);
             else
-                return LoginFailed(result);
+                return LoginFailed(result.loginResult);
         }
 
         class LoginSuccessModel

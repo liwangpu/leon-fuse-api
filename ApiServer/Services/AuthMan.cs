@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiModel;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ApiModel;
-using Microsoft.EntityFrameworkCore;
 
 namespace ApiServer.Services
 {
@@ -34,6 +33,12 @@ namespace ApiServer.Services
             Expired
         }
 
+        public struct LoginResultStruct
+        {
+            public LoginResult loginResult;
+            public Account acc;
+        }
+
         Data.ApiDbContext context;
         Controller controller;
         public AuthMan(Controller controller, Data.ApiDbContext context)
@@ -42,34 +47,36 @@ namespace ApiServer.Services
             this.context = context;
         }
 
-        public LoginResult LoginRequest(string account, string pwd, out Account acc)
+        public async Task<LoginResultStruct> LoginRequest(string account, string pwd)
         {
-            acc = null;
+            LoginResultStruct result = new LoginResultStruct();
+            result.loginResult = LoginResult.AccOrPasswordWrong;
+            result.acc = null;
 
             if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(pwd))
-                return LoginResult.AccOrPasswordWrong;
+                return result;
             account = account.ToLower();
             pwd = pwd.ToLower();
 
-            acc = context.Accounts.FirstOrDefault(d => d.Mail == account || d.Phone == account);
+            result.acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == account || d.Phone == account);
 
-            if (acc == null)
-                return LoginResult.AccOrPasswordWrong;
+            if (result.acc == null)
+                result.loginResult = LoginResult.AccOrPasswordWrong;
 
-            if (acc.Frozened)
-                return LoginResult.Frozen;
+            if (result.acc.Frozened)
+                result.loginResult = LoginResult.Frozen;
 
             var now = DateTime.UtcNow;
-            if (now < acc.ActivationTime)
-                return LoginResult.NotActivation;
+            if (now < result.acc.ActivationTime)
+                result.loginResult = LoginResult.NotActivation;
 
-            if (now > acc.ExpireTime)
-                return LoginResult.Expired;
+            if (now > result.acc.ExpireTime)
+                result.loginResult = LoginResult.Expired;
 
-            if (acc.Password != pwd)
-                return LoginResult.AccOrPasswordWrong;
+            if (result.acc.Password != pwd)
+                result.loginResult = LoginResult.AccOrPasswordWrong;
 
-            return LoginResult.Ok;
+            return result;
         }
 
         public static string GetAccountId(Controller c)
@@ -81,6 +88,6 @@ namespace ApiServer.Services
         {
             return context.Set<Account>().Find(c.User.Identity.Name);
         }
-        
+
     }
 }

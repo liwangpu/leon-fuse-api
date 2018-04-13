@@ -79,6 +79,16 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<PermissionItem> Permissions { get; set; }
 
+        /// <summary>
+        /// 模型
+        /// </summary>
+        public DbSet<StaticMesh> StaticMeshs { get; set; }
+
+        /// <summary>
+        /// 材质
+        /// </summary>
+        public DbSet<Material> Materials { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }
@@ -88,6 +98,8 @@ namespace ApiServer.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //optionsBuilder.UseNpgsql(@"Server=localhost;Database=dmz;User Id=postgres;Password=root");
+            //optionsBuilder.UseSqlServer(@"Data Source=qds116703363.my3w.com;Initial Catalog=qds116703363_db;Persist Security Info=True;User ID=qds116703363;Password=AAaa123456");
         }
 
         protected override void OnModelCreating(ModelBuilder b)

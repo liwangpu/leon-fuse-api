@@ -11,14 +11,15 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180412100602_Add-Mesh")]
+    partial class AddMesh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
             modelBuilder.Entity("ApiModel.Account", b =>
                 {
@@ -345,27 +346,15 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("FileExt");
-
                     b.Property<string>("FolderId");
 
                     b.Property<string>("Icon");
-
-                    b.Property<string>("LocalPath");
-
-                    b.Property<string>("Md5");
 
                     b.Property<DateTime>("ModifyTime");
 
                     b.Property<string>("Name");
 
-                    b.Property<long>("Size");
-
                     b.Property<string>("StaticMeshId");
-
-                    b.Property<string>("UploadTime");
-
-                    b.Property<string>("Url");
 
                     b.HasKey("Id");
 
@@ -464,8 +453,7 @@ namespace ApiServer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId")
-                        .IsUnique()
-                        .HasFilter("[OwnerId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -657,37 +645,19 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("FileExt");
-
                     b.Property<string>("FolderId");
 
                     b.Property<string>("Icon");
-
-                    b.Property<string>("LocalPath");
-
-                    b.Property<string>("Md5");
 
                     b.Property<DateTime>("ModifyTime");
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("ProductSpecId");
-
-                    b.Property<long>("Size");
-
                     b.Property<string>("SrcFileUrl");
-
-                    b.Property<string>("UploadTime");
-
-                    b.Property<string>("Url");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("ProductSpecId")
-                        .IsUnique()
-                        .HasFilter("[ProductSpecId] IS NOT NULL");
 
                     b.ToTable("StaticMeshs");
                 });
@@ -885,10 +855,6 @@ namespace ApiServer.Migrations
                     b.HasOne("ApiModel.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId");
-
-                    b.HasOne("ApiModel.ProductSpec", "ProductSpec")
-                        .WithOne("StaticMesh")
-                        .HasForeignKey("ApiModel.StaticMesh", "ProductSpecId");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>

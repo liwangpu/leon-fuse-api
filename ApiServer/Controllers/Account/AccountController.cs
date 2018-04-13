@@ -35,13 +35,13 @@ namespace ApiServer.Controllers
         [Route("Register")]
         [HttpPost]
         [Produces(typeof(Account))]
-        public IActionResult Register([FromBody]RegisterAccountModel value)
+        public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
         {
-            if(ModelState.IsValid == false)
+            if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
             }
-            Account acc = accountMan.Register(value);
+            Account acc = await accountMan.Register(value);
             if (acc == null)
                 return BadRequest();
             return Ok(acc);
@@ -57,8 +57,8 @@ namespace ApiServer.Controllers
         [HttpPost]
         public IActionResult ResetPassword([FromBody]ResetPasswordModel value)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+            //if (ModelState.IsValid == false)
+            //    return BadRequest(ModelState);
             return Ok();
         }
 
@@ -69,11 +69,11 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("NewPassword")]
         [HttpPost]
-        public IActionResult NewPassword([FromBody]NewPasswordModel value)
+        public async Task<IActionResult> NewPassword([FromBody]NewPasswordModel value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            bool bOk = accountMan.ChangePassword(AuthMan.GetAccountId(this), value);
+            bool bOk = await accountMan.ChangePasswordAsync(AuthMan.GetAccountId(this), value);
             if (bOk)
                 return Ok();
             return BadRequest();
@@ -86,11 +86,11 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Profile")]
         [HttpPost]
-        public IActionResult EditProfile([FromBody]AccountProfileModel value)
+        public async Task<IActionResult> EditProfile([FromBody]AccountProfileModel value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            bool bOk = accountMan.UpdateProfile(AuthMan.GetAccountId(this), value);
+            bool bOk = await accountMan.UpdateProfile(AuthMan.GetAccountId(this), value);
             if (bOk)
                 return Ok();
             return BadRequest();

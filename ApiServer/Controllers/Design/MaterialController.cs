@@ -1,37 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ApiModel;
+﻿using ApiModel;
+using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
-using ApiServer.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace ApiServer.Controllers
+namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ClientAssetsController : Controller
+    public class MaterialController : Controller
     {
-        private readonly Repository<ClientAsset> repo;
+        private readonly Repository<Material> repo;
 
-        public ClientAssetsController(Data.ApiDbContext context)
+        public MaterialController(Data.ApiDbContext context)
         {
-            repo = new Repository<ClientAsset>(context);
+            repo = new Repository<Material>(context);
         }
 
         [HttpGet]
-        public async Task<PagedData<ClientAsset>> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<Material>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
+            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+                d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 
+
         [HttpGet("{id}")]
-        [Produces(typeof(ClientAsset))]
+        [Produces(typeof(Material))]
         public async Task<IActionResult> Get(string id)
         {
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
@@ -40,16 +38,10 @@ namespace ApiServer.Controllers
             return Ok(res);//return Forbid();
         }
 
-        [Route("NewOne")]
-        [HttpGet]
-        public ClientAsset NewOne()
-        {
-            return EntityFactory<ClientAsset>.New();
-        }
 
         [HttpPost]
-        [Produces(typeof(ClientAsset))]
-        public async Task<IActionResult> Post([FromBody]ClientAsset value)
+        [Produces(typeof(Material))]
+        public async Task<IActionResult> Post([FromBody]Material value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
@@ -59,8 +51,8 @@ namespace ApiServer.Controllers
         }
 
         [HttpPut]
-        [Produces(typeof(ClientAsset))]
-        public async Task<IActionResult> Put([FromBody]ClientAsset value)
+        [Produces(typeof(Material))]
+        public async Task<IActionResult> Put([FromBody]Material value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
@@ -79,7 +71,5 @@ namespace ApiServer.Controllers
                 return Ok();
             return NotFound();//return Forbid();
         }
-
-
     }
 }

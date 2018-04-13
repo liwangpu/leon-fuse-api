@@ -26,18 +26,18 @@ namespace ApiServer.Controllers.Design
         }
 
         [HttpGet]
-        public PagedData<Layout> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<Layout>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return repo.Get(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-                string.IsNullOrEmpty(search) ? (Func<Layout, bool>)null : d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
+            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+                d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 
         [HttpGet("{id}")]
         [Produces(typeof(Layout))]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
-            var res = repo.Get(AuthMan.GetAccountId(this), id);
+            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
             return Ok(res);//return Forbid();
@@ -52,32 +52,32 @@ namespace ApiServer.Controllers.Design
 
         [HttpPost]
         [Produces(typeof(Layout))]
-        public IActionResult Post([FromBody]Layout value)
+        public async Task<IActionResult> Post([FromBody]Layout value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            value = repo.Create(AuthMan.GetAccountId(this), value);
+            value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
             return CreatedAtAction("Get", value);
         }
 
         [HttpPut]
         [Produces(typeof(Layout))]
-        public IActionResult Put([FromBody]Layout value)
+        public async Task<IActionResult> Put([FromBody]Layout value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            var res = repo.Update(AuthMan.GetAccountId(this), value);
+            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
             if (res == null)
                 return NotFound();
             return Ok(value);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            bool bOk = repo.Delete(AuthMan.GetAccountId(this), id);
+            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
             if (bOk)
                 return Ok();
             return NotFound();//return Forbid();
@@ -85,19 +85,20 @@ namespace ApiServer.Controllers.Design
 
         [Route("UpdateData")]
         [HttpPost]
-        public IActionResult UpdateData(string id, [FromBody]string data)
+        public async Task<IActionResult> UpdateData(string id, [FromBody]string data)
         {
             if (data == null)
                 data = "";
             string accid = AuthMan.GetAccountId(this);
-            if (repo.CanUpdate(accid, id) == false)
+            var ok = await repo.CanUpdateAsync(accid, id);
+            if (ok == false)
                 return Forbid();
 
-            var obj = repo.Get(accid, id);
+            var obj = await repo.GetAsync(accid, id);
             if (obj == null)
                 return Forbid();
             obj.Data = data;
-            repo.SaveChangesAsync();
+            await repo.SaveChangesAsync();
 
             return Ok();
         }

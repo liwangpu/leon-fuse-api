@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using BambooCommon;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace BambooCore
 {
@@ -29,7 +31,7 @@ namespace BambooCore
         /// 获取DbContext对象，以便扩展
         /// </summary>
         public DbContext Context { get { return context; } }
-        
+
         public IQueryable<PermissionItem> GetPermissons(string accid)
         {
             return context.Set<PermissionItem>().Where(d => d.AccountId == accid);
@@ -52,22 +54,23 @@ namespace BambooCore
         /// <param name="desc"></param>
         /// <param name="searchPredicate"></param>
         /// <returns></returns>
-        public PagedData<T> Get(string accid, int page, int pageSize, string orderBy, bool desc, Func<T, bool> searchPredicate)
+        public async Task<PagedData<T>> GetAync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
         {
-            return GetDataSet(accid).Paging(page, pageSize, orderBy, desc, searchPredicate);
+            return await GetDataSet(accid).Paging(page, pageSize, orderBy, desc, searchPredicate);
         }
-        
+
         /// <summary>
         /// 通过ID获取一个数据，如果找不到或者无权访问则返回null，已通过权限过滤
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public T Get(string accid, string id)
+        public async Task<T> GetAsync(string accid, string id)
         {
-            if (CanRead(accid, id) == false)
+            var ok = await CanReadAsync(accid, id);
+            if (!ok)
                 return null;
 
-            return GetDataSet(accid).FirstOrDefault(d => d.Id == id);
+            return await GetDataSet(accid).FirstOrDefaultAsync(d => d.Id == id);
         }
 
         /// <summary>
@@ -75,22 +78,22 @@ namespace BambooCore
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public T Create(string accid, T value, bool forceNewId = true)
+        public async Task<T> CreateAsync(string accid, T value, bool forceNewId = true)
         {
             if (value == null)
                 return null;
-            
-            if(forceNewId)
+
+            if (forceNewId)
                 value.Id = GuidGen.NewGUID();//强制分配新id
 
             if (string.IsNullOrEmpty(value.Name))
-                value.Name = "Obj" + nextNewNameId++;            
+                value.Name = "Obj" + nextNewNameId++;
 
             context.Set<T>().Add(value);
-            
+
             context.Set<PermissionItem>().Add(Permission.NewItem(accid, value.Id, value.GetType().Name, PermissionType.All));
 
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return value;
         }
 
@@ -99,7 +102,7 @@ namespace BambooCore
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        public int BatchCreate(string accid, IEnumerable<T> values)
+        public async Task<int> BatchCreateAsync(string accid, IEnumerable<T> values)
         {
             int count = 0;
             var set = context.Set<T>();
@@ -108,12 +111,12 @@ namespace BambooCore
             foreach (var item in values)
             {
                 set.Add(item);
-                
+
                 pset.Add(Permission.NewItem(accid, item.Id, type, PermissionType.All));
 
                 count++;
             }
-            SaveChangesAsync();
+            await SaveChangesAsync();
             return count;
         }
 
@@ -123,7 +126,7 @@ namespace BambooCore
         /// <param name="count">创建对象的数量</param>
         /// <param name="template">模板对象</param>
         /// <returns></returns>
-        public int BatchCreate(string accid, int count, T template)
+        public async Task<int> BatchCreateAsync(string accid, int count, T template)
         {
             var set = context.Set<T>();
             if (template == null)
@@ -136,10 +139,10 @@ namespace BambooCore
                 var t = template.Clone() as T;
                 t.Id = GuidGen.NewGUID();
                 set.Add(t);
-                
+
                 pset.Add(Permission.NewItem(accid, t.Id, type, PermissionType.All));
             }
-            SaveChangesAsync();
+            await SaveChangesAsync();
             return count;
         }
 
@@ -149,9 +152,9 @@ namespace BambooCore
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool CanUpdate(string accid, string id)
+        public async Task<bool> CanUpdateAsync(string accid, string id)
         {
-            var p = context.Set<PermissionItem>().FirstOrDefault(d => d.AccountId == accid && d.ResId == id);
+            var p = await context.Set<PermissionItem>().FirstOrDefaultAsync(d => d.AccountId == accid && d.ResId == id);
             if (p == null)
                 return false;
             return Permission.CanWrite(p.Permission);
@@ -163,9 +166,9 @@ namespace BambooCore
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool CanDelete(string accid, string id)
+        public async Task<bool> CanDeleteAsync(string accid, string id)
         {
-            var p = context.Set<PermissionItem>().FirstOrDefault(d => d.AccountId == accid && d.ResId == id);
+            var p = await context.Set<PermissionItem>().FirstOrDefaultAsync(d => d.AccountId == accid && d.ResId == id);
             if (p == null)
                 return false;
             return Permission.CanDelete(p.Permission);
@@ -177,9 +180,9 @@ namespace BambooCore
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool CanRead(string accid, string id)
+        public async Task<bool> CanReadAsync(string accid, string id)
         {
-            var p = context.Set<PermissionItem>().FirstOrDefault(d => d.AccountId == accid && d.ResId == id);
+            var p = await context.Set<PermissionItem>().FirstOrDefaultAsync(d => d.AccountId == accid && d.ResId == id);
             if (p == null)
                 return false;
             return Permission.CanRead(p.Permission);
@@ -191,9 +194,9 @@ namespace BambooCore
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool CanManage(string accid, string id)
+        public async Task<bool> CanManageAsync(string accid, string id)
         {
-            var p = context.Set<PermissionItem>().FirstOrDefault(d => d.AccountId == accid && d.ResId == id);
+            var p = await context.Set<PermissionItem>().FirstOrDefaultAsync(d => d.AccountId == accid && d.ResId == id);
             if (p == null)
                 return false;
             return Permission.CanManage(p.Permission);
@@ -205,9 +208,9 @@ namespace BambooCore
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public PermissionItem GetPermission(string accid, string id)
+        public async Task<PermissionItem> GetPermissionAsync(string accid, string id)
         {
-            return context.Set<PermissionItem>().FirstOrDefault(d => d.AccountId == accid && d.ResId == id);
+            return await context.Set<PermissionItem>().FirstOrDefaultAsync(d => d.AccountId == accid && d.ResId == id);
         }
 
         /// <summary>
@@ -216,23 +219,24 @@ namespace BambooCore
         /// <param name="id"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public T Update(string accid, T value)
+        public async Task<T> UpdateAsync(string accid, T value)
         {
-            if (CanUpdate(accid, value.Id) == false)
+            bool bOk = await CanUpdateAsync(accid, value.Id);
+            if (bOk == false)
                 return null;
 
-            ListableEntity entity = value as ListableEntity;
+            var entity = value as ListableEntity;
             if (entity != null)
-                UpdateProtectListableEntity(accid, entity);
-            
-            var res = GetDataSet(accid).FirstOrDefault(d => d.Id == value.Id);
+                await UpdateProtectListableEntityAsync(accid, entity);
+
+            var res = await GetDataSet(accid).FirstOrDefaultAsync(d => d.Id == value.Id);
             if (res == null)
                 return null;
             DataCopyer.CopyDataTo(value, res);
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return res;
         }
-        
+
         /// <summary>
         /// Update操作前的数据检查，确保数据不会误导ID,CreateTime, ModifyTime，比如 PUT /asset/105  但是提供的数据里面id=106。
         /// </summary>
@@ -240,9 +244,9 @@ namespace BambooCore
         /// <param name="id"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool UpdateProtectListableEntity(string accid, ListableEntity value)
+        async Task<bool> UpdateProtectListableEntityAsync(string accid, ListableEntity value)
         {
-            ListableEntity src = Get(accid, value.Id) as ListableEntity;
+            var src = await GetAsync(accid, value.Id) as ListableEntity;
             if (src == null)
                 return false;
             value.CreateTime = src.CreateTime;
@@ -255,31 +259,32 @@ namespace BambooCore
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Delete(string accid, string id)
+        public async Task<bool> DeleteAsync(string accid, string id)
         {
-            if (CanDelete(accid, id) == false)
+            var ok = await CanDeleteAsync(accid, id);
+            if (ok == false)
                 return false;
-            var res = GetDataSet(accid).FirstOrDefault(d => d.Id == id);
-            if(res != null)
+            var res = await GetDataSet(accid).FirstOrDefaultAsync(d => d.Id == id);
+            if (res != null)
                 context.Set<T>().Remove(res);
-            
+
             var pset = context.Set<PermissionItem>();
-            var pitem = pset.FirstOrDefault(d => d.AccountId == accid && d.ResId == id);
-            if(pitem != null)
+            var pitem = await pset.FirstOrDefaultAsync(d => d.AccountId == accid && d.ResId == id);
+            if (pitem != null)
                 pset.Remove(pitem);
 
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
-        
+
         /// <summary>
         /// 保存数据修改到数据库，多次修改一次提交一般会作为事务提交，有一个失败就全部失败。所以应该尽量修改后就提交。
         /// 本类的方法中除了查询外的函数已经执行了SaveChanges操作，不需要再次调用此方法。
         /// 此方法是为了给直接访问DbSet属性做自定义操作后使用的。
         /// </summary>
-        public void SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

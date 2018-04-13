@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 
 namespace BambooCore
 {
@@ -42,22 +44,22 @@ namespace BambooCore
         /// <param name="desc">是否是倒序排列，默认是升序</param>
         /// <param name="searchPredicate">用来查找或过滤的筛选函数，不需要此功能则传null即可</param>
         /// <returns></returns>
-        public static PagedData<T> Paging<T>(this IEnumerable<T> src, int page, int pageSize, string orderBy, bool desc, Func<T, bool> searchPredicate) where T : class
+        public static async Task<PagedData<T>> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class
         {
-            PagedData<T> res = new PagedData<T>();
 
-            IEnumerable<T> data = null;
-            if (searchPredicate == null)
+            PagedData<T> res = new PagedData<T>();
+            IQueryable<T> data = null;
+            if (searchExpression == null)
                 data = src;
             else
-                data = src.Where(searchPredicate);
+                data = src.Where(searchExpression);
 
             if (page < 1)
                 page = 1;
             if (pageSize < 1)
                 pageSize = 1;
 
-            res.Total = data.Count();
+            res.Total = await data.CountAsync();
             res.Page = page;
 
             if (!string.IsNullOrEmpty(orderBy))
@@ -79,7 +81,7 @@ namespace BambooCore
             else
             {
                 data = data.Skip((page - 1) * pageSize).Take(pageSize);
-                res.Data = data.ToList();
+                res.Data = await data.ToListAsync();
                 res.Size = res.Data.Count;
             }
             return res;

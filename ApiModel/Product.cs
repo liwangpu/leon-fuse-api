@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BambooCommon;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,10 +21,8 @@ namespace ApiModel
     /// <summary>
     /// 产品规格
     /// </summary>
-    public class ProductSpec
+    public class ProductSpec : EntityBase
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Icon { get; set; }
         public string Mesh { get; set; }
         public string Description { get; set; }
@@ -37,12 +36,14 @@ namespace ApiModel
         /// 第三方ID，此产品在供应商自己的系统比如ERP的ID
         /// </summary>
         public string TPID { get; set; }
-        
+
         /// <summary>
         /// 所在产品的ID
         /// </summary>
         public string ProductId { get; set; }
         [JsonIgnore]
         public Product Product { get; set; }
+
+        public StaticMesh StaticMesh { get; set; }
     }
 }

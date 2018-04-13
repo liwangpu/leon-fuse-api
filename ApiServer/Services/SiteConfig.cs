@@ -81,7 +81,7 @@ namespace ApiServer.Services
         public void ReloadSettingsFromDb(Data.ApiDbContext context)
         {
             settingsMap = new ConcurrentDictionary<string, string>();
-            
+
             foreach (var item in context.Settings)
             {
                 if (item == null || string.IsNullOrEmpty(item.Key))
@@ -108,12 +108,12 @@ namespace ApiServer.Services
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="context"></param>
-        public void SetItem(string key, string value, Data.ApiDbContext context)
+        public async Task SetItem(string key, string value, Data.ApiDbContext context)
         {
             settingsMap[key] = value;
             //save to db
-            var item = context.Settings.Find(key);
-            if(item == null)
+            var item = await context.Settings.FindAsync(key);
+            if (item == null)
             {
                 item = new ApiModel.SettingsItem();
                 item.Key = key;
@@ -125,25 +125,25 @@ namespace ApiServer.Services
                 item.Value = value;
             }
 
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
-        public void SetItem<T>(string key, T value, Data.ApiDbContext context) where T : class
+        public async Task SetItem<T>(string key, T value, Data.ApiDbContext context) where T : class
         {
             string vs = Newtonsoft.Json.JsonConvert.SerializeObject(value);
-            SetItem(key, vs, context);
+            await SetItem(key, vs, context);
         }
 
-        public bool DeleteItem(string key, Data.ApiDbContext context)
+        public async Task<bool> DeleteItem(string key, Data.ApiDbContext context)
         {
             string value;
             settingsMap.Remove(key, out value);
-            var item = context.Settings.Find(key);
+            var item = await context.Settings.FindAsync(key);
             if (item == null)
                 return false;
-            
+
             context.Settings.Remove(item);
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return true;
         }
