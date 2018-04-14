@@ -102,9 +102,9 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Profile")]
         [HttpGet]
-        public AccountProfileModel GetProfile()
+        public async Task<AccountProfileModel> GetProfile()
         {
-            return accountMan.GetProfile(AuthMan.GetAccountId(this));
+            return await accountMan.GetProfile(AuthMan.GetAccountId(this));
         }
 
         /// <summary>
@@ -113,9 +113,9 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Navigation")]
         [HttpGet]
-        public NavigationModel GetNavigationData()
+        public async Task<NavigationModel> GetNavigationData()
         {
-            return accountMan.GetNavigation(AuthMan.GetAccountId(this));
+            return await accountMan.GetNavigation(AuthMan.GetAccountId(this));
         }
     }
 }

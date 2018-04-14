@@ -57,9 +57,9 @@ namespace ApiServer.Services
             return true;
         }
 
-        public AccountProfileModel GetProfile(string accid)
+        public async Task<AccountProfileModel> GetProfile(string accid)
         {
-            Account acc = context.Accounts.Find(accid);
+            Account acc = await context.Accounts.FindAsync(accid);
             if (acc == null)
                 return null;
             AccountProfileModel p = new AccountProfileModel();
@@ -86,9 +86,9 @@ namespace ApiServer.Services
             return true;
         }
 
-        public NavigationModel GetNavigation(string accid)
+        public async Task<NavigationModel> GetNavigation(string accid)
         {
-            Account acc = context.Accounts.Find(accid);
+            Account acc = await context.Accounts.FindAsync(accid);
             if (acc != null)
             {
                 NavigationModel mm;
