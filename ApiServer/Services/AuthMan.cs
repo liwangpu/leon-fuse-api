@@ -50,7 +50,7 @@ namespace ApiServer.Services
         public async Task<LoginResultStruct> LoginRequest(string account, string pwd)
         {
             LoginResultStruct result = new LoginResultStruct();
-            result.loginResult = LoginResult.AccOrPasswordWrong;
+            result.loginResult = LoginResult.Ok;
             result.acc = null;
 
             if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(pwd))
