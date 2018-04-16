@@ -13,6 +13,10 @@ namespace ApiModel.Entities
         [NotMapped]
         public FileAsset FileAsset { get; set; }
         public List<Material> Materials { get; set; }
+
+        public List<string> Dependencies { get; set; }
+        public string Tags { get; set; }
+
         public override Dictionary<string, object> ToDictionary()
         {
             var dicData = new Dictionary<string, object>();
@@ -30,6 +34,9 @@ namespace ApiModel.Entities
             {
                 dicData["Materials"] = Materials.Select(x => x.ToDictionary());
             }
+            dicData["Dependencies"] = Dependencies;
+            dicData["Tags"] = Tags;
+
             return dicData;
         }
     }

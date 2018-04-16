@@ -95,6 +95,7 @@ namespace ApiServer.Services
         /// 从内存缓存中获取指定的设置项
         /// </summary>
         /// <param name="key"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public string GetItem(string key, Data.ApiDbContext context = null)
         {

@@ -12,6 +12,10 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }
+
+        public List<string> Dependencies { get; set; }
+        public string Parameters { get; set; }
+
         public override Dictionary<string, object> ToDictionary()
         {
             var dicData = new Dictionary<string, object>();
@@ -21,8 +25,11 @@ namespace ApiModel.Entities
             dicData["ModifiedTime"] = ModifiedTime;
             if (FileAsset != null)
             {
-                dicData["url"] = FileAsset.Url;
+                dicData["Url"] = FileAsset.Url;
             }
+            dicData["Dependencies"] = Dependencies;
+            dicData["Parameters"] = Parameters;
+
             return dicData;
         }
     }
