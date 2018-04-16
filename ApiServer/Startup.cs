@@ -36,10 +36,10 @@ namespace ApiServer
                                                                  .AllowCredentials()));
 
 
-            //services.AddEntityFrameworkNpgsql();
-            //services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
-            services.AddEntityFrameworkSqlServer();
-            services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
+            services.AddEntityFrameworkNpgsql();
+            services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
+            //services.AddEntityFrameworkSqlServer();
+            //services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

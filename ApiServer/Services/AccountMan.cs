@@ -28,19 +28,27 @@ namespace ApiServer.Services
             if (string.IsNullOrWhiteSpace(param.Email))
                 return null;
             string mail = param.Email.Trim().ToLower();
-            var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
+
+            Account acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
             if (acc == null)
             {
+                acc = new Account();
+                acc.Id = GuidGen.NewGUID();
+                acc.Name = param.Name;
+                acc.Password = param.Password;
+                acc.Mail = mail;
+                acc.Password = param.Password;
+                acc.Frozened = false;
+                acc.ActivationTime = DateTime.UtcNow;
+                acc.ExpireTime = DateTime.UtcNow.AddYears(10);
+                acc.Type = "";
                 context.Accounts.Add(acc);
                 await context.SaveChangesAsync();
             }
-            model.Id = GuidGen.NewGUID();
-            model.Mail = mail;
-            model.Password = param.Password;
-            model.Frozened = false;
-            model.ActivationTime = DateTime.UtcNow;
-            model.ExpireTime = DateTime.UtcNow.AddYears(10);
-            model.Type = "";
+            model.Name = param.Name;
+            model.Id = acc.Id;
+            model.Mail = acc.Mail;
+            model.Password = acc.Password;
             return model;
         }
 

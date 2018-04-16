@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ApiServer.Models
 {
     public class AccountModel
     {
         public string Id { get; set; }
+        public string Name { get; set; }
         public string Mail { get; set; }
         public string Password { get; set; }
         public bool Frozened { get; set; }
@@ -44,13 +42,16 @@ namespace ApiServer.Models
         public string Brief { get; set; }
     }
 
+    #region RegisterAccountModel 用户注册模型
+    /// <summary>
+    /// 用户注册模型
+    /// </summary>
     public class RegisterAccountModel
     {
         public string Email { get; set; }
+        public string Name { get; set; }
         public string Password { get; set; }
-    }
-
-
-
+    } 
+    #endregion
 
 }

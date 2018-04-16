@@ -1,4 +1,5 @@
-﻿using ApiServer.Models;
+﻿using ApiModel.Entities;
+using ApiServer.Models;
 using ApiServer.Services;
 using BambooCommon;
 using Microsoft.AspNetCore.Authorization;
@@ -28,21 +29,22 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="value">新账号的基本信息</param>
         /// <returns></returns>
-        //[AllowAnonymous]
-        //[Route("Register")]
-        //[HttpPost]
-        //[Produces(typeof(Account))]
-        //public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
-        //{
-        //    if (ModelState.IsValid == false)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    Account acc = await accountMan.Register(value);
-        //    if (acc == null)
-        //        return BadRequest();
-        //    return Ok(acc);
-        //}
+        [AllowAnonymous]
+        [Route("Register")]
+        [HttpPost]
+        [Produces(typeof(Account))]
+        public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+
+            AccountModel account = await accountMan.Register(value);
+            if (account == null)
+                return BadRequest();
+            return Ok(account);
+        }
 
         /// <summary>
         /// 重置密码
