@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using ApiModel;
+﻿using ApiServer.Models;
 using ApiServer.Services;
 using BambooCommon;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,21 +28,21 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="value">新账号的基本信息</param>
         /// <returns></returns>
-        [AllowAnonymous]
-        [Route("Register")]
-        [HttpPost]
-        [Produces(typeof(Account))]
-        public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
-        {
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
-            Account acc = await accountMan.Register(value);
-            if (acc == null)
-                return BadRequest();
-            return Ok(acc);
-        }
+        //[AllowAnonymous]
+        //[Route("Register")]
+        //[HttpPost]
+        //[Produces(typeof(Account))]
+        //public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
+        //{
+        //    if (ModelState.IsValid == false)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    Account acc = await accountMan.Register(value);
+        //    if (acc == null)
+        //        return BadRequest();
+        //    return Ok(acc);
+        //}
 
         /// <summary>
         /// 重置密码
@@ -102,9 +99,9 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Profile")]
         [HttpGet]
-        public AccountProfileModel GetProfile()
+        public async Task<AccountProfileModel> GetProfile()
         {
-            return accountMan.GetProfile(AuthMan.GetAccountId(this));
+            return await accountMan.GetProfile(AuthMan.GetAccountId(this));
         }
 
         /// <summary>
@@ -113,9 +110,9 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Navigation")]
         [HttpGet]
-        public NavigationModel GetNavigationData()
+        public async Task<NavigationModel> GetNavigationData()
         {
-            return accountMan.GetNavigation(AuthMan.GetAccountId(this));
+            return await accountMan.GetNavigation(AuthMan.GetAccountId(this));
         }
     }
 }

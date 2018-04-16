@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApiModel\ApiModel.csproj" />
     <ProjectReference Include="..\BambooCommon\BambooCommon.csproj" />
   </ItemGroup>
 

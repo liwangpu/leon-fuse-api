@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ApiModel;
-using BambooCore;
+﻿using ApiModel.Entities;
+using System;
 
 namespace ApiServer.Data
 {
@@ -39,7 +35,7 @@ namespace ApiServer.Data
                 acc.Frozened = false;
                 acc.ActivationTime = DateTime.UtcNow;
                 acc.ExpireTime = DateTime.UtcNow.AddYears(100);
-                acc.Type = "";
+                acc.Type = "sysadmin";
                 context.Accounts.Add(acc);
             }
 

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BambooCommon;
+﻿using BambooCommon;
 
 namespace BambooCore
 {
-    
+
     /// <summary>
     /// 资源的权限定义，用一个8位整数表示对一个资源的权限，每个位表示一个项目是否有权限
     /// 位号  8  7  6   5    4    3    2    1

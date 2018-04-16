@@ -20,14 +20,14 @@ namespace ApiServer.Migrations
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ApiModel.Account", b =>
+            modelBuilder.Entity("ApiModel.Entities.Account", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("ActivationTime");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("DepartmentId");
 
@@ -45,7 +45,7 @@ namespace ApiServer.Migrations
 
                     b.Property<bool>("MailValid");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -66,7 +66,7 @@ namespace ApiServer.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("ApiModel.AccountOpenId", b =>
+            modelBuilder.Entity("ApiModel.Entities.AccountOpenId", b =>
                 {
                     b.Property<string>("OpenId")
                         .ValueGeneratedOnAdd();
@@ -84,54 +84,48 @@ namespace ApiServer.Migrations
                     b.ToTable("AccountOpenId");
                 });
 
-            modelBuilder.Entity("ApiModel.AssetCategory", b =>
+            modelBuilder.Entity("ApiModel.Entities.AssetCategory", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountId");
-
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("ParentId");
-
-                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
                     b.ToTable("AssetCategories");
                 });
 
-            modelBuilder.Entity("ApiModel.AssetFolder", b =>
+            modelBuilder.Entity("ApiModel.Entities.AssetFolder", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AccountId");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("FolderId");
+
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("OrganizationId");
-
-                    b.Property<string>("ParentId");
-
-                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
@@ -142,31 +136,27 @@ namespace ApiServer.Migrations
                     b.ToTable("AssetFolders");
                 });
 
-            modelBuilder.Entity("ApiModel.AssetTag", b =>
+            modelBuilder.Entity("ApiModel.Entities.AssetTag", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountId");
-
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
                     b.ToTable("AssetTags");
                 });
 
-            modelBuilder.Entity("ApiModel.ClientAsset", b =>
+            modelBuilder.Entity("ApiModel.Entities.ClientAsset", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -175,11 +165,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("CategoryId");
 
-                    b.Property<string>("ClassName");
-
-                    b.Property<string>("ClientFiles");
-
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
@@ -187,21 +173,11 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("OrganizationId");
-
-                    b.Property<string>("Properties");
-
-                    b.Property<string>("SrcFileLocalPath");
-
-                    b.Property<string>("SrcFileMd5");
-
-                    b.Property<string>("SrcFileUrl");
-
-                    b.Property<string>("UploadTime");
 
                     b.HasKey("Id");
 
@@ -212,18 +188,18 @@ namespace ApiServer.Migrations
                     b.ToTable("ClientAssets");
                 });
 
-            modelBuilder.Entity("ApiModel.Department", b =>
+            modelBuilder.Entity("ApiModel.Entities.Department", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -240,7 +216,7 @@ namespace ApiServer.Migrations
                     b.ToTable("Department");
                 });
 
-            modelBuilder.Entity("ApiModel.FileAsset", b =>
+            modelBuilder.Entity("ApiModel.Entities.FileAsset", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -249,7 +225,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("CategoryId");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
@@ -263,7 +239,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Md5");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -284,44 +260,30 @@ namespace ApiServer.Migrations
                     b.ToTable("Files");
                 });
 
-            modelBuilder.Entity("ApiModel.Layout", b =>
+            modelBuilder.Entity("ApiModel.Entities.Layout", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AccountId");
 
-                    b.Property<string>("Address");
-
                     b.Property<string>("CategoryId");
 
-                    b.Property<string>("City");
-
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Data");
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("District");
-
                     b.Property<string>("FolderId");
-
-                    b.Property<string>("GeoPos");
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("OrganizationId");
-
-                    b.Property<int>("PlanImageScale");
-
-                    b.Property<string>("PlanImageUrl");
-
-                    b.Property<string>("Province");
 
                     b.HasKey("Id");
 
@@ -332,51 +294,33 @@ namespace ApiServer.Migrations
                     b.ToTable("Layouts");
                 });
 
-            modelBuilder.Entity("ApiModel.Material", b =>
+            modelBuilder.Entity("ApiModel.Entities.Material", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountId");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("FileExt");
-
-                    b.Property<string>("FolderId");
+                    b.Property<string>("FileAssetId");
 
                     b.Property<string>("Icon");
 
-                    b.Property<string>("LocalPath");
-
-                    b.Property<string>("Md5");
-
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
-                    b.Property<long>("Size");
-
                     b.Property<string>("StaticMeshId");
 
-                    b.Property<string>("UploadTime");
-
-                    b.Property<string>("Url");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.HasIndex("StaticMeshId");
 
                     b.ToTable("Materials");
                 });
 
-            modelBuilder.Entity("ApiModel.Order", b =>
+            modelBuilder.Entity("ApiModel.Entities.Order", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -387,13 +331,13 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Content");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -412,12 +356,14 @@ namespace ApiServer.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("ApiModel.OrderStateItem", b =>
+            modelBuilder.Entity("ApiModel.Entities.OrderStateItem", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Detail");
+
+                    b.Property<string>("Name");
 
                     b.Property<string>("NewState");
 
@@ -442,18 +388,18 @@ namespace ApiServer.Migrations
                     b.ToTable("OrderStateItem");
                 });
 
-            modelBuilder.Entity("ApiModel.Organization", b =>
+            modelBuilder.Entity("ApiModel.Entities.Organization", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -472,18 +418,24 @@ namespace ApiServer.Migrations
                     b.ToTable("Organizations");
                 });
 
-            modelBuilder.Entity("ApiModel.OrganMember", b =>
+            modelBuilder.Entity("ApiModel.Entities.OrganMember", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AccountId");
 
+                    b.Property<DateTime>("CreatedTime");
+
                     b.Property<string>("DepartmentId");
 
                     b.Property<DateTime>("JoinDepartmentTime");
 
                     b.Property<DateTime>("JoinOrganTime");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Name");
 
                     b.Property<string>("OrganizationId");
 
@@ -500,7 +452,7 @@ namespace ApiServer.Migrations
                     b.ToTable("OrganMember");
                 });
 
-            modelBuilder.Entity("ApiModel.Product", b =>
+            modelBuilder.Entity("ApiModel.Entities.Product", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -509,7 +461,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("CategoryId");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
@@ -517,7 +469,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Icon");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -532,18 +484,20 @@ namespace ApiServer.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ApiModel.ProductSpec", b =>
+            modelBuilder.Entity("ApiModel.Entities.ProductSpec", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Charlets");
+
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
-                    b.Property<string>("Materials");
-
-                    b.Property<string>("Mesh");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -560,7 +514,7 @@ namespace ApiServer.Migrations
                     b.ToTable("ProductSpec");
                 });
 
-            modelBuilder.Entity("ApiModel.SettingsItem", b =>
+            modelBuilder.Entity("ApiModel.Entities.SettingsItem", b =>
                 {
                     b.Property<string>("Key")
                         .ValueGeneratedOnAdd();
@@ -572,7 +526,7 @@ namespace ApiServer.Migrations
                     b.ToTable("Settings");
                 });
 
-            modelBuilder.Entity("ApiModel.Skirting", b =>
+            modelBuilder.Entity("ApiModel.Entities.Skirting", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -581,23 +535,17 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("CategoryId");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
                     b.Property<string>("FolderId");
 
-                    b.Property<int>("Height");
-
                     b.Property<string>("Icon");
 
-                    b.Property<string>("LateralPath");
-
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
-
-                    b.Property<int>("Thickness");
 
                     b.HasKey("Id");
 
@@ -606,7 +554,7 @@ namespace ApiServer.Migrations
                     b.ToTable("Skirtings");
                 });
 
-            modelBuilder.Entity("ApiModel.Solution", b =>
+            modelBuilder.Entity("ApiModel.Entities.Solution", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -615,7 +563,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("CategoryId");
 
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Data");
 
@@ -627,7 +575,7 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("LayoutId");
 
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
@@ -644,50 +592,28 @@ namespace ApiServer.Migrations
                     b.ToTable("Solutions");
                 });
 
-            modelBuilder.Entity("ApiModel.StaticMesh", b =>
+            modelBuilder.Entity("ApiModel.Entities.StaticMesh", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountId");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreateTime");
+                    b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("FileExt");
-
-                    b.Property<string>("FolderId");
+                    b.Property<string>("FileAssetId");
 
                     b.Property<string>("Icon");
 
-                    b.Property<string>("LocalPath");
-
-                    b.Property<string>("Md5");
-
-                    b.Property<DateTime>("ModifyTime");
+                    b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("ProductSpecId");
 
-                    b.Property<long>("Size");
-
-                    b.Property<string>("SrcFileUrl");
-
-                    b.Property<string>("UploadTime");
-
-                    b.Property<string>("Url");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("ProductSpecId")
-                        .IsUnique()
-                        .HasFilter("[ProductSpecId] IS NOT NULL");
+                    b.HasIndex("ProductSpecId");
 
                     b.ToTable("StaticMeshs");
                 });
@@ -712,188 +638,180 @@ namespace ApiServer.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("ApiModel.Account", b =>
+            modelBuilder.Entity("ApiModel.Entities.Account", b =>
                 {
-                    b.HasOne("ApiModel.Department", "Department")
+                    b.HasOne("ApiModel.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId");
                 });
 
-            modelBuilder.Entity("ApiModel.AccountOpenId", b =>
+            modelBuilder.Entity("ApiModel.Entities.AccountOpenId", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("OpenIds")
                         .HasForeignKey("AccountId");
                 });
 
-            modelBuilder.Entity("ApiModel.AssetFolder", b =>
+            modelBuilder.Entity("ApiModel.Entities.AssetFolder", b =>
                 {
-                    b.HasOne("ApiModel.Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("Folders")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Folders")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.ClientAsset", b =>
+            modelBuilder.Entity("ApiModel.Entities.ClientAsset", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("ClientAssets")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("ClientAssets")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.Department", b =>
+            modelBuilder.Entity("ApiModel.Entities.Department", b =>
                 {
-                    b.HasOne("ApiModel.Organization", "Organization")
+                    b.HasOne("ApiModel.Entities.Organization", "Organization")
                         .WithMany("Departments")
                         .HasForeignKey("OrganizationId");
 
-                    b.HasOne("ApiModel.Department", "Parent")
+                    b.HasOne("ApiModel.Entities.Department", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId");
                 });
 
-            modelBuilder.Entity("ApiModel.FileAsset", b =>
+            modelBuilder.Entity("ApiModel.Entities.FileAsset", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("Files")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Files")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.Layout", b =>
+            modelBuilder.Entity("ApiModel.Entities.Layout", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("Layouts")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Layouts")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.Material", b =>
+            modelBuilder.Entity("ApiModel.Entities.Material", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId");
-
-                    b.HasOne("ApiModel.StaticMesh", "StaticMesh")
+                    b.HasOne("ApiModel.Entities.StaticMesh", "StaticMesh")
                         .WithMany("Materials")
                         .HasForeignKey("StaticMeshId");
                 });
 
-            modelBuilder.Entity("ApiModel.Order", b =>
+            modelBuilder.Entity("ApiModel.Entities.Order", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("Orders")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Orders")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.OrderStateItem", b =>
+            modelBuilder.Entity("ApiModel.Entities.OrderStateItem", b =>
                 {
-                    b.HasOne("ApiModel.Order", "Order")
+                    b.HasOne("ApiModel.Entities.Order", "Order")
                         .WithMany("OrderStates")
                         .HasForeignKey("OrderId");
 
-                    b.HasOne("ApiModel.Solution", "Solution")
+                    b.HasOne("ApiModel.Entities.Solution", "Solution")
                         .WithMany()
                         .HasForeignKey("SolutionId");
                 });
 
-            modelBuilder.Entity("ApiModel.Organization", b =>
+            modelBuilder.Entity("ApiModel.Entities.Organization", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Owner")
+                    b.HasOne("ApiModel.Entities.Account", "Owner")
                         .WithOne("Organization")
-                        .HasForeignKey("ApiModel.Organization", "OwnerId");
+                        .HasForeignKey("ApiModel.Entities.Organization", "OwnerId");
 
-                    b.HasOne("ApiModel.Organization", "Parent")
+                    b.HasOne("ApiModel.Entities.Organization", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId");
                 });
 
-            modelBuilder.Entity("ApiModel.OrganMember", b =>
+            modelBuilder.Entity("ApiModel.Entities.OrganMember", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Department", "Department")
+                    b.HasOne("ApiModel.Entities.Department", "Department")
                         .WithMany("Members")
                         .HasForeignKey("DepartmentId");
 
-                    b.HasOne("ApiModel.Organization", "Organization")
+                    b.HasOne("ApiModel.Entities.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.Product", b =>
+            modelBuilder.Entity("ApiModel.Entities.Product", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("Products")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Products")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.ProductSpec", b =>
+            modelBuilder.Entity("ApiModel.Entities.ProductSpec", b =>
                 {
-                    b.HasOne("ApiModel.Product", "Product")
+                    b.HasOne("ApiModel.Entities.Product", "Product")
                         .WithMany("Specifications")
                         .HasForeignKey("ProductId");
                 });
 
-            modelBuilder.Entity("ApiModel.Skirting", b =>
+            modelBuilder.Entity("ApiModel.Entities.Skirting", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId");
                 });
 
-            modelBuilder.Entity("ApiModel.Solution", b =>
+            modelBuilder.Entity("ApiModel.Entities.Solution", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account", "Account")
                         .WithMany("Solutions")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ApiModel.Layout", "Layout")
+                    b.HasOne("ApiModel.Entities.Layout", "Layout")
                         .WithMany()
                         .HasForeignKey("LayoutId");
 
-                    b.HasOne("ApiModel.Organization")
+                    b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Solutions")
                         .HasForeignKey("OrganizationId");
                 });
 
-            modelBuilder.Entity("ApiModel.StaticMesh", b =>
+            modelBuilder.Entity("ApiModel.Entities.StaticMesh", b =>
                 {
-                    b.HasOne("ApiModel.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId");
-
-                    b.HasOne("ApiModel.ProductSpec", "ProductSpec")
-                        .WithOne("StaticMesh")
-                        .HasForeignKey("ApiModel.StaticMesh", "ProductSpecId");
+                    b.HasOne("ApiModel.Entities.ProductSpec", "ProductSpec")
+                        .WithMany("StaticMeshes")
+                        .HasForeignKey("ProductSpecId");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>
                 {
-                    b.HasOne("ApiModel.Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("Permissions")
                         .HasForeignKey("AccountId");
                 });

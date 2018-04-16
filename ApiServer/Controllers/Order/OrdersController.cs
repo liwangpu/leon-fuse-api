@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using ApiModel;
 using BambooCore;
 using ApiServer.Services;
+using ApiModel.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,7 +28,7 @@ namespace ApiServer.Controllers
         public async Task<PagedData<Order>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
                 d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Content.HaveSubStr(search));
         }
 
@@ -53,8 +54,8 @@ namespace ApiServer.Controllers
             string accid = AuthMan.GetAccountId(this);
             value.Id = GuidGen.NewGUID();
             value.AccountId = accid;
-            value.CreateTime = DateTime.UtcNow;
-            value.ModifyTime = value.CreateTime;
+            value.CreatedTime = DateTime.UtcNow;
+            value.ModifiedTime = value.CreatedTime;
 
             value = await repo.CreateAsync(accid, value);
             return CreatedAtAction("Get", value);
@@ -121,7 +122,7 @@ namespace ApiServer.Controllers
                 return NotFound();
 
             res.Content = Newtonsoft.Json.JsonConvert.SerializeObject(content);
-            res.ModifyTime = DateTime.UtcNow;
+            res.ModifiedTime = DateTime.UtcNow;
             await repo.SaveChangesAsync();
             return Ok();
         }

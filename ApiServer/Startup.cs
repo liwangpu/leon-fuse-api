@@ -36,10 +36,10 @@ namespace ApiServer
                                                                  .AllowCredentials()));
 
 
-            services.AddEntityFrameworkNpgsql();
-            services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
-            //services.AddEntityFrameworkSqlServer();
-            //services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
+            //services.AddEntityFrameworkNpgsql();
+            //services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
+            services.AddEntityFrameworkSqlServer();
+            services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -145,7 +145,7 @@ namespace ApiServer
             });
 
             //初始化站点服务
-            //InitSiteServices(serviceProvider);
+            InitSiteServices(serviceProvider);
         }
 
         /// <summary>
@@ -160,8 +160,6 @@ namespace ApiServer
 
             //init guid generator
             GuidGen.Init(json.ServerId, json.GuidSalt, json.GuidMinLen);
-
-            SiteConfig.Instance.ReloadSettingsFromDb(dbContext);
 
             //init db
             DbInitializer.InitDbIfItsEmpty(dbContext);

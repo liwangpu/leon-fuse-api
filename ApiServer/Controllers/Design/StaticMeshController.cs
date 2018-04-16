@@ -1,9 +1,9 @@
-﻿using ApiModel;
+﻿using ApiModel.Entities;
+using ApiServer.Data;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers.Design
@@ -12,18 +12,20 @@ namespace ApiServer.Controllers.Design
     [Route("/[controller]")]
     public class StaticMeshController : Controller
     {
+        private readonly ApiDbContext _ApiContext;
         private readonly Repository<StaticMesh> repo;
 
-        public StaticMeshController(Data.ApiDbContext context)
+        public StaticMeshController(ApiDbContext context)
         {
             repo = new Repository<StaticMesh>(context);
+            _ApiContext = context;
         }
 
         [HttpGet]
         public async Task<PagedData<StaticMesh>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
                 d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 
@@ -35,7 +37,16 @@ namespace ApiServer.Controllers.Design
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
-            return Ok(res);//return Forbid();
+            repo.Context.Entry(res).Collection(d => d.Materials).Load();
+            if (res.Materials != null && res.Materials.Count > 0)
+            {
+                for (int idx = res.Materials.Count - 1; idx >= 0; idx--)
+                {
+                    var mate = res.Materials[idx];
+                    mate.FileAsset = await _ApiContext.Files.FindAsync(mate.FileAssetId);
+                }
+            }
+            return Ok(res.ToDictionary());//return Forbid();
         }
 
 
@@ -57,7 +68,7 @@ namespace ApiServer.Controllers.Design
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            var res =await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
+            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
             if (res == null)
                 return NotFound();
             return Ok(value);
