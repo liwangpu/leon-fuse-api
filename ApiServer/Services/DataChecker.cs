@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using ApiModel;
-using BambooCommon;
-using BambooCore;
+﻿using ApiModel;
+using ApiModel.Entities;
 
 namespace ApiServer.Services
 {
@@ -22,7 +16,7 @@ namespace ApiServer.Services
                 return;
 
         }
-        public static void Check(ListableEntity obj)
+        public static void Check(IListable obj)
         {
             if (obj == null)
                 return;

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BambooCore
+﻿namespace BambooCore
 {
     /// <summary>
     /// 类似c++的 bitset，进行位操作。 可以最大64位。可以用静态函数，也可以创建实例

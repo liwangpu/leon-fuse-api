@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ApiModel;
 using BambooCommon;
+using System;
+using System.Collections.Generic;
 
 namespace BambooCore
 {
@@ -10,7 +9,7 @@ namespace BambooCore
     /// 用来生成对象的工厂
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class EntityFactory<T> where T : ListableEntity, new()
+    public class EntityFactory<T> where T : EntityBase, IListable, ApiModel.ICloneable, new()
     {
         /// <summary>
         /// 下次生成对象用的ID
@@ -23,11 +22,13 @@ namespace BambooCore
         /// <returns></returns>
         public static T New()
         {
-            T d = new T();
-            d.Id = GuidGen.NewGUID();
-            d.Name = string.Format("obj{0:D4}", nextId++);
-            d.CreateTime = DateTime.UtcNow;
-            d.ModifyTime = d.CreateTime;
+            T d = new T
+            {
+                Id = GuidGen.NewGUID(),
+                Name = string.Format("obj{0:D4}", nextId++),
+                CreatedTime = DateTime.UtcNow
+            };
+            d.ModifiedTime = d.CreatedTime;
             d.Icon = "";
             d.Description = "";
             return d;
@@ -55,8 +56,8 @@ namespace BambooCore
                 var d = template.Clone() as T;
                 d.Id = GuidGen.NewGUID();
                 d.Name = string.Format("obj{0:D4}", nextId++);
-                d.CreateTime = DateTime.UtcNow;
-                d.ModifyTime = d.CreateTime;
+                d.CreatedTime = DateTime.UtcNow;
+                d.ModifiedTime = d.CreatedTime;
                 randomizer?.Invoke(d, nextId, i);
                 res.Add(d);
             }

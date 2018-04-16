@@ -2,15 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using BambooCommon;
 
-namespace ApiModel
+namespace ApiModel.Entities
 {
-    /// <summary>
-    /// 组织机构
-    /// </summary>
-    public class Organization : ListableEntity
+    public class Organization : IListable
     {
         /// <summary>
         /// 父级组织的ID
@@ -55,49 +50,19 @@ namespace ApiModel
         public List<AssetFolder> Folders { get; set; }
         [JsonIgnore]
         public List<FileAsset> Files { get; set; }
-    }
-
-    /// <summary>
-    /// 组织机构的部门
-    /// </summary>
-    public class Department : ListableEntity
-    {
-        public string ParentId { get; set; }
-        [JsonIgnore]
-        public Department Parent { get; set; }
-
-        public string OrganizationId { get; set; }
-        [JsonIgnore]
-        public Organization Organization { get; set; }
-
-        [JsonIgnore]
-        public List<OrganMember> Members { get; set; }
-    }
-
-    /// <summary>
-    /// 组织内（部门）的成员信息
-    /// </summary>
-    public class OrganMember
-    {
+        public string Description { get; set; }
+        public string Icon { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
         public string Id { get; set; }
-        public string AccountId { get; set; }
-        
-        public string OrganizationId { get; set; }
-        [JsonIgnore]
-        public Organization Organization { get; set; }
-        
-        public string DepartmentId { get; set; }
-        [JsonIgnore]
-        public Department Department { get; set; }
+        public string Name { get; set; }
 
-        public DateTime JoinOrganTime { get; set; }
-        public DateTime JoinDepartmentTime { get; set; }
-
-        public string Role { get; set; }
-
-        [JsonIgnore]
-        public Account Account { get; set; }
+        public Dictionary<string, object> ToDictionary()
+        {
+            var dicData = new Dictionary<string, object>();
+            dicData["Id"] = this.Id;
+            dicData["Name"] = this.Name;
+            return dicData;
+        }
     }
-
-
 }

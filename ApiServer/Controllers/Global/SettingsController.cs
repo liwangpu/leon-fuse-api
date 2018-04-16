@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiModel;
+using ApiModel.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +31,7 @@ namespace ApiServer.Controllers.Global
         [HttpGet("{key}")]
         public string Get(string key)
         {
-            return Services.SiteConfig.Instance.GetItem(key);
+            return Services.SiteConfig.Instance.GetItem(key, context);
         }
 
         [HttpPost]

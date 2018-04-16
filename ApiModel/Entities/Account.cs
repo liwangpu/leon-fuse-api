@@ -1,55 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using BambooCommon;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using BambooCommon;
 
-namespace ApiModel
+namespace ApiModel.Entities
 {
-    /// <summary>
-    /// 注册账号使用的对象模型
-    /// </summary>
-    public class RegisterAccountModel
+    public class Account : IListable
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
-
-    /// <summary>
-    /// 重置密码时使用的对象模型，这是忘记密码后在未登录的情况下重置密码用的
-    /// </summary>
-    public class ResetPasswordModel
-    {
-        public string Email { get; set; }
-    }
-
-    /// <summary>
-    /// 设置新密码的对象模型，密码是加密后的版本，在登陆后才可使用
-    /// </summary>
-    public class NewPasswordModel
-    {
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
-    }
-
-    /// <summary>
-    /// 账号的摘要信息
-    /// </summary>
-    public class AccountProfileModel
-    {
-        public string Nickname { get; set; }
-        public string Avatar { get; set; }
-        public string Location { get; set; }
-        public string Brief { get; set; }
-    }
-
-    /// <summary>
-    /// 账号的完整信息
-    /// </summary>
-    public class Account : ListableEntity
-    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
         public string Mail { get; set; }
         public string Password { get; set; }
         public string Phone { get; set; }
@@ -62,7 +26,10 @@ namespace ApiModel
         /// <summary>
         /// 账号类型，系统管理员，普通用户，供应商，设计公司等等
         /// </summary>
-        public string Type { get; set; }
+        public string Type
+        {
+            get; set;
+        }
         /// <summary>
         /// 账号有效期，登陆时间小于这个有效期则无法登陆
         /// </summary>
@@ -71,7 +38,6 @@ namespace ApiModel
         /// 账号启用时间，如果当前登陆时间小于启用时间，则不能登陆。
         /// </summary>
         public DateTime ActivationTime { get; set; }
-
         [JsonIgnore]
         [InverseProperty("Owner")]
         public Organization Organization { get; set; }
@@ -102,30 +68,12 @@ namespace ApiModel
         /// </summary>
         [JsonIgnore]
         public List<PermissionItem> Permissions { get; set; }
+        public Dictionary<string, object> ToDictionary()
+        {
+            var dicData = new Dictionary<string, object>();
+            dicData["Id"] = this.Id;
+            dicData["Name"] = this.Name;
+            return dicData;
+        }
     }
-
-
-    /// <summary>
-    /// 账号的第三方登陆信息
-    /// </summary>
-    public class AccountOpenId
-    {
-        [Key]
-        /// <summary>
-        /// 第三方平台的oauth openid，用来关联用户身份
-        /// </summary>
-        public string OpenId { get; set; }
-        /// <summary>
-        /// 平台名, google, facebook, qq, wechat等等
-        /// </summary>
-        public string Platform { get; set; }
-        /// <summary>
-        /// 创建绑定的时间
-        /// </summary>
-        public DateTime CreateTime { get; set; }
-
-        public string AccountId { get; set; }
-        public Account Account { get; set; }
-    }
-
 }

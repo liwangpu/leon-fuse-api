@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ApiModel.Entities;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace ApiServer.Services
             public int TokenValidDays { get; set; }
         }
 
-        ConcurrentDictionary<string, string> settingsMap = new ConcurrentDictionary<string, string>();
+        ConcurrentDictionary<string, string> settingsMap = null;
 
         JsonConfig jsonConfig = new JsonConfig();
 
@@ -95,8 +96,11 @@ namespace ApiServer.Services
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string GetItem(string key)
+        public string GetItem(string key, Data.ApiDbContext context = null)
         {
+            if (settingsMap == null && context != null)
+                ReloadSettingsFromDb(context);
+
             string value = "";
             settingsMap.TryGetValue(key, out value);
             return value;
@@ -110,12 +114,15 @@ namespace ApiServer.Services
         /// <param name="context"></param>
         public async Task SetItem(string key, string value, Data.ApiDbContext context)
         {
+            if (settingsMap == null && context != null)
+                ReloadSettingsFromDb(context);
+
             settingsMap[key] = value;
             //save to db
             var item = await context.Settings.FindAsync(key);
             if (item == null)
             {
-                item = new ApiModel.SettingsItem();
+                item = new SettingsItem();
                 item.Key = key;
                 item.Value = value;
                 context.Settings.Add(item);

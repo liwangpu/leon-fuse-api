@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ApiModel;
+﻿using ApiModel.Entities;
 using BambooCommon;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiServer.Data
 {
@@ -82,6 +79,11 @@ namespace ApiServer.Data
         /// <summary>
         /// 模型
         /// </summary>
+        public DbSet<ProductSpec> ProductSpec { get; set; }
+
+        /// <summary>
+        /// 模型
+        /// </summary>
         public DbSet<StaticMesh> StaticMeshs { get; set; }
 
         /// <summary>
@@ -98,8 +100,8 @@ namespace ApiServer.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql(@"Server=localhost;Database=dmz;User Id=postgres;Password=root");
-            //optionsBuilder.UseSqlServer(@"Data Source=qds116703363.my3w.com;Initial Catalog=qds116703363_db;Persist Security Info=True;User ID=qds116703363;Password=AAaa123456");
+            //optionsBuilder.UseSqlServer(@"Server=localhost;Database=dmz;User Id=postgres;Password=root");
+            //optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-EA0ERLU\SQLEXPRESS;Initial Catalog=DMZ;Persist Security Info=True;User ID=sa;Password=root");
         }
 
         protected override void OnModelCreating(ModelBuilder b)

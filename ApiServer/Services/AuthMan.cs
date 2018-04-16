@@ -1,8 +1,8 @@
-﻿using ApiModel;
+﻿using ApiModel.Entities;
+using ApiServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Services
@@ -36,7 +36,7 @@ namespace ApiServer.Services
         public struct LoginResultStruct
         {
             public LoginResult loginResult;
-            public Account acc;
+            public AccountModel acc;
         }
 
         Data.ApiDbContext context;
@@ -58,7 +58,18 @@ namespace ApiServer.Services
             account = account.ToLower();
             pwd = pwd.ToLower();
 
-            result.acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == account || d.Phone == account);
+            var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == account || d.Phone == account);
+            //result.acc =
+            if (acc != null)
+            {
+                var model = new AccountModel();
+                model.Id = acc.Id;
+                model.Frozened = acc.Frozened;
+                model.ActivationTime = acc.ActivationTime;
+                model.ExpireTime = acc.ExpireTime;
+                model.Password = acc.Password;
+                result.acc = model;
+            }
 
             if (result.acc == null)
                 result.loginResult = LoginResult.AccOrPasswordWrong;

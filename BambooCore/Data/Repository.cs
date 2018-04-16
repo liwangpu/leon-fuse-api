@@ -5,14 +5,14 @@ using BambooCommon;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-
+using ApiModel;
 namespace BambooCore
 {
     /// <summary>
     /// 通用的Entity存储仓库，提供常规的增删改查逻辑
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Repository<T> where T : EntityBase, new()
+    public class Repository<T> where T : class, IEntity, ApiModel.ICloneable, new()
     {
         private readonly DbContext context;
         private static long nextNewNameId = 0;
@@ -38,6 +38,7 @@ namespace BambooCore
         }
 
         public IQueryable<T> GetDataSet(string accid)
+
         {
             var dataSet = context.Set<T>();
             var permissionSet = GetPermissons(accid);
@@ -45,16 +46,16 @@ namespace BambooCore
             return tempset;
         }
 
-        /// <summary>
-        /// 分页获取数据，支持自定义筛选条件，按属性名排序
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="desc"></param>
-        /// <param name="searchPredicate"></param>
-        /// <returns></returns>
-        public async Task<PagedData<T>> GetAync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
+        public IQueryable<T> GetDataSet1(string accid)
+
+        {
+            var dataSet = context.Set<T>();
+            var permissionSet = GetPermissons(accid);
+            var tempset = from d in dataSet join p in permissionSet on d.Id equals p.ResId select d;
+            return tempset;
+        }
+
+        public async Task<PagedData<T>> GetAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
         {
             return await GetDataSet(accid).Paging(page, pageSize, orderBy, desc, searchPredicate);
         }
@@ -225,7 +226,7 @@ namespace BambooCore
             if (bOk == false)
                 return null;
 
-            var entity = value as ListableEntity;
+            var entity = value as IListable;
             if (entity != null)
                 await UpdateProtectListableEntityAsync(accid, entity);
 
@@ -244,13 +245,13 @@ namespace BambooCore
         /// <param name="id"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        async Task<bool> UpdateProtectListableEntityAsync(string accid, ListableEntity value)
+        async Task<bool> UpdateProtectListableEntityAsync(string accid, IListable value)
         {
-            var src = await GetAsync(accid, value.Id) as ListableEntity;
+            var src = await GetAsync(accid, value.Id) as IListable;
             if (src == null)
                 return false;
-            value.CreateTime = src.CreateTime;
-            value.ModifyTime = DateTime.UtcNow;
+            value.CreatedTime = src.CreatedTime;
+            value.ModifiedTime = DateTime.UtcNow;
             return true;
         }
 

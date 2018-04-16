@@ -1,50 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-namespace ApiModel
+﻿namespace ApiModel.Entities
 {
-
-    /// <summary>
-    /// 表示设计方案
-    /// </summary>
-    public class Solution : Asset
-    {
-        public string LayoutId { get; set; }
-        [JsonIgnore]
-        public Layout Layout { get; set; }
-
-        /// <summary>
-        /// 内容为 SolutionData 对象的 json字符串
-        /// </summary>
-        public string Data { get; set; }
-    }
-
-    /// <summary>
-    /// 方案的数据结构，在内存和客户端使用。服务端只是存储这个对象的json字符串格式 到 Solution::Data属性
-    /// </summary>
-    public class SolutionData
-    {
-        public List<SolutionRegionData> Regions { get; set; }
-    }
-
-    /// <summary>
-    /// 方案的一个区域的数据
-    /// </summary>
-    public class SolutionRegionData
-    {
-        /// <summary>
-        /// 对应户型中的区域
-        /// </summary>
-        public string RegionId { get; set; }
-        /// <summary>
-        /// 区域中摆放的物品信息
-        /// </summary>
-        public List<AreaItem> Items { get; set; }
-    }
-
     /// <summary>
     /// 摆放在场景中的对象的数据
     /// </summary>

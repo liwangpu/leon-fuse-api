@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ApiModel;
+﻿using ApiModel.Entities;
+using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
-using ApiServer.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,7 +24,7 @@ namespace ApiServer.Controllers
         public async Task<PagedData<ClientAsset>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 
         [HttpGet("{id}")]

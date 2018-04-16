@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
+using ApiModel.Entities;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -41,7 +42,7 @@ namespace ApiServer.Controllers.Asset
         public async Task<PagedData<FileAsset>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
                 d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 

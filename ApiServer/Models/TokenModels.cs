@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ApiModel
+﻿namespace ApiModel.Entities
 {
     /// <summary>
     /// 请求access token的参数

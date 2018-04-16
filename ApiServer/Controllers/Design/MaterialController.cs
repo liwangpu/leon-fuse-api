@@ -1,4 +1,5 @@
 ﻿using ApiModel;
+using ApiModel.Entities;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,7 @@ namespace ApiServer.Controllers.Design
         public async Task<PagedData<Material>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
                 d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
         }
 
@@ -71,5 +72,13 @@ namespace ApiServer.Controllers.Design
                 return Ok();
             return NotFound();//return Forbid();
         }
+
+        //[Route("Upload")]
+        //[HttpPost]
+        //public async Task<IActionResult> GetByMesh()
+        //{
+        //    return await repo.GetAsync(AuthMan.GetAccountId(this), 0, 999, "", false,
+        //        d => d.re);
+        //}
     }
 }

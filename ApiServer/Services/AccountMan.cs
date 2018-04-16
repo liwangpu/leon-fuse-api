@@ -6,6 +6,8 @@ using ApiModel;
 using BambooCore;
 using BambooCommon;
 using Microsoft.EntityFrameworkCore;
+using ApiServer.Models;
+using ApiModel.Entities;
 
 namespace ApiServer.Services
 {
@@ -18,28 +20,28 @@ namespace ApiServer.Services
             this.context = context;
         }
 
-        public async Task<Account> Register(RegisterAccountModel param)
+        public async Task<AccountModel> Register(RegisterAccountModel param)
         {
+            var model = new AccountModel();
             if (param == null)
                 return null;
             if (string.IsNullOrWhiteSpace(param.Email))
                 return null;
             string mail = param.Email.Trim().ToLower();
-            Account acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
-            if (acc != null)
-                return acc;
-            acc = new Account();
-            acc.Id = GuidGen.NewGUID();
-            acc.Mail = mail;
-            acc.Password = param.Password;
-            acc.Frozened = false;
-            acc.ActivationTime = DateTime.UtcNow;
-            acc.ExpireTime = DateTime.UtcNow.AddYears(10);
-            acc.Type = "";
-            context.Accounts.Add(acc);
-
-            await context.SaveChangesAsync();
-            return acc;
+            var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
+            if (acc == null)
+            {
+                context.Accounts.Add(acc);
+                await context.SaveChangesAsync();
+            }
+            model.Id = GuidGen.NewGUID();
+            model.Mail = mail;
+            model.Password = param.Password;
+            model.Frozened = false;
+            model.ActivationTime = DateTime.UtcNow;
+            model.ExpireTime = DateTime.UtcNow.AddYears(10);
+            model.Type = "";
+            return model;
         }
 
         public async Task<bool> ChangePasswordAsync(string accid, NewPasswordModel param)

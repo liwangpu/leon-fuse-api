@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>WinExe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,9 +18,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\Design\**" />
+    <Compile Remove="Controllers\Order\**" />
+    <Content Remove="Controllers\Design\**" />
+    <Content Remove="Controllers\Order\**" />
+    <EmbeddedResource Remove="Controllers\Design\**" />
+    <EmbeddedResource Remove="Controllers\Order\**" />
+    <None Remove="Controllers\Design\**" />
+    <None Remove="Controllers\Order\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Controllers\Design\LayoutController.cs" />
+    <Compile Include="Controllers\Design\MaterialController.cs" />
+    <Compile Include="Controllers\Design\ProductsController.cs" />
+    <Compile Include="Controllers\Design\ProductSpecController.cs" />
+    <Compile Include="Controllers\Design\SolutionController.cs" />
+    <Compile Include="Controllers\Design\StaticMeshController.cs" />
+    <Compile Include="Controllers\Order\OrdersController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +59,7 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
+    
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ApiModel;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +9,34 @@ using System.Threading.Tasks;
 
 namespace BambooCore
 {
+
+    public static class PagingExtend
+    {
+        public static List<Dictionary<string, object>> ToDic<TSource>(this List<TSource> source)
+            where TSource : class, IEntity
+        {
+            if (source != null && source.Count > 0)
+            {
+                var dics = new List<Dictionary<string, object>>();
+                dics.AddRange(source.Select(x => x.ToDictionary()));
+                return dics;
+            }
+            return new List<Dictionary<string, object>>();
+        }
+    }
+
     /// <summary>
     /// 通用的分页数据结构
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class PagedData<T>
     {
-        public List<T> Data { get; set; }
+        public List<Dictionary<string, object>> Data { get; set; }
         public int Page { get; set; }
         public int Size { get; set; }
         public int Total { get; set; }
     }
+
 
     /// <summary>
     /// 对IEnumerable的分页查询的扩展
@@ -44,10 +62,10 @@ namespace BambooCore
         /// <param name="desc">是否是倒序排列，默认是升序</param>
         /// <param name="searchPredicate">用来查找或过滤的筛选函数，不需要此功能则传null即可</param>
         /// <returns></returns>
-        public static async Task<PagedData<T>> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class
+        public static async Task<PagedData<T>> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
         {
 
-            PagedData<T> res = new PagedData<T>();
+            var res = new PagedData<T>();
             IQueryable<T> data = null;
             if (searchExpression == null)
                 data = src;
@@ -75,16 +93,19 @@ namespace BambooCore
 
             if (((page - 1) * pageSize) > res.Total)
             {
-                res.Data = new List<T>();
+                res.Data = new List<Dictionary<string, object>>();
                 res.Size = 0;
             }
             else
             {
                 data = data.Skip((page - 1) * pageSize).Take(pageSize);
-                res.Data = await data.ToListAsync();
+                //res.Data = data.ToListAsync();
+                var datas = await data.ToListAsync();
+                res.Data = datas.ToDic();
                 res.Size = res.Data.Count;
             }
             return res;
         }
+
     }
 }
