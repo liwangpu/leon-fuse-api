@@ -18,7 +18,14 @@ namespace ApiServer.Data
         {
             context = dbContext;
 
-            InitUsers();
+            try
+            {
+                InitUsers();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         static void InitUsers()

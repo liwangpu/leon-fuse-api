@@ -59,7 +59,6 @@ namespace ApiServer.Services
             pwd = pwd.ToLower();
 
             var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == account || d.Phone == account);
-            //result.acc =
             if (acc != null)
             {
                 var model = new AccountModel();
@@ -72,20 +71,25 @@ namespace ApiServer.Services
             }
 
             if (result.acc == null)
+            {
                 result.loginResult = LoginResult.AccOrPasswordWrong;
+            }
+            else
+            {
+                if (result.acc.Frozened)
+                    result.loginResult = LoginResult.Frozen;
 
-            if (result.acc.Frozened)
-                result.loginResult = LoginResult.Frozen;
+                var now = DateTime.UtcNow;
+                if (now < result.acc.ActivationTime)
+                    result.loginResult = LoginResult.NotActivation;
 
-            var now = DateTime.UtcNow;
-            if (now < result.acc.ActivationTime)
-                result.loginResult = LoginResult.NotActivation;
+                if (now > result.acc.ExpireTime)
+                    result.loginResult = LoginResult.Expired;
 
-            if (now > result.acc.ExpireTime)
-                result.loginResult = LoginResult.Expired;
+                if (result.acc.Password != pwd)
+                    result.loginResult = LoginResult.AccOrPasswordWrong;
+            }
 
-            if (result.acc.Password != pwd)
-                result.loginResult = LoginResult.AccOrPasswordWrong;
 
             return result;
         }
