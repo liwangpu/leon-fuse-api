@@ -38,4 +38,5 @@ namespace ApiModel.Entities
             return dicData;
         }
     }
+
 }
