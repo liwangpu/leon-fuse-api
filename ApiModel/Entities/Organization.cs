@@ -61,6 +61,9 @@ namespace ApiModel.Entities
             dicData["ModifiedTime"] = ModifiedTime;
             dicData["Description"] = Description;
             dicData["Icon"] = Icon;
+
+            if (Owner != null)
+                dicData["Owner"] = Owner.ToDictionary();
             return dicData;
         }
     }

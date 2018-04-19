@@ -35,7 +35,8 @@ namespace ApiServer.Controllers
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
-            //repo.Context.Entry(res).Collection(d => d.Specifications).Load();
+            await repo.Context.Entry(res).Reference(d => d.Owner).LoadAsync();
+
             return Ok(res.ToDictionary());//return Forbid();
         }
 

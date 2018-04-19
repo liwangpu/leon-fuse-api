@@ -1,14 +1,20 @@
 ﻿using System;
+using ApiModel;
+using ApiModel.Entities;
+using BambooCore;
 
 namespace ApiServer.Models
 {
-    public class AccountModel
+    public class AccountModel : IModel<Account>
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public string Mail { get; set; }
         public string Password { get; set; }
         public bool Frozened { get; set; }
+        public string Location { get; set; }
+        public string Phone { get; set; }
+        public string OrganizationId { get; set; }
         /// <summary>
         /// 账号类型，系统管理员，普通用户，供应商，设计公司等等
         /// </summary>
@@ -21,6 +27,22 @@ namespace ApiServer.Models
         /// 账号启用时间，如果当前登陆时间小于启用时间，则不能登陆。
         /// </summary>
         public DateTime ActivationTime { get; set; }
+
+        public Account ToEntity()
+        {
+            var entity = new Account();
+            entity.Id = Id;
+            entity.Name = Name;
+            entity.Mail = Mail;
+            entity.Password = Md5.CalcString(Password);
+            entity.Phone = Phone;
+            entity.Location = Location;
+            entity.OrganizationId = OrganizationId;
+            entity.Type = Type;
+            entity.ExpireTime = ExpireTime;
+            entity.ActivationTime = ActivationTime;
+            return entity;
+        }
     }
 
     public class ResetPasswordModel
@@ -36,10 +58,16 @@ namespace ApiServer.Models
 
     public class AccountProfileModel
     {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Mail { get; set; }
+        public string Phone { get; set; }
         public string Nickname { get; set; }
         public string Avatar { get; set; }
         public string Location { get; set; }
         public string Brief { get; set; }
+        public string OrganizationId { get; set; }
+        public string DepartmentId { get; set; }
     }
 
     #region RegisterAccountModel 用户注册模型
@@ -48,10 +76,16 @@ namespace ApiServer.Models
     /// </summary>
     public class RegisterAccountModel
     {
-        public string Email { get; set; }
+        public string Mail { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
-    } 
+        public string Type { get; set; }
+        public string Location { get; set; }
+        public string Phone { get; set; }
+        public string OrganizationId { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
+    }
     #endregion
 
 }

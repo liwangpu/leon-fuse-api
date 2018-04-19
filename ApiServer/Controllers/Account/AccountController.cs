@@ -2,6 +2,7 @@
 using ApiServer.Models;
 using ApiServer.Services;
 using BambooCommon;
+using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -18,10 +19,37 @@ namespace ApiServer.Controllers
     public class AccountController : Controller
     {
         AccountMan accountMan;
-
+        private readonly Repository<Account> repo;
         public AccountController(Data.ApiDbContext context)
         {
+            repo = new Repository<Account>(context);
             accountMan = new AccountMan(context);
+        }
+
+        [HttpGet]
+        public async Task<PagedData> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        {
+            PagingMan.CheckParam(ref search, ref page, ref pageSize);
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+               d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Produces(typeof(Account))]
+        public async Task<IActionResult> Put([FromBody]AccountModel value)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value.ToEntity());
+            if (res == null)
+                return NotFound();
+            return Ok(res.ToDictionary());
         }
 
         /// <summary>
@@ -41,6 +69,8 @@ namespace ApiServer.Controllers
             }
 
             AccountModel account = await accountMan.Register(value);
+            repo.Context.Set<PermissionItem>().Add(Permission.NewItem(AuthMan.GetAccountId(this), account.Id, value.GetType().Name, PermissionType.All));
+            await repo.SaveChangesAsync();
             if (account == null)
                 return BadRequest();
             return Ok(account);
