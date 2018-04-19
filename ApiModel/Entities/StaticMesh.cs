@@ -14,8 +14,8 @@ namespace ApiModel.Entities
         public FileAsset FileAsset { get; set; }
         public List<Material> Materials { get; set; }
 
-        public List<string> Dependencies { get; set; }
-        public string Tags { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
 
         public override Dictionary<string, object> ToDictionary()
         {
@@ -28,14 +28,14 @@ namespace ApiModel.Entities
             dicData["Icon"] = Icon;
             if (FileAsset != null)
             {
-                dicData["url"] = FileAsset.Url;
+                dicData["Url"] = FileAsset.Url;
             }
             if (Materials != null && Materials.Count > 0)
             {
                 dicData["Materials"] = Materials.Select(x => x.ToDictionary());
             }
             dicData["Dependencies"] = Dependencies;
-            dicData["Tags"] = Tags;
+            dicData["Properties"] = Properties;
 
             return dicData;
         }

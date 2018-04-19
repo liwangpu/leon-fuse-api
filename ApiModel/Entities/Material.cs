@@ -13,7 +13,7 @@ namespace ApiModel.Entities
         [NotMapped]
         public FileAsset FileAsset { get; set; }
 
-        public List<string> Dependencies { get; set; }
+        public string Dependencies { get; set; }
         public string Parameters { get; set; }
 
         public override Dictionary<string, object> ToDictionary()

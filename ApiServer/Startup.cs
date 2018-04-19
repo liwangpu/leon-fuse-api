@@ -4,6 +4,7 @@ using BambooCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +18,13 @@ namespace ApiServer
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;            
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -34,8 +36,7 @@ namespace ApiServer
                                                                 .AllowAnyMethod()
                                                                  .AllowAnyHeader()
                                                                  .AllowCredentials()));
-
-
+            
             services.AddEntityFrameworkNpgsql();
             services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
             //services.AddEntityFrameworkSqlServer();
@@ -101,6 +102,11 @@ namespace ApiServer
                     // using Microsoft.AspNetCore.Http;
                     ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
                 }
+            });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
 

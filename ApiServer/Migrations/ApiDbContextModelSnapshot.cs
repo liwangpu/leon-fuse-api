@@ -17,8 +17,8 @@ namespace ApiServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011");
 
             modelBuilder.Entity("ApiModel.Entities.Account", b =>
                 {
@@ -301,6 +301,8 @@ namespace ApiServer.Migrations
 
                     b.Property<DateTime>("CreatedTime");
 
+                    b.Property<string>("Dependencies");
+
                     b.Property<string>("Description");
 
                     b.Property<string>("FileAssetId");
@@ -310,6 +312,8 @@ namespace ApiServer.Migrations
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Parameters");
 
                     b.Property<string>("StaticMeshId");
 
@@ -410,8 +414,7 @@ namespace ApiServer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId")
-                        .IsUnique()
-                        .HasFilter("[OwnerId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -599,6 +602,8 @@ namespace ApiServer.Migrations
 
                     b.Property<DateTime>("CreatedTime");
 
+                    b.Property<string>("Dependencies");
+
                     b.Property<string>("Description");
 
                     b.Property<string>("FileAssetId");
@@ -610,6 +615,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Name");
 
                     b.Property<string>("ProductSpecId");
+
+                    b.Property<string>("Tags");
 
                     b.HasKey("Id");
 
