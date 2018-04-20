@@ -84,6 +84,7 @@ namespace ApiModel.Entities
             dicData["ExpireTime"] = ExpireTime;
             dicData["OrganizationId"] = OrganizationId;
             dicData["ActivationTime"] = ActivationTime;
+            dicData["DepartmentId"] = DepartmentId;
             return dicData;
         }
     }

@@ -38,13 +38,14 @@ namespace ApiServer.Services
                 acc.Password = Md5.CalcString(param.Password);
                 acc.Mail = mail;
                 acc.Frozened = false;
-                acc.ActivationTime = DateTime.UtcNow;
-                acc.ExpireTime = DateTime.UtcNow.AddYears(10);
+                acc.ActivationTime = param.ActivationTime;
+                acc.ExpireTime = param.ExpireTime;
                 acc.Type = param.Type;
                 acc.Location = param.Location;
                 acc.Phone = param.Phone;
                 acc.OrganizationId = param.OrganizationId;
                 acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
+                acc.DepartmentId = param.DepartmentId;
                 context.Accounts.Add(acc);
                 await context.SaveChangesAsync();
             }
