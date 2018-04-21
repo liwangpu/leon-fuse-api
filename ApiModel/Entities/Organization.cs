@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Organization : IListable
+    public class Organization : EntityBase, IListable
     {
         /// <summary>
         /// 父级组织的ID
@@ -52,16 +51,19 @@ namespace ApiModel.Entities
         public List<FileAsset> Files { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
 
-        public Dictionary<string, object> ToDictionary()
+        public override Dictionary<string, object> ToDictionary()
         {
             var dicData = new Dictionary<string, object>();
-            dicData["Id"] = this.Id;
-            dicData["Name"] = this.Name;
+            dicData["Id"] = Id;
+            dicData["Name"] = Name;
+            dicData["CreatedTime"] = CreatedTime;
+            dicData["ModifiedTime"] = ModifiedTime;
+            dicData["Description"] = Description;
+            dicData["Icon"] = Icon;
+
+            if (Owner != null)
+                dicData["Owner"] = Owner.ToDictionary();
             return dicData;
         }
     }

@@ -86,7 +86,7 @@ namespace BambooCore
                 {
                     data = data.OrderBy(orderBy);
                     if (desc)
-                        data = data.Reverse();
+                        data = data.OrderByDescendingBy(orderBy);
                 }
                 catch { }// orderBy参数有误，比如名称不是类的成员
             }
@@ -98,10 +98,16 @@ namespace BambooCore
             }
             else
             {
-                data = data.Skip((page - 1) * pageSize).Take(pageSize);
-                var datas = await data.ToListAsync();
-                res.Data = datas.ToDictionaryList();
-                res.Size = res.Data.Count;
+                try
+                {
+                    data = data.Skip((page - 1) * pageSize).Take(pageSize);
+                    var datas = await data.ToListAsync();
+                    res.Data = datas.ToDictionaryList();
+                    res.Size = res.Data.Count;
+                }
+                catch (Exception ex)
+                {
+                }
             }
             return res;
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ApiModel.Entities
 {
-    public class Department : IListable
+    public class Department : EntityBase, IListable
     {
         public string ParentId { get; set; }
         [JsonIgnore]
@@ -18,16 +18,17 @@ namespace ApiModel.Entities
         public List<OrganMember> Members { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
 
-        public Dictionary<string, object> ToDictionary()
+        public override Dictionary<string, object> ToDictionary()
         {
             var dicData = new Dictionary<string, object>();
-            dicData["Id"] = this.Id;
-            dicData["Name"] = this.Name;
+            dicData["Id"] = Id;
+            dicData["Name"] = Name;
+            dicData["Description"] = Description;
+            dicData["CreatedTime"] = CreatedTime;
+            dicData["ModifiedTime"] = ModifiedTime;
+            if (Members != null && Members.Count > 0)
+                dicData["Members"] = Members.ToDictionary();
             return dicData;
         }
     }

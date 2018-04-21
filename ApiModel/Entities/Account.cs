@@ -6,12 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Account : IListable
+    public class Account : EntityBase, IListable, ICloneable
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
         public string Mail { get; set; }
@@ -68,11 +64,27 @@ namespace ApiModel.Entities
         /// </summary>
         [JsonIgnore]
         public List<PermissionItem> Permissions { get; set; }
-        public Dictionary<string, object> ToDictionary()
+
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Dictionary<string, object> ToDictionary()
         {
             var dicData = new Dictionary<string, object>();
-            dicData["Id"] = this.Id;
-            dicData["Name"] = this.Name;
+            dicData["Id"] = Id;
+            dicData["Name"] = Name;
+            dicData["Mail"] = Mail;
+            dicData["Phone"] = Phone;
+            dicData["Location"] = Location;
+            dicData["Description"] = Description;
+            dicData["Icon"] = Icon;
+            dicData["Type"] = Type;
+            dicData["ExpireTime"] = ExpireTime;
+            dicData["OrganizationId"] = OrganizationId;
+            dicData["ActivationTime"] = ActivationTime;
+            dicData["DepartmentId"] = DepartmentId;
             return dicData;
         }
     }

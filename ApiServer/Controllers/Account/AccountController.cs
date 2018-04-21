@@ -1,9 +1,14 @@
-﻿using ApiServer.Models;
+﻿using ApiModel.Entities;
+using ApiServer.Data;
+using ApiServer.Models;
 using ApiServer.Services;
 using BambooCommon;
+using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,10 +22,61 @@ namespace ApiServer.Controllers
     public class AccountController : Controller
     {
         AccountMan accountMan;
-
-        public AccountController(Data.ApiDbContext context)
+        private readonly Repository<Account> repo;
+        private ApiDbContext _context;
+        public AccountController(ApiDbContext context)
         {
+            repo = new Repository<Account>(context);
             accountMan = new AccountMan(context);
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<PagedData> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        {
+            PagingMan.CheckParam(ref search, ref page, ref pageSize);
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
+               d => d.DepartmentId == search || d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+        }
+
+        [HttpGet("{id}")]
+        [Produces(typeof(Account))]
+        public async Task<IActionResult> Get(string id)
+        {
+            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
+            if (res == null)
+                return NotFound();
+            repo.Context.Entry(res).Reference(d => d.Organization).Load();
+            //repo.Context.Entry(res).Reference(d => d).Load();
+            return Ok(res.ToDictionary());//return Forbid();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Produces(typeof(Account))]
+        public async Task<IActionResult> Put([FromBody]AccountModel value)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value.ToEntity());
+            if (res == null)
+                return NotFound();
+            return Ok(res.ToDictionary());
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
+            if (bOk)
+                return Ok();
+            return NotFound();//return Forbid();
         }
 
         /// <summary>
@@ -28,21 +84,24 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="value">新账号的基本信息</param>
         /// <returns></returns>
-        //[AllowAnonymous]
-        //[Route("Register")]
-        //[HttpPost]
-        //[Produces(typeof(Account))]
-        //public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
-        //{
-        //    if (ModelState.IsValid == false)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    Account acc = await accountMan.Register(value);
-        //    if (acc == null)
-        //        return BadRequest();
-        //    return Ok(acc);
-        //}
+        [AllowAnonymous]
+        [Route("Register")]
+        [HttpPost]
+        [Produces(typeof(Account))]
+        public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+            var refReor = await _context.Accounts.FirstOrDefaultAsync(x => x.Mail == value.Mail || x.Phone == value.Phone);
+            if (refReor != null)
+                return BadRequest("账户信息已经存在,修改您的邮箱或者电话信息");
+            AccountModel account = await accountMan.Register(value);
+            repo.Context.Set<PermissionItem>().Add(Permission.NewItem(AuthMan.GetAccountId(this), account.Id, value.GetType().Name, PermissionType.All));
+            await repo.SaveChangesAsync();
+            if (account == null)
+                return BadRequest();
+            return Ok(account);
+        }
 
         /// <summary>
         /// 重置密码

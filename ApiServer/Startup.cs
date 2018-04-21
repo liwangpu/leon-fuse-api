@@ -168,6 +168,8 @@ namespace ApiServer
             //init guid generator
             GuidGen.Init(json.ServerId, json.GuidSalt, json.GuidMinLen);
 
+            SiteConfig.Instance.ReloadSettingsFromDb(dbContext);
+
             //init db
             DbInitializer.InitDbIfItsEmpty(dbContext);
         }

@@ -25,22 +25,39 @@ namespace ApiServer.Services
             var model = new AccountModel();
             if (param == null)
                 return null;
-            if (string.IsNullOrWhiteSpace(param.Email))
+            if (string.IsNullOrWhiteSpace(param.Mail))
                 return null;
-            string mail = param.Email.Trim().ToLower();
-            var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
+            string mail = param.Mail.Trim().ToLower();
+
+            Account acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
             if (acc == null)
             {
+                acc = new Account();
+                acc.Id = GuidGen.NewGUID();
+                acc.Name = param.Name;
+                acc.Password = Md5.CalcString(param.Password);
+                acc.Mail = mail;
+                acc.Frozened = false;
+                acc.ActivationTime = param.ActivationTime;
+                acc.ExpireTime = param.ExpireTime;
+                acc.Type = param.Type;
+                acc.Location = param.Location;
+                acc.Phone = param.Phone;
+                acc.OrganizationId = param.OrganizationId;
+                acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
+                acc.DepartmentId = param.DepartmentId;
                 context.Accounts.Add(acc);
                 await context.SaveChangesAsync();
             }
-            model.Id = GuidGen.NewGUID();
-            model.Mail = mail;
-            model.Password = param.Password;
-            model.Frozened = false;
-            model.ActivationTime = DateTime.UtcNow;
-            model.ExpireTime = DateTime.UtcNow.AddYears(10);
-            model.Type = "";
+            model.Name = param.Name;
+            model.Id = acc.Id;
+            model.Mail = acc.Mail;
+            //model.Password = acc.Password;
+            model.Phone = acc.Phone;
+            model.Location = acc.Location;
+            model.Type = acc.Type;
+            model.ActivationTime = acc.ActivationTime;
+            model.ExpireTime = acc.ExpireTime;
             return model;
         }
 
@@ -69,6 +86,9 @@ namespace ApiServer.Services
             p.Avatar = acc.Icon;
             p.Brief = acc.Description;
             p.Location = acc.Location;
+            p.OrganizationId = acc.OrganizationId;
+            p.DepartmentId = acc.DepartmentId;
+
             return p;
         }
 
