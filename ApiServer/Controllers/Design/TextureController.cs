@@ -1,23 +1,24 @@
-﻿using ApiModel;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
+using ApiServer.Data;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MaterialController : Controller
+    public class TextureController : Controller
     {
-        private readonly Repository<Material> repo;
+        private readonly ApiDbContext _ApiContext;
+        private readonly Repository<Texture> repo;
 
-        public MaterialController(Data.ApiDbContext context)
+        public TextureController(ApiDbContext context)
         {
-            repo = new Repository<Material>(context);
+            repo = new Repository<Texture>(context);
+            _ApiContext = context;
         }
 
         [HttpGet]
@@ -30,7 +31,7 @@ namespace ApiServer.Controllers.Design
 
 
         [HttpGet("{id}")]
-        [Produces(typeof(Material))]
+        [Produces(typeof(Texture))]
         public async Task<IActionResult> Get(string id)
         {
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
@@ -41,8 +42,8 @@ namespace ApiServer.Controllers.Design
 
 
         [HttpPost]
-        [Produces(typeof(Material))]
-        public async Task<IActionResult> Post([FromBody]Material value)
+        [Produces(typeof(Texture))]
+        public async Task<IActionResult> Post([FromBody]Texture value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
@@ -52,8 +53,8 @@ namespace ApiServer.Controllers.Design
         }
 
         [HttpPut]
-        [Produces(typeof(Material))]
-        public async Task<IActionResult> Put([FromBody]Material value)
+        [Produces(typeof(Texture))]
+        public async Task<IActionResult> Put([FromBody]Texture value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
@@ -72,13 +73,5 @@ namespace ApiServer.Controllers.Design
                 return Ok();
             return NotFound();//return Forbid();
         }
-
-        //[Route("Upload")]
-        //[HttpPost]
-        //public async Task<IActionResult> GetByMesh()
-        //{
-        //    return await repo.GetAsync(AuthMan.GetAccountId(this), 0, 999, "", false,
-        //        d => d.re);
-        //}
     }
 }

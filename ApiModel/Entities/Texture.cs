@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace ApiModel.Entities
 {
-    public class Material : EntityBase, IListable
+    public class Texture : EntityBase, IListable
     {
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -12,7 +14,7 @@ namespace ApiModel.Entities
         public FileAsset FileAsset { get; set; }
 
         public string Dependencies { get; set; }
-        public string Parameters { get; set; }
+        public string Properties { get; set; }
 
         public override Dictionary<string, object> ToDictionary()
         {
@@ -26,7 +28,7 @@ namespace ApiModel.Entities
                 dicData["Url"] = FileAsset.Url;
             }
             dicData["Dependencies"] = Dependencies;
-            dicData["Parameters"] = Parameters;
+            dicData["Properties"] = Properties;
 
             return dicData;
         }

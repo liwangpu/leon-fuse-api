@@ -294,6 +294,32 @@ namespace ApiServer.Migrations
                     b.ToTable("Layouts");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.Map", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Dependencies");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("FileAssetId");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Properties");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Maps");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.Material", b =>
                 {
                     b.Property<string>("Id")
@@ -616,13 +642,39 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("ProductSpecId");
 
-                    b.Property<string>("Tags");
+                    b.Property<string>("Properties");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductSpecId");
 
                     b.ToTable("StaticMeshs");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.Texture", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Dependencies");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("FileAssetId");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Properties");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Textures");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>
@@ -716,7 +768,7 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Material", b =>
                 {
-                    b.HasOne("ApiModel.Entities.StaticMesh", "StaticMesh")
+                    b.HasOne("ApiModel.Entities.StaticMesh")
                         .WithMany("Materials")
                         .HasForeignKey("StaticMeshId");
                 });
@@ -811,7 +863,7 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.StaticMesh", b =>
                 {
-                    b.HasOne("ApiModel.Entities.ProductSpec", "ProductSpec")
+                    b.HasOne("ApiModel.Entities.ProductSpec")
                         .WithMany("StaticMeshes")
                         .HasForeignKey("ProductSpecId");
                 });

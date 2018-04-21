@@ -23,7 +23,7 @@ namespace ApiModel
             }
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
             return MemberwiseClone();
         }

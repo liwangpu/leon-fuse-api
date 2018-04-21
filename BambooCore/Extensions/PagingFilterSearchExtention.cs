@@ -105,7 +105,7 @@ namespace BambooCore
                     res.Data = datas.ToDictionaryList();
                     res.Size = res.Data.Count;
                 }
-                catch (Exception ex)
+                catch
                 {
                 }
             }

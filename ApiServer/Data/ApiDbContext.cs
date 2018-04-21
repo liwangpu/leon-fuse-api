@@ -77,7 +77,7 @@ namespace ApiServer.Data
         public DbSet<PermissionItem> Permissions { get; set; }
 
         /// <summary>
-        /// 模型
+        /// 产品规格
         /// </summary>
         public DbSet<ProductSpec> ProductSpec { get; set; }
 
@@ -90,6 +90,16 @@ namespace ApiServer.Data
         /// 材质
         /// </summary>
         public DbSet<Material> Materials { get; set; }
+
+        /// <summary>
+        /// 贴图
+        /// </summary>
+        public DbSet<Texture> Textures { get; set; }
+
+        /// <summary>
+        /// 地图，场景
+        /// </summary>
+        public DbSet<Map> Maps { get; set; }
 
         //------------------------------------------------------------------------
 

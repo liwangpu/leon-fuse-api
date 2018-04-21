@@ -7,8 +7,6 @@ namespace ApiModel.Entities
     {
         public string Description { get; set; }
         public string Icon { get; set; }
-        public string ProductSpecId { get; set; }
-        public ProductSpec ProductSpec { get; set; }
         public string FileAssetId { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }

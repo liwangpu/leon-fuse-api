@@ -65,10 +65,10 @@ namespace ApiModel.Entities
         [JsonIgnore]
         public List<PermissionItem> Permissions { get; set; }
 
-        public object Clone()
-        {
-            throw new NotImplementedException();
-        }
+        //public override object Clone()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public override Dictionary<string, object> ToDictionary()
         {
