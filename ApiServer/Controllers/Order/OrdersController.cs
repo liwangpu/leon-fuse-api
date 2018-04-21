@@ -29,7 +29,7 @@ namespace ApiServer.Controllers
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
             return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-                d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Content.HaveSubStr(search));
+                d => d.Id.Contains(search) || d.Name.Contains(search) || d.Content.Contains(search));
         }
 
         [HttpGet("{id}")]

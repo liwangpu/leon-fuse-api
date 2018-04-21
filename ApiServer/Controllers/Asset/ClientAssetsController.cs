@@ -24,7 +24,7 @@ namespace ApiServer.Controllers
         public async Task<PagedData> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,d => d.Id.HaveSubStr(search) || d.Name.HaveSubStr(search) || d.Description.HaveSubStr(search));
+            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
         }
 
         [HttpGet("{id}")]
