@@ -100,7 +100,8 @@ namespace ApiServer
                 {
                     // Requires the following import:
                     // using Microsoft.AspNetCore.Http;
-                    ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
+                    if(ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
+                        ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
                 }
             });
 

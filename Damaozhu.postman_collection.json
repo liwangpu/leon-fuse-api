@@ -165,6 +165,32 @@
 			"item": [
 				{
 					"name": "Get Token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a3f5713a-9251-4342-86c1-7966e6325abb",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "a2b61134-179c-49b1-935b-8991f187777d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"check token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"});",
+									""
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -175,7 +201,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"account\":\"test2@a.com\",\n\t\"password\":\"{{normalpwd}}\"\n}"
+							"raw": "{\n\t\"account\":\"admin2\",\n\t\"password\":\"{{adminpwd}}\"\n}"
 						},
 						"url": {
 							"raw": "{{base}}/token",

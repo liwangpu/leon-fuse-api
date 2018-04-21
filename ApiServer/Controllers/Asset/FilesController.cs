@@ -50,7 +50,8 @@ namespace ApiServer.Controllers.Asset
         [Produces(typeof(FileAsset))]
         public async Task<IActionResult> Get(string id)
         {
-            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
+            //var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
+            var res = await repo.Context.Set<FileAsset>().FindAsync(id); //获取单个文件的记录改为跨账号全局查询，以便客户端判断重复文件
             if (res == null)
                 return NotFound();
             return Ok(res);//return Forbid();
@@ -117,29 +118,82 @@ namespace ApiServer.Controllers.Asset
 
         /// <summary>
         /// 上传一个文件，文件放在body中。服务器会把此文件存在upload文件夹中，并在账号上创建一个FileAsset，并返回数据给客户端。
-        /// 建议客户端需要再次使用PUT /files API来修改此FileAsset，为其补全一些备注信息，比如文件本地文件名，描述信息。
+        /// 文件的内容可以在Header里面附加，也可以再次使用PUT /files API来修改此FileAsset。
+        /// 在Header里面附加的内容一定要用urlencode封装一下，否则遇到中文会被框架拦截，返回500错误。
         /// </summary>
         /// <returns></returns>
         [Route("Upload")]
         [HttpPost]
         public async Task<FileAsset> Upload()
         {
-            string name = Guid.NewGuid().ToString();
-            FileAsset res = new FileAsset();
-            res.Id = GuidGen.NewGUID();
-            res.Name = name;
-            res.Url = "/upload/" + name;
+            string fileExt = "";
+            string localPath = "";
+            string description = "";
+            Microsoft.Extensions.Primitives.StringValues headerVar;
+            Request.Headers.TryGetValue("fileExt", out headerVar); if (headerVar.Count > 0) fileExt = headerVar[0].Trim();
+            Request.Headers.TryGetValue("localPath", out headerVar); if (headerVar.Count > 0) localPath = headerVar[0].Trim();
+            Request.Headers.TryGetValue("description", out headerVar); if (headerVar.Count > 0) description = headerVar[0].Trim();
 
-            string localPath = uploadPath + name;
-            using (StreamWriter sw = new StreamWriter(localPath))
+            localPath = System.Net.WebUtility.UrlDecode(localPath);
+            description = System.Net.WebUtility.UrlDecode(description);
+
+            //确保扩展名以 .开头，比如.jpg
+            if (fileExt.Length > 0 && fileExt[0] != '.')
+                fileExt = "." + fileExt;
+
+            FileAsset res = new FileAsset();
+            res.Id = GuidGen.NewGUID(); //先生成临时ID，用于保存文件
+            res.Name = localPath.Length > 0 ? Path.GetFileName(localPath) : res.Id;
+            res.Url = "/upload/" + res.Id;
+            res.FileExt = fileExt;
+            res.LocalPath = localPath;
+            res.Description = description;
+
+            //保存
+            string savePath = uploadPath + res.Id;
+            try
             {
-                var bodystream = HttpContext.Request.Body;
-                bodystream.CopyTo(sw.BaseStream);
+                using (StreamWriter sw = new StreamWriter(savePath))
+                {
+                    HttpContext.Request.Body.CopyTo(sw.BaseStream);
+                }
             }
-            FileInfo fi = new FileInfo(localPath);
+            catch
+            {
+                res.Id = "";
+                res.Url = "";
+                return res;
+            }
+            FileInfo fi = new FileInfo(savePath);
             res.Size = fi.Length;
-            res.Md5 = Md5.CalcFile(localPath);
-            await repo.CreateAsync(AuthMan.GetAccountId(this), res, false);
+            res.Md5 = Md5.CalcFile(savePath); //计算md5
+            res.Id = res.Md5; //将ID和url改为md5
+            res.Url = "/upload/" + res.Id + res.FileExt;
+            string renamedPath = uploadPath + res.Id + res.FileExt;
+
+            // 检查是否已经上传过此文件
+            var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
+            if(existRecord != null)
+            {
+                // 数据库记录还在，但是文件不在了，重新保存下文件。
+                if(System.IO.File.Exists(renamedPath) == false)
+                {
+                    System.IO.File.Move(savePath, renamedPath); //重命名文件
+                }
+                return existRecord;
+            }
+            else // 没有上传记录
+            {
+                //没上传记录，但是已经有这个文件了，先删除已有的文件，使用用户的文件覆盖
+                if (System.IO.File.Exists(renamedPath))
+                {
+                    System.IO.File.Delete(renamedPath); 
+                }
+                System.IO.File.Move(savePath, renamedPath); //重命名文件
+            }
+
+
+            await repo.CreateAsync(AuthMan.GetAccountId(this), res, false); //记录到数据库
 
             return res;
         }
