@@ -92,7 +92,8 @@ namespace ApiServer.Controllers
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            var refReor = await _context.Accounts.FirstOrDefaultAsync(x => x.Mail == value.Mail || x.Phone == value.Phone);
+            //var refReor = await _context.Accounts.Where(x =>  x.Mail == value.Mail || x.Phone == value.Phone).FirstOrDefaultAsync();
+            var refReor = await _context.Accounts.FirstOrDefaultAsync(x => !string.IsNullOrWhiteSpace(value.Mail) && x.Mail == value.Mail || !string.IsNullOrWhiteSpace(value.Phone) && x.Phone == value.Phone);
             if (refReor != null)
                 return BadRequest("账户信息已经存在,修改您的邮箱或者电话信息");
             AccountModel account = await accountMan.Register(value);

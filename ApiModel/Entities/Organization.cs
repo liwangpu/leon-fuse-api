@@ -51,6 +51,8 @@ namespace ApiModel.Entities
         public List<FileAsset> Files { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
+        public string Mail { get; set; }
+        public string Location { get; set; }
 
         public override Dictionary<string, object> ToDictionary()
         {
@@ -60,10 +62,13 @@ namespace ApiModel.Entities
             dicData["CreatedTime"] = CreatedTime;
             dicData["ModifiedTime"] = ModifiedTime;
             dicData["Description"] = Description;
+            dicData["Mail"] = Mail;
+            dicData["Location"] = Location;
             dicData["Icon"] = Icon;
-
             if (Owner != null)
                 dicData["Owner"] = Owner.ToDictionary();
+            if (Departments != null && Departments.Count > 0)
+                dicData["Departments"] = Departments.ToDictionary();
             return dicData;
         }
     }

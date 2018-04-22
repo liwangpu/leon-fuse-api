@@ -36,7 +36,7 @@ namespace ApiServer.Controllers
             if (res == null)
                 return NotFound();
             await repo.Context.Entry(res).Reference(d => d.Owner).LoadAsync();
-
+            await repo.Context.Entry(res).Collection(d => d.Departments).LoadAsync();
             return Ok(res.ToDictionary());//return Forbid();
         }
 

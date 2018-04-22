@@ -25,6 +25,8 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<Organization> Organizations { get; set; }
 
+        public DbSet<Department> Departments { get; set; }
+
         //assets------------------------------------------------------------------
 
         /// <summary>
