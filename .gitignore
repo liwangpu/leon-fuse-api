@@ -162,8 +162,3 @@ $RECYCLE.BIN/
 # VisualStudioCode
 .vscode
 ApiServer/wwwroot/
-<<<<<<< HEAD
-Migrations
-=======
-ApiServer/Migrations
->>>>>>> b213f35e13d6e04602338181a97b9ddbd508d52e
