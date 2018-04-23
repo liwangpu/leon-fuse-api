@@ -8,13 +8,19 @@ namespace ApiModel.Entities
         public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
-        [NotMapped]
-        public FileAsset FileAsset { get; set; }
-        public List<Material> Materials { get; set; }
-        public string ProductSpecId { get; set; }
-        public ProductSpec ProductSpec { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+
+        [NotMapped]
+        public FileAsset FileAsset { get; set; }
+        [NotMapped]
+        public List<Material> Materials { get; set; }
+
+
+        public StaticMesh()
+        {
+            Materials = new List<Material>();
+        }
 
         public override Dictionary<string, object> ToDictionary()
         {

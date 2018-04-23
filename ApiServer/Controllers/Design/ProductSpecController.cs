@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using System.Collections.Generic;
-
+using Newtonsoft.Json;
 namespace ApiServer.Controllers.Design
 {
     [Authorize]
@@ -32,30 +32,43 @@ namespace ApiServer.Controllers.Design
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
-            repo.Context.Entry(res).Collection(d => d.StaticMeshes).Load();
-            if (res.StaticMeshes != null && res.StaticMeshes.Count > 0)
-            {
-                for (int idx = res.StaticMeshes.Count - 1; idx >= 0; idx--)
-                {
-                    var mesh = res.StaticMeshes[idx];
-                    if (mesh != null)
-                        mesh.FileAsset = await _ApiContext.Files.FindAsync(mesh.FileAssetId);
-                }
-            }
+
             if (!string.IsNullOrWhiteSpace(res.Icon))
             {
                 var ass = await _ApiContext.Files.FindAsync(res.Icon);
                 if (ass != null)
                     res.IconFileAsset = ass;
             }
-            if (!string.IsNullOrWhiteSpace(res.Charlets))
+            if (!string.IsNullOrWhiteSpace(res.CharletIds))
             {
-                var chartletIds = res.Charlets.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var chartletIds = res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                 for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
                 {
                     var ass = await _ApiContext.Files.FindAsync(chartletIds[idx]);
                     if (ass != null)
                         res.CharletAsset.Add(ass);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
+            {
+                var meshIds = res.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                {
+                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
+                    var refMesh = await _ApiContext.StaticMeshs.FindAsync(kv.Key);
+                    refMesh.FileAsset = await _ApiContext.Files.FindAsync(refMesh.FileAssetId);
+                    if (!string.IsNullOrWhiteSpace(kv.Value))
+                    {
+                        var matids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        foreach (var item in matids)
+                        {
+                            var refMat = await _ApiContext.Materials.FindAsync(item);
+                            refMat.FileAsset = await _ApiContext.Files.FindAsync(refMat.FileAssetId);
+                            refMesh.Materials.Add(refMat);
+                        }
+                    }
+
+                    res.StaticMeshAsset.Add(refMesh);
                 }
             }
             return Ok(res.ToDictionary());//return Forbid();
@@ -95,6 +108,109 @@ namespace ApiServer.Controllers.Design
             return NotFound();//return Forbid();
         }
 
+        [Route("UploadStaticMesh")]
+        [HttpPut]
+        public async Task<IActionResult> UploadStaticMesh([FromBody]SpecStaticMeshUploadModel mesh)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            var spec = await _ApiContext.ProductSpec.FindAsync(mesh.ProductSpecId);
+            if (spec != null)
+            {
+                //ids是一个KeyValuePair<string,string>的信息,key为static mesh id,value为mesh依赖的material ids(逗号分隔)
+                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
+                meshIds.Add(JsonConvert.SerializeObject(new KeyValuePair<string, string>(mesh.AssetId, "")));
+                spec.StaticMeshIds = string.Join("|", meshIds);
+                await _ApiContext.SaveChangesAsync();
+                return Ok(mesh);
+            }
+            return NotFound(mesh);
+        }
+
+        [Route("DeleteStaticMesh")]
+        [HttpPut]
+        public async Task<IActionResult> DeleteStaticMesh([FromBody]SpecStaticMeshUploadModel mesh)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            var spec = await _ApiContext.ProductSpec.FindAsync(mesh.ProductSpecId);
+            if (spec != null)
+            {
+                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                {
+                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
+                    if (kv.Key == mesh.AssetId)
+                        meshIds.RemoveAt(idx);
+                }
+                spec.StaticMeshIds = string.Join("|", meshIds);
+                await _ApiContext.SaveChangesAsync();
+                return Ok(mesh);
+            }
+            return NotFound();
+        }
+
+
+        [Route("UploadMaterial")]
+        [HttpPut]
+        public async Task<IActionResult> UploadMaterial([FromBody]SpecMaterialUploadModel material)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+            var spec = await _ApiContext.ProductSpec.FindAsync(material.ProductSpecId);
+            if (spec != null)
+            {
+                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                {
+                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
+                    if (kv.Key == material.StaticMeshId)
+                    {
+                        var metids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        metids.Add(material.AssetId);
+                        meshIds[idx] = JsonConvert.SerializeObject(new KeyValuePair<string, string>(kv.Key, string.Join(",", metids)));
+                    }
+                }
+                spec.StaticMeshIds = string.Join("|", meshIds);
+                await _ApiContext.SaveChangesAsync();
+                return Ok(material);
+            }
+            return NotFound();
+        }
+
+        [Route("DeleteMaterial")]
+        [HttpPut]
+        public async Task<IActionResult> DeleteMaterial([FromBody]SpecMaterialUploadModel material)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+            var spec = await _ApiContext.ProductSpec.FindAsync(material.ProductSpecId);
+            if (spec != null)
+            {
+                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                {
+                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
+                    if (kv.Key == material.StaticMeshId)
+                    {
+                        var metids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        for (int ndx = metids.Count - 1; ndx >= 0; ndx--)
+                        {
+                            if (metids[ndx] == material.AssetId)
+                                metids.RemoveAt(ndx);
+                        }
+                        meshIds[idx] = JsonConvert.SerializeObject(new KeyValuePair<string, string>(kv.Key, string.Join(",", metids)));
+                    }
+                }
+                spec.StaticMeshIds = string.Join("|", meshIds);
+                await _ApiContext.SaveChangesAsync();
+                return Ok(material);
+            }
+            return NotFound();
+        }
+
         [Route("ChangeICon")]
         [HttpPut]
         public async Task<IActionResult> ChangeICon([FromBody]IconModel icon)
@@ -122,9 +238,9 @@ namespace ApiServer.Controllers.Design
             var res = await _ApiContext.ProductSpec.FindAsync(icon.ObjId);
             if (res != null)
             {
-                var chartletIds = string.IsNullOrWhiteSpace(res.Charlets) ? new List<string>() : res.Charlets.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var chartletIds = string.IsNullOrWhiteSpace(res.CharletIds) ? new List<string>() : res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                 chartletIds.Add(icon.AssetId);
-                res.Charlets = string.Join(",", chartletIds);
+                res.CharletIds = string.Join(",", chartletIds);
                 await _ApiContext.SaveChangesAsync();
                 return Ok();
             }
@@ -141,13 +257,13 @@ namespace ApiServer.Controllers.Design
             var res = await _ApiContext.ProductSpec.FindAsync(icon.ObjId);
             if (res != null)
             {
-                var chartletIds = string.IsNullOrWhiteSpace(res.Charlets) ? new List<string>() : res.Charlets.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var chartletIds = string.IsNullOrWhiteSpace(res.CharletIds) ? new List<string>() : res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                 for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
                 {
                     if (chartletIds[idx] == icon.AssetId)
                         chartletIds.RemoveAt(idx);
                 }
-                res.Charlets = string.Join(",", chartletIds);
+                res.CharletIds = string.Join(",", chartletIds);
                 await _ApiContext.SaveChangesAsync();
                 return Ok();
             }

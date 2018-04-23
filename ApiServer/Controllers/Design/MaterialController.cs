@@ -1,10 +1,8 @@
-﻿using ApiModel;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers.Design
@@ -47,8 +45,8 @@ namespace ApiServer.Controllers.Design
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            if (string.IsNullOrEmpty(value.StaticMeshId) == false)
-                value.StaticMesh = await repo.Context.Set<StaticMesh>().FindAsync(value.StaticMeshId);
+            //if (string.IsNullOrEmpty(value.StaticMeshId) == false)
+            //    value.StaticMesh = await repo.Context.Set<StaticMesh>().FindAsync(value.StaticMeshId);
             value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
             return CreatedAtAction("Get", value);
         }

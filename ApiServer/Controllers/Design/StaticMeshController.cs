@@ -1,5 +1,6 @@
 ﻿using ApiModel.Entities;
 using ApiServer.Data;
+using ApiServer.Models;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
@@ -52,14 +53,19 @@ namespace ApiServer.Controllers.Design
 
         [HttpPost]
         [Produces(typeof(StaticMesh))]
-        public async Task<IActionResult> Post([FromBody]StaticMesh value)
+        public async Task<IActionResult> Post([FromBody]StaticMeshEditModel value)
         {
+            //if (ModelState.IsValid == false)
+            //    return BadRequest(ModelState);
+            //if (string.IsNullOrEmpty(value.ProductSpecId) == false)
+            //    value.ProductSpec = await repo.Context.Set<ProductSpec>().FindAsync(value.ProductSpecId);
+            //value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
+
+
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            if (string.IsNullOrEmpty(value.ProductSpecId) == false)
-                value.ProductSpec = await repo.Context.Set<ProductSpec>().FindAsync(value.ProductSpecId);
-            value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
-            return CreatedAtAction("Get", value);
+            var res = await repo.CreateAsync(AuthMan.GetAccountId(this), value.ToEntity());
+            return CreatedAtAction("Get", res);
         }
 
         [HttpPut]

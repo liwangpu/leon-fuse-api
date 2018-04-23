@@ -8,12 +8,12 @@ namespace ApiModel.Entities
         public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
-        [NotMapped]
-        public FileAsset FileAsset { get; set; }
-        public string StaticMeshId { get; set; }
-        public StaticMesh StaticMesh { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
+
+        [NotMapped]
+        public FileAsset FileAsset { get; set; }
+
 
         public override Dictionary<string, object> ToDictionary()
         {
@@ -31,5 +31,16 @@ namespace ApiModel.Entities
 
             return dicData;
         }
+    }
+
+    public class MaterialDTO
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
+        public string FileAssetId { get; set; }
+        public string Dependencies { get; set; }
+        public string Parameters { get; set; }
     }
 }

@@ -9,6 +9,8 @@ namespace ApiModel.Entities
     {
         public string Description { get; set; }
         public string Icon { get; set; }
+        public string CharletIds { get; set; }
+        public string StaticMeshIds { get; set; }
 
         /// <summary>
         /// 价格，单位为元
@@ -25,17 +27,18 @@ namespace ApiModel.Entities
         public string ProductId { get; set; }
         [JsonIgnore]
         public Product Product { get; set; }
-        [JsonIgnore]
-        public List<StaticMesh> StaticMeshes { get; set; }
+
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
-        public string Charlets { get; set; }
         [NotMapped]
         public List<FileAsset> CharletAsset { get; set; }
+        [NotMapped]
+        public List<StaticMesh> StaticMeshAsset { get; set; }
 
         public ProductSpec()
         {
             CharletAsset = new List<FileAsset>();
+            StaticMeshAsset = new List<StaticMesh>();
         }
 
         public override Dictionary<string, object> ToDictionary()
@@ -50,9 +53,9 @@ namespace ApiModel.Entities
             dicData["TPID"] = TPID;
             dicData["ProductId"] = ProductId;
 
-            if (StaticMeshes != null && StaticMeshes.Count > 0)
+            if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
             {
-                dicData["StaticMeshes"] = StaticMeshes.Select(x => x.ToDictionary());
+                dicData["StaticMeshes"] = StaticMeshAsset.Select(x => x.ToDictionary());
             }
             if (IconFileAsset != null)
             {
@@ -65,5 +68,13 @@ namespace ApiModel.Entities
             }
             return dicData;
         }
+    }
+
+    public class ProductSpecDTO
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
     }
 }
