@@ -15,6 +15,7 @@ namespace ApiServer.Models
         public string Location { get; set; }
         public string Phone { get; set; }
         public string OrganizationId { get; set; }
+        public string DepartmentId { get; set; }
         /// <summary>
         /// 账号类型，系统管理员，普通用户，供应商，设计公司等等
         /// </summary>
@@ -34,13 +35,15 @@ namespace ApiServer.Models
             entity.Id = Id;
             entity.Name = Name;
             entity.Mail = Mail;
-            entity.Password = Md5.CalcString(Password);
+            if (!string.IsNullOrWhiteSpace(Password))
+                entity.Password = Md5.CalcString(Password);
             entity.Phone = Phone;
             entity.Location = Location;
             entity.OrganizationId = OrganizationId;
             entity.Type = Type;
             entity.ExpireTime = ExpireTime;
             entity.ActivationTime = ActivationTime;
+            entity.DepartmentId = DepartmentId;
             return entity;
         }
     }

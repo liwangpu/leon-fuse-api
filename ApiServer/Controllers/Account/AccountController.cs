@@ -63,8 +63,12 @@ namespace ApiServer.Controllers
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-
-            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value.ToEntity());
+            //
+            var refRecord = await _context.Accounts.FindAsync(value.Id);
+            var entity = value.ToEntity();
+            if (string.IsNullOrWhiteSpace(entity.Password))
+                entity.Password = refRecord.Password;//密码如果为空,维持原来密码
+            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), entity);
             if (res == null)
                 return NotFound();
             return Ok(res.ToDictionary());

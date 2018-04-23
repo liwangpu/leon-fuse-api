@@ -10,7 +10,8 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-
+        public string StaticMeshId { get; set; }
+        public StaticMesh StaticMesh { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
 

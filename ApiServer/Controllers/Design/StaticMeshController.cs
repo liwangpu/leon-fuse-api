@@ -56,10 +56,8 @@ namespace ApiServer.Controllers.Design
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            if(string.IsNullOrEmpty(value.FileAssetId) == false)
-            {
-                value.FileAsset = await repo.Context.Set<FileAsset>().FindAsync(value.FileAssetId);
-            }
+            if (string.IsNullOrEmpty(value.ProductSpecId) == false)
+                value.ProductSpec = await repo.Context.Set<ProductSpec>().FindAsync(value.ProductSpecId);
             value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
             return CreatedAtAction("Get", value);
         }

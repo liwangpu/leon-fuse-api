@@ -107,7 +107,7 @@ namespace ApiServer.Controllers.Design
             {
                 res.Icon = icon.AssetId;
                 await _ApiContext.SaveChangesAsync();
-                return Ok();
+                return Ok(res);
             }
             return NotFound();
         }

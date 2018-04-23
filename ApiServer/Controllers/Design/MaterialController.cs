@@ -47,10 +47,8 @@ namespace ApiServer.Controllers.Design
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            if (string.IsNullOrEmpty(value.FileAssetId) == false)
-            {
-                value.FileAsset = await repo.Context.Set<FileAsset>().FindAsync(value.FileAssetId);
-            }
+            if (string.IsNullOrEmpty(value.StaticMeshId) == false)
+                value.StaticMesh = await repo.Context.Set<StaticMesh>().FindAsync(value.StaticMeshId);
             value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
             return CreatedAtAction("Get", value);
         }

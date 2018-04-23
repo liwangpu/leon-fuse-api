@@ -11,7 +11,8 @@ namespace ApiModel.Entities
         [NotMapped]
         public FileAsset FileAsset { get; set; }
         public List<Material> Materials { get; set; }
-
+        public string ProductSpecId { get; set; }
+        public ProductSpec ProductSpec { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
 

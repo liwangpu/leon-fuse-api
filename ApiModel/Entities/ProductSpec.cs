@@ -56,7 +56,8 @@ namespace ApiModel.Entities
             }
             if (IconFileAsset != null)
             {
-                dicData["Icon"] = IconFileAsset.ToDictionary();
+                dicData["IconAsset"] = IconFileAsset.ToDictionary();
+                dicData["Icon"] = IconFileAsset.Url;
             }
             if (CharletAsset != null && CharletAsset.Count > 0)
             {

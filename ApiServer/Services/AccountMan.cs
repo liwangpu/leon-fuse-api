@@ -46,7 +46,7 @@ namespace ApiServer.Services
                 acc.OrganizationId = param.OrganizationId;
                 acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
                 acc.DepartmentId = param.DepartmentId;
-                //acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);
+                acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);
 
 
 
