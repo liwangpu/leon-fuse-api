@@ -173,10 +173,10 @@ namespace ApiServer.Controllers.Asset
 
             // 检查是否已经上传过此文件
             var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
-            if(existRecord != null)
+            if (existRecord != null)
             {
                 // 数据库记录还在，但是文件不在了，重新保存下文件。
-                if(System.IO.File.Exists(renamedPath) == false)
+                if (System.IO.File.Exists(renamedPath) == false)
                 {
                     System.IO.File.Move(savePath, renamedPath); //重命名文件
                 }
@@ -187,7 +187,7 @@ namespace ApiServer.Controllers.Asset
                 //没上传记录，但是已经有这个文件了，先删除已有的文件，使用用户的文件覆盖
                 if (System.IO.File.Exists(renamedPath))
                 {
-                    System.IO.File.Delete(renamedPath); 
+                    System.IO.File.Delete(renamedPath);
                 }
                 System.IO.File.Move(savePath, renamedPath); //重命名文件
             }
@@ -198,31 +198,64 @@ namespace ApiServer.Controllers.Asset
             return res;
         }
 
-        //[Route("UploadFormFile")]
-        //[HttpPost]
-        //public IActionResult UploadFormFile(IFormFile file)
-        //{
-        //    if (file == null)
-        //        return BadRequest();
+        [Route("UploadFormFile")]
+        [HttpPost]
+        public async Task<IActionResult> UploadFormFile(IFormFile file)
+        {
+            if (file == null)
+                return BadRequest();
 
-        //    // 原文件名（包括路径）
-        //    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
-        //    // 扩展名
-        //    var extName = filename.Substring(filename.LastIndexOf('.')).Replace("\"", "");
-        //    // 新文件名
-        //    string shortfilename = $"{Guid.NewGuid()}{extName}";
-        //    // 新文件名（包括路径）
-        //    filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
-        //    // 设置文件大小
-        //    long size = file.Length;
-        //    // 创建新文件
-        //    using (FileStream fs = System.IO.File.Create(filename))
-        //    {
-        //        file.CopyTo(fs);
-        //        // 清空缓冲区数据
-        //        fs.Flush();
-        //    }
-        //    return Ok();
-        //}
+            // 原文件名（包括路径）
+            var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
+            // 扩展名
+            var extName = filename.Substring(filename.LastIndexOf('.')).Replace("\"", "");
+            // 新文件名
+            string shortfilename = $"{Guid.NewGuid()}{extName}";
+            // 新文件名（包括路径）
+            filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
+            // 设置文件大小
+            long size = file.Length;
+            // 创建新文件
+            using (FileStream fs = System.IO.File.Create(filename))
+            {
+                file.CopyTo(fs);
+                // 清空缓冲区数据
+                fs.Flush();
+            }
+
+            FileAsset res = new FileAsset();
+            res.Name = file.FileName;
+            res.FileExt = extName;
+            res.Size = file.Length;
+            res.Md5 = Md5.CalcFile(filename); //计算md5
+            res.Id = res.Md5; //将ID和url改为md5
+            res.Url = "/upload/" + res.Id + res.FileExt;
+
+            string renamedPath = uploadPath + res.Id + res.FileExt;
+
+            // 检查是否已经上传过此文件
+            var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
+            if (existRecord != null)
+            {
+                // 数据库记录还在，但是文件不在了，重新保存下文件。
+                if (System.IO.File.Exists(renamedPath) == false)
+                {
+                    System.IO.File.Move(filename, renamedPath); //重命名文件
+                }
+                return Ok(existRecord);
+            }
+            else // 没有上传记录
+            {
+                //没上传记录，但是已经有这个文件了，先删除已有的文件，使用用户的文件覆盖
+                if (System.IO.File.Exists(renamedPath))
+                {
+                    System.IO.File.Delete(renamedPath);
+                }
+                System.IO.File.Move(filename, renamedPath); //重命名文件
+            }
+
+            var ass = await repo.CreateAsync(AuthMan.GetAccountId(this), res, false); //记录到数据库
+            return Ok(ass);
+        }
     }
 }

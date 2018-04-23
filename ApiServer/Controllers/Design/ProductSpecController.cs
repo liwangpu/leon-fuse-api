@@ -10,6 +10,9 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Microsoft.DotNet;
+using Microsoft.EntityFrameworkCore;
+
 namespace ApiServer.Controllers.Design
 {
     [Authorize]
@@ -35,7 +38,7 @@ namespace ApiServer.Controllers.Design
 
             if (!string.IsNullOrWhiteSpace(res.Icon))
             {
-                var ass = await _ApiContext.Files.FindAsync(res.Icon);
+                var ass = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == res.Icon);
                 if (ass != null)
                     res.IconFileAsset = ass;
             }
@@ -44,7 +47,7 @@ namespace ApiServer.Controllers.Design
                 var chartletIds = res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                 for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
                 {
-                    var ass = await _ApiContext.Files.FindAsync(chartletIds[idx]);
+                    var ass = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == chartletIds[idx]);
                     if (ass != null)
                         res.CharletAsset.Add(ass);
                 }
@@ -55,16 +58,31 @@ namespace ApiServer.Controllers.Design
                 for (int idx = meshIds.Count - 1; idx >= 0; idx--)
                 {
                     var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
-                    var refMesh = await _ApiContext.StaticMeshs.FindAsync(kv.Key);
-                    refMesh.FileAsset = await _ApiContext.Files.FindAsync(refMesh.FileAssetId);
+                    var refMesh = await _ApiContext.StaticMeshs.FirstOrDefaultAsync(x => x.Id == kv.Key);
+                    if (refMesh != null)
+                    {
+                        //var tmp = await _ApiContext.Files.Where(x=>x.Id==refMesh.FileAssetId);
+                        var tmp = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == refMesh.FileAssetId);
+                        if (tmp != null)
+                            refMesh.FileAsset = tmp;
+                    }
+
                     if (!string.IsNullOrWhiteSpace(kv.Value))
                     {
                         var matids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                         foreach (var item in matids)
                         {
-                            var refMat = await _ApiContext.Materials.FindAsync(item);
-                            refMat.FileAsset = await _ApiContext.Files.FindAsync(refMat.FileAssetId);
-                            refMesh.Materials.Add(refMat);
+                            var refMat = await _ApiContext.Materials.FirstOrDefaultAsync(x => x.Id == item);
+                            if (refMat != null)
+                            {
+                                var tmp = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == refMat.FileAssetId);
+                                if (tmp != null)
+                                {
+                                    refMat.FileAsset = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == refMat.FileAssetId);
+                                    refMesh.Materials.Add(refMat);
+                                }
+
+                            }
                         }
                     }
 
@@ -242,7 +260,7 @@ namespace ApiServer.Controllers.Design
                 chartletIds.Add(icon.AssetId);
                 res.CharletIds = string.Join(",", chartletIds);
                 await _ApiContext.SaveChangesAsync();
-                return Ok();
+                return Ok(res);
             }
             return NotFound();
         }
@@ -265,7 +283,7 @@ namespace ApiServer.Controllers.Design
                 }
                 res.CharletIds = string.Join(",", chartletIds);
                 await _ApiContext.SaveChangesAsync();
-                return Ok();
+                return Ok(icon);
             }
             return NotFound();
         }

@@ -55,7 +55,7 @@ namespace ApiModel.Entities
 
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
             {
-                dicData["StaticMeshes"] = StaticMeshAsset.Select(x => x.ToDictionary());
+                dicData["StaticMeshes"] = StaticMeshAsset.Where(x => x != null).Select(x => x.ToDictionary());
             }
             if (IconFileAsset != null)
             {
@@ -64,7 +64,7 @@ namespace ApiModel.Entities
             }
             if (CharletAsset != null && CharletAsset.Count > 0)
             {
-                dicData["Charlets"] = CharletAsset.Select(x => x.ToDictionary());
+                dicData["Charlets"] = CharletAsset.Where(x => x != null).Select(x => x.ToDictionary());
             }
             return dicData;
         }
