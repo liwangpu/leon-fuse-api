@@ -104,8 +104,25 @@ namespace ApiServer
                 }
             });
 
+
+            Console.WriteLine("content root path: " + env.ContentRootPath);
+            Console.WriteLine("web root path: " + env.WebRootPath);
+            if (Directory.Exists(env.WebRootPath) == false)
+            {
+                if(string.IsNullOrEmpty(env.WebRootPath))
+                {
+                    env.WebRootPath = Path.Combine(env.ContentRootPath, "wwwroot");
+                }
+                Console.WriteLine("web root path not exist. create " + env.WebRootPath);
+                Directory.CreateDirectory(env.WebRootPath);
+            }
             string uploadPath = Path.Combine(env.WebRootPath, "upload");
             Console.WriteLine("uploadpath: " + uploadPath);
+            if (Directory.Exists(uploadPath) == false)
+            {
+                Console.WriteLine("upload path not exist. create " + uploadPath);
+                Directory.CreateDirectory(uploadPath);
+            }
             if (string.IsNullOrEmpty(uploadPath))
             {
                 app.UseStaticFiles(new StaticFileOptions
