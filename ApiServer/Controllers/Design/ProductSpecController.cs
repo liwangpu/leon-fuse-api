@@ -85,7 +85,6 @@ namespace ApiServer.Controllers.Design
                             }
                         }
                     }
-
                     res.StaticMeshAsset.Add(refMesh);
                 }
             }

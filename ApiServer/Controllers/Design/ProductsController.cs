@@ -37,6 +37,13 @@ namespace ApiServer.Controllers.Design
             if (res == null)
                 return NotFound();
             repo.Context.Entry(res).Collection(d => d.Specifications).Load();
+            if (res.Specifications != null && res.Specifications.Count > 0)
+            {
+                for (int idx = res.Specifications.Count - 1; idx >= 0; idx--)
+                {
+
+                }
+            }
             return Ok(res.ToDictionary());//return Forbid();
         }
 

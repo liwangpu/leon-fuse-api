@@ -33,7 +33,8 @@ namespace ApiServer.Controllers.Asset
             repo = new Repository<FileAsset>(context);
             hostEnv = env;
 
-            uploadPath = hostEnv.WebRootPath + "/upload/";
+            //uploadPath = hostEnv.WebRootPath + "/upload/";
+            uploadPath = Path.Combine(hostEnv.WebRootPath, "upload");
             if (Directory.Exists(uploadPath) == false)
                 Directory.CreateDirectory(uploadPath);
         }
@@ -212,7 +213,8 @@ namespace ApiServer.Controllers.Asset
             // 新文件名
             string shortfilename = $"{Guid.NewGuid()}{extName}";
             // 新文件名（包括路径）
-            filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
+            //filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
+            filename = Path.Combine(hostEnv.WebRootPath, "upload", shortfilename);
             // 设置文件大小
             long size = file.Length;
             // 创建新文件
@@ -231,7 +233,8 @@ namespace ApiServer.Controllers.Asset
             res.Id = res.Md5; //将ID和url改为md5
             res.Url = "/upload/" + res.Id + res.FileExt;
 
-            string renamedPath = uploadPath + res.Id + res.FileExt;
+            //string renamedPath = uploadPath + res.Id + res.FileExt;
+            string renamedPath = Path.Combine(uploadPath, res.Id + res.FileExt);
 
             // 检查是否已经上传过此文件
             var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
