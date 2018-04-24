@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -91,19 +92,34 @@ namespace ApiServer
             //    app.UseDeveloperExceptionPage();
             //}
 
-            //app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });//支持所有文件类型，否则会出现404
 
+            // default wwwroot directory
             app.UseStaticFiles(new StaticFileOptions
             {
                 ServeUnknownFileTypes = true,
                 OnPrepareResponse = ctx =>
                 {
-                    // Requires the following import:
-                    // using Microsoft.AspNetCore.Http;
-                    if(ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
+                    if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
                         ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
                 }
             });
+
+            string uploadPath = Path.Combine(env.WebRootPath, "upload");
+            Console.WriteLine("uploadpath: " + uploadPath);
+            if (string.IsNullOrEmpty(uploadPath))
+            {
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    ServeUnknownFileTypes = true,
+                    OnPrepareResponse = ctx =>
+                    {
+                        if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
+                            ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
+                    },
+                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadPath),
+                    RequestPath = "/upload"
+                });
+            }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
