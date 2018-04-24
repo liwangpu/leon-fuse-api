@@ -8,6 +8,7 @@ using BambooCommon;
 using Microsoft.EntityFrameworkCore;
 using ApiServer.Models;
 using ApiModel.Entities;
+using ApiModel.Consts;
 
 namespace ApiServer.Services
 {
@@ -44,9 +45,10 @@ namespace ApiServer.Services
                 acc.Location = param.Location;
                 acc.Phone = param.Phone;
                 acc.OrganizationId = param.OrganizationId;
-                acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
+                if (param.Type == AppConst.AccountType_Organization)
+                    acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
                 acc.DepartmentId = param.DepartmentId;
-                acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);
+                //acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);
 
 
 

@@ -60,14 +60,14 @@ namespace ApiServer.Controllers
         IActionResult LoginFailed(Services.AuthMan.LoginResult result)
         {
             string err = "";
-            switch(result)
+            switch (result)
             {
                 case Services.AuthMan.LoginResult.AccOrPasswordWrong: err = "account or password wrong"; break;
                 case Services.AuthMan.LoginResult.Expired: err = "account expired"; break;
                 case Services.AuthMan.LoginResult.Frozen: err = "account is forzen by admin"; break;
                 case Services.AuthMan.LoginResult.NotActivation: err = "account not activate yet"; break;
             }
-            return BadRequest(new LoginFailedModel { Error = err });
+            return BadRequest(err);
         }
 
         IActionResult MakeToken(string accid)
@@ -75,7 +75,7 @@ namespace ApiServer.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Services.SiteConfig.Instance.Json.TokenKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]{ new Claim(ClaimTypes.Name, accid) };
+            var claims = new[] { new Claim(ClaimTypes.Name, accid) };
 
             var token = new JwtSecurityToken(
                 issuer: "damaozhu.com",
