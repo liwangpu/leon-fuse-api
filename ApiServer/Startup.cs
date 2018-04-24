@@ -82,34 +82,13 @@ namespace ApiServer
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        void hostStaticFileServer(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors("AllowAll");
-
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-
-
-            // default wwwroot directory
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                ServeUnknownFileTypes = true,
-                OnPrepareResponse = ctx =>
-                {
-                    if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
-                        ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
-                }
-            });
-
-
             Console.WriteLine("content root path: " + env.ContentRootPath);
             Console.WriteLine("web root path: " + env.WebRootPath);
             if (Directory.Exists(env.WebRootPath) == false)
             {
-                if(string.IsNullOrEmpty(env.WebRootPath))
+                if (string.IsNullOrEmpty(env.WebRootPath))
                 {
                     env.WebRootPath = Path.Combine(env.ContentRootPath, "wwwroot");
                 }
@@ -123,20 +102,41 @@ namespace ApiServer
                 Console.WriteLine("upload path not exist. create " + uploadPath);
                 Directory.CreateDirectory(uploadPath);
             }
-            if (string.IsNullOrEmpty(uploadPath))
+
+            // default wwwroot directory
+            app.UseStaticFiles(new StaticFileOptions
             {
-                app.UseStaticFiles(new StaticFileOptions
+                ServeUnknownFileTypes = true,
+                OnPrepareResponse = ctx =>
                 {
-                    ServeUnknownFileTypes = true,
-                    OnPrepareResponse = ctx =>
-                    {
-                        if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
-                            ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
-                    },
-                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadPath),
-                    RequestPath = "/upload"
-                });
-            }
+                    if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
+                        ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
+                }
+            });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true,
+                OnPrepareResponse = ctx =>
+                {
+                    if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
+                        ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
+                },
+                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadPath),
+                RequestPath = "/upload"
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        {
+            app.UseCors("AllowAll");
+
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+
+            hostStaticFileServer(app, env);
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
