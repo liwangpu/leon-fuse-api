@@ -1,7 +1,6 @@
-﻿using System;
-using ApiModel;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using BambooCore;
+using System;
 
 namespace ApiServer.Models
 {

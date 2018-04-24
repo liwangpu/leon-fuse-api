@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ApiModel.Consts
+﻿namespace ApiModel.Consts
 {
     public class AppConst
     {

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-using ApiModel;
-using BambooCommon;
-using BambooCore;
+﻿using ApiModel.Entities;
 using ApiServer.Services;
+using BambooCore;
 using Microsoft.AspNetCore.Authorization;
-using ApiModel.Entities;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

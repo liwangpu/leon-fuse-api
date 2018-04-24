@@ -1,8 +1,10 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Data;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,11 +15,13 @@ namespace ApiServer.Controllers.Design
     [Route("/[controller]")]
     public class ProductsController : Controller
     {
+        private readonly ApiDbContext _ApiContext;
         private readonly Repository<Product> repo;
 
         public ProductsController(Data.ApiDbContext context)
         {
             repo = new Repository<Product>(context);
+            _ApiContext = context;
         }
 
         [HttpGet]
@@ -36,12 +40,22 @@ namespace ApiServer.Controllers.Design
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
+            //if (!string.IsNullOrWhiteSpace(res.Icon))
+            //{
+            //    var iconass = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == res.Icon);
+            //    res.IconFileAsset = iconass;
+            //}
             repo.Context.Entry(res).Collection(d => d.Specifications).Load();
             if (res.Specifications != null && res.Specifications.Count > 0)
             {
-                for (int idx = res.Specifications.Count - 1; idx >= 0; idx--)
+                for (int nidx = res.Specifications.Count - 1; nidx >= 0; nidx--)
                 {
-
+                    var spec = res.Specifications[nidx];
+                    if (!string.IsNullOrWhiteSpace(spec.Icon))
+                    {
+                        var iconass = await _ApiContext.Files.FirstOrDefaultAsync(x => x.Id == spec.Icon);
+                        spec.IconFileAsset = iconass;
+                    }
                 }
             }
             return Ok(res.ToDictionary());//return Forbid();
