@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ApiModel.Consts;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -102,6 +103,9 @@ namespace ApiServer.Controllers
                 return BadRequest("账户信息已经存在,修改您的邮箱或者电话信息");
             AccountModel account = await accountMan.Register(value);
             repo.Context.Set<PermissionItem>().Add(Permission.NewItem(AuthMan.GetAccountId(this), account.Id, value.GetType().Name, PermissionType.All));
+            if (value.Type == AppConst.AccountType_Organization)
+                repo.Context.Set<PermissionItem>().Add(Permission.NewItem(account.Id, value.DepartmentId, "Department", PermissionType.All));
+
             await repo.SaveChangesAsync();
             if (account == null)
                 return BadRequest();
