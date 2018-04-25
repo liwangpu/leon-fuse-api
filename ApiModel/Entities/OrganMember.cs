@@ -4,12 +4,8 @@ using System.Collections.Generic;
 
 namespace ApiModel.Entities
 {
-    public class OrganMember : IEntity
+    public class OrganMember : EntityBase, IEntity
     {
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string AccountId { get; set; }
 
         public string OrganizationId { get; set; }
@@ -25,7 +21,7 @@ namespace ApiModel.Entities
 
         [JsonIgnore]
         public Account Account { get; set; }
-        public Dictionary<string, object> ToDictionary()
+        public override Dictionary<string, object> ToDictionary()
         {
             var dicData = new Dictionary<string, object>();
             dicData["Id"] = this.Id;

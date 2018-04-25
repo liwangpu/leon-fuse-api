@@ -12,12 +12,12 @@ namespace BambooCore
     /// 通用的Entity存储仓库，提供常规的增删改查逻辑
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Repository<T> where T : class, IEntity, ApiModel.ICloneable, new()
+    public class Repository1<T> where T : class, IEntity, ApiModel.ICloneable, new()
     {
         private readonly DbContext context;
         private static long nextNewNameId = 0;
 
-        public Repository(DbContext context)
+        public Repository1(DbContext context)
         {
             this.context = context;
         }
@@ -46,9 +46,9 @@ namespace BambooCore
             return tempset;
         }
 
-        public async Task<PagedData> GetAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
+        public async Task<PagedData1<T>> GetAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
         {
-            return await GetDataSet(accid).Paging(page, pageSize, orderBy, desc, searchPredicate);
+            return await GetDataSet(accid).Paging1(page, pageSize, orderBy, desc, searchPredicate);
         }
 
         /// <summary>

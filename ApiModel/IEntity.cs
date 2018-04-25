@@ -6,5 +6,6 @@ namespace ApiModel
     public interface IEntity : IData
     {
         Dictionary<string, object> ToDictionary();
+        bool IsPersistence();
     }
 }

@@ -20,5 +20,10 @@ namespace ApiModel
             return datas.Select(data => data.ToDictionary(callback, bContainFk)).ToList();
         }
         #endregion
+
+        public static IEnumerable<IData> ToDTO<TEntity>(this IEnumerable<TEntity> datas) where TEntity : IDTOTransfer<IData>
+        {
+            return datas.Select(data => data.ToDTO()).ToList();
+        }
     }
 }

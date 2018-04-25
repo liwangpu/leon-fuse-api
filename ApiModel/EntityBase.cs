@@ -12,15 +12,8 @@ namespace ApiModel
 
         public EntityBase()
         {
-            if (string.IsNullOrWhiteSpace(Id))
-            {
-                CreatedTime = DateTime.Now;
-                ModifiedTime = DateTime.Now;
-            }
-            else
-            {
-                ModifiedTime = DateTime.Now;
-            }
+            CreatedTime = DateTime.Now;
+            ModifiedTime = DateTime.Now;
         }
 
         public virtual object Clone()
@@ -36,6 +29,13 @@ namespace ApiModel
             dicData["CreatedTime"] = CreatedTime;
             dicData["ModifiedTime"] = ModifiedTime;
             return dicData;
+        }
+
+        public bool IsPersistence()
+        {
+            if (!string.IsNullOrWhiteSpace(Id))
+                return true;
+            return false;
         }
     }
 }

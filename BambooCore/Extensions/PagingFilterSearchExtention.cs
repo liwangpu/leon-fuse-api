@@ -37,6 +37,19 @@ namespace BambooCore
         public int Total { get; set; }
     }
 
+    /// <summary>
+    /// 通用的分页数据结构
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class PagedData1<T>
+    {
+        public IEnumerable<T> Data { get; set; }
+        public int Page { get; set; }
+        public int Size { get; set; }
+        public int Total { get; set; }
+    }
+
+
 
     /// <summary>
     /// 对IEnumerable的分页查询的扩展
@@ -104,6 +117,55 @@ namespace BambooCore
                     var datas = await data.ToListAsync();
                     res.Data = datas.ToDictionaryList();
                     res.Size = res.Data.Count;
+                }
+                catch
+                {
+                }
+            }
+            return res;
+        }
+
+        public static async Task<PagedData1<T>> Paging1<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
+        {
+
+            var res = new PagedData1<T>();
+            IQueryable<T> data = null;
+            if (searchExpression == null)
+                data = src;
+            else
+                data = src.Where(searchExpression);
+
+            if (page < 1)
+                page = 1;
+            if (pageSize < 1)
+                pageSize = 1;
+
+            res.Total = await data.CountAsync();
+            res.Page = page;
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                try
+                {
+                    data = data.OrderBy(orderBy);
+                    if (desc)
+                        data = data.OrderByDescendingBy(orderBy);
+                }
+                catch { }// orderBy参数有误，比如名称不是类的成员
+            }
+
+            if (((page - 1) * pageSize) > res.Total)
+            {
+                res.Data = new List<T>();
+                res.Size = 0;
+            }
+            else
+            {
+                try
+                {
+                    data = data.Skip((page - 1) * pageSize).Take(pageSize);
+                    res.Data = await data.ToListAsync();
+                    res.Size = res.Data.Count();
                 }
                 catch
                 {

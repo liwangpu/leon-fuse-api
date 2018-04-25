@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
-    public class ProductSpec : EntityBase, IListable
+    public class ProductSpec : EntityBase, IListable, IDTOTransfer<ProductSpecDTO>
     {
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -24,7 +25,6 @@ namespace ApiModel.Entities
         /// 所在产品的ID
         /// </summary>
         public string ProductId { get; set; }
-        [JsonIgnore]
         public Product Product { get; set; }
 
         [NotMapped]
@@ -67,13 +67,49 @@ namespace ApiModel.Entities
             }
             return dicData;
         }
+
+        public ProductSpecDTO ToDTO()
+        {
+            var dto = new ProductSpecDTO();
+            dto.Id = Id;
+            dto.Name = Name;
+            dto.Description = Description;
+            dto.Icon = Icon;
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
+            dto.Price = Price;
+            dto.TPID = TPID;
+            dto.ProductId = ProductId;
+            if (IconFileAsset != null)
+            {
+                dto.IconAsset = IconFileAsset.ToDTO();
+                dto.Icon = IconFileAsset.Url;
+            }
+            if (CharletAsset != null && CharletAsset.Count > 0)
+            {
+                dto.Charlets = CharletAsset.Select(x => x.ToDTO()).ToList();
+            }
+            if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
+            {
+                dto.StaticMeshes = StaticMeshAsset.Select(x => x.ToDTO()).ToList();
+            }
+            return dto;
+        }
     }
 
-    public class ProductSpecDTO
+    public class ProductSpecDTO : IData
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
+        public int Price { get; set; }
+        public string TPID { get; set; }
+        public string ProductId { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
+        public FileAssetDTO IconAsset { get; set; }
+        public List<StaticMeshDTO> StaticMeshes { get; set; }
+        public List<FileAssetDTO> Charlets { get; set; }
     }
 }
