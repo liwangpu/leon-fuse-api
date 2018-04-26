@@ -59,9 +59,9 @@ namespace ApiServer.Controllers.Design
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var res = await _ProductStore._GetByIdAsync(accid, id);
-            if (res == null)
-                return NotFound(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+            var msg = await _ProductStore.CanRead(accid, id);
+            if (msg.Count > 0)
+                return NotFound(msg);
             var data = await _ProductStore.GetByIdAsync(accid, id);
             return Ok(data);
         }
@@ -84,9 +84,10 @@ namespace ApiServer.Controllers.Design
             product.Name = value.Name;
             product.Description = value.Description;
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductStore.SaveOrUpdateAsync(accid, product);
+            var msg = await _ProductStore.CanCreate(accid, product);
             if (msg.Count > 0)
                 return BadRequest(msg);
+            await _ProductStore.SaveOrUpdateAsync(accid, product);
             return Ok(product);
         }
         #endregion
@@ -105,15 +106,17 @@ namespace ApiServer.Controllers.Design
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
             var accid = AuthMan.GetAccountId(this);
-            var product = await _ProductStore._GetByIdAsync(accid, value.Id);
+            var product = await _ProductStore._GetByIdAsync(value.Id);
             if (product == null)
                 return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
             product.Name = value.Name;
+            product.Name = value.Name;
             product.Description = value.Description;
             product.ModifiedTime = new DateTime();
-            var msg = await _ProductStore.SaveOrUpdateAsync(accid, product);
+            var msg = await _ProductStore.CanUpdate(accid, product);
             if (msg.Count > 0)
                 return BadRequest(msg);
+            await _ProductStore.SaveOrUpdateAsync(accid, product);
             return Ok(product);
         }
         #endregion
@@ -130,9 +133,10 @@ namespace ApiServer.Controllers.Design
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductStore.DeleteAsync(accid, id);
+            var msg = await _ProductStore.CanDelete(accid, id);
             if (msg.Count > 0)
                 return NotFound(msg);
+            await _ProductStore.DeleteAsync(accid, id);
             return Ok();
         }
         #endregion

@@ -7,33 +7,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 namespace ApiServer.Stores
 {
-    /// <summary>
-    /// Product Store
-    /// </summary>
-    public class ProductStore : StoreBase<Product, ProductDTO>, IStore<Product>
+    public class SolutionStore : StoreBase<Solution, SolutionDTO>, IStore<Solution>
     {
-        private readonly FileAssetStore _FileAssetStore;
 
         #region 构造函数
-        public ProductStore(ApiDbContext context)
+        public SolutionStore(ApiDbContext context)
         : base(context)
         {
-            _FileAssetStore = new FileAssetStore(context);
+
         }
         #endregion
 
         /**************** public methods ****************/
 
-        #region CanCreate 判断产品信息是否符合存储规范
+        #region CanCreate 判断方案信息是否符合存储规范
         /// <summary>
-        /// 判断产品信息是否符合存储规范
+        /// 判断方案信息是否符合存储规范
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanCreate(string accid, Product data)
+        public async Task<List<string>> CanCreate(string accid, Solution data)
         {
             var errors = new List<string>();
             var valid = _CanSave(accid, data);
@@ -41,19 +38,19 @@ namespace ApiServer.Stores
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
+                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "方案名称", 50));
             return errors;
         }
         #endregion
 
-        #region CanUpdate 判断产品信息是否符合更新规范
+        #region CanUpdate 判断方案信息是否符合更新规范
         /// <summary>
-        /// 判断产品信息是否符合更新规范
+        /// 判断方案信息是否符合更新规范
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanUpdate(string accid, Product data)
+        public async Task<List<string>> CanUpdate(string accid, Solution data)
         {
             var errors = new List<string>();
             var valid = _CanSave(accid, data);
@@ -61,17 +58,17 @@ namespace ApiServer.Stores
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
+                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "方案名称", 50));
             return errors;
-        } 
+        }
         #endregion
 
-        #region CanDelete 判断产品信息是否符合删除规范
+        #region CanDelete 判断方案信息是否符合删除规范
         /// <summary>
-        /// 判断产品信息是否符合删除规范
+        /// 判断方案信息是否符合删除规范
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         public async Task<List<string>> CanDelete(string accid, string id)
         {
@@ -88,7 +85,7 @@ namespace ApiServer.Stores
         /// 判断用户是否符合读取权限
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         public async Task<List<string>> CanRead(string accid, string id)
         {
@@ -108,11 +105,11 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchPredicate"></param>
         /// <returns></returns>
-        public async Task<PagedData1<ProductDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Product, bool>> searchPredicate)
+        public async Task<PagedData1<SolutionDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Solution, bool>> searchPredicate)
         {
             var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
             var dtos = pagedData.Data.Select(x => x.ToDTO());
-            return new PagedData1<ProductDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
+            return new PagedData1<SolutionDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
         }
         #endregion
 
@@ -123,49 +120,35 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ProductDTO> GetByIdAsync(string accid, string id)
+        public async Task<SolutionDTO> GetByIdAsync(string accid, string id)
         {
             try
             {
                 var data = await _GetByIdAsync(id);
-                _Repo.Context.Entry(data).Collection(d => d.Specifications).Load();
-                if (data.Specifications != null && data.Specifications.Count > 0)
-                {
-                    for (int nidx = data.Specifications.Count - 1; nidx >= 0; nidx--)
-                    {
-                        var spec = data.Specifications[nidx];
-                        if (!string.IsNullOrWhiteSpace(spec.Icon))
-                        {
-                            var iconass = await _FileAssetStore._GetByIdAsync(spec.Icon);
-                            spec.IconFileAsset = iconass;
-                        }
-                    }
-                }
                 return data.ToDTO();
             }
             catch (Exception ex)
             {
                 Logger.LogError("GetByIdAsync", ex);
             }
-            return new ProductDTO();
+            return new SolutionDTO();
         }
         #endregion
 
-        #region SaveOrUpdateAsync 更新产品信息
+        #region SaveOrUpdateAsync 更新方案信息
         /// <summary>
-        /// 更新产品信息
+        /// 更新方案信息
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task SaveOrUpdateAsync(string accid, Product data)
+        public async Task SaveOrUpdateAsync(string accid, Solution data)
         {
             try
             {
                 if (!data.IsPersistence())
                 {
-                    await _Repo.Context.Set<Product>().AddAsync(data);
-                    //await _Repo.Context.Set<PermissionItem>().AddAsync(Permission.NewItem(accid, data.Id, "Product", PermissionType.All));
+                    await _Repo.Context.Set<Solution>().AddAsync(data);
                 }
                 await _Repo.Context.SaveChangesAsync();
             }
@@ -176,9 +159,9 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region DeleteAsync 删除产品信息
+        #region DeleteAsync 删除方案信息
         /// <summary>
-        /// 删除产品信息
+        /// 删除方案信息
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
@@ -191,7 +174,7 @@ namespace ApiServer.Stores
                 if (data.IsPersistence())
                 {
                     //var ps = _Repo.Context.Set<PermissionItem>().Where(x => x.ResId == data.Id).FirstOrDefault();
-                    _Repo.Context.Set<Product>().Remove(data);
+                    _Repo.Context.Set<Solution>().Remove(data);
                     //if (ps != null)
                     //    _Repo.Context.Set<PermissionItem>().Remove(ps);
                     await _Repo.SaveChangesAsync();
@@ -203,5 +186,6 @@ namespace ApiServer.Stores
             }
         }
         #endregion
+
     }
 }

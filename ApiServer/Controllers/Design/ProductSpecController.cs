@@ -38,9 +38,9 @@ namespace ApiServer.Controllers.Design
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var res = await _ProductSpecStore._GetByIdAsync(accid, id);
-            if (res == null)
-                return NotFound(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+            var msg = await _ProductSpecStore.CanRead(accid, id);
+            if (msg.Count > 0)
+                return NotFound(msg);
             var data = await _ProductSpecStore.GetByIdAsync(accid, id);
             return Ok(data);
         }
@@ -64,9 +64,10 @@ namespace ApiServer.Controllers.Design
             spec.Description = value.Description;
             spec.ProductId = value.ProductId;
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
+            var msg = await _ProductSpecStore.CanCreate(accid, spec);
             if (msg.Count > 0)
                 return BadRequest(msg);
+            await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
             return Ok(spec);
         }
         #endregion
@@ -85,15 +86,16 @@ namespace ApiServer.Controllers.Design
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, value.Id);
+            var spec = await _ProductSpecStore._GetByIdAsync(value.Id);
             if (spec == null)
                 return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
             spec.Name = value.Name;
             spec.Description = value.Description;
             spec.ModifiedTime = new DateTime();
-            var msg = await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
+            var msg = await _ProductSpecStore.CanUpdate(accid, spec);
             if (msg.Count > 0)
                 return BadRequest(msg);
+            await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
             return Ok(spec);
         }
         #endregion
@@ -110,9 +112,10 @@ namespace ApiServer.Controllers.Design
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductSpecStore.DeleteAsync(accid, id);
+            var msg = await _ProductSpecStore.CanDelete(accid, id);
             if (msg.Count > 0)
                 return NotFound(msg);
+            await _ProductSpecStore.DeleteAsync(accid, id);
             return Ok();
         }
         #endregion
@@ -133,7 +136,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, mesh.ProductSpecId);
+            var spec = await _ProductSpecStore._GetByIdAsync(mesh.ProductSpecId);
             if (spec != null)
             {
                 //ids是一个KeyValuePair<string,string>的信息,key为static mesh id,value为mesh依赖的material ids(逗号分隔)
@@ -163,7 +166,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, mesh.ProductSpecId);
+            var spec = await _ProductSpecStore._GetByIdAsync(mesh.ProductSpecId);
             if (spec != null)
             {
                 var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -197,7 +200,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, material.ProductSpecId);
+            var spec = await _ProductSpecStore._GetByIdAsync(material.ProductSpecId);
             if (spec != null)
             {
                 var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -235,7 +238,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, material.ProductSpecId);
+            var spec = await _ProductSpecStore._GetByIdAsync(material.ProductSpecId);
             if (spec != null)
             {
                 var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -277,7 +280,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, icon.ObjId);
+            var spec = await _ProductSpecStore._GetByIdAsync(icon.ObjId);
             if (spec != null)
             {
                 spec.Icon = icon.AssetId;
@@ -304,7 +307,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, icon.ObjId);
+            var spec = await _ProductSpecStore._GetByIdAsync(icon.ObjId);
             if (spec != null)
             {
                 var chartletIds = string.IsNullOrWhiteSpace(spec.CharletIds) ? new List<string>() : spec.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -331,7 +334,7 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(accid, icon.ObjId);
+            var spec = await _ProductSpecStore._GetByIdAsync(icon.ObjId);
             if (spec != null)
             {
                 var chartletIds = string.IsNullOrWhiteSpace(spec.CharletIds) ? new List<string>() : spec.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -345,7 +348,7 @@ namespace ApiServer.Controllers.Design
                 return Ok(icon);
             }
             return NotFound();
-        } 
+        }
         #endregion
 
     }

@@ -45,9 +45,9 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<StaticMeshDTO> GetByIdAsync(string accid, string id)
+        public async Task<StaticMeshDTO> GetByIdAsync(string id)
         {
-            var data = await _GetByIdAsync(accid, id);
+            var data = await _GetByIdAsync(id);
             return data.ToDTO();
         }
         #endregion

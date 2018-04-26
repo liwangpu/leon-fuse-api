@@ -47,7 +47,7 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task<FileAssetDTO> GetByIdAsync(string accid, string id)
         {
-            var data = await _GetByIdAsync(accid, id);
+            var data = await _GetByIdAsync( id);
             return data.ToDTO();
         }
         #endregion

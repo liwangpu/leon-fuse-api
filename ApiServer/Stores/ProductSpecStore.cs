@@ -14,7 +14,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// ProductSpec Store
     /// </summary>
-    public class ProductSpecStore : StoreBase<ProductSpec, ProductSpecDTO>
+    public class ProductSpecStore : StoreBase<ProductSpec, ProductSpecDTO>, IStore<ProductSpec>
     {
         private readonly FileAssetStore _FileAssetStore;
         private readonly StaticMeshStore _StaticMeshStore;
@@ -32,28 +32,54 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        /**************** protected methods ****************/
+        /**************** public methods ****************/
 
-        #region CanSave 判断产品规格信息是否符合存储规范
+        #region CanCreate 判断产品规格信息是否符合存储规范
         /// <summary>
         /// 判断产品规格信息是否符合存储规范
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected async Task<List<string>> CanSave(string accid, ProductSpec data)
+        public async Task<List<string>> CanCreate(string accid, ProductSpec data)
         {
             var errors = new List<string>();
-            //基类做数据为空或者权限验证
-            var valid = await _CanSave(accid, data);
+
+            var valid = _CanSave(accid, data);
             if (valid.Count > 0)
                 return valid;
-            //派生类做数据有效性验证
+
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
                 errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50));
             if (string.IsNullOrWhiteSpace(data.ProductId))
                 errors.Add(string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号"));
-            var existProd = await _ProductStore._GetByIdAsync(accid, data.ProductId);
+            var existProd = await _ProductStore._GetByIdAsync(data.ProductId);
+            if (existProd == null)
+                errors.Add(string.Format(ValidityMessage.V_NotReferenceMsg, "产品"));
+            return errors;
+        }
+        #endregion
+
+        #region CanUpdate 判断产品规格信息是否符合更新规范
+        /// <summary> 
+        /// 判断产品规格信息是否符合更新规范
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<List<string>> CanUpdate(string accid, ProductSpec data)
+        {
+            var errors = new List<string>();
+
+            var valid = _CanSave(accid, data);
+            if (valid.Count > 0)
+                return valid;
+
+            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
+                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50));
+            if (string.IsNullOrWhiteSpace(data.ProductId))
+                errors.Add(string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号"));
+            var existProd = await _ProductStore._GetByIdAsync(data.ProductId);
             if (existProd == null)
                 errors.Add(string.Format(ValidityMessage.V_NotReferenceMsg, "产品"));
             return errors;
@@ -67,18 +93,30 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected async Task<List<string>> CanDelete(string accid, ProductSpec data)
+        public async Task<List<string>> CanDelete(string accid, string id)
         {
             var errors = new List<string>();
-            //基类做数据为空或者权限验证
-            var valid = await _CanDelete(accid, data);
+
+            var valid = _CanDelete(accid, id);
             if (valid.Count > 0)
                 return valid;
             return errors;
         }
         #endregion
 
-        /**************** public methods ****************/
+        #region CanRead 判断用户是否有读取权限
+        /// <summary>
+        /// 判断用户是否有读取权限
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<string>> CanRead(string accid, string id)
+        {
+            var errors = new List<string>();
+            return errors;
+        }
+        #endregion
 
         #region SimpleQueryAsync 简单返回分页查询DTO信息
         /// <summary>
@@ -108,59 +146,67 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task<ProductSpecDTO> GetByIdAsync(string accid, string id)
         {
-            var res = await _GetByIdAsync(accid, id);
-            if (!string.IsNullOrWhiteSpace(res.Icon))
+            try
             {
-                var ass = await _FileAssetStore._GetByIdAsync(accid, res.Icon);
-                if (ass != null)
-                    res.IconFileAsset = ass;
-            }
-            if (!string.IsNullOrWhiteSpace(res.CharletIds))
-            {
-                var chartletIds = res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
+                var res = await _GetByIdAsync(id);
+                if (!string.IsNullOrWhiteSpace(res.Icon))
                 {
-                    var ass = await _FileAssetStore._GetByIdAsync(accid, chartletIds[idx]);
+                    var ass = await _FileAssetStore._GetByIdAsync(res.Icon);
                     if (ass != null)
-                        res.CharletAsset.Add(ass);
+                        res.IconFileAsset = ass;
                 }
-            }
-            if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
-            {
-                var meshIds = res.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                if (!string.IsNullOrWhiteSpace(res.CharletIds))
                 {
-                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
-                    var refMesh = await _StaticMeshStore._GetByIdAsync(accid, kv.Key);
-                    if (refMesh != null)
+                    var chartletIds = res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                    for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
                     {
-                        var tmp = await _FileAssetStore._GetByIdAsync(accid, refMesh.FileAssetId);
-                        if (tmp != null)
-                            refMesh.FileAsset = tmp;
+                        var ass = await _FileAssetStore._GetByIdAsync(chartletIds[idx]);
+                        if (ass != null)
+                            res.CharletAsset.Add(ass);
                     }
-
-                    if (!string.IsNullOrWhiteSpace(kv.Value))
+                }
+                if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
+                {
+                    var meshIds = res.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
+                    for (int idx = meshIds.Count - 1; idx >= 0; idx--)
                     {
-                        var matids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                        foreach (var item in matids)
+                        var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
+                        var refMesh = await _StaticMeshStore._GetByIdAsync(kv.Key);
+                        if (refMesh != null)
                         {
-                            var refMat = await _MaterialStore._GetByIdAsync(accid, item);
-                            if (refMat != null)
-                            {
-                                var tmp = await _FileAssetStore._GetByIdAsync(accid, refMat.FileAssetId);
-                                if (tmp != null)
-                                {
-                                    refMat.FileAsset = tmp;
-                                    refMesh.Materials.Add(refMat);
-                                }
+                            var tmp = await _FileAssetStore._GetByIdAsync(refMesh.FileAssetId);
+                            if (tmp != null)
+                                refMesh.FileAsset = tmp;
+                        }
 
+                        if (!string.IsNullOrWhiteSpace(kv.Value))
+                        {
+                            var matids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                            foreach (var item in matids)
+                            {
+                                var refMat = await _MaterialStore._GetByIdAsync(item);
+                                if (refMat != null)
+                                {
+                                    var tmp = await _FileAssetStore._GetByIdAsync(refMat.FileAssetId);
+                                    if (tmp != null)
+                                    {
+                                        refMat.FileAsset = tmp;
+                                        refMesh.Materials.Add(refMat);
+                                    }
+
+                                }
                             }
                         }
+                        res.StaticMeshAsset.Add(refMesh);
                     }
-                    res.StaticMeshAsset.Add(refMesh);
                 }
+                return res.ToDTO();
             }
-            return res.ToDTO();
+            catch (Exception ex)
+            {
+                Logger.LogError("GetByIdAsync", ex);
+            }
+            return new ProductSpecDTO();
         }
         #endregion
 
@@ -171,19 +217,21 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> SaveOrUpdateAsync(string accid, ProductSpec data)
+        public async Task SaveOrUpdateAsync(string accid, ProductSpec data)
         {
-            var valid = await CanSave(accid, data);
-            if (valid.Count == 0)
+            try
             {
                 if (!data.IsPersistence())
                 {
                     await _Repo.Context.Set<ProductSpec>().AddAsync(data);
-                    await _Repo.Context.Set<PermissionItem>().AddAsync(Permission.NewItem(accid, data.Id, "ProductSpec", PermissionType.All));
+                    //await _Repo.Context.Set<PermissionItem>().AddAsync(Permission.NewItem(accid, data.Id, "ProductSpec", PermissionType.All));
                 }
                 await _Repo.Context.SaveChangesAsync();
             }
-            return valid;
+            catch (Exception ex)
+            {
+                Logger.LogError("SaveOrUpdateAsync", ex);
+            }
         }
         #endregion
 
@@ -194,12 +242,11 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> DeleteAsync(string accid, string id)
+        public async Task DeleteAsync(string accid, string id)
         {
-            var data = await _GetByIdAsync(accid, id);
-            var valid = await CanDelete(accid, data);
-            if (valid.Count == 0)
+            try
             {
+                var data = await _GetByIdAsync(id);
                 if (data.IsPersistence())
                 {
                     var ps = _Repo.Context.Set<PermissionItem>().Where(x => x.ResId == data.Id).FirstOrDefault();
@@ -209,7 +256,10 @@ namespace ApiServer.Stores
                     await _Repo.SaveChangesAsync();
                 }
             }
-            return valid;
+            catch (Exception ex)
+            {
+                Logger.LogError("DeleteAsync", ex);
+            }
         }
         #endregion
     }

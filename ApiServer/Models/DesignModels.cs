@@ -22,6 +22,18 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public string ProductId { get; set; }
-    } 
+    }
+    #endregion
+
+    #region SolutionEditModel 解决方案编辑模型
+    /// <summary>
+    /// 解决方案编辑模型
+    /// </summary>
+    public class SolutionEditModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
     #endregion
 }
