@@ -15,7 +15,7 @@ namespace ApiModel.Entities
         {
             AssetCategoryDTO dto = new AssetCategoryDTO();
             dto.Id = Id;
-            dto.ParentId = Id;
+            dto.ParentId = ParentId;
             dto.Name = Name;
             dto.Description = Description;
             dto.Icon = Icon;

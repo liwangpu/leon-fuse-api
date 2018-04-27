@@ -32,10 +32,10 @@ namespace ApiServer.Controllers.Asset
             if (string.IsNullOrEmpty(type))
                 type = "product";
             return await catman.GetCategoryAsync(type);
-        }        
-        
+        }
+
         /// <summary>
-        /// 创建一个分类
+        /// 创建一个分类。必须指定一个父级ID，不能主动创建根节点，根节点在get时会自动创建。
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -124,14 +124,14 @@ namespace ApiServer.Controllers.Asset
         /// </summary>
         /// <param name="type"></param>
         /// <param name="id"></param>
-        /// <param name="displayIndex"></param>
+        /// <param name="index"></param>
         /// <returns></returns>
         [Route("DisplayIndex")]
         [HttpPost]
         [Produces(typeof(AssetCategoryDTO))]
-        public async Task<IActionResult> DisplayIndex(string type, string id, int displayIndex)
+        public async Task<IActionResult> DisplayIndex(string type, string id, int index)
         {
-            var result = await catman.SetDisplayIndex(type, id, displayIndex);
+            var result = await catman.SetDisplayIndex(type, id, index);
             if (result == null)
                 return BadRequest();
 

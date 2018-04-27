@@ -37,30 +37,34 @@ namespace ApiServer.Services
 
             if(root == null)
             {
-                root = new AssetCategoryDTO();
+                AssetCategory rootNode = new AssetCategory();
+                rootNode.Id = GuidGen.NewGUID();
+                rootNode.ParentId = "";
+                rootNode.Type = type;
+                rootNode.Name = type + "_root";
+                rootNode.Icon = "";
+                rootNode.Description = "auto generated node for " + type + ", do not need to display this node";
+                dbset.Add(rootNode);
+                await context.SaveChangesAsync();
+                root = rootNode.ToDTO();
             }
 
             return root;
         }
 
         /// <summary>
-        /// 创建一个分类，一次只能创建单个分类，不会层级创建。
+        /// 创建一个分类，一次只能创建单个分类，不会层级创建。必须指定一个父级ID，不能主动创建根节点，根节点在get时会自动创建。
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
         public async Task<AssetCategoryDTO> CreateAsync(AssetCategoryDTO dto)
         {
-            // want to create root node
-            if(string.IsNullOrEmpty(dto.ParentId))
-            {
-                AssetCategory root = await dbset.FirstOrDefaultAsync(d => d.Type == dto.Type && d.ParentId == "");
-                if(root != null)
-                {
-                    return root.ToDTO(); // but an root node exist, return directly.
-                }
-            }
+            //必须指定一个父级ID，不能主动创建根节点，根节点在get时会自动创建。
+            if (string.IsNullOrEmpty(dto.ParentId))
+                return null;
 
-            AssetCategory parent = await dbset.FirstOrDefaultAsync(d => d.Type == dto.Type && d.ParentId == dto.ParentId);
+            AssetCategory parent = await dbset.FirstOrDefaultAsync(d => d.Type == dto.Type && d.Id == dto.ParentId);            
+            
             if(parent == null)
             {
                 return null; // want to create a child node, but parent node not found.
@@ -202,13 +206,12 @@ namespace ApiServer.Services
 
             string tableName = "";
             if (type == "product")
-                tableName = "Product";
+                tableName = "Products";
             else if (type == "material")
-                tableName = "Material";
-
-            string sql = "update \"{0}\" set \"CategoryId\"='{1}' where \"CategoryId\"='{2}'";
-            List<string> sqlParams = new List<string>() { tableName, targetCatId, catid };
-            int rows = await context.Database.ExecuteSqlCommandAsync(sql, sqlParams);
+                tableName = "Materials";
+            
+            string sql = string.Format("update \"{0}\" set \"CategoryId\"='{1}' where \"CategoryId\"='{2}'", tableName, targetCatId, catid);
+            int rows = await context.Database.ExecuteSqlCommandAsync(sql);
             return "";
         }
 
@@ -227,7 +230,7 @@ namespace ApiServer.Services
             {
                 return null; // not found.
             }
-            AssetCategory parent = await dbset.FirstOrDefaultAsync(d => d.Type == type && d.ParentId == target.ParentId);
+            AssetCategory parent = await dbset.FirstOrDefaultAsync(d => d.Type == type && d.Id == target.ParentId);
             if (parent == null)
             {
                 return null; // not found.

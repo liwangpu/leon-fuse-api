@@ -1535,6 +1535,278 @@
 						}
 					],
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Category",
+					"description": "",
+					"item": [
+						{
+							"name": "get product category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/category?type=product",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "product"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get material category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/category?type=material",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "material"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create category",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": null,\n    \"name\": \"aa\",\n    \"description\": \"bb\",\n    \"icon\": null,\n    \"parentId\": \"\",\n    \"type\": \"product\",\n    \"displayIndex\": 0,\n    \"children\": null\n}"
+								},
+								"url": {
+									"raw": "{{base}}/category",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update category",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"3GU86EP38KV7KW\",\n    \"name\": \"newname1\",\n    \"description\": \"hello\",\n    \"icon\": \"icon1\",\n    \"parentId\": \"\",\n    \"type\": \"product\",\n    \"displayIndex\": 12,\n    \"children\": []\n}"
+								},
+								"url": {
+									"raw": "{{base}}/category",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete category",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/category?type=product&id=Y6UGZA6PYPYQYW",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "product"
+										},
+										{
+											"key": "id",
+											"value": "Y6UGZA6PYPYQYW"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "move category",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/category/move?type=product&id=aa&targetId=bb",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category",
+										"move"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "product"
+										},
+										{
+											"key": "id",
+											"value": "aa"
+										},
+										{
+											"key": "targetId",
+											"value": "bb"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "transfer category assets",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/category/transfer?type=product&id=3GU86EP38KV7KW&targetId=40UZQAN4A5489V",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category",
+										"transfer"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "product"
+										},
+										{
+											"key": "id",
+											"value": "3GU86EP38KV7KW"
+										},
+										{
+											"key": "targetId",
+											"value": "40UZQAN4A5489V"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "set category display index",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/category/displayindex?type=product&id=MGU16AKQ0WQ88Z&index=10",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"category",
+										"displayindex"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "product"
+										},
+										{
+											"key": "id",
+											"value": "MGU16AKQ0WQ88Z"
+										},
+										{
+											"key": "index",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
 				}
 			]
 		},
