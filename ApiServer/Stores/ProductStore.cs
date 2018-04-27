@@ -63,7 +63,7 @@ namespace ApiServer.Stores
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
                 errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
             return errors;
-        } 
+        }
         #endregion
 
         #region CanDelete 判断产品信息是否符合删除规范
@@ -71,7 +71,7 @@ namespace ApiServer.Stores
         /// 判断产品信息是否符合删除规范
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         public async Task<List<string>> CanDelete(string accid, string id)
         {
@@ -88,7 +88,7 @@ namespace ApiServer.Stores
         /// 判断用户是否符合读取权限
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         public async Task<List<string>> CanRead(string accid, string id)
         {

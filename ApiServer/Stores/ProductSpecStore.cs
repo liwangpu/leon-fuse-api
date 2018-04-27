@@ -91,7 +91,7 @@ namespace ApiServer.Stores
         /// 判断产品信息是否符合删除规范
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         public async Task<List<string>> CanDelete(string accid, string id)
         {

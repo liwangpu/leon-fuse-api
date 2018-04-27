@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Material : EntityBase, IListable, IDTOTransfer<MaterialDTO>
+    public class Material : EntityBase, IAsset, IListable, IDTOTransfer<MaterialDTO>
     {
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -13,26 +13,15 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
 
+        public string FolderId { get; set; }
+        public string CategoryId { get; set; }
+        public string AccountId { get; set; }
+        [JsonIgnore]
+        public Account Account { get; set; }
+
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-
-
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            if (FileAsset != null)
-            {
-                dicData["Url"] = FileAsset.Url;
-            }
-            dicData["Dependencies"] = Dependencies;
-            dicData["Parameters"] = Parameters;
-
-            return dicData;
-        }
+        
 
         public MaterialDTO ToDTO()
         {
@@ -51,6 +40,7 @@ namespace ApiModel.Entities
                 dto.FileAsset = FileAsset.ToDTO();
                 dto.Url = FileAsset.Url;
             }
+            dto.CategoryId = CategoryId;
 
             return dto;
         }
@@ -69,5 +59,6 @@ namespace ApiModel.Entities
         public DateTime ModifiedTime { get; set; }
         public string Url { get; set; }
         public FileAssetDTO FileAsset { get; set; }
+        public string CategoryId { get; set; }
     }
 }

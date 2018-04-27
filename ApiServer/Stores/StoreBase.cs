@@ -91,7 +91,7 @@ namespace ApiServer.Stores
         /// 简单判断数据id是否为空
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         protected List<string> _CanDelete(string accid, string id)
         {
