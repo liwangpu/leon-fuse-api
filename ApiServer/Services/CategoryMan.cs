@@ -165,7 +165,10 @@ namespace ApiServer.Services
                 return "target category " + targetCatId + " not found"; // not found.
             }
 
+            int childrenCount = await dbset.Where(d => d.ParentId == targetCatId).CountAsync();
+
             cat.ParentId = targetCatId;
+            cat.DisplayIndex = childrenCount; // index start from 0;
             await context.SaveChangesAsync();
             return "";
         }
