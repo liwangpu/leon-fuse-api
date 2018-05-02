@@ -64,7 +64,7 @@ namespace ApiServer.Controllers
                 case Services.AuthMan.LoginResult.Frozen: err = "account is forzen by admin"; break;
                 case Services.AuthMan.LoginResult.NotActivation: err = "account not activate yet"; break;
             }
-            return BadRequest(err);
+            return BadRequest(new LoginFailedModel { Error = err });
         }
 
         IActionResult MakeToken(string accid)
