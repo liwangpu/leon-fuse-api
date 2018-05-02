@@ -28,14 +28,14 @@ namespace ApiServer.Services
         {
             List<AssetCategory> templist = await dbset.Where(d => d.Type == type).ToListAsync();
             LinkedList<AssetCategory> list = new LinkedList<AssetCategory>();
-            foreach(var item in templist)
+            foreach (var item in templist)
             {
                 list.AddLast(item);
             }
             AssetCategoryDTO root = FindRoot(list);
             FindChildren(list, root);
 
-            if(root == null)
+            if (root == null)
             {
                 AssetCategory rootNode = new AssetCategory();
                 rootNode.Id = GuidGen.NewGUID();
@@ -52,6 +52,14 @@ namespace ApiServer.Services
             return root;
         }
 
+        public async Task<AssetCategoryDTO> GetById(string id)
+        {
+            var data = await dbset.FindAsync(id);
+            if (data != null)
+                return data.ToDTO();
+            return new AssetCategoryDTO();
+        }
+
         /// <summary>
         /// 创建一个分类，一次只能创建单个分类，不会层级创建。必须指定一个父级ID，不能主动创建根节点，根节点在get时会自动创建。
         /// </summary>
@@ -63,9 +71,9 @@ namespace ApiServer.Services
             if (string.IsNullOrEmpty(dto.ParentId))
                 return null;
 
-            AssetCategory parent = await dbset.FirstOrDefaultAsync(d => d.Type == dto.Type && d.Id == dto.ParentId);            
-            
-            if(parent == null)
+            AssetCategory parent = await dbset.FirstOrDefaultAsync(d => d.Type == dto.Type && d.Id == dto.ParentId);
+
+            if (parent == null)
             {
                 return null; // want to create a child node, but parent node not found.
             }
@@ -82,7 +90,7 @@ namespace ApiServer.Services
             cat.DisplayIndex = childrenCount; //index start from 0.
             dbset.Add(cat);
             await context.SaveChangesAsync();
-            
+
             return cat.ToDTO();
         }
 
@@ -115,7 +123,7 @@ namespace ApiServer.Services
         public async Task<string> DeleteAsync(string type, string catid)
         {
             AssetCategory childCategory = await dbset.FirstOrDefaultAsync(d => d.Type == type && d.ParentId == catid);
-            if(childCategory != null)
+            if (childCategory != null)
             {
                 return "cannot delete this category, until delete or move all of children category."; //此分类下还有子分类，不可以删除。
             }
@@ -127,7 +135,7 @@ namespace ApiServer.Services
 
             //hack
             bool haveAssets = false;
-            if(type == "product")
+            if (type == "product")
             {
                 var asset = await context.Set<Product>().FirstOrDefaultAsync(d => d.CategoryId == catid);
                 haveAssets = (asset != null);
@@ -138,7 +146,7 @@ namespace ApiServer.Services
                 haveAssets = (asset != null);
             }
 
-            if(haveAssets)
+            if (haveAssets)
             {
                 return "can not delete this category, until delete or move all asset to another category";
             }
@@ -209,7 +217,7 @@ namespace ApiServer.Services
                 tableName = "Products";
             else if (type == "material")
                 tableName = "Materials";
-            
+
             string sql = string.Format("update \"{0}\" set \"CategoryId\"='{1}' where \"CategoryId\"='{2}'", tableName, targetCatId, catid);
             int rows = await context.Database.ExecuteSqlCommandAsync(sql);
             return "";
@@ -264,7 +272,7 @@ namespace ApiServer.Services
         {
             foreach (var item in list)
             {
-                if(string.IsNullOrEmpty(item.ParentId))
+                if (string.IsNullOrEmpty(item.ParentId))
                 {
                     return item.ToDTO();
                 }
@@ -296,7 +304,7 @@ namespace ApiServer.Services
             {
                 FindChildren(list, item);
             }
-        }        
+        }
 
     }
 }

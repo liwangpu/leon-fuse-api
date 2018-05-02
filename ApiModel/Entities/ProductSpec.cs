@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string CharletIds { get; set; }
         public string StaticMeshIds { get; set; }
-
+        public string CategoryId { get; set; }
         /// <summary>
         /// 价格，单位为元
         /// </summary>
@@ -33,39 +32,13 @@ namespace ApiModel.Entities
         public List<FileAsset> CharletAsset { get; set; }
         [NotMapped]
         public List<StaticMesh> StaticMeshAsset { get; set; }
+        [NotMapped]
+        public AssetCategory AssetCategory { get; set; }
 
         public ProductSpec()
         {
             CharletAsset = new List<FileAsset>();
             StaticMeshAsset = new List<StaticMesh>();
-        }
-
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            dicData["Description"] = Description;
-            dicData["Price"] = Price;
-            dicData["TPID"] = TPID;
-            dicData["ProductId"] = ProductId;
-
-            if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
-            {
-                dicData["StaticMeshes"] = StaticMeshAsset.Where(x => x != null).Select(x => x.ToDictionary());
-            }
-            if (IconFileAsset != null)
-            {
-                dicData["IconAsset"] = IconFileAsset.ToDictionary();
-                dicData["Icon"] = IconFileAsset.Url;
-            }
-            if (CharletAsset != null && CharletAsset.Count > 0)
-            {
-                dicData["Charlets"] = CharletAsset.Where(x => x != null).Select(x => x.ToDictionary());
-            }
-            return dicData;
         }
 
         public ProductSpecDTO ToDTO()
@@ -80,19 +53,18 @@ namespace ApiModel.Entities
             dto.Price = Price;
             dto.TPID = TPID;
             dto.ProductId = ProductId;
+            dto.CategoryId = CategoryId;
             if (IconFileAsset != null)
             {
                 dto.IconAsset = IconFileAsset.ToDTO();
                 dto.Icon = IconFileAsset.Url;
             }
             if (CharletAsset != null && CharletAsset.Count > 0)
-            {
                 dto.Charlets = CharletAsset.Select(x => x.ToDTO()).ToList();
-            }
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
-            {
                 dto.StaticMeshes = StaticMeshAsset.Select(x => x.ToDTO()).ToList();
-            }
+            if (AssetCategory != null)
+                dto.CategoryName = AssetCategory.Name;
             return dto;
         }
     }
@@ -106,6 +78,8 @@ namespace ApiModel.Entities
         public int Price { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }
+        public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public FileAssetDTO IconAsset { get; set; }

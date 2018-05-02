@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
@@ -10,15 +11,21 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
+
         public string AccountId { get; set; }
-        [JsonIgnore]
         public Account Account { get; set; }
+
+
         /// <summary>
         /// 规格
         /// </summary>
         [JsonIgnore]
         public List<ProductSpec> Specifications { get; set; }
-        
+
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
+        [NotMapped]
+        public AssetCategory AssetCategory { get; set; }
 
         public ProductDTO ToDTO()
         {
@@ -26,7 +33,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.FolderId = FolderId;
             dto.CategoryId = CategoryId;
             dto.AccountId = AccountId;
@@ -34,6 +40,10 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             if (Specifications != null && Specifications.Count > 0)
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
+            if (IconFileAsset != null)
+                dto.Icon = IconFileAsset.Url;
+            if (AssetCategory != null)
+                dto.CategoryName = AssetCategory.Name;
             return dto;
         }
     }
@@ -46,6 +56,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public string AccountId { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }

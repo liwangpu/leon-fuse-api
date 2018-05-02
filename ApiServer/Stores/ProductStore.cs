@@ -111,8 +111,17 @@ namespace ApiServer.Stores
         public async Task<PagedData1<ProductDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Product, bool>> searchPredicate)
         {
             var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
-            var dtos = pagedData.Data.Select(x => x.ToDTO());
-            return new PagedData1<ProductDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
+            var datas = pagedData.Data.ToList();
+            if (pagedData.Data != null && pagedData.Data.Count() > 0)
+            {
+                for (int idx = datas.Count - 1; idx >= 0; idx--)
+                {
+                    var icon = datas[idx].Icon;
+                    if (!string.IsNullOrWhiteSpace(icon))
+                        datas[idx].IconFileAsset = await _FileAssetStore._GetByIdAsync(icon);
+                }
+            }
+            return new PagedData1<ProductDTO>() { Data = datas.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
         }
         #endregion
 
@@ -141,6 +150,8 @@ namespace ApiServer.Stores
                         }
                     }
                 }
+                if (!string.IsNullOrWhiteSpace(data.CategoryId))
+                    data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
                 return data.ToDTO();
             }
             catch (Exception ex)

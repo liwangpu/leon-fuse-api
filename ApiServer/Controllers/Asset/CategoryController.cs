@@ -51,7 +51,7 @@ namespace ApiServer.Controllers.Asset
                 return BadRequest();
             return Ok(result);
         }
-        
+
         /// <summary>
         /// 修改一个分类的基本信息， 名称，描述，图标。其他属性会被忽略，比如子分类，显示位置。
         /// </summary>
@@ -68,7 +68,7 @@ namespace ApiServer.Controllers.Asset
                 return BadRequest();
             return Ok(result);
         }
-        
+
         /// <summary>
         /// 删除一个分类，注意只能删除空分类。此分类下还有子分类或者还有资源，需要先转移或者删除后才能删除。
         /// </summary>

@@ -111,8 +111,10 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
             product.Name = value.Name;
             product.Name = value.Name;
+            product.CategoryId = value.CategoryId;
+            product.FolderId = value.FolderId;
             product.Description = value.Description;
-            product.ModifiedTime = new DateTime();
+            product.ModifiedTime = DateTime.Now ;
             var msg = await _ProductStore.CanUpdate(accid, product);
             if (msg.Count > 0)
                 return BadRequest(msg);
@@ -141,5 +143,31 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
+        #region ChangeICon 更新图标信息
+        /// <summary>
+        /// 更新图标信息
+        /// </summary>
+        /// <param name="icon"></param>
+        /// <returns></returns>
+        [Route("ChangeICon")]
+        [HttpPut]
+        [ProducesResponseType(typeof(IconModel), 200)]
+        [ProducesResponseType(typeof(List<string>), 404)]
+        public async Task<IActionResult> ChangeICon([FromBody]IconModel icon)
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            var accid = AuthMan.GetAccountId(this);
+            var spec = await _ProductStore._GetByIdAsync(icon.ObjId);
+            if (spec != null)
+            {
+                spec.Icon = icon.AssetId;
+                await _ProductStore._SaveOrUpdateAsync(spec);
+                return Ok(spec);
+            }
+            return NotFound();
+        }
+        #endregion
     }
 }
