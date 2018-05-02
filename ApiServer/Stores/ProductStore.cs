@@ -164,10 +164,10 @@ namespace ApiServer.Stores
             {
                 if (!data.IsPersistence())
                 {
-                    await _Repo.Context.Set<Product>().AddAsync(data);
+                    await _DbContext.Set<Product>().AddAsync(data);
                     //await _Repo.Context.Set<PermissionItem>().AddAsync(Permission.NewItem(accid, data.Id, "Product", PermissionType.All));
                 }
-                await _Repo.Context.SaveChangesAsync();
+                await _DbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
