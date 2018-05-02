@@ -43,4 +43,9 @@ namespace ApiModel.Entities
         public int DisplayIndex { get; set; }
         public List<AssetCategoryDTO> Children { get; set; }
     }
+
+    public class AssetCategoryPack
+    {
+        public List<AssetCategoryDTO> Categories { get; set; }
+    }
 }

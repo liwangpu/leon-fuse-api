@@ -34,6 +34,20 @@ namespace ApiServer.Controllers.Asset
             return await catman.GetCategoryAsync(type);
         }
 
+        [Route("all")]
+        [HttpGet]
+        public async Task<AssetCategoryPack> GetAll()
+        {
+            AssetCategoryPack pack = new AssetCategoryPack();
+            pack.Categories = new List<AssetCategoryDTO>();
+            AssetCategoryDTO cat = null;
+            cat = await catman.GetCategoryAsync("product"); if(cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("material"); if (cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("package"); if (cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("order"); if (cat != null) pack.Categories.Add(cat);
+            return pack;
+        }
+
         /// <summary>
         /// 创建一个分类。必须指定一个父级ID，不能主动创建根节点，根节点在get时会自动创建。
         /// </summary>
