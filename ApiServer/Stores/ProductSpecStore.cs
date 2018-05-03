@@ -200,10 +200,6 @@ namespace ApiServer.Stores
                         res.StaticMeshAsset.Add(refMesh);
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(res.CategoryId))
-                {
-                    res.AssetCategory = await _DbContext.AssetCategories.FindAsync(res.CategoryId);
-                }
 
                 return res.ToDTO();
             }

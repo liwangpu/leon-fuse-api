@@ -1,7 +1,6 @@
 ﻿using ApiModel.Entities;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,9 +23,9 @@ namespace ApiServer.Services
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<AssetCategoryDTO> GetCategoryAsync(string type)
+        public async Task<AssetCategoryDTO> GetCategoryAsync(string type, string organId)
         {
-            List<AssetCategory> templist = await dbset.Where(d => d.Type == type).ToListAsync();
+            List<AssetCategory> templist = await dbset.Where(d => d.Type == type && d.OrganizationId == organId).ToListAsync();
             LinkedList<AssetCategory> list = new LinkedList<AssetCategory>();
             foreach (var item in templist)
             {
@@ -40,6 +39,7 @@ namespace ApiServer.Services
                 AssetCategory rootNode = new AssetCategory();
                 rootNode.Id = GuidGen.NewGUID();
                 rootNode.ParentId = "";
+                rootNode.OrganizationId = organId;
                 rootNode.Type = type;
                 rootNode.Name = type + "_root";
                 rootNode.Icon = "";
@@ -88,6 +88,7 @@ namespace ApiServer.Services
             cat.Type = dto.Type;
             cat.ParentId = dto.ParentId;
             cat.DisplayIndex = childrenCount; //index start from 0.
+            cat.OrganizationId = dto.OrganizationId;
             dbset.Add(cat);
             await context.SaveChangesAsync();
 
@@ -109,7 +110,6 @@ namespace ApiServer.Services
             cat.Name = value.Name;
             cat.Icon = value.Icon;
             cat.Description = value.Description;
-
             await context.SaveChangesAsync();
             return cat.ToDTO();
         }

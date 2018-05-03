@@ -63,6 +63,7 @@ namespace ApiServer.Controllers.Design
             spec.Name = value.Name;
             spec.Description = value.Description;
             spec.ProductId = value.ProductId;
+            spec.Price = value.Price;
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductSpecStore.CanCreate(accid, spec);
             if (msg.Count > 0)
@@ -91,8 +92,8 @@ namespace ApiServer.Controllers.Design
                 return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
             spec.Name = value.Name;
             spec.Description = value.Description;
-            spec.CategoryId = value.CategoryId;
             spec.ModifiedTime = DateTime.Now;
+            spec.Price = value.Price;
             var msg = await _ProductSpecStore.CanUpdate(accid, spec);
             if (msg.Count > 0)
                 return BadRequest(msg);

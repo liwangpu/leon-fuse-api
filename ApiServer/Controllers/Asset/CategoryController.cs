@@ -25,26 +25,27 @@ namespace ApiServer.Controllers.Asset
         /// 获取整个类型(product, material)下的所有分类信息，已经整理成一个树结构。
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="organId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<AssetCategoryDTO> Get(string type)
+        public async Task<AssetCategoryDTO> Get(string type,string organId)
         {
             if (string.IsNullOrEmpty(type))
                 type = "product";
-            return await catman.GetCategoryAsync(type);
+            return await catman.GetCategoryAsync(type, organId);
         }
 
         [Route("all")]
         [HttpGet]
-        public async Task<AssetCategoryPack> GetAll()
+        public async Task<AssetCategoryPack> GetAll(string organId)
         {
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
             AssetCategoryDTO cat = null;
-            cat = await catman.GetCategoryAsync("product"); if(cat != null) pack.Categories.Add(cat);
-            cat = await catman.GetCategoryAsync("material"); if (cat != null) pack.Categories.Add(cat);
-            cat = await catman.GetCategoryAsync("package"); if (cat != null) pack.Categories.Add(cat);
-            cat = await catman.GetCategoryAsync("order"); if (cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("product", organId); if(cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("material", organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
             return pack;
         }
 

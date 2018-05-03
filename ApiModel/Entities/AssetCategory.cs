@@ -10,7 +10,8 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string ParentId { get; set; }
         public int DisplayIndex { get; set; }
-        
+        public string OrganizationId { get; set; }
+
         public AssetCategoryDTO ToDTO()
         {
             AssetCategoryDTO dto = new AssetCategoryDTO();
@@ -21,6 +22,7 @@ namespace ApiModel.Entities
             dto.Icon = Icon;
             dto.Type = Type;
             dto.DisplayIndex = DisplayIndex;
+            dto.OrganizationId = OrganizationId;
             dto.Children = new List<AssetCategoryDTO>();
             return dto;
         }
@@ -33,6 +35,7 @@ namespace ApiModel.Entities
         public string Description { get; set; }
         public string Icon { get; set; }
         public string ParentId { get; set; }
+        public string OrganizationId { get; set; }
         /// <summary>
         /// 分类的类型，比如产品product, 材质material
         /// </summary>

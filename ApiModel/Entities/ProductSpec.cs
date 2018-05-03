@@ -10,11 +10,11 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string CharletIds { get; set; }
         public string StaticMeshIds { get; set; }
-        public string CategoryId { get; set; }
+
         /// <summary>
         /// 价格，单位为元
         /// </summary>
-        public int Price { get; set; }
+        public double Price { get; set; }
         /// <summary>
         /// 第三方ID，此产品在供应商自己的系统比如ERP的ID
         /// </summary>
@@ -32,8 +32,6 @@ namespace ApiModel.Entities
         public List<FileAsset> CharletAsset { get; set; }
         [NotMapped]
         public List<StaticMesh> StaticMeshAsset { get; set; }
-        [NotMapped]
-        public AssetCategory AssetCategory { get; set; }
 
         public ProductSpec()
         {
@@ -53,7 +51,6 @@ namespace ApiModel.Entities
             dto.Price = Price;
             dto.TPID = TPID;
             dto.ProductId = ProductId;
-            dto.CategoryId = CategoryId;
             if (IconFileAsset != null)
             {
                 dto.IconAsset = IconFileAsset.ToDTO();
@@ -63,8 +60,6 @@ namespace ApiModel.Entities
                 dto.Charlets = CharletAsset.Select(x => x.ToDTO()).ToList();
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
                 dto.StaticMeshes = StaticMeshAsset.Select(x => x.ToDTO()).ToList();
-            if (AssetCategory != null)
-                dto.CategoryName = AssetCategory.Name;
             return dto;
         }
     }
@@ -75,11 +70,9 @@ namespace ApiModel.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-        public int Price { get; set; }
+        public double Price { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }
-        public string CategoryId { get; set; }
-        public string CategoryName { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public FileAssetDTO IconAsset { get; set; }
