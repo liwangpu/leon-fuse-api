@@ -108,7 +108,7 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchPredicate"></param>
         /// <returns></returns>
-        public async Task<PagedData1<ProductDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Product, bool>> searchPredicate)
+        public async Task<PagedData<ProductDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Product, bool>> searchPredicate)
         {
             var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
             var datas = pagedData.Data.ToList();
@@ -121,7 +121,7 @@ namespace ApiServer.Stores
                         datas[idx].IconFileAsset = await _FileAssetStore._GetByIdAsync(icon);
                 }
             }
-            return new PagedData1<ProductDTO>() { Data = datas.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
+            return new PagedData<ProductDTO>() { Data = datas.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
         }
         #endregion
 

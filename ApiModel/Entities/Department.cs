@@ -18,17 +18,5 @@ namespace ApiModel.Entities
         public string Description { get; set; }
         public string Icon { get; set; }
 
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["Description"] = Description;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            if (Members != null && Members.Count > 0)
-                dicData["Members"] = Members.ToDictionary();
-            return dicData;
-        }
     }
 }

@@ -32,7 +32,7 @@ namespace ApiServer.Controllers
         }
 
         [HttpGet]
-        public async Task<PagedData> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<Account>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
             return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
@@ -48,7 +48,7 @@ namespace ApiServer.Controllers
                 return NotFound();
             repo.Context.Entry(res).Reference(d => d.Organization).Load();
             //repo.Context.Entry(res).Reference(d => d).Load();
-            return Ok(res.ToDictionary());//return Forbid();
+            return Ok(res);//return Forbid();
         }
 
 
@@ -71,7 +71,7 @@ namespace ApiServer.Controllers
             var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), entity);
             if (res == null)
                 return NotFound();
-            return Ok(res.ToDictionary());
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]

@@ -103,6 +103,8 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<Map> Maps { get; set; }
 
+        public DbSet<PermissionTree> PermissionTrees { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

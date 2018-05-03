@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
             if (res == null)
                 return NotFound();
             await repo.Context.Entry(res).Collection(d => d.Members).LoadAsync();
-            return Ok(res.ToDictionary());//return Forbid();
+            return Ok(res);//return Forbid();
         }
 
 
@@ -75,7 +75,7 @@ namespace ApiServer.Controllers
             var res = await repo.GetDataSet(AuthMan.GetAccountId(this)).Where(x => x.OrganizationId == organId).ToListAsync();
             if (res == null)
                 return NotFound();
-            return Ok(res.Select(x => x.ToDictionary()));
+            return Ok(res);
         }
 
 

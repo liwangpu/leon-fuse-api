@@ -46,7 +46,7 @@ namespace BambooCore
             return tempset;
         }
 
-        public async Task<PagedData> GetAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
+        public async Task<PagedData<T>> GetAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
         {
             return await GetDataSet(accid).Paging(page, pageSize, orderBy, desc, searchPredicate);
         }

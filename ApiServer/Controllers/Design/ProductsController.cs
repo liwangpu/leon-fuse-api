@@ -38,9 +38,9 @@ namespace ApiServer.Controllers.Design
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData1<ProductDTO>), 200)]
-        [ProducesResponseType(typeof(PagedData1<ProductDTO>), 400)]
-        public async Task<PagedData1<ProductDTO>> Get(int page, int pageSize, string orderBy, bool desc, string search = "")
+        [ProducesResponseType(typeof(PagedData<ProductDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<ProductDTO>), 400)]
+        public async Task<PagedData<ProductDTO>> Get(int page, int pageSize, string orderBy, bool desc, string search = "")
         {
             var accid = AuthMan.GetAccountId(this);
             return await _ProductStore.SimpleQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));

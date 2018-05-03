@@ -22,7 +22,7 @@ namespace ApiServer.Controllers.Design
         }
 
         [HttpGet]
-        public async Task<PagedData> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<Map>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             PagingMan.CheckParam(ref search, ref page, ref pageSize);
             return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
@@ -37,7 +37,7 @@ namespace ApiServer.Controllers.Design
             var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
             if (res == null)
                 return NotFound();
-            return Ok(res.ToDictionary());//return Forbid();
+            return Ok(res);//return Forbid();
         }
 
 

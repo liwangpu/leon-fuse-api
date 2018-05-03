@@ -36,23 +36,6 @@ namespace ApiModel.Entities
         public string Description { get; set; }
         public string Icon { get; set; }
 
-
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            dicData["Url"] = Url;
-            dicData["Size"] = Size;
-            dicData["FileExt"] = FileExt;
-            dicData["LocalPath"] = LocalPath;
-            dicData["Description"] = Description;
-            dicData["UploadTime"] = UploadTime;
-            return dicData;
-        }
-
         public FileAssetDTO ToDTO()
         {
             var dto = new FileAssetDTO();

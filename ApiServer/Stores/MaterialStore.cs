@@ -31,11 +31,11 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchPredicate"></param>
         /// <returns></returns>
-        public async Task<PagedData1<MaterialDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Material, bool>> searchPredicate)
+        public async Task<PagedData<MaterialDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Material, bool>> searchPredicate)
         {
             var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
             var dtos = pagedData.Data.Select(x => x.ToDTO());
-            return new PagedData1<MaterialDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
+            return new PagedData<MaterialDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
         }
         #endregion
 

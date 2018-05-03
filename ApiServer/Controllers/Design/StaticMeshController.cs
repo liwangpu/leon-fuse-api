@@ -37,9 +37,9 @@ namespace ApiServer.Controllers.Design
         /// <param name="desc"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData1<StaticMeshDTO>), 200)]
-        [ProducesResponseType(typeof(PagedData1<StaticMeshDTO>), 400)]
-        public async Task<PagedData1<StaticMeshDTO>> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        [ProducesResponseType(typeof(PagedData<StaticMeshDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<StaticMeshDTO>), 400)]
+        public async Task<PagedData<StaticMeshDTO>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             var accid = AuthMan.GetAccountId(this);
             return await _StaticMeshStore.SimpleQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));

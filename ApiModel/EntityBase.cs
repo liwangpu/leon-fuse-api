@@ -9,26 +9,25 @@ namespace ApiModel
         public string Name { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
+        public string Creator { get; set; }
+        public string Modifier { get; set; }
 
         public EntityBase()
         {
-            CreatedTime = DateTime.Now;
-            ModifiedTime = DateTime.Now;
+            if (string.IsNullOrWhiteSpace(Id))
+            {
+                CreatedTime = DateTime.Now;
+                ModifiedTime = DateTime.Now;
+            }
+            else
+            {
+                ModifiedTime = DateTime.Now;
+            }
         }
 
         public virtual object Clone()
         {
             return MemberwiseClone();
-        }
-
-        public virtual Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            return dicData;
         }
 
         public bool IsPersistence()

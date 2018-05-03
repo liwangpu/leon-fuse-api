@@ -14,21 +14,5 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Properties { get; set; }
 
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            if (FileAsset != null)
-            {
-                dicData["Url"] = FileAsset.Url;
-            }
-            dicData["Dependencies"] = Dependencies;
-            dicData["Properties"] = Properties;
-
-            return dicData;
-        }
     }
 }

@@ -129,11 +129,11 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchPredicate"></param>
         /// <returns></returns>
-        public async Task<PagedData1<ProductSpecDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<ProductSpec, bool>> searchPredicate)
+        public async Task<PagedData<ProductSpecDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<ProductSpec, bool>> searchPredicate)
         {
             var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
             var dtos = pagedData.Data.Select(x => x.ToDTO());
-            return new PagedData1<ProductSpecDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
+            return new PagedData<ProductSpecDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
         }
         #endregion
 

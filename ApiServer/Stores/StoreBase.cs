@@ -48,7 +48,7 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchPredicate"></param>
         /// <returns></returns>
-        protected async Task<PagedData1<T>> _SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
+        protected async Task<PagedData<T>> _SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace ApiServer.Stores
             {
                 Logger.LogError("_SimplePagedQueryAsync", ex);
             }
-            return new PagedData1<T>();
+            return new PagedData<T>();
         }
         #endregion
 

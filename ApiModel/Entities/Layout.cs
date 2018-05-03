@@ -14,13 +14,5 @@ namespace ApiModel.Entities
         /// 户型数据,内容为类LayoutData的Json字符串。
         /// </summary>
         public string Data { get; set; }
-
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = this.Id;
-            dicData["Name"] = this.Name;
-            return dicData;
-        }
     }
 }

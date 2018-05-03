@@ -64,28 +64,5 @@ namespace ApiModel.Entities
         /// </summary>
         [JsonIgnore]
         public List<PermissionItem> Permissions { get; set; }
-
-        //public override object Clone()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["Mail"] = Mail;
-            dicData["Phone"] = Phone;
-            dicData["Location"] = Location;
-            dicData["Description"] = Description;
-            dicData["Icon"] = Icon;
-            dicData["Type"] = Type;
-            dicData["ExpireTime"] = ExpireTime;
-            dicData["OrganizationId"] = OrganizationId;
-            dicData["ActivationTime"] = ActivationTime;
-            dicData["DepartmentId"] = DepartmentId;
-            return dicData;
-        }
     }
 }

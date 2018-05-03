@@ -22,14 +22,6 @@ namespace ApiModel.Entities
         public string Description { get; set; }
 
 
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = this.Id;
-            dicData["Name"] = this.Name;
-            return dicData;
-        }
-
         public SolutionDTO ToDTO()
         {
             var dto = new SolutionDTO();

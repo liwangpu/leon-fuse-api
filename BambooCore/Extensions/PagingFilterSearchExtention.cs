@@ -10,45 +10,17 @@ using System.Threading.Tasks;
 namespace BambooCore
 {
 
-    public static class PagingExtend
-    {
-        public static List<Dictionary<string, object>> ToDictionaryList<TSource>(this List<TSource> source)
-            where TSource : class, IEntity
-        {
-            if (source != null && source.Count > 0)
-            {
-                var dics = new List<Dictionary<string, object>>();
-                dics.AddRange(source.Select(x => x.ToDictionary()));
-                return dics;
-            }
-            return new List<Dictionary<string, object>>();
-        }
-    }
-
     /// <summary>
     /// 通用的分页数据结构
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PagedData
-    {
-        public List<Dictionary<string, object>> Data { get; set; }
-        public int Page { get; set; }
-        public int Size { get; set; }
-        public int Total { get; set; }
-    }
-
-    /// <summary>
-    /// 通用的分页数据结构
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class PagedData1<T>
+    public class PagedData<T>
     {
         public IEnumerable<T> Data { get; set; }
         public int Page { get; set; }
         public int Size { get; set; }
         public int Total { get; set; }
     }
-
 
 
     /// <summary>
@@ -75,10 +47,10 @@ namespace BambooCore
         /// <param name="desc">是否是倒序排列，默认是升序</param>
         /// <param name="searchPredicate">用来查找或过滤的筛选函数，不需要此功能则传null即可</param>
         /// <returns></returns>
-        public static async Task<PagedData> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
+        public static async Task<PagedData<T>> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
         {
 
-            var res = new PagedData();
+            var res = new PagedData<T>();
             IQueryable<T> data = null;
             if (searchExpression == null)
                 data = src;
@@ -106,7 +78,7 @@ namespace BambooCore
 
             if (((page - 1) * pageSize) > res.Total)
             {
-                res.Data = new List<Dictionary<string, object>>();
+                res.Data = new List<T>();
                 res.Size = 0;
             }
             else
@@ -115,8 +87,8 @@ namespace BambooCore
                 {
                     data = data.Skip((page - 1) * pageSize).Take(pageSize);
                     var datas = await data.ToListAsync();
-                    res.Data = datas.ToDictionaryList();
-                    res.Size = res.Data.Count;
+                    res.Data = datas;
+                    res.Size = res.Data.Count();
                 }
                 catch
                 {
@@ -125,10 +97,10 @@ namespace BambooCore
             return res;
         }
 
-        public static async Task<PagedData1<T>> Paging1<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
+        public static async Task<PagedData<T>> Paging1<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
         {
 
-            var res = new PagedData1<T>();
+            var res = new PagedData<T>();
             IQueryable<T> data = null;
             if (searchExpression == null)
                 data = src;
@@ -173,6 +145,5 @@ namespace BambooCore
             }
             return res;
         }
-
     }
 }

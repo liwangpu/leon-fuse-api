@@ -23,12 +23,5 @@ namespace ApiModel.Entities
         public List<OrderStateItem> OrderStates { get; set; }
         [JsonIgnore]
         public Account Account { get; set; }
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = this.Id;
-            dicData["Name"] = this.Name;
-            return dicData;
-        }
     }
 }

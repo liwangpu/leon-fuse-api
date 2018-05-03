@@ -54,22 +54,5 @@ namespace ApiModel.Entities
         public string Mail { get; set; }
         public string Location { get; set; }
 
-        public override Dictionary<string, object> ToDictionary()
-        {
-            var dicData = new Dictionary<string, object>();
-            dicData["Id"] = Id;
-            dicData["Name"] = Name;
-            dicData["CreatedTime"] = CreatedTime;
-            dicData["ModifiedTime"] = ModifiedTime;
-            dicData["Description"] = Description;
-            dicData["Mail"] = Mail;
-            dicData["Location"] = Location;
-            dicData["Icon"] = Icon;
-            if (Owner != null)
-                dicData["Owner"] = Owner.ToDictionary();
-            if (Departments != null && Departments.Count > 0)
-                dicData["Departments"] = Departments.ToDictionary();
-            return dicData;
-        }
     }
 }
