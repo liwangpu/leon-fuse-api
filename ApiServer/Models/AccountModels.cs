@@ -84,6 +84,7 @@ namespace ApiServer.Models
         public string Type { get; set; }
         public string Location { get; set; }
         public string Phone { get; set; }
+        public string Description { get; set; }
         public string OrganizationId { get; set; }
         public string DepartmentId { get; set; }
         public DateTime ExpireTime { get; set; }

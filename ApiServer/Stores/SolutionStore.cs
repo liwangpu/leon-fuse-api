@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class SolutionStore : StoreBase<Solution, SolutionDTO>, IStore<Solution>
+    public class SolutionStore : StoreBase<Solution>, IStore<Solution>
     {
 
         #region 构造函数

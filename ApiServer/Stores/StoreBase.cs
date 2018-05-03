@@ -20,9 +20,8 @@ namespace ApiServer.Stores
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="U"></typeparam>
-    public class StoreBase<T, U>
-         where T : class, IEntity, ApiModel.ICloneable, IDTOTransfer<U>, new()
-        where U : IData
+    public class StoreBase<T>
+         where T : class, IEntity, ApiModel.ICloneable, new()
     {
         protected readonly Repository1<T> _Repo;
         protected readonly ApiDbContext _DbContext;

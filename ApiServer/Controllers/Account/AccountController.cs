@@ -3,6 +3,7 @@ using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Models;
 using ApiServer.Services;
+using ApiServer.Stores;
 using BambooCommon;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
@@ -24,11 +25,14 @@ namespace ApiServer.Controllers
         AccountMan accountMan;
         private readonly Repository<Account> repo;
         private ApiDbContext _context;
+        private readonly AccountStore _AccountStore;
+        //private readonly AccountStore _AccountStore;
         public AccountController(ApiDbContext context)
         {
             repo = new Repository<Account>(context);
             accountMan = new AccountMan(context);
             _context = context;
+            _AccountStore = new AccountStore(context);
         }
 
         [HttpGet]
@@ -94,15 +98,31 @@ namespace ApiServer.Controllers
         [Produces(typeof(Account))]
         public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+            //if (ModelState.IsValid == false)
+            //    return BadRequest(ModelState);
+
+            //var accid = AuthMan.GetAccountId(this);
+            //var department = new Account();
+            //department.Name = value.Name;
+            //department.Description = value.Description;
+            //department.Creator = accid;
+            //department.OrganizationId = value.OrganizationId;
+            //department.Organization=await 
+
+            //var msg = await _DepartmentStore.CanCreate(accid, department);
+            //if (msg.Count > 0)
+            //    return BadRequest(msg);
+
+            //var dto = await _DepartmentStore.CreateAsync(accid, department);
+            //return Ok(dto);
+
             //var refReor = await _context.Accounts.Where(x =>  x.Mail == value.Mail || x.Phone == value.Phone).FirstOrDefaultAsync();
             var refReor = await _context.Accounts.FirstOrDefaultAsync(x => !string.IsNullOrWhiteSpace(value.Mail) && x.Mail == value.Mail || !string.IsNullOrWhiteSpace(value.Phone) && x.Phone == value.Phone);
             if (refReor != null)
                 return BadRequest("账户信息已经存在,修改您的邮箱或者电话信息");
             AccountModel account = await accountMan.Register(value);
             repo.Context.Set<PermissionItem>().Add(Permission.NewItem(AuthMan.GetAccountId(this), account.Id, value.GetType().Name, PermissionType.All));
-            if (value.Type == AppConst.AccountType_Organization)
+            if (value.Type == AppConst.AccountType_OrganAdmin)
                 repo.Context.Set<PermissionItem>().Add(Permission.NewItem(account.Id, value.DepartmentId, "Department", PermissionType.All));
 
             await repo.SaveChangesAsync();

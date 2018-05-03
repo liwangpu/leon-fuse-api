@@ -8,5 +8,7 @@
         public static string V_StringLengthRejectMsg = "对不起,{0}必须为1-{1}个字符信息";
         public static string V_RequiredRejectMsg = "对不起,{0}为必填信息";
         public static string V_NotReferenceMsg = "对不起,关联{0}记录不存在";
+        public static string V_NoCreateAccPermissionMsg = "对不起,您没有权限创建该类型用户";
+        public static string V_DuplicatedMsg = "对不起,系统已经存在{0}为\"{1}\"的信息";
     }
 }

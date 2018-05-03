@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
-    public class Product : EntityBase, IAsset, IDTOTransfer<ProductDTO>
+    public class Product : EntityBase, IAsset, IPermission, IDTOTransfer<ProductDTO>
     {
         public string Description { get; set; }
         public string Icon { get; set; }

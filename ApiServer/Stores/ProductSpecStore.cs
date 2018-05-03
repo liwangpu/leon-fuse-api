@@ -14,7 +14,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// ProductSpec Store
     /// </summary>
-    public class ProductSpecStore : StoreBase<ProductSpec, ProductSpecDTO>, IStore<ProductSpec>
+    public class ProductSpecStore : StoreBase<ProductSpec>, IStore<ProductSpec>
     {
         private readonly FileAssetStore _FileAssetStore;
         private readonly StaticMeshStore _StaticMeshStore;

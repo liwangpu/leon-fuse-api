@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Organization : EntityBase, IListable
+    public class Organization : EntityBase, IListable, IDTOTransfer<OrganizationDTO>
     {
         /// <summary>
         /// 父级组织的ID
@@ -54,5 +54,31 @@ namespace ApiModel.Entities
         public string Mail { get; set; }
         public string Location { get; set; }
 
+        public OrganizationDTO ToDTO()
+        {
+            var dto = new OrganizationDTO();
+            dto.Id = Id;
+            dto.Name = Name;
+            dto.Description = Description;
+            dto.Icon = Icon;
+            dto.Mail = Mail;
+            dto.Location = Location;
+
+            return dto;
+        }
+    }
+
+
+
+    public class OrganizationDTO : IData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
+        public string Mail { get; set; }
+        public string Location { get; set; }
+        public string ParentId { get; set; }
+        public string OwnerId { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// Material Store
     /// </summary>
-    public class MaterialStore : StoreBase<Material, MaterialDTO>
+    public class MaterialStore : StoreBase<Material>
     {
         #region 构造函数
         public MaterialStore(ApiDbContext context)

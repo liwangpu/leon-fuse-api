@@ -13,7 +13,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// StaticMesh Store
     /// </summary>
-    public class StaticMeshStore : StoreBase<StaticMesh, StaticMeshDTO>, IStore<StaticMesh>
+    public class StaticMeshStore : StoreBase<StaticMesh>, IStore<StaticMesh>
     {
         #region 构造函数
         public StaticMeshStore(ApiDbContext context)

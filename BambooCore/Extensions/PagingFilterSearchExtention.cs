@@ -145,5 +145,35 @@ namespace BambooCore
             }
             return res;
         }
+
+
+        public static async Task<PagedData<T>> SimplePaging<T>(this IQueryable<T> src, int page, int pageSize) where T : class, IEntity
+        {
+            var res = new PagedData<T>();
+            IQueryable<T> data = src;
+
+
+            if (page < 1)
+                page = 1;
+            if (pageSize < 1)
+                pageSize = 1;
+
+            res.Total = await data.CountAsync();
+            res.Page = page;
+
+            if (((page - 1) * pageSize) > res.Total)
+            {
+                res.Data = new List<T>();
+                res.Size = 0;
+            }
+            else
+            {
+                data = data.Skip((page - 1) * pageSize).Take(pageSize);
+                res.Data = await data.ToListAsync();
+                res.Size = res.Data.Count();
+            }
+            return res;
+        }
+
     }
 }

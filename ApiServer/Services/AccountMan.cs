@@ -41,7 +41,7 @@ namespace ApiServer.Services
                 acc.Location = param.Location;
                 acc.Phone = param.Phone;
                 acc.OrganizationId = param.OrganizationId;
-                if (param.Type == AppConst.AccountType_Organization)
+                if (param.Type == AppConst.AccountType_OrganAdmin)
                     acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
                 acc.DepartmentId = param.DepartmentId;
                 //acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);

@@ -17,11 +17,31 @@ namespace ApiServer.Stores
         }
 
         /// <summary>
+        /// 添加新节点
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task AddNewNode(PermissionTree data)
+        {
+            try
+            {
+                data.LValue = 1;
+                data.RValue = 2;
+                _DbContext.PermissionTrees.Add(data);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("PermissionTreeStore AddNewNode", ex);
+            }
+        }
+
+        /// <summary>
         /// 添加子节点
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task AddChild(PermissionTree data)
+        public async Task AddChildNode(PermissionTree data)
         {
             try
             {
@@ -43,7 +63,7 @@ namespace ApiServer.Stores
             }
             catch (Exception ex)
             {
-                Logger.LogError("PermissionTreeStore CreateAsync", ex);
+                Logger.LogError("PermissionTreeStore AddChildNode", ex);
             }
         }
 
@@ -53,7 +73,7 @@ namespace ApiServer.Stores
         /// <param name="data"></param>
         /// <param name="sibling"></param>
         /// <returns></returns>
-        public async Task AddSibling(PermissionTree data, string sibling)
+        public async Task AddSiblingNode(PermissionTree data, string sibling)
         {
             try
             {
@@ -76,7 +96,7 @@ namespace ApiServer.Stores
             }
             catch (Exception ex)
             {
-                Logger.LogError("PermissionTreeStore CreateAsync", ex);
+                Logger.LogError("PermissionTreeStore AddSiblingNode", ex);
             }
         }
     }

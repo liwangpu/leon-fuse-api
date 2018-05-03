@@ -110,7 +110,6 @@ namespace ApiServer.Controllers.Design
             if (product == null)
                 return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
             product.Name = value.Name;
-            product.Name = value.Name;
             product.CategoryId = value.CategoryId;
             product.FolderId = value.FolderId;
             product.Description = value.Description;

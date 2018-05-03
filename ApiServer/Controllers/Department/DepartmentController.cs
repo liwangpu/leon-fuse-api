@@ -2,10 +2,13 @@
 using ApiServer.Data;
 using ApiServer.Models;
 using ApiServer.Services;
+using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +19,11 @@ namespace ApiServer.Controllers
     public class DepartmentController : Controller
     {
         private readonly Repository<Department> repo;
-
+        private readonly DepartmentStore _DepartmentStore;
         public DepartmentController(ApiDbContext context)
         {
             repo = new Repository<Department>(context);
+            _DepartmentStore = new DepartmentStore(context);
         }
 
         [HttpGet("{id}")]
@@ -33,29 +37,68 @@ namespace ApiServer.Controllers
             return Ok(res);//return Forbid();
         }
 
-
+        #region Post 新建部门信息
+        /// <summary>
+        /// 新建部门信息
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public async Task<IActionResult> Post([FromBody]DepartmentEditModel value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            var dep = await repo.CreateAsync(AuthMan.GetAccountId(this), value.ToEntity());
-            return CreatedAtAction("Get", dep);
-        }
+            var accid = AuthMan.GetAccountId(this);
+            var department = new Department();
+            department.Name = value.Name;
+            department.ParentId = value.ParentId;
+            department.Description = value.Description;
+            department.ModifiedTime = DateTime.Now;
+            department.Creator = accid;
+            department.OrganizationId = value.OrganizationId;
 
+            var msg = await _DepartmentStore.CanCreate(accid, department);
+            if (msg.Count > 0)
+                return BadRequest(msg);
+
+            var dto = await _DepartmentStore.CreateAsync(accid, department);
+            return Ok(dto);
+        }
+        #endregion
+
+        #region Put 编辑部门信息
+        /// <summary>
+        /// 编辑部门信息
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpPut]
-        [Produces(typeof(Department))]
-        public async Task<IActionResult> Put([FromBody]Department value)
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
+        public async Task<IActionResult> Put([FromBody]DepartmentEditModel value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
+            var accid = AuthMan.GetAccountId(this);
+            var department = await _DepartmentStore._GetByIdAsync(value.Id);
+            department.Name = value.Name;
+            department.ParentId = value.ParentId;
+            department.Description = value.Description;
+            department.ModifiedTime = DateTime.Now;
+            department.Modifier = accid;
 
-            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
-            if (res == null)
-                return NotFound();
-            return Ok(value);
-        }
+            if (department == null)
+                return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+            var msg = await _DepartmentStore.CanUpdate(accid, department);
+            if (msg.Count > 0)
+                return BadRequest(msg);
+            var dto = await _DepartmentStore.UpdateAsync(accid, department);
+            return Ok(dto);
+        } 
+        #endregion
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)

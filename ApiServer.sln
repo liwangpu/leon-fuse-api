@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiServer.Tests", "ApiServe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BambooCore", "BambooCore\BambooCore.csproj", "{09617D08-EA07-4924-904D-A9EEE788A37F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BambooCommon", "BambooCommon\BambooCommon.csproj", "{D684E136-3F0B-4F90-8BFA-F6D76BDAA41E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BambooCommon", "BambooCommon\BambooCommon.csproj", "{D684E136-3F0B-4F90-8BFA-F6D76BDAA41E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

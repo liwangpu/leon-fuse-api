@@ -11,7 +11,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// FileAsset Store
     /// </summary>
-    public class FileAssetStore : StoreBase<FileAsset, FileAssetDTO>
+    public class FileAssetStore : StoreBase<FileAsset>
     {
         #region 构造函数
         public FileAssetStore(ApiDbContext context)
