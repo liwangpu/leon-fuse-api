@@ -2,7 +2,7 @@
 
 namespace ApiServer.Models
 {
-    public class FileAssetModel : IModel<FileAsset>
+    public class FileAssetModel
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -17,25 +17,6 @@ namespace ApiServer.Models
         public string AccountId { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-
-        public FileAsset ToEntity()
-        {
-            var entity = new FileAsset();
-            entity.Id = Id;
-            entity.Name = Name;
-            entity.Url = Url;
-            entity.Md5 = Md5;
-            entity.Size = Size;
-            entity.FileExt = FileExt;
-            entity.LocalPath = LocalPath;
-            entity.UploadTime = UploadTime;
-            entity.FolderId = FolderId;
-            entity.CategoryId = CategoryId;
-            entity.AccountId = AccountId;
-            entity.Description = Description;
-            entity.Icon = Icon;
-            return entity;
-        }
     }
 
     public class IconModel

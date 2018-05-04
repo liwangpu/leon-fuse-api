@@ -3,10 +3,11 @@ using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Services;
 using BambooCommon;
+using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -27,8 +28,90 @@ namespace ApiServer.Stores
         }
         #endregion
 
+        /**************** protected method ****************/
+
+        #region _OrganPermissionPipe 查询组织权限过滤
+        /// <summary>
+        /// 查询组织权限过滤
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected void _OrganPermissionPipe(ref IQueryable<Organization> query, Account currentAcc)
+        {
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            {
+
+            }
+            else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+            {
+                query = query.Where(x => x.Id == currentAcc.OrganizationId);
+            }
+            else if (currentAcc.Type == AppConst.AccountType_OrganMember)
+            {
+                query = query.Take(0);
+            }
+            else
+            {
+                query = query.Take(0);
+            }
+        } 
+        #endregion
 
         /**************** public method ****************/
+
+        #region SimplePagedQueryAsync 简单返回分页查询DTO信息
+        /// <summary>
+        /// 简单返回分页查询DTO信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="searchExpression"></param>
+        /// <returns></returns>
+        public async Task<PagedData<OrganizationDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Organization, bool>> searchExpression)
+        {
+            try
+            {
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Organizations
+                            select it;
+                //_SearchExpressionPipe(ref query, searchExpression);
+                _OrganPermissionPipe(ref query, currentAcc);
+                var result = await query.SimplePaging(page, pageSize);
+                if (result.Total > 0)
+                    return new PagedData<OrganizationDTO>() { Data = result.Data.Select(x => x.ToDTO()), Total = result.Total, Page = page, Size = pageSize };
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("ProductStore SimplePagedQueryAsync", ex);
+            }
+            return new PagedData<OrganizationDTO>();
+        }
+        #endregion
+
+        #region GetByIdAsync 根据Id返回实体DTO数据信息
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<OrganizationDTO> GetByIdAsync(string accid, string id)
+        {
+            try
+            {
+                var data = await _GetByIdAsync(id);
+                return data.ToDTO();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("GetByIdAsync", ex);
+            }
+            return new OrganizationDTO();
+        }
+        #endregion
 
         #region CanCreate 判断组织信息是否符合存储规范
         /// <summary>
@@ -37,28 +120,27 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanCreate(string accid, Organization data)
+        public async Task<string> CanCreate(string accid, Organization data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "组织名称", 50));
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "组织名称", 50);
             if (string.IsNullOrWhiteSpace(data.Mail) || data.Mail.Length > 50)
             {
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "邮箱", 50));
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "邮箱", 50);
             }
             else
             {
                 var exist = await _DbContext.Accounts.Where(x => x.Mail == data.Mail.Trim()).CountAsync();
                 if (exist > 0)
-                    errors.Add(string.Format(ValidityMessage.V_DuplicatedMsg, "邮箱", data.Mail.Trim()));
+                    return string.Format(ValidityMessage.V_DuplicatedMsg, "邮箱", data.Mail.Trim());
             }
 
 
-            return errors;
+            return string.Empty;
         }
         #endregion
 
@@ -69,16 +151,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanUpdate(string accid, Organization data)
+        public async Task<string> CanUpdate(string accid, Organization data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
-            return errors;
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50);
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -89,13 +170,12 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanDelete(string accid, string id)
+        public async Task<string> CanDelete(string accid, string id)
         {
-            var errors = new List<string>();
             var valid = _CanDelete(accid, id);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -106,10 +186,16 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanRead(string accid, string id)
+        public async Task<string> CanRead(string accid, string id)
         {
-            var errors = new List<string>();
-            return errors;
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.Organizations
+                        select it;
+            _OrganPermissionPipe(ref query, currentAcc);
+            var result = await query.CountAsync(x => x.Id == id);
+            if (result == 0)
+                return ValidityMessage.V_NoPermissionReadMsg;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -165,6 +251,7 @@ namespace ApiServer.Stores
             {
                 #region 创建默认部门
                 var department = new Department();
+                department.OrganizationId = data.Id;
                 department.Organization = data;
                 department.Name = data.Name;
                 department.Creator = accid;
@@ -179,8 +266,7 @@ namespace ApiServer.Stores
                 account.Mail = data.Mail;
                 account.Password = ConstVar.DefaultNormalPasswordMd5;
                 account.Location = data.Location;
-                account.Creator = accid;
-                account.Modifier = accid;
+
                 account.ExpireTime = DateTime.Now.AddYears(10);
                 account.ActivationTime = DateTime.UtcNow;
                 account.Department = department;
@@ -188,6 +274,11 @@ namespace ApiServer.Stores
                 account.Organization = data;
                 account.OrganizationId = data.Id;
                 await _AccountStore.CreateAsync(accid, account);
+                //将创建人和修改人改为该默认管理员
+                account.Creator = account.Id;
+                account.Modifier = account.Id;
+                _DbContext.Accounts.Update(account);
+                await _DbContext.SaveChangesAsync();
                 #endregion
             }
             return data.ToDTO();
@@ -214,6 +305,21 @@ namespace ApiServer.Stores
                 Logger.LogError("OrganizationStore UpdateAsync", ex);
             }
             return new OrganizationDTO();
+        }
+        #endregion
+
+        #region GetOrganOwner 根据组织Id获取组织管理员信息
+        /// <summary>
+        /// 根据组织Id获取组织管理员信息
+        /// </summary>
+        /// <param name="organId"></param>
+        /// <returns></returns>
+        public async Task<AccountDTO> GetOrganOwner(string organId)
+        {
+            var organ = await _DbContext.Organizations.Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == organId);
+            if (organ != null && organ.Owner != null)
+                return organ.Owner.ToDTO();
+            return new AccountDTO();
         }
         #endregion
     }

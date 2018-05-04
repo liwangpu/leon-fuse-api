@@ -36,7 +36,7 @@ namespace ApiServer.Services
         public struct LoginResultStruct
         {
             public LoginResult loginResult;
-            public AccountModel acc;
+            public AccountEditModel acc;
         }
 
         Data.ApiDbContext context;
@@ -61,7 +61,7 @@ namespace ApiServer.Services
             var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == account || d.Phone == account);
             if (acc != null)
             {
-                var model = new AccountModel();
+                var model = new AccountEditModel();
                 model.Id = acc.Id;
                 model.Frozened = acc.Frozened;
                 model.ActivationTime = acc.ActivationTime;

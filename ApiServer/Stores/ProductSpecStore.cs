@@ -41,22 +41,22 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanCreate(string accid, ProductSpec data)
+        public async Task<string> CanCreate(string accid, ProductSpec data)
         {
             var errors = new List<string>();
 
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50));
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50);
             if (string.IsNullOrWhiteSpace(data.ProductId))
-                errors.Add(string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号"));
+                return string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号");
             var existProd = await _ProductStore._GetByIdAsync(data.ProductId);
             if (existProd == null)
-                errors.Add(string.Format(ValidityMessage.V_NotReferenceMsg, "产品"));
-            return errors;
+                return string.Format(ValidityMessage.V_NotReferenceMsg, "产品");
+            return string.Empty;
         }
         #endregion
 
@@ -67,22 +67,20 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanUpdate(string accid, ProductSpec data)
+        public async Task<string> CanUpdate(string accid, ProductSpec data)
         {
-            var errors = new List<string>();
-
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50));
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50);
             if (string.IsNullOrWhiteSpace(data.ProductId))
-                errors.Add(string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号"));
+                return string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号");
             var existProd = await _ProductStore._GetByIdAsync(data.ProductId);
             if (existProd == null)
-                errors.Add(string.Format(ValidityMessage.V_NotReferenceMsg, "产品"));
-            return errors;
+                return string.Format(ValidityMessage.V_NotReferenceMsg, "产品");
+            return string.Empty;
         }
         #endregion
 
@@ -93,14 +91,12 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanDelete(string accid, string id)
+        public async Task<string> CanDelete(string accid, string id)
         {
-            var errors = new List<string>();
-
             var valid = _CanDelete(accid, id);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -111,10 +107,9 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanRead(string accid, string id)
+        public async Task<string> CanRead(string accid, string id)
         {
-            var errors = new List<string>();
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 

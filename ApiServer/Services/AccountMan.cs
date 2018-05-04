@@ -4,6 +4,7 @@ using ApiServer.Models;
 using BambooCommon;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace ApiServer.Services
@@ -17,9 +18,9 @@ namespace ApiServer.Services
             this.context = context;
         }
 
-        public async Task<AccountModel> Register(RegisterAccountModel param)
+        public async Task<AccountEditModel> Register(RegisterAccountModel param)
         {
-            var model = new AccountModel();
+            var model = new AccountEditModel();
             if (param == null)
                 return null;
             if (string.IsNullOrWhiteSpace(param.Mail))
@@ -35,8 +36,8 @@ namespace ApiServer.Services
                 acc.Password = Md5.CalcString(param.Password);
                 acc.Mail = mail;
                 acc.Frozened = false;
-                acc.ActivationTime = param.ActivationTime;
-                acc.ExpireTime = param.ExpireTime;
+                acc.ActivationTime = param.ActivationTime!=null? (DateTime)param.ActivationTime:DateTime.MinValue;
+                acc.ExpireTime =  param.ExpireTime != null ? (DateTime)param.ExpireTime : DateTime.MinValue;
                 acc.Type = param.Type;
                 acc.Location = param.Location;
                 acc.Phone = param.Phone;

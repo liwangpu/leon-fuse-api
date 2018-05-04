@@ -3,7 +3,6 @@ using ApiServer.Data;
 using BambooCommon;
 using BambooCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -30,16 +29,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanCreate(string accid, Solution data)
+        public async Task<string> CanCreate(string accid, Solution data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "方案名称", 50));
-            return errors;
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "方案名称", 50);
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -50,16 +48,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanUpdate(string accid, Solution data)
+        public async Task<string> CanUpdate(string accid, Solution data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "方案名称", 50));
-            return errors;
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "方案名称", 50);
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -70,13 +67,12 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanDelete(string accid, string id)
+        public async Task<string> CanDelete(string accid, string id)
         {
-            var errors = new List<string>();
             var valid = _CanDelete(accid, id);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -87,10 +83,9 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanRead(string accid, string id)
+        public async Task<string> CanRead(string accid, string id)
         {
-            var errors = new List<string>();
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 

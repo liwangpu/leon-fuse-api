@@ -43,7 +43,7 @@ namespace ApiServer.Controllers.Design
         public async Task<PagedData<ProductDTO>> Get(int page, int pageSize, string orderBy, bool desc, string search = "")
         {
             var accid = AuthMan.GetAccountId(this);
-            return await _ProductStore.SimpleQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+            return await _ProductStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
         }
         #endregion
 
@@ -55,12 +55,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductStore.CanRead(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             var data = await _ProductStore.GetByIdAsync(accid, id);
             return Ok(data);
@@ -75,7 +75,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(Product), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]ProductEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -85,7 +85,7 @@ namespace ApiServer.Controllers.Design
             product.Description = value.Description;
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductStore.CanCreate(accid, product);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _ProductStore.SaveOrUpdateAsync(accid, product);
             return Ok(product);
@@ -100,7 +100,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(typeof(Product), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]ProductEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -108,14 +108,14 @@ namespace ApiServer.Controllers.Design
             var accid = AuthMan.GetAccountId(this);
             var product = await _ProductStore._GetByIdAsync(value.Id);
             if (product == null)
-                return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
             product.Name = value.Name;
             product.CategoryId = value.CategoryId;
             product.FolderId = value.FolderId;
             product.Description = value.Description;
-            product.ModifiedTime = DateTime.Now ;
+            product.ModifiedTime = DateTime.Now;
             var msg = await _ProductStore.CanUpdate(accid, product);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _ProductStore.SaveOrUpdateAsync(accid, product);
             return Ok(product);
@@ -130,12 +130,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(Nullable), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductStore.CanDelete(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             await _ProductStore.DeleteAsync(accid, id);
             return Ok();

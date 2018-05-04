@@ -1,5 +1,4 @@
-﻿using ApiModel.Consts;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -8,7 +7,7 @@ using BambooCommon;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -35,48 +34,85 @@ namespace ApiServer.Controllers
             _AccountStore = new AccountStore(context);
         }
 
+        #region Get 根据分页获取用户信息
+        /// <summary>
+        /// 根据分页获取用户信息
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<PagedData<Account>> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        [ProducesResponseType(typeof(PagedData<AccountDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<AccountDTO>), 400)]
+        public async Task<PagedData<AccountDTO>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
-            PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-               d => d.DepartmentId == search || d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+            var accid = AuthMan.GetAccountId(this);
+            return await _AccountStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
         }
+        #endregion
 
+        #region Get 根据Id获取用户信息
+        /// <summary>
+        /// 根据Id获取用户信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces(typeof(Account))]
+        [ProducesResponseType(typeof(AccountDTO), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Get(string id)
         {
-            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
-            if (res == null)
-                return NotFound();
-            repo.Context.Entry(res).Reference(d => d.Organization).Load();
-            //repo.Context.Entry(res).Reference(d => d).Load();
-            return Ok(res);//return Forbid();
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+            var accid = AuthMan.GetAccountId(this);
+            var valid = await _AccountStore.CanRead(accid, id);
+            if (!string.IsNullOrWhiteSpace(valid))
+                return BadRequest(valid);
+            var dto = await _AccountStore.GetByIdAsync(accid, id);
+            return Ok(dto);
         }
+        #endregion
 
-
+        #region Put 更新用户信息
         /// <summary>
-        /// 
+        /// 更新用户信息
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPut]
-        [Produces(typeof(Account))]
-        public async Task<IActionResult> Put([FromBody]AccountModel value)
+        [ProducesResponseType(typeof(AccountDTO), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> Put([FromBody]AccountEditModel value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-            //
-            var refRecord = await _context.Accounts.FindAsync(value.Id);
-            var entity = value.ToEntity();
-            if (string.IsNullOrWhiteSpace(entity.Password))
-                entity.Password = refRecord.Password;//密码如果为空,维持原来密码
-            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), entity);
-            if (res == null)
-                return NotFound();
-            return Ok(res);
+            if (string.IsNullOrWhiteSpace(value.Id))
+                return BadRequest(string.Format(ValidityMessage.V_RequiredRejectMsg, "id"));
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _AccountStore._GetByIdAsync(value.Id);
+            account.Name = value.Name;
+            account.Description = value.Description;
+            account.Password = Md5.CalcString(value.Password);
+            account.Mail = value.Mail;
+            account.ActivationTime = value.ActivationTime != null ? (DateTime)value.ActivationTime : DateTime.UtcNow;
+            account.ExpireTime = value.ExpireTime != null ? (DateTime)value.ExpireTime : DateTime.Now.AddYears(10);
+            account.Location = value.Location;
+            account.Phone = value.Phone;
+            account.Mail = value.Mail;
+            account.DepartmentId = value.DepartmentId;
+            account.Modifier = accid;
+            if (account == null)
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
+            var msg = await _AccountStore.CanUpdate(accid, account);
+            if (!string.IsNullOrWhiteSpace(msg))
+                return BadRequest(msg);
+            var dto = await _AccountStore.UpdateAsync(accid, account);
+            return Ok(dto);
         }
+        #endregion
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
@@ -87,49 +123,86 @@ namespace ApiServer.Controllers
             return NotFound();//return Forbid();
         }
 
+        #region Post 新建用户
         /// <summary>
-        /// 注册新账号
+        /// 新建用户
         /// </summary>
-        /// <param name="value">新账号的基本信息</param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        [AllowAnonymous]
-        [Route("Register")]
         [HttpPost]
-        [Produces(typeof(Account))]
-        public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
+        [ProducesResponseType(typeof(Organization), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> Post([FromBody]RegisterAccountModel value)
         {
-            //if (ModelState.IsValid == false)
-            //    return BadRequest(ModelState);
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
 
-            //var accid = AuthMan.GetAccountId(this);
-            //var department = new Account();
-            //department.Name = value.Name;
-            //department.Description = value.Description;
-            //department.Creator = accid;
-            //department.OrganizationId = value.OrganizationId;
-            //department.Organization=await 
+            var accid = AuthMan.GetAccountId(this);
+            var account = new Account();
+            account.Name = value.Name;
+            account.Description = value.Description;
+            account.Password = Md5.CalcString(value.Password);
+            account.Mail = value.Mail;
+            account.Frozened = false;
+            account.ActivationTime = value.ActivationTime != null ? (DateTime)value.ActivationTime : DateTime.UtcNow;
+            account.ExpireTime = value.ExpireTime != null ? (DateTime)value.ExpireTime : DateTime.Now.AddYears(10);
+            account.Type = value.Type;
+            account.Location = value.Location;
+            account.Phone = value.Phone;
+            account.Mail = value.Mail;
+            account.Creator = accid;
+            account.Modifier = accid;
+            account.OrganizationId = value.OrganizationId;
+            account.DepartmentId = value.DepartmentId;
+            var msg = await _AccountStore.CanCreate(accid, account);
+            if (!string.IsNullOrWhiteSpace(msg))
+                return BadRequest(msg);
 
-            //var msg = await _DepartmentStore.CanCreate(accid, department);
-            //if (msg.Count > 0)
-            //    return BadRequest(msg);
-
-            //var dto = await _DepartmentStore.CreateAsync(accid, department);
-            //return Ok(dto);
-
-            //var refReor = await _context.Accounts.Where(x =>  x.Mail == value.Mail || x.Phone == value.Phone).FirstOrDefaultAsync();
-            var refReor = await _context.Accounts.FirstOrDefaultAsync(x => !string.IsNullOrWhiteSpace(value.Mail) && x.Mail == value.Mail || !string.IsNullOrWhiteSpace(value.Phone) && x.Phone == value.Phone);
-            if (refReor != null)
-                return BadRequest("账户信息已经存在,修改您的邮箱或者电话信息");
-            AccountModel account = await accountMan.Register(value);
-            repo.Context.Set<PermissionItem>().Add(Permission.NewItem(AuthMan.GetAccountId(this), account.Id, value.GetType().Name, PermissionType.All));
-            if (value.Type == AppConst.AccountType_OrganAdmin)
-                repo.Context.Set<PermissionItem>().Add(Permission.NewItem(account.Id, value.DepartmentId, "Department", PermissionType.All));
-
-            await repo.SaveChangesAsync();
-            if (account == null)
-                return BadRequest();
-            return Ok(account);
+            var dto = await _AccountStore.CreateAsync(accid, account);
+            return Ok(dto);
         }
+        #endregion
+
+
+        ///// <summary>
+        ///// 注册新账号
+        ///// </summary>
+        ///// <param name="value">新账号的基本信息</param>
+        ///// <returns></returns>
+        //[AllowAnonymous]
+        //[Route("Register")]
+        //[HttpPost]
+        //[Produces(typeof(Account))]
+        //public async Task<IActionResult> Register([FromBody]RegisterAccountModel value)
+        //{
+        //    if (ModelState.IsValid == false)
+        //        return BadRequest(ModelState);
+
+        //    var accid = AuthMan.GetAccountId(this);
+        //    var account = new Account();
+        //    account.Name = value.Name;
+        //    account.Description = value.Description;
+        //    account.Password = Md5.CalcString(value.Password);
+        //    account.Mail = value.Mail;
+        //    account.Frozened = false;
+        //    account.ActivationTime = value.ActivationTime != null ? value.ActivationTime : DateTime.UtcNow;
+        //    account.ExpireTime = value.ExpireTime != null ? value.ExpireTime : DateTime.Now.AddYears(10);
+        //    account.Type = value.Type;
+        //    account.Location = value.Location;
+        //    account.Phone = value.Phone;
+        //    account.Mail = value.Mail;
+        //    account.Creator = accid;
+        //    account.Modifier = accid;
+        //    account.OrganizationId = value.OrganizationId;
+        //    account.Organization = await _context.Organizations.FindAsync(value.OrganizationId);
+
+        //    var msg = await _AccountStore.CanCreate(accid, account);
+        //    if (msg.Count > 0)
+        //        return BadRequest(msg);
+
+        //    var dto = await _AccountStore.CreateAsync(accid, account);
+        //    return Ok(dto);
+        //}
 
         /// <summary>
         /// 重置密码

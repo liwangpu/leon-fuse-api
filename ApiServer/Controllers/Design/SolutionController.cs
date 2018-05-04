@@ -55,12 +55,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(SolutionDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _SolutionStore.CanRead(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             var data = await _SolutionStore.GetByIdAsync(accid, id);
             return Ok(data);
@@ -75,7 +75,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(Solution), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]SolutionEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -85,7 +85,7 @@ namespace ApiServer.Controllers.Design
             solution.Description = value.Description;
             var accid = AuthMan.GetAccountId(this);
             var msg = await _SolutionStore.CanCreate(accid, solution);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _SolutionStore.SaveOrUpdateAsync(accid, solution);
             return Ok(solution);
@@ -100,7 +100,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(typeof(Solution), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]SolutionEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -108,13 +108,13 @@ namespace ApiServer.Controllers.Design
             var accid = AuthMan.GetAccountId(this);
             var solution = await _SolutionStore._GetByIdAsync(value.Id);
             if (solution == null)
-                return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg );
             solution.Name = value.Name;
             solution.Name = value.Name;
             solution.Description = value.Description;
             solution.ModifiedTime = new DateTime();
             var msg = await _SolutionStore.CanUpdate(accid, solution);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _SolutionStore.SaveOrUpdateAsync(accid, solution);
             return Ok(solution);
@@ -129,12 +129,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(Nullable), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _SolutionStore.CanDelete(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             await _SolutionStore.DeleteAsync(accid, id);
             return Ok();

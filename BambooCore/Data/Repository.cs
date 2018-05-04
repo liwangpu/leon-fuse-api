@@ -58,9 +58,9 @@ namespace BambooCore
         /// <returns></returns>
         public async Task<T> GetAsync(string accid, string id)
         {
-            var ok = await CanReadAsync(accid, id);
-            if (!ok)
-                return null;
+            //var ok = await CanReadAsync(accid, id);
+            //if (!ok)
+            //    return null;
 
             return await GetDataSet(accid).FirstOrDefaultAsync(d => d.Id == id);
         }
@@ -213,9 +213,9 @@ namespace BambooCore
         /// <returns></returns>
         public async Task<T> UpdateAsync(string accid, T value)
         {
-            bool bOk = await CanUpdateAsync(accid, value.Id);
-            if (bOk == false)
-                return null;
+            //bool bOk = await CanUpdateAsync(accid, value.Id);
+            //if (bOk == false)
+            //    return null;
 
             var entity = value as IListable;
             if (entity != null)

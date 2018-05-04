@@ -16,6 +16,7 @@ namespace ApiServer.Stores
             _DbContext = context;
         }
 
+        #region AddNewNode 添加新节点
         /// <summary>
         /// 添加新节点
         /// </summary>
@@ -35,7 +36,9 @@ namespace ApiServer.Stores
                 Logger.LogError("PermissionTreeStore AddNewNode", ex);
             }
         }
+        #endregion
 
+        #region AddChildNode 添加子节点
         /// <summary>
         /// 添加子节点
         /// </summary>
@@ -66,7 +69,9 @@ namespace ApiServer.Stores
                 Logger.LogError("PermissionTreeStore AddChildNode", ex);
             }
         }
+        #endregion
 
+        #region AddSiblingNode 添加相邻节点
         /// <summary>
         /// 添加相邻节点
         /// </summary>
@@ -98,6 +103,7 @@ namespace ApiServer.Stores
             {
                 Logger.LogError("PermissionTreeStore AddSiblingNode", ex);
             }
-        }
+        } 
+        #endregion
     }
 }

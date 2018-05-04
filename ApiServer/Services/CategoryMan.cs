@@ -18,10 +18,12 @@ namespace ApiServer.Services
             dbset = context.Set<AssetCategory>();
         }
 
+
         /// <summary>
-        /// 获取所有分类，已经整理为树结构
+        ///  获取所有分类，已经整理为树结构
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="organId"></param>
         /// <returns></returns>
         public async Task<AssetCategoryDTO> GetCategoryAsync(string type, string organId)
         {

@@ -39,18 +39,18 @@ namespace ApiModel.Entities
         public Department Department { get; set; }
         public List<ClientAsset> ClientAssets { get; set; }
         public List<Product> Products { get; set; }
-        public List<Solution> Solutions { get; set; }    
-        public List<Layout> Layouts { get; set; }     
-        public List<Order> Orders { get; set; }     
-        public List<AssetFolder> Folders { get; set; }       
-        public List<FileAsset> Files { get; set; }      
+        public List<Solution> Solutions { get; set; }
+        public List<Layout> Layouts { get; set; }
+        public List<Order> Orders { get; set; }
+        public List<AssetFolder> Folders { get; set; }
+        public List<FileAsset> Files { get; set; }
         public List<AccountOpenId> OpenIds { get; set; }
 
 
         /// <summary>
         /// 权限记录，记录能访问的所有类型资源的所有权限设置。不在此列出的则无法访问。
         /// </summary>
-        
+
         public List<PermissionItem> Permissions { get; set; }
 
         public AccountDTO ToDTO()
@@ -64,7 +64,12 @@ namespace ApiModel.Entities
             dto.Location = Location;
             dto.OrganizationId = OrganizationId;
             dto.DepartmentId = DepartmentId;
-            return new AccountDTO();
+            dto.Phone = Phone;
+            dto.Frozened = Frozened;
+            dto.Type = Type;
+            dto.ExpireTime = ExpireTime;
+            dto.ActivationTime = ActivationTime;
+            return dto;
         }
     }
 
@@ -79,5 +84,10 @@ namespace ApiModel.Entities
         public string Location { get; set; }
         public string OrganizationId { get; set; }
         public string DepartmentId { get; set; }
+        public string Phone { get; set; }
+        public bool Frozened { get; set; }
+        public string Type { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
     }
 }

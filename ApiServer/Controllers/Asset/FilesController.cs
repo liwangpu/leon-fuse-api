@@ -1,5 +1,7 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Models;
 using ApiServer.Services;
+using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -19,13 +21,14 @@ namespace ApiServer.Controllers.Asset
     [Route("/[controller]")]
     public class FilesController : Controller
     {
-
+        private readonly FileAssetStore _FileAssetStore;
         private readonly Repository<FileAsset> repo;
         private IHostingEnvironment hostEnv;
         private string uploadPath;
 
         public FilesController(Data.ApiDbContext context, IHostingEnvironment env)
         {
+            _FileAssetStore = new FileAssetStore(context);
             repo = new Repository<FileAsset>(context);
             hostEnv = env;
 
@@ -90,18 +93,44 @@ namespace ApiServer.Controllers.Asset
             return CreatedAtAction("Get", value);
         }
 
+        #region Put 更新资源文件信息
+        /// <summary>
+        /// 更新资源文件信息
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpPut]
         [Produces(typeof(FileAsset))]
-        public async Task<IActionResult> Put([FromBody]FileAsset value)
+        public async Task<IActionResult> Put([FromBody]FileAssetModel value)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
-
-            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
-            if (res == null)
-                return NotFound();
-            return Ok(value);
-        }
+            if (string.IsNullOrWhiteSpace(value.Id))
+                return BadRequest(string.Format(ValidityMessage.V_RequiredRejectMsg, "id"));
+            var accid = AuthMan.GetAccountId(this);
+            var asset = await _FileAssetStore._GetByIdAsync(value.Id);
+            asset.Id = value.Id;
+            asset.Name = value.Name;
+            asset.Icon = value.Icon;
+            asset.Description = value.Description;
+            asset.Url = value.Url;
+            asset.Md5 = value.Md5;
+            asset.Size = value.Size;
+            asset.FileExt = value.FileExt;
+            asset.LocalPath = value.LocalPath;
+            asset.UploadTime = value.UploadTime;
+            asset.FolderId = value.FolderId;
+            asset.CategoryId = value.CategoryId;
+            asset.AccountId = value.AccountId;
+            if (asset == null)
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
+            var msg = await _FileAssetStore.CanUpdate(accid, asset);
+            if (!string.IsNullOrWhiteSpace(msg))
+                return BadRequest(msg);
+            var dto = await _FileAssetStore.UpdateAsync(accid, asset);
+            return Ok(dto);
+        } 
+        #endregion
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)

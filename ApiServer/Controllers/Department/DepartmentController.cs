@@ -45,7 +45,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(DepartmentDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]DepartmentEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -61,7 +61,7 @@ namespace ApiServer.Controllers
             department.OrganizationId = value.OrganizationId;
 
             var msg = await _DepartmentStore.CanCreate(accid, department);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
 
             var dto = await _DepartmentStore.CreateAsync(accid, department);
@@ -77,7 +77,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(typeof(DepartmentDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]DepartmentEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -91,13 +91,13 @@ namespace ApiServer.Controllers
             department.Modifier = accid;
 
             if (department == null)
-                return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
             var msg = await _DepartmentStore.CanUpdate(accid, department);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             var dto = await _DepartmentStore.UpdateAsync(accid, department);
             return Ok(dto);
-        } 
+        }
         #endregion
 
         [HttpDelete("{id}")]
@@ -112,14 +112,15 @@ namespace ApiServer.Controllers
 
         [Route("ByOrgan")]
         [HttpGet]
-        [Produces(typeof(Department))]
+        [ProducesResponseType(typeof(List<DepartmentDTO>), 200)]
         public async Task<IActionResult> GetByOrgan(string organId)
         {
-            var res = await repo.GetDataSet(AuthMan.GetAccountId(this)).Where(x => x.OrganizationId == organId).ToListAsync();
-            if (res == null)
-                return NotFound();
-            return Ok(res);
+            var dtos = await _DepartmentStore.GetByOrgan(organId);
+            return Ok(dtos);
         }
+
+
+
 
 
     }

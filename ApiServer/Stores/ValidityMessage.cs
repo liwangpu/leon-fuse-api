@@ -2,6 +2,7 @@
 {
     public class ValidityMessage
     {
+        public static string V_NoPermissionReadMsg = "对不起,您没有权限读取该条记录";
         public static string V_NoPermissionMsg = "对不起,您没有权限操作该条记录";
         public static string V_SubmitDataMsg = "对不起,提交数据不能为空";
         public static string V_NotDataOrPermissionMsg = "对不起,操作记录不存在或您没有权限进行该操作";

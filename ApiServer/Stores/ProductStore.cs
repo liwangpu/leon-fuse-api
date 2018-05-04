@@ -3,7 +3,6 @@ using ApiServer.Data;
 using BambooCommon;
 using BambooCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -24,7 +23,43 @@ namespace ApiServer.Stores
         }
         #endregion
 
+        /**************** protected methods ****************/
+
+
+
         /**************** public methods ****************/
+
+        #region SimplePagedQueryAsync 简单返回分页查询DTO信息
+        /// <summary>
+        /// 简单返回分页查询DTO信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="searchExpression"></param>
+        /// <returns></returns>
+        public async Task<PagedData<ProductDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Product, bool>> searchExpression)
+        {
+            try
+            {
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Products
+                            select it;
+                _SearchExpressionPipe(ref query, searchExpression);
+                _BasicPermissionPipe(ref query, currentAcc);
+                var result = await query.SimplePaging(page, pageSize);
+                if (result.Total > 0)
+                    return new PagedData<ProductDTO>() { Data = result.Data.Select(x => x.ToDTO()), Total = result.Total, Page = page, Size = pageSize };
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("ProductStore SimplePagedQueryAsync", ex);
+            }
+            return new PagedData<ProductDTO>();
+        } 
+        #endregion
 
         #region CanCreate 判断产品信息是否符合存储规范
         /// <summary>
@@ -33,16 +68,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanCreate(string accid, Product data)
+        public async Task<string> CanCreate(string accid, Product data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
-            return errors;
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50);
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -53,16 +87,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanUpdate(string accid, Product data)
+        public async Task<string> CanUpdate(string accid, Product data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
-            return errors;
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50);
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -73,13 +106,12 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanDelete(string accid, string id)
+        public async Task<string> CanDelete(string accid, string id)
         {
-            var errors = new List<string>();
             var valid = _CanDelete(accid, id);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -90,38 +122,9 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanRead(string accid, string id)
+        public async Task<string> CanRead(string accid, string id)
         {
-            var errors = new List<string>();
-            return errors;
-        }
-        #endregion
-
-        #region SimpleQueryAsync 简单返回分页查询DTO信息
-        /// <summary>
-        /// 简单返回分页查询DTO信息
-        /// </summary>
-        /// <param name="accid"></param>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="desc"></param>
-        /// <param name="searchPredicate"></param>
-        /// <returns></returns>
-        public async Task<PagedData<ProductDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Product, bool>> searchPredicate)
-        {
-            var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
-            var datas = pagedData.Data.ToList();
-            if (pagedData.Data != null && pagedData.Data.Count() > 0)
-            {
-                for (int idx = datas.Count - 1; idx >= 0; idx--)
-                {
-                    var icon = datas[idx].Icon;
-                    if (!string.IsNullOrWhiteSpace(icon))
-                        datas[idx].IconFileAsset = await _FileAssetStore._GetByIdAsync(icon);
-                }
-            }
-            return new PagedData<ProductDTO>() { Data = datas.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 

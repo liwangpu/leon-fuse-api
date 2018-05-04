@@ -1,13 +1,14 @@
 ﻿using ApiModel;
+using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Services;
+using BambooCommon;
 using BambooCore;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Linq;
-using BambooCommon;
 
 namespace ApiServer.Stores
 {
@@ -19,22 +20,95 @@ namespace ApiServer.Stores
     /// StoreBase应该是权限无关的,它只做简单操作,如果需要对权限做操作,请在派生类里面实现
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
     public class StoreBase<T>
          where T : class, IEntity, ApiModel.ICloneable, new()
     {
-        protected readonly Repository1<T> _Repo;
         protected readonly ApiDbContext _DbContext;
-
+        protected readonly Repository1<T> _Repo;
         #region 构造函数
         public StoreBase(ApiDbContext context)
         {
-            _Repo = new Repository1<T>(context);
             _DbContext = context;
+            //TODO:删除_Repo
+            _Repo = new Repository1<T>(context);
         }
         #endregion
 
         /**************** protected method ****************/
+
+        #region _BasicPermissionPipe 基本的权限树数据过滤管道
+        /// <summary>
+        /// 基本的权限树数据过滤管道
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        /// <returns></returns>
+        protected void _BasicPermissionPipe<T>(ref IQueryable<T> query, Account currentAcc)
+            where T : IPermission
+        {
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            {
+
+            }
+            else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+            {
+                var treeQ = from ps in _DbContext.PermissionTrees
+                            where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
+                            select ps;
+                query = from it in query
+                        join ps in treeQ on it.Creator equals ps.ObjId
+                        select it;
+            }
+            else if (currentAcc.Type == AppConst.AccountType_OrganMember)
+            {
+                query = from it in query
+                        where it.Creator == currentAcc.Id
+                        select it;
+            }
+            else
+            {
+                query = from it in query
+                        where it.Creator == currentAcc.Id
+                        select it;
+            }
+        }
+        #endregion
+
+        #region 基本查询数据过滤管道 _SearchExpressionPipe
+        /// <summary>
+        /// 基本查询数据过滤管道
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="searchExpression"></param>
+        /// <returns></returns>
+        protected void _SearchExpressionPipe<T>(ref IQueryable<T> query, Expression<Func<T, bool>> searchExpression)
+        {
+            if (searchExpression != null)
+            {
+                query = query.Where(searchExpression);
+            }
+        }
+        #endregion
+
+
+        protected async Task<PagedData<T>> _SimplePagedQueryAsync1(IQueryable<T> query, int page, int pageSize)
+        {
+            try
+            {
+                if (page < 1)
+                    page = 1;
+                if (pageSize < 1)
+                    pageSize = SiteConfig.Instance.Json.DefaultPageSize;
+                return await query.SimplePaging(page, pageSize);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("_SimplePagedQueryAsync", ex);
+            }
+            return new PagedData<T>();
+        }
 
         #region _SimplePagedQueryAsync 根据查询参数获取数据信息
         /// <summary>
@@ -72,16 +146,14 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected List<string> _CanSave(string accid, T data)
+        protected string _CanSave(string accid, T data)
         {
-            var errors = new List<string>();
             //为空验证
             if (data == null)
             {
-                errors.Add(ValidityMessage.V_SubmitDataMsg);
-                return errors;
+                return ValidityMessage.V_SubmitDataMsg;
             }
-            return errors;
+            return string.Empty;
         }
         #endregion
 
@@ -92,16 +164,14 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        protected List<string> _CanDelete(string accid, string id)
+        protected string _CanDelete(string accid, string id)
         {
-            var errors = new List<string>();
             //为空验证
             if (id == null)
             {
-                errors.Add(ValidityMessage.V_NotDataOrPermissionMsg);
-                return errors;
+                return ValidityMessage.V_NotDataOrPermissionMsg;
             }
-            return errors;
+            return string.Empty;
         }
         #endregion
 
@@ -170,4 +240,13 @@ namespace ApiServer.Stores
         }
         #endregion
     }
+
+    //public static class StoreBaseDataPipeExtension
+    //{
+    //    public static IQueryable<T> TreeLimitedPipe<T>(this IQueryable<T> src)
+    //        where T : class, IPermission
+    //    {
+
+    //    }
+    //}
 }

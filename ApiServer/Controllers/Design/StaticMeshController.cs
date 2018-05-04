@@ -54,12 +54,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(StaticMeshDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _StaticMeshStore.CanRead(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             var data = await _StaticMeshStore.GetByIdAsync(id);
             return Ok(data);
@@ -74,7 +74,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(StaticMeshDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]StaticMeshEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -86,7 +86,7 @@ namespace ApiServer.Controllers.Design
             entity.Icon = value.Icon;
             var accid = AuthMan.GetAccountId(this);
             var msg = await _StaticMeshStore.CanCreate(accid, entity);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _StaticMeshStore.SaveOrUpdateAsync(accid, entity);
             return Ok(entity.ToDTO());
@@ -101,7 +101,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(typeof(StaticMeshDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]StaticMeshEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -109,13 +109,13 @@ namespace ApiServer.Controllers.Design
             var accid = AuthMan.GetAccountId(this);
             var mesh = await _StaticMeshStore._GetByIdAsync(value.Id);
             if (mesh == null)
-                return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg );
             mesh.Name = value.Name;
             mesh.Name = value.Name;
             mesh.Description = value.Description;
             mesh.ModifiedTime = new DateTime();
             var msg = await _StaticMeshStore.CanUpdate(accid, mesh);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _StaticMeshStore.SaveOrUpdateAsync(accid, mesh);
             return Ok(mesh.ToDTO());
@@ -130,12 +130,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(Nullable), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _StaticMeshStore.CanDelete(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             await _StaticMeshStore.DeleteAsync(accid, id);
             return Ok();

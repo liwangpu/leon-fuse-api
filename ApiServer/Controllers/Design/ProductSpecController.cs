@@ -34,12 +34,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductSpecStore.CanRead(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             var data = await _ProductSpecStore.GetByIdAsync(accid, id);
             return Ok(data);
@@ -54,7 +54,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(ProductSpec), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]ProductSpecEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -66,7 +66,7 @@ namespace ApiServer.Controllers.Design
             spec.Price = value.Price;
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductSpecStore.CanCreate(accid, spec);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
             return Ok(spec);
@@ -81,7 +81,7 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(typeof(ProductSpec), 200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]ProductSpecEditModel value)
         {
             if (ModelState.IsValid == false)
@@ -89,13 +89,13 @@ namespace ApiServer.Controllers.Design
             var accid = AuthMan.GetAccountId(this);
             var spec = await _ProductSpecStore._GetByIdAsync(value.Id);
             if (spec == null)
-                return BadRequest(new List<string>() { ValidityMessage.V_NotDataOrPermissionMsg });
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg );
             spec.Name = value.Name;
             spec.Description = value.Description;
             spec.ModifiedTime = DateTime.Now;
             spec.Price = value.Price;
             var msg = await _ProductSpecStore.CanUpdate(accid, spec);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);
             await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
             return Ok(spec);
@@ -110,12 +110,12 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(Nullable), 200)]
-        [ProducesResponseType(typeof(List<string>), 404)]
+        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var msg = await _ProductSpecStore.CanDelete(accid, id);
-            if (msg.Count > 0)
+            if (!string.IsNullOrWhiteSpace(msg))
                 return NotFound(msg);
             await _ProductSpecStore.DeleteAsync(accid, id);
             return Ok();

@@ -31,19 +31,18 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanCreate(string accid, Department data)
+        public async Task<string> CanCreate(string accid, Department data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "部门名称", 50));
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "部门名称", 50);
             if (string.IsNullOrWhiteSpace(data.OrganizationId) || data.OrganizationId.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_RequiredRejectMsg, "组织编号"));
+                return string.Format(ValidityMessage.V_RequiredRejectMsg, "组织编号");
 
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -54,16 +53,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanUpdate(string accid, Department data)
+        public async Task<string> CanUpdate(string accid, Department data)
         {
-            var errors = new List<string>();
             var valid = _CanSave(accid, data);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                errors.Add(string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50));
-            return errors;
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50);
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -74,13 +72,12 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanDelete(string accid, string id)
+        public async Task<string> CanDelete(string accid, string id)
         {
-            var errors = new List<string>();
             var valid = _CanDelete(accid, id);
-            if (valid.Count > 0)
+            if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -91,16 +88,15 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<string>> CanRead(string accid, string id)
+        public async Task<string> CanRead(string accid, string id)
         {
-            var errors = new List<string>();
-            return errors;
+            return await Task.FromResult(string.Empty);
         }
         #endregion
 
-        #region CreateAsync 新建组织信息
+        #region CreateAsync 新建部门信息
         /// <summary>
-        /// 新建组织信息
+        /// 新建部门信息
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
@@ -150,9 +146,9 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region UpdateAsync 更新组织信息
+        #region UpdateAsync 更新部门信息
         /// <summary>
-        /// 更新组织信息
+        /// 更新部门信息
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
@@ -171,6 +167,24 @@ namespace ApiServer.Stores
             }
             return new DepartmentDTO();
         }
+        #endregion
+
+        #region GetByOrgan 根据组织id获取部门信息
+        /// <summary>
+        /// 根据组织id获取部门信息
+        /// </summary>
+        /// <param name="organId"></param>
+        /// <returns></returns>
+        public async Task<List<DepartmentDTO>> GetByOrgan(string organId)
+        {
+            var treeQ = from ps in _DbContext.PermissionTrees
+                        where ps.OrganizationId == organId && ps.NodeType == AppConst.S_NodeType_Department
+                        select ps;
+            var query = from it in _DbContext.Departments
+                        join ps in treeQ on it.Id equals ps.ObjId
+                        select it;
+            return await query.Select(x => x.ToDTO()).ToListAsync();
+        } 
         #endregion
     }
 }
