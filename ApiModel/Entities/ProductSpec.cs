@@ -4,13 +4,27 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
+    /// <summary>
+    /// 产品规格信息
+    /// </summary>
     public class ProductSpec : EntityBase, IListable, IDTOTransfer<ProductSpecDTO>
     {
+        /// <summary>
+        /// 描述
+        /// </summary>
         public string Description { get; set; }
+        /// <summary>
+        /// 图标
+        /// </summary>
         public string Icon { get; set; }
+        /// <summary>
+        /// 贴图ids(逗号分隔的FileAssetId)
+        /// </summary>
         public string CharletIds { get; set; }
+        /// <summary>
+        /// 模型材质依赖信息(格式为SpecMeshMap,请看下文)
+        /// </summary>
         public string StaticMeshIds { get; set; }
-
         /// <summary>
         /// 价格，单位为元
         /// </summary>
@@ -26,6 +40,7 @@ namespace ApiModel.Entities
         public string ProductId { get; set; }
         public Product Product { get; set; }
 
+        /**************** DTO专用容器 ****************/
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
         [NotMapped]
@@ -64,6 +79,9 @@ namespace ApiModel.Entities
         }
     }
 
+    /// <summary>
+    /// 产品规格信息DTO
+    /// </summary>
     public class ProductSpecDTO : IData
     {
         public string Id { get; set; }
@@ -78,5 +96,37 @@ namespace ApiModel.Entities
         public FileAssetDTO IconAsset { get; set; }
         public List<StaticMeshDTO> StaticMeshes { get; set; }
         public List<FileAssetDTO> Charlets { get; set; }
+    }
+
+    /// <summary>
+    /// 产品规格-模型和材质文件依赖,对应ProductSpec.StaticMeshIds(仅用来序列化反序列化字符串信息,非数据持久类)
+    /// </summary>
+    public class SpecMeshMap
+    {
+        public SpecMeshMap()
+        {
+            Items = new List<SpecMeshMapItem>();
+        }
+        public List<SpecMeshMapItem> Items { get; set; }
+    }
+
+    /// <summary>
+    /// 产品规格-模型和材质文件依赖信息(仅用来序列化反序列化字符串信息,非数据持久类)
+    /// </summary>
+    public class SpecMeshMapItem
+    {
+        public SpecMeshMapItem()
+        {
+            MaterialIds = new List<string>();
+        }
+
+        /// <summary>
+        /// 模型文件id
+        /// </summary>
+        public string StaticMeshId { get; set; }
+        /// <summary>
+        /// 所依赖材质文件Ids
+        /// </summary>
+        public List<string> MaterialIds { get; set; }
     }
 }

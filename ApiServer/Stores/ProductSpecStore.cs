@@ -164,11 +164,10 @@ namespace ApiServer.Stores
                 }
                 if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
                 {
-                    var meshIds = res.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
-                    for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                    var map = JsonConvert.DeserializeObject<SpecMeshMap>(res.StaticMeshIds);
+                    for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                     {
-                        var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
-                        var refMesh = await _StaticMeshStore._GetByIdAsync(kv.Key);
+                        var refMesh = await _StaticMeshStore._GetByIdAsync(map.Items[idx].StaticMeshId);
                         if (refMesh != null)
                         {
                             var tmp = await _FileAssetStore._GetByIdAsync(refMesh.FileAssetId);
@@ -176,9 +175,9 @@ namespace ApiServer.Stores
                                 refMesh.FileAsset = tmp;
                         }
 
-                        if (!string.IsNullOrWhiteSpace(kv.Value))
+                        if (map.Items[idx].MaterialIds != null && map.Items[idx].MaterialIds.Count > 0)
                         {
-                            var matids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                            var matids = map.Items[idx].MaterialIds;
                             foreach (var item in matids)
                             {
                                 var refMat = await _MaterialStore._GetByIdAsync(item);

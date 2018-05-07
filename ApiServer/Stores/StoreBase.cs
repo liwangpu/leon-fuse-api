@@ -237,6 +237,26 @@ namespace ApiServer.Stores
 
         /**************** public method ****************/
 
+        #region _GetById 根据id信息返回实体数据信息
+        /// <summary>
+        /// 根据id信息返回实体数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public T _GetById(string id)
+        {
+            try
+            {
+                return _DbContext.Set<T>().Find(id);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("_GetById", ex);
+            }
+            return null;
+        }
+        #endregion
+
         #region _GetByIdAsync 根据id信息返回实体数据信息
         /// <summary>
         /// 根据id信息返回实体数据信息
@@ -268,8 +288,29 @@ namespace ApiServer.Stores
             try
             {
                 if (!data.IsPersistence())
-                    await _DbContext.Set<T>().AddAsync(data);
+                    _DbContext.Set<T>().Add(data);
                 await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("_SaveOrUpdateAsync", ex);
+            }
+        }
+        #endregion
+
+        #region _SaveOrUpdate 更新或者保存实体数据信息
+        /// <summary>
+        /// 更新或者保存实体数据信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public void _SaveOrUpdate(T data)
+        {
+            try
+            {
+                if (!data.IsPersistence())
+                    _DbContext.Set<T>().Add(data);
+                _DbContext.SaveChanges();
             }
             catch (Exception ex)
             {

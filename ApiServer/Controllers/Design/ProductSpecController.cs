@@ -89,7 +89,7 @@ namespace ApiServer.Controllers.Design
             var accid = AuthMan.GetAccountId(this);
             var spec = await _ProductSpecStore._GetByIdAsync(value.Id);
             if (spec == null)
-                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg );
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
             spec.Name = value.Name;
             spec.Description = value.Description;
             spec.ModifiedTime = DateTime.Now;
@@ -141,10 +141,15 @@ namespace ApiServer.Controllers.Design
             var spec = await _ProductSpecStore._GetByIdAsync(mesh.ProductSpecId);
             if (spec != null)
             {
-                //ids是一个KeyValuePair<string,string>的信息,key为static mesh id,value为mesh依赖的material ids(逗号分隔)
-                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
-                meshIds.Add(JsonConvert.SerializeObject(new KeyValuePair<string, string>(mesh.AssetId, "")));
-                spec.StaticMeshIds = string.Join("|", meshIds);
+                var map = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds);
+                var exist = map.Items.Where(x => x.StaticMeshId == mesh.AssetId).Count() > 0;
+                if (!exist)
+                {
+                    var item = new SpecMeshMapItem();
+                    item.StaticMeshId = mesh.AssetId;
+                    map.Items.Add(item);
+                }
+                spec.StaticMeshIds = JsonConvert.SerializeObject(map);
                 await _ProductSpecStore._SaveOrUpdateAsync(spec);
                 return Ok(mesh);
             }
@@ -171,14 +176,13 @@ namespace ApiServer.Controllers.Design
             var spec = await _ProductSpecStore._GetByIdAsync(mesh.ProductSpecId);
             if (spec != null)
             {
-                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                var map = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds);
+                for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                 {
-                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
-                    if (kv.Key == mesh.AssetId)
-                        meshIds.RemoveAt(idx);
+                    if (map.Items[idx].StaticMeshId == mesh.AssetId)
+                        map.Items.RemoveAt(idx);
                 }
-                spec.StaticMeshIds = string.Join("|", meshIds);
+                spec.StaticMeshIds = JsonConvert.SerializeObject(map);
                 await _ProductSpecStore._SaveOrUpdateAsync(spec);
                 return Ok(mesh);
             }
@@ -186,7 +190,7 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
-        #region UploadMaterial 上传材质文件信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
+        #region UploadMaterial 上传材质文件信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)不用异步,因为多文件上传异步出先同时进行造成信息丢失
         /// <summary>
         /// 上传材质文件信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
         /// </summary>
@@ -196,28 +200,27 @@ namespace ApiServer.Controllers.Design
         [HttpPut]
         [ProducesResponseType(typeof(SpecMaterialUploadModel), 200)]
         [ProducesResponseType(typeof(List<string>), 404)]
-        public async Task<IActionResult> UploadMaterial([FromBody]SpecMaterialUploadModel material)
+        public IActionResult UploadMaterial([FromBody]SpecMaterialUploadModel material)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(material.ProductSpecId);
+            var spec = _ProductSpecStore._GetById(material.ProductSpecId);
             if (spec != null)
             {
-                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                var map = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds);
+                for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                 {
-                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
-                    if (kv.Key == material.StaticMeshId)
+                    if (map.Items[idx].StaticMeshId == material.StaticMeshId)
                     {
-                        var metids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var metids = map.Items[idx].MaterialIds == null ? new List<string>() : map.Items[idx].MaterialIds;
                         metids.Add(material.AssetId);
-                        meshIds[idx] = JsonConvert.SerializeObject(new KeyValuePair<string, string>(kv.Key, string.Join(",", metids)));
+                        map.Items[idx].MaterialIds = metids;
                     }
                 }
-                spec.StaticMeshIds = string.Join("|", meshIds);
-                await _ProductSpecStore._SaveOrUpdateAsync(spec);
+                spec.StaticMeshIds = JsonConvert.SerializeObject(map);
+                _ProductSpecStore._SaveOrUpdate(spec);
                 return Ok(material);
             }
             return NotFound();
@@ -243,22 +246,21 @@ namespace ApiServer.Controllers.Design
             var spec = await _ProductSpecStore._GetByIdAsync(material.ProductSpecId);
             if (spec != null)
             {
-                var meshIds = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new List<string>() : spec.StaticMeshIds.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = meshIds.Count - 1; idx >= 0; idx--)
+                var map = string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds);
+                for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                 {
-                    var kv = JsonConvert.DeserializeObject<KeyValuePair<string, string>>(meshIds[idx]);
-                    if (kv.Key == material.StaticMeshId)
+                    if (map.Items[idx].StaticMeshId == material.StaticMeshId)
                     {
-                        var metids = string.IsNullOrWhiteSpace(kv.Value) ? new List<string>() : kv.Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var metids = map.Items[idx].MaterialIds;
                         for (int ndx = metids.Count - 1; ndx >= 0; ndx--)
                         {
                             if (metids[ndx] == material.AssetId)
                                 metids.RemoveAt(ndx);
                         }
-                        meshIds[idx] = JsonConvert.SerializeObject(new KeyValuePair<string, string>(kv.Key, string.Join(",", metids)));
+                        map.Items[idx].MaterialIds = metids;
                     }
                 }
-                spec.StaticMeshIds = string.Join("|", meshIds);
+                spec.StaticMeshIds = JsonConvert.SerializeObject(map);
                 await _ProductSpecStore._SaveOrUpdateAsync(spec);
                 return Ok(material);
             }
@@ -303,19 +305,19 @@ namespace ApiServer.Controllers.Design
         [HttpPut]
         [ProducesResponseType(typeof(IconModel), 200)]
         [ProducesResponseType(typeof(List<string>), 404)]
-        public async Task<IActionResult> UploadChartlet([FromBody]IconModel icon)
+        public IActionResult UploadChartlet([FromBody]IconModel icon)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
             var accid = AuthMan.GetAccountId(this);
-            var spec = await _ProductSpecStore._GetByIdAsync(icon.ObjId);
+            var spec =  _ProductSpecStore._GetById(icon.ObjId);
             if (spec != null)
             {
                 var chartletIds = string.IsNullOrWhiteSpace(spec.CharletIds) ? new List<string>() : spec.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                 chartletIds.Add(icon.AssetId);
                 spec.CharletIds = string.Join(",", chartletIds);
-                await _ProductSpecStore._SaveOrUpdateAsync(spec);
+                 _ProductSpecStore._SaveOrUpdate(spec);
                 return Ok(spec);
             }
             return NotFound();
