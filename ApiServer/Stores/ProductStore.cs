@@ -11,7 +11,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// Product Store
     /// </summary>
-    public class ProductStore : StoreBase<Product>, IStore<Product>
+    public class ProductStore : PermissionStore<Product>, IStore<Product>
     {
         private readonly FileAssetStore _FileAssetStore;
 

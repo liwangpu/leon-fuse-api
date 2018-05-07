@@ -12,7 +12,7 @@ namespace BambooCore
     /// 通用的Entity存储仓库，提供常规的增删改查逻辑
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Repository1<T> where T : class, IEntity, ApiModel.ICloneable, new()
+    public class Repository1<T> where T : class, IEntity, new()
     {
         private readonly DbContext context;
         private static long nextNewNameId = 0;
@@ -112,31 +112,6 @@ namespace BambooCore
             return count;
         }
 
-        /// <summary>
-        /// 批量创建
-        /// </summary>
-        /// <param name="count">创建对象的数量</param>
-        /// <param name="template">模板对象</param>
-        /// <returns></returns>
-        public async Task<int> BatchCreateAsync(string accid, int count, T template)
-        {
-            var set = context.Set<T>();
-            if (template == null)
-                template = new T();
-
-            string type = typeof(T).Name;
-            var pset = context.Set<PermissionItem>();
-            for (int i = 0; i < count; i++)
-            {
-                var t = template.Clone() as T;
-                t.Id = GuidGen.NewGUID();
-                set.Add(t);
-
-                pset.Add(Permission.NewItem(accid, t.Id, type, PermissionType.All));
-            }
-            await SaveChangesAsync();
-            return count;
-        }
 
         /// <summary>
         /// 判断用户是否能更新指定资源
