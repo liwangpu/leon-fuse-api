@@ -7,6 +7,7 @@ using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 
@@ -41,7 +42,10 @@ namespace ApiServer.Controllers
         public async Task<PagedData<OrganizationDTO>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             var accid = AuthMan.GetAccountId(this);
-            return await _OrganizationStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+            if (string.IsNullOrEmpty(search))
+                return await _OrganizationStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc);
+            else
+                return await _OrganizationStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
         }
         #endregion
 
@@ -151,7 +155,7 @@ namespace ApiServer.Controllers
                 return BadRequest(valid);
             var dto = await _OrganizationStore.GetOrganOwner(organId);
             return Ok(dto);
-        } 
+        }
         #endregion
 
 

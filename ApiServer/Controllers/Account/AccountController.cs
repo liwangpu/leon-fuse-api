@@ -50,7 +50,7 @@ namespace ApiServer.Controllers
         public async Task<PagedData<AccountDTO>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             var accid = AuthMan.GetAccountId(this);
-            return await _AccountStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+            return await _AccountStore.GetAccountByDepartmentAsync(accid, page, pageSize, orderBy, desc, search);
         }
         #endregion
 
@@ -95,7 +95,8 @@ namespace ApiServer.Controllers
             var account = await _AccountStore._GetByIdAsync(value.Id);
             account.Name = value.Name;
             account.Description = value.Description;
-            account.Password = Md5.CalcString(value.Password);
+            if (!string.IsNullOrWhiteSpace(value.Password))
+                account.Password = Md5.CalcString(value.Password);
             account.Mail = value.Mail;
             account.ActivationTime = value.ActivationTime != null ? (DateTime)value.ActivationTime : DateTime.UtcNow;
             account.ExpireTime = value.ExpireTime != null ? (DateTime)value.ExpireTime : DateTime.Now.AddYears(10);

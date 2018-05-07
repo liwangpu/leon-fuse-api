@@ -47,6 +47,7 @@ namespace ApiServer.Stores
                 var currentAcc = await _DbContext.Accounts.FindAsync(accid);
                 var query = from it in _DbContext.Products
                             select it;
+                _OrderByPipe(ref query, orderBy, desc);
                 _SearchExpressionPipe(ref query, searchExpression);
                 _BasicPermissionPipe(ref query, currentAcc);
                 var result = await query.SimplePaging(page, pageSize);
@@ -58,7 +59,7 @@ namespace ApiServer.Stores
                 Logger.LogError("ProductStore SimplePagedQueryAsync", ex);
             }
             return new PagedData<ProductDTO>();
-        } 
+        }
         #endregion
 
         #region CanCreate 判断产品信息是否符合存储规范

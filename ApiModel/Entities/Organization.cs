@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -63,7 +64,8 @@ namespace ApiModel.Entities
             dto.Icon = Icon;
             dto.Mail = Mail;
             dto.Location = Location;
-
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
             return dto;
         }
     }
@@ -80,5 +82,7 @@ namespace ApiModel.Entities
         public string Location { get; set; }
         public string ParentId { get; set; }
         public string OwnerId { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
     }
 }

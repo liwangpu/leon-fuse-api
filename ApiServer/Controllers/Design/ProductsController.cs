@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Controllers.Common;
 using ApiServer.Data;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -16,7 +17,7 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductsController : Controller
+    public class ProductsController : ListableController
     {
         private readonly ProductStore _ProductStore;
 
@@ -80,10 +81,14 @@ namespace ApiServer.Controllers.Design
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
+            var accid = AuthMan.GetAccountId(this);
             var product = new Product();
             product.Name = value.Name;
             product.Description = value.Description;
-            var accid = AuthMan.GetAccountId(this);
+            product.Creator = accid;
+            product.Modifier = accid;
+
+
             var msg = await _ProductStore.CanCreate(accid, product);
             if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);

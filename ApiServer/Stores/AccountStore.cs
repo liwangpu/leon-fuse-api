@@ -26,13 +26,13 @@ namespace ApiServer.Stores
 
         /**************** protected method ****************/
 
-        #region _OrganPermissionPipe _AccountPermissionPipe
+        #region AccountPermissionPipe 查询用户权限过滤
         /// <summary>
         /// 查询用户权限过滤
         /// </summary>
         /// <param name="query"></param>
         /// <param name="currentAcc"></param>
-        protected void _AccountPermissionPipe(ref IQueryable<Account> query, Account currentAcc)
+        protected void AccountPermissionPipe(ref IQueryable<Account> query, Account currentAcc)
         {
             if (currentAcc.Type == AppConst.AccountType_SysAdmin)
             {
@@ -59,7 +59,61 @@ namespace ApiServer.Stores
         }
         #endregion
 
+        #region DepartmentFilterPipe 部门用户过滤
+        /// <summary>
+        /// 部门用户过滤
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="depNode"></param>
+        protected void DepartmentFilterPipe(ref IQueryable<Account> query, PermissionTree depNode)
+        {
+            if (depNode != null)
+            {
+                var userQ = from ps in _DbContext.PermissionTrees
+                            where ps.OrganizationId == depNode.OrganizationId && ps.LValue > depNode.LValue && ps.RValue < depNode.RValue
+                            select ps;
+                query = from it in query
+                        join us in userQ on it.Id equals us.ObjId
+                        select it;
+            }
+        }
+        #endregion
+
         /**************** public method ****************/
+
+        #region GetAccountByDepartmentAsync 根据部门获取用户DTO信息
+        /// <summary>
+        /// 根据部门获取用户DTO信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="departmentId"></param>
+        /// <returns></returns>
+        public async Task<PagedData<AccountDTO>> GetAccountByDepartmentAsync(string accid, int page, int pageSize, string orderBy, bool desc, string departmentId)
+        {
+            try
+            {
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var currentDep = await _DbContext.PermissionTrees.Where(x => x.ObjId == departmentId).FirstOrDefaultAsync();
+                var query = from it in _DbContext.Accounts
+                            select it;
+                _OrderByPipe(ref query, orderBy, desc);
+                DepartmentFilterPipe(ref query, currentDep);
+                AccountPermissionPipe(ref query, currentAcc);
+                var result = await query.SimplePaging(0, 99999);
+                if (result.Total > 0)
+                    return new PagedData<AccountDTO>() { Data = result.Data.Select(x => x.ToDTO()), Total = result.Total, Page = page, Size = pageSize };
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("AccountStore SimplePagedQueryAsync", ex);
+            }
+            return new PagedData<AccountDTO>();
+        }
+        #endregion
 
         #region SimplePagedQueryAsync 简单返回分页查询DTO信息
         /// <summary>
@@ -72,15 +126,16 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchExpression"></param>
         /// <returns></returns>
-        public async Task<PagedData<AccountDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Account, bool>> searchExpression)
+        public async Task<PagedData<AccountDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Account, bool>> searchExpression = null)
         {
             try
             {
                 var currentAcc = await _DbContext.Accounts.FindAsync(accid);
                 var query = from it in _DbContext.Accounts
                             select it;
-                //_SearchExpressionPipe(ref query, searchExpression);
-                _AccountPermissionPipe(ref query, currentAcc);
+                _SearchExpressionPipe(ref query, searchExpression);
+                _OrderByPipe(ref query, orderBy, desc);
+                AccountPermissionPipe(ref query, currentAcc);
                 var result = await query.SimplePaging(page, pageSize);
                 if (result.Total > 0)
                     return new PagedData<AccountDTO>() { Data = result.Data.Select(x => x.ToDTO()), Total = result.Total, Page = page, Size = pageSize };

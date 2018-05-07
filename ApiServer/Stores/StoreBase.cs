@@ -2,14 +2,13 @@
 using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiServer.Data;
-using ApiServer.Services;
 using BambooCommon;
 using BambooCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-
+#pragma warning disable CS0693
 namespace ApiServer.Stores
 {
     /// <summary>
@@ -18,6 +17,8 @@ namespace ApiServer.Stores
     /// StoreBase是DTO无关的,返回的信息只是最原始的实体数据信息
     /// 如果需要返回DTO数据,请在派生Store类里面实现
     /// StoreBase应该是权限无关的,它只做简单操作,如果需要对权限做操作,请在派生类里面实现
+    /// 考虑到大部分资源都是权限相关的,所以在此基类中加入的权限相关的_SimplePagedQueryWithPermissionAsync方法
+    /// 另外还有一个权限无关的_SimplePagedQueryWithoutPermissionAsync分页查询
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class StoreBase<T>
@@ -25,11 +26,12 @@ namespace ApiServer.Stores
     {
         protected readonly ApiDbContext _DbContext;
         protected readonly Repository1<T> _Repo;
+
         #region 构造函数
         public StoreBase(ApiDbContext context)
         {
             _DbContext = context;
-            //TODO:删除_Repo
+            //TODO:移除
             _Repo = new Repository1<T>(context);
         }
         #endregion
@@ -75,7 +77,7 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region 基本查询数据过滤管道 _SearchExpressionPipe
+        #region _SearchExpressionPipe 基本查询数据过滤管道 
         /// <summary>
         /// 基本查询数据过滤管道
         /// </summary>
@@ -92,15 +94,69 @@ namespace ApiServer.Stores
         }
         #endregion
 
+        #region _OrderByPipe 基本排序过滤管道
+        /// <summary> 
+        /// 基本排序过滤管道
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        protected void _OrderByPipe<T>(ref IQueryable<T> query, string orderBy, bool desc)
+                  where T : class, IEntity, new()
+        {
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                /*
+                 * api提供的字段信息是大小写不敏感,或者说经过转换大小写了
+                 * client在排序的时候并不知道真实属性的名字,需要经过反射获取原来属性的名字信息
+                 * 确保在排序的时候不会出现异常
+                 */
+                var realProperty = string.Empty;
+                var properties = typeof(T).GetProperties();
+                for (int idx = properties.Length - 1; idx >= 0; idx--)
+                {
+                    var propName = properties[idx].Name.ToString();
+                    if (propName.ToLower() == orderBy.ToLower())
+                    {
+                        realProperty = propName;
+                        break;
+                    }
+                }
 
-        protected async Task<PagedData<T>> _SimplePagedQueryAsync1(IQueryable<T> query, int page, int pageSize)
+                if (!string.IsNullOrWhiteSpace(realProperty))
+                {
+                    if (desc)
+                        query = query.OrderByDescendingBy(realProperty);
+                    else
+                        query = query.OrderBy(realProperty);
+                }
+            }
+        }
+        #endregion
+
+        #region _SimplePagedQueryWithPermissionAsync 权限相关的分页查询
+        /// <summary>
+        /// 权限相关的分页查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="accid"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="searchExpression"></param>
+        /// <returns></returns>
+        protected async Task<PagedData<T>> _SimplePagedQueryWithPermissionAsync<T>(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression)
+            where T : class, IPermission, IEntity, new()
         {
             try
             {
-                if (page < 1)
-                    page = 1;
-                if (pageSize < 1)
-                    pageSize = SiteConfig.Instance.Json.DefaultPageSize;
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Set<T>()
+                            select it;
+                _OrderByPipe(ref query, orderBy, desc);
+                _SearchExpressionPipe(ref query, searchExpression);
+                _BasicPermissionPipe(ref query, currentAcc);
                 return await query.SimplePaging(page, pageSize);
             }
             catch (Exception ex)
@@ -109,27 +165,31 @@ namespace ApiServer.Stores
             }
             return new PagedData<T>();
         }
+        #endregion
 
-        #region _SimplePagedQueryAsync 根据查询参数获取数据信息
+        #region _SimplePagedQueryWithoutPermissionAsync 权限无关的分页查询
         /// <summary>
-        /// 根据查询参数获取数据信息
+        /// 权限无关的分页查询
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="accid"></param>
         /// <param name="page"></param>
         /// <param name="pageSize"></param>
         /// <param name="orderBy"></param>
         /// <param name="desc"></param>
-        /// <param name="searchPredicate"></param>
+        /// <param name="searchExpression"></param>
         /// <returns></returns>
-        protected async Task<PagedData<T>> _SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchPredicate)
+        protected async Task<PagedData<T>> _SimplePagedQueryWithoutPermissionAsync<T>(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression)
+            where T : class, IEntity, new()
         {
             try
             {
-                if (page < 1)
-                    page = 1;
-                if (pageSize < 1)
-                    pageSize = SiteConfig.Instance.Json.DefaultPageSize;
-                return await _DbContext.Set<T>().Where(x => x.Id != null).Paging1(page, pageSize, orderBy, desc, searchPredicate);
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Set<T>()
+                            select it;
+                _OrderByPipe(ref query, orderBy, desc);
+                _SearchExpressionPipe(ref query, searchExpression);
+                return await query.SimplePaging(page, pageSize);
             }
             catch (Exception ex)
             {
@@ -240,13 +300,4 @@ namespace ApiServer.Stores
         }
         #endregion
     }
-
-    //public static class StoreBaseDataPipeExtension
-    //{
-    //    public static IQueryable<T> TreeLimitedPipe<T>(this IQueryable<T> src)
-    //        where T : class, IPermission
-    //    {
-
-    //    }
-    //}
 }

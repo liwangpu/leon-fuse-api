@@ -30,13 +30,13 @@ namespace ApiServer.Stores
 
         /**************** protected method ****************/
 
-        #region _OrganPermissionPipe 查询组织权限过滤
+        #region OrganPermissionPipe 查询组织权限过滤
         /// <summary>
         /// 查询组织权限过滤
         /// </summary>
         /// <param name="query"></param>
         /// <param name="currentAcc"></param>
-        protected void _OrganPermissionPipe(ref IQueryable<Organization> query, Account currentAcc)
+        protected void OrganPermissionPipe(ref IQueryable<Organization> query, Account currentAcc)
         {
             if (currentAcc.Type == AppConst.AccountType_SysAdmin)
             {
@@ -54,7 +54,7 @@ namespace ApiServer.Stores
             {
                 query = query.Take(0);
             }
-        } 
+        }
         #endregion
 
         /**************** public method ****************/
@@ -70,15 +70,16 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         /// <param name="searchExpression"></param>
         /// <returns></returns>
-        public async Task<PagedData<OrganizationDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Organization, bool>> searchExpression)
+        public async Task<PagedData<OrganizationDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Organization, bool>> searchExpression = null)
         {
             try
             {
                 var currentAcc = await _DbContext.Accounts.FindAsync(accid);
                 var query = from it in _DbContext.Organizations
                             select it;
-                //_SearchExpressionPipe(ref query, searchExpression);
-                _OrganPermissionPipe(ref query, currentAcc);
+                _SearchExpressionPipe(ref query, searchExpression);
+                _OrderByPipe(ref query, orderBy, desc);
+                OrganPermissionPipe(ref query, currentAcc);
                 var result = await query.SimplePaging(page, pageSize);
                 if (result.Total > 0)
                     return new PagedData<OrganizationDTO>() { Data = result.Data.Select(x => x.ToDTO()), Total = result.Total, Page = page, Size = pageSize };
@@ -127,7 +128,16 @@ namespace ApiServer.Stores
                 return valid;
 
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
+            {
                 return string.Format(ValidityMessage.V_StringLengthRejectMsg, "组织名称", 50);
+            }
+            else
+            {
+                var exist = await _DbContext.Organizations.Where(x => x.Name == data.Name.Trim()).CountAsync();
+                if (exist > 0)
+                    return string.Format(ValidityMessage.V_DuplicatedMsg, "组织名称", data.Name.Trim());
+            }
+
             if (string.IsNullOrWhiteSpace(data.Mail) || data.Mail.Length > 50)
             {
                 return string.Format(ValidityMessage.V_StringLengthRejectMsg, "邮箱", 50);
@@ -157,8 +167,33 @@ namespace ApiServer.Stores
             if (!string.IsNullOrWhiteSpace(valid))
                 return valid;
 
+
             if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "产品名称", 50);
+            {
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "组织名称", 50);
+            }
+            else
+            {
+                var exist = await _DbContext.Organizations.Where(x => x.Name == data.Name.Trim() && x.Id != data.Id).CountAsync();
+                if (exist > 0)
+                    return string.Format(ValidityMessage.V_DuplicatedMsg, "组织名称", data.Name.Trim());
+            }
+
+
+            if (string.IsNullOrWhiteSpace(data.Mail) || data.Mail.Length > 50)
+            {
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "邮箱", 50);
+            }
+            else
+            {
+                var organMailexist = await _DbContext.Organizations.Where(x => x.Mail == data.Mail.Trim() && x.Id != data.Id).CountAsync();
+                var ownerMailExist = await _DbContext.Accounts.Where(x => x.Mail == data.Mail.Trim() && x.OrganizationId != data.Id).CountAsync();
+
+                if (organMailexist > 0 && ownerMailExist > 0)
+                    return string.Format(ValidityMessage.V_DuplicatedMsg, "邮箱", data.Mail.Trim());
+            }
+
+
             return await Task.FromResult(string.Empty);
         }
         #endregion
@@ -191,7 +226,7 @@ namespace ApiServer.Stores
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var query = from it in _DbContext.Organizations
                         select it;
-            _OrganPermissionPipe(ref query, currentAcc);
+            OrganPermissionPipe(ref query, currentAcc);
             var result = await query.CountAsync(x => x.Id == id);
             if (result == 0)
                 return ValidityMessage.V_NoPermissionReadMsg;
