@@ -20,7 +20,7 @@ namespace ApiServer.Stores
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class StoreBase<T>
-         where T : class, IEntity, new()
+         where T : class, IData, new()
     {
         protected readonly ApiDbContext _DbContext;
         protected readonly Repository1<T> _Repo;

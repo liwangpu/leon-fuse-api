@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace ApiServer.Stores
 {
     public class PermissionStore<T> : StoreBase<T>
-               where T : class, IEntity, IPermission, new()
+               where T : class, IData, IPermission, new()
     {
         #region 构造函数
         public PermissionStore(ApiDbContext context)

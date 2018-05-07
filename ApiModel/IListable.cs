@@ -2,7 +2,7 @@
 
 namespace ApiModel
 {
-    public interface IListable : IEntity
+    public interface IListable : IData
     {
         string Description { get; set; }
         string Icon { get; set; }

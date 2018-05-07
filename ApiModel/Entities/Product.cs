@@ -48,7 +48,7 @@ namespace ApiModel.Entities
         }
     }
 
-    public class ProductDTO : IData
+    public class ProductDTO : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }

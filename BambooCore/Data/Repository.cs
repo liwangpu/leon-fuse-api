@@ -12,7 +12,7 @@ namespace BambooCore
     /// 通用的Entity存储仓库，提供常规的增删改查逻辑
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Repository<T> where T : class, IEntity, ApiModel.ICloneable, new()
+    public class Repository<T> where T : class, IData, ApiModel.ICloneable, new()
     {
         private readonly DbContext context;
         private static long nextNewNameId = 0;

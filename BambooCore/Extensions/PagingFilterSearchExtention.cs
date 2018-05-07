@@ -47,7 +47,7 @@ namespace BambooCore
         /// <param name="desc">是否是倒序排列，默认是升序</param>
         /// <param name="searchPredicate">用来查找或过滤的筛选函数，不需要此功能则传null即可</param>
         /// <returns></returns>
-        public static async Task<PagedData<T>> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
+        public static async Task<PagedData<T>> Paging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IData
         {
 
             var res = new PagedData<T>();
@@ -97,7 +97,7 @@ namespace BambooCore
             return res;
         }
 
-        public static async Task<PagedData<T>> Paging1<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IEntity
+        public static async Task<PagedData<T>> Paging1<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IData
         {
 
             var res = new PagedData<T>();
@@ -147,7 +147,7 @@ namespace BambooCore
         }
 
 
-        public static async Task<PagedData<T>> SimplePaging<T>(this IQueryable<T> src, int page, int pageSize) where T : class, IEntity
+        public static async Task<PagedData<T>> SimplePaging<T>(this IQueryable<T> src, int page, int pageSize) where T : class, IData
         {
             var res = new PagedData<T>();
             IQueryable<T> data = src;

@@ -82,7 +82,7 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息DTO
     /// </summary>
-    public class ProductSpecDTO : IData
+    public class ProductSpecDTO : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }

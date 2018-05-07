@@ -1,11 +1,9 @@
 ﻿using ApiModel;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 namespace ApiServer.Stores
 {
     public interface IStore<T>
-        where T : IEntity
+        where T : IData
     {
         //IQueryable<T> 
         Task<string> CanCreate(string accid, T data);

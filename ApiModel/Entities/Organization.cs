@@ -72,7 +72,7 @@ namespace ApiModel.Entities
 
 
 
-    public class OrganizationDTO : IData
+    public class OrganizationDTO : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }

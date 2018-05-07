@@ -56,7 +56,7 @@ namespace ApiModel.Entities
         }
     }
 
-    public class FileAssetDTO : IData
+    public class FileAssetDTO : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }

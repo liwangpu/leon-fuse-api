@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ApiModel.Entities
 {
-    public class OrganMember : EntityBase, IEntity
+    public class OrganMember : EntityBase
     {
         public string AccountId { get; set; }
 

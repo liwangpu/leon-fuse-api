@@ -371,6 +371,12 @@ namespace ApiServer.Stores
         {
             try
             {
+                #region 部门有改变,需要改变权限树
+                //if (data.DepartmentId != data.Department.Id)
+                //{
+
+                //}
+                #endregion
                 _DbContext.Accounts.Update(data);
                 await _DbContext.SaveChangesAsync();
                 return data.ToDTO();

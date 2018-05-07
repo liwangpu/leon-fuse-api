@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ApiModel.Entities
 {
-    public class Wall : IData
+    public class Wall : DataBase
     {
         /// <summary>
         /// 在当前户型里唯一的ID

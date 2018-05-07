@@ -25,7 +25,7 @@ namespace ApiModel.Entities
     }
 
 
-    public class DepartmentDTO : IData
+    public class DepartmentDTO : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }

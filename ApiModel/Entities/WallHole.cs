@@ -4,13 +4,11 @@ namespace ApiModel.Entities
     /// <summary>
     /// 表示墙上的洞，门，窗，壁龛等
     /// </summary>
-    public class WallHole : IData
+    public class WallHole : DataBase
     {
         /// <summary>
         /// 在当前户型里唯一的ID
         /// </summary>
-        public string Id { get; set; }
-        public string Name { get; set; }
         public Vector2 Location { get; set; }
         /// <summary>
         /// 如果Path为空则此洞为标准的长方体洞。此属性表示洞的长宽的一半的数值

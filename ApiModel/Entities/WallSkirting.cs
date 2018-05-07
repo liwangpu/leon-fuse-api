@@ -4,13 +4,12 @@ namespace ApiModel.Entities
     /// <summary>
     /// 裙料，墙上条状装饰覆盖物的配置信息，比如踢脚线，顶角线，腰线等的位置与长度，材质。
     /// </summary>
-    public class WallSkirting : IData
+    public class WallSkirting : DataBase
     {
         /// <summary>
         /// 在当前户型里唯一的ID
         /// </summary>
-        public string Id { get; set; }
-        public string Name { get; set; }
+
         public int WallId { get; set; }
         public string SkirtingId { get; set; }
         public Vector2 Location { get; set; }

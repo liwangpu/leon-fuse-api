@@ -2,7 +2,7 @@
 namespace ApiServer.Models
 {
     public interface IModel<T>
-        where T : IEntity
+        where T : IData
     {
         T ToEntity();
     }

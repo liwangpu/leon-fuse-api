@@ -3,7 +3,7 @@ using System;
 
 namespace ApiModel.Entities
 {
-    public class OrderStateItem : IData
+    public class OrderStateItem : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }

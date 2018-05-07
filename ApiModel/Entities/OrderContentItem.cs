@@ -1,9 +1,7 @@
 ﻿namespace ApiModel.Entities
 {
-    public class OrderContentItem : IData
+    public class OrderContentItem : DataBase
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string ProductId { get; set; }
         public int Num { get; set; }
         public int UnitPrice { get; set; }

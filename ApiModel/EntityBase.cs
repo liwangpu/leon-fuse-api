@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ApiModel
 {
-    public class EntityBase : IEntity, ICloneable
+    public class EntityBase : DataBase, ICloneable
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }
@@ -28,13 +25,6 @@ namespace ApiModel
         public virtual object Clone()
         {
             return MemberwiseClone();
-        }
-
-        public bool IsPersistence()
-        {
-            if (!string.IsNullOrWhiteSpace(Id))
-                return true;
-            return false;
         }
     }
 }

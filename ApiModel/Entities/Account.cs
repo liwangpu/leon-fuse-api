@@ -74,7 +74,7 @@ namespace ApiModel.Entities
     }
 
 
-    public class AccountDTO : IData
+    public class AccountDTO : DataBase
     {
         public string Id { get; set; }
         public string Name { get; set; }
