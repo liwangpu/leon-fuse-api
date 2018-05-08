@@ -139,7 +139,21 @@ namespace ApiServer.Controllers.Design
                 return NotFound(msg);
             await _StaticMeshStore.DeleteAsync(accid, id);
             return Ok();
-        } 
+        }
+        #endregion
+
+        #region NewOne Post,Put示例数据
+        /// <summary>
+        /// Post,Put示例数据
+        /// </summary>
+        /// <returns></returns>
+        [Route("NewOne")]
+        [HttpGet]
+        [ProducesResponseType(typeof(StaticMeshEditModel), 200)]
+        public IActionResult NewOne()
+        {
+            return Ok(new StaticMeshEditModel());
+        }
         #endregion
     }
 }

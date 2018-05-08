@@ -173,5 +173,19 @@ namespace ApiServer.Controllers.Design
             return NotFound();
         }
         #endregion
+
+        #region NewOne Post,Put示例数据
+        /// <summary>
+        /// Post,Put示例数据
+        /// </summary>
+        /// <returns></returns>
+        [Route("NewOne")]
+        [HttpGet]
+        [ProducesResponseType(typeof(ProductEditModel), 200)]
+        public IActionResult NewOne()
+        {
+            return Ok(new ProductEditModel());
+        }
+        #endregion
     }
 }

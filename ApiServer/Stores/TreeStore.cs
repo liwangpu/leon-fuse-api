@@ -58,7 +58,7 @@ namespace ApiServer.Stores
                 {
                     data.LValue = parentNode.RValue;
                     data.RValue = data.LValue + 1;
-                    var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId&&x.RValue>=parentNode.RValue).ToListAsync();
+                    var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
                     for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                     {
                         var cur = refNodes[idx];
@@ -120,5 +120,10 @@ namespace ApiServer.Stores
             }
         }
         #endregion
+
+        public async Task MoveNode(T data, string newParentNodeId)
+        {
+
+        }
     }
 }

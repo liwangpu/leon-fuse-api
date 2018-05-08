@@ -8,5 +8,7 @@ namespace ApiServer.Controllers.Common
     /// </summary>
     public class ListableController : Controller
     {
+
+
     }
 }

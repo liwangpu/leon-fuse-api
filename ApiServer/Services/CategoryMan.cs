@@ -157,7 +157,16 @@ namespace ApiServer.Services
             cat.Name = value.Name;
             cat.Icon = value.Icon;
             cat.Description = value.Description;
+            //cat.ParentId = value.ParentId;
             await context.SaveChangesAsync();
+
+            #region 父分类有变,修改tree信息
+            if (value.ParentId != cat.ParentId)
+            {
+
+            }
+            #endregion
+
             return cat.ToDTO();
         }
 

@@ -20,7 +20,7 @@ namespace ApiServer.Controllers.Design
         public MaterialController(Data.ApiDbContext context)
         {
             _materialStore = new MaterialStore(context);
-        } 
+        }
         #endregion
 
         #region Get 根据分页查询信息获取材质概要信息
@@ -137,6 +137,20 @@ namespace ApiServer.Controllers.Design
             var material = await _materialStore._GetByIdAsync(id);
             await _materialStore.DeleteAsync(accid, material);
             return Ok();
+        }
+        #endregion
+
+        #region NewOne Post,Put示例数据
+        /// <summary>
+        /// Post,Put示例数据
+        /// </summary>
+        /// <returns></returns>
+        [Route("NewOne")]
+        [HttpGet]
+        [ProducesResponseType(typeof(MaterialEditModel), 200)]
+        public IActionResult NewOne()
+        {
+            return Ok(new MaterialEditModel());
         } 
         #endregion
 
