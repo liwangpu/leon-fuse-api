@@ -2,6 +2,7 @@
 using ApiServer.Data;
 using BambooCommon;
 using BambooCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -261,6 +262,22 @@ namespace ApiServer.Stores
                 Logger.LogError("_DeleteAsync", ex);
             }
             return true;
+        }
+        #endregion
+
+        #region Exist 简单判断id对应记录是否存在
+        /// <summary>
+        /// 简单判断id对应记录是否存在
+        /// 基类简单判断id是否存在,但不做actived等校验
+        /// 如果需要校验actived已否,请在派生类重写
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> Exist(string id)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+                return await _DbContext.Set<T>().CountAsync(x => x.Id == id) > 0;
+            return false;
         }
         #endregion
     }

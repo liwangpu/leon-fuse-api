@@ -1,5 +1,6 @@
 ﻿using ApiModel.Entities;
 using ApiServer.Data;
+using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
@@ -34,15 +35,17 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductSpecStore.CanRead(accid, id);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return NotFound(msg);
-            var data = await _ProductSpecStore.GetByIdAsync(accid, id);
-            return Ok(data);
+            var exist = await _ProductSpecStore.Exist(id);
+            if (!exist)
+                return NotFound();
+            var canRead = await _ProductSpecStore.CanRead(accid, id);
+            if (!canRead)
+                return Forbid();
+            var dto = await _ProductSpecStore.GetByIdAsync(accid, id);
+            return Ok(dto);
         }
         #endregion
 
@@ -53,23 +56,24 @@ namespace ApiServer.Controllers.Design
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(ProductSpec), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> Post([FromBody]ProductSpecEditModel value)
+        [ValidateModel]
+        [ProducesResponseType(typeof(ProductSpecDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Post([FromBody]ProductSpecCreateModel value)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+            var accid = AuthMan.GetAccountId(this);
             var spec = new ProductSpec();
             spec.Name = value.Name;
             spec.Description = value.Description;
             spec.ProductId = value.ProductId;
             spec.Price = value.Price;
-            var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductSpecStore.CanCreate(accid, spec);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return BadRequest(msg);
-            await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
-            return Ok(spec);
+           
+            await _ProductSpecStore.CanCreate(accid, spec, ModelState);
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
+
+            var dto = await _ProductSpecStore.CreateAsync(accid, spec);
+            return Ok(dto);
         }
         #endregion
 
@@ -80,25 +84,27 @@ namespace ApiServer.Controllers.Design
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPut]
-        [ProducesResponseType(typeof(ProductSpec), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ProductSpecDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]ProductSpecEditModel value)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+            var exist = await _ProductSpecStore.Exist(value.Id);
+            if (!exist)
+                return NotFound();
+
             var accid = AuthMan.GetAccountId(this);
             var spec = await _ProductSpecStore._GetByIdAsync(value.Id);
-            if (spec == null)
-                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
             spec.Name = value.Name;
             spec.Description = value.Description;
             spec.ModifiedTime = DateTime.Now;
             spec.Price = value.Price;
-            var msg = await _ProductSpecStore.CanUpdate(accid, spec);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return BadRequest(msg);
-            await _ProductSpecStore.SaveOrUpdateAsync(accid, spec);
-            return Ok(spec);
+            await _ProductSpecStore.CanUpdate(accid, spec, ModelState);
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
+
+            var dto = await _ProductSpecStore.UpdateAsync(accid, spec);
+            return Ok(dto);
         }
         #endregion
 
@@ -109,14 +115,16 @@ namespace ApiServer.Controllers.Design
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(Nullable), 200)]
-        [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> Delete(string id)
         {
+            var exist = await _ProductSpecStore.Exist(id);
+            if (!exist)
+                return NotFound();
+
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _ProductSpecStore.CanDelete(accid, id);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return NotFound(msg);
+            var canDelete = await _ProductSpecStore.CanDelete(accid, id);
+            if (!canDelete)
+                return Forbid();
             await _ProductSpecStore.DeleteAsync(accid, id);
             return Ok();
         }
@@ -362,10 +370,10 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [Route("NewOne")]
         [HttpGet]
-        [ProducesResponseType(typeof(ProductSpecEditModel), 200)]
+        [ProducesResponseType(typeof(ProductSpecCreateModel), 200)]
         public IActionResult NewOne()
         {
-            return Ok(new ProductSpecEditModel());
+            return Ok(new ProductSpecCreateModel());
         }
         #endregion
 

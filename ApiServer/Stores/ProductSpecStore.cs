@@ -2,9 +2,10 @@
 using ApiServer.Data;
 using BambooCommon;
 using BambooCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// ProductSpec Store
     /// </summary>
-    public class ProductSpecStore : StoreBase<ProductSpec>, IStore<ProductSpec>
+    public class ProductSpecStore : PermissionStore<ProductSpec>
     {
         private readonly FileAssetStore _FileAssetStore;
         private readonly StaticMeshStore _StaticMeshStore;
@@ -40,47 +41,26 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
+        /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task<string> CanCreate(string accid, ProductSpec data)
+        public async Task CanCreate(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
-            var errors = new List<string>();
 
-            var valid = _CanSave(accid, data);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return valid;
-
-            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50);
-            if (string.IsNullOrWhiteSpace(data.ProductId))
-                return string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号");
-            var existProd = await _ProductStore._GetByIdAsync(data.ProductId);
-            if (existProd == null)
-                return string.Format(ValidityMessage.V_NotReferenceMsg, "产品");
-            return string.Empty;
+            await Task.FromResult(string.Empty);
         }
         #endregion
 
         #region CanUpdate 判断产品规格信息是否符合更新规范
-        /// <summary> 
+        /// <summary>
         /// 判断产品规格信息是否符合更新规范
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
+        /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task<string> CanUpdate(string accid, ProductSpec data)
+        public async Task CanUpdate(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
-            var valid = _CanSave(accid, data);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return valid;
-
-            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "规格名称", 50);
-            if (string.IsNullOrWhiteSpace(data.ProductId))
-                return string.Format(ValidityMessage.V_RequiredRejectMsg, "产品编号");
-            var existProd = await _ProductStore._GetByIdAsync(data.ProductId);
-            if (existProd == null)
-                return string.Format(ValidityMessage.V_NotReferenceMsg, "产品");
-            return string.Empty;
+            await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -91,12 +71,16 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<string> CanDelete(string accid, string id)
+        public async Task<bool> CanDelete(string accid, string id)
         {
-            var valid = _CanDelete(accid, id);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return valid;
-            return await Task.FromResult(string.Empty);
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.ProductSpec
+                        select it;
+            _BasicPermissionPipe(ref query, currentAcc);
+            var result = await query.CountAsync(x => x.Id == id);
+            if (result == 0)
+                return false;
+            return true;
         }
         #endregion
 
@@ -107,9 +91,16 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<string> CanRead(string accid, string id)
+        public async Task<bool> CanRead(string accid, string id)
         {
-            return await Task.FromResult(string.Empty);
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.ProductSpec
+                        select it;
+            _BasicPermissionPipe(ref query, currentAcc);
+            var result = await query.CountAsync(x => x.Id == id);
+            if (result == 0)
+                return false;
+            return true;
         }
         #endregion
 
@@ -208,28 +199,56 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region SaveOrUpdateAsync 更新产品规格信息
+        #region CreateAsync 新建规格信息
         /// <summary>
-        /// 更新产品规格信息
+        /// 新建规格信息
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task SaveOrUpdateAsync(string accid, ProductSpec data)
+        public async Task<ProductSpecDTO> CreateAsync(string accid, ProductSpec data)
         {
             try
             {
-                if (!data.IsPersistence())
-                {
-                    await _Repo.Context.Set<ProductSpec>().AddAsync(data);
-                    //await _Repo.Context.Set<PermissionItem>().AddAsync(Permission.NewItem(accid, data.Id, "ProductSpec", PermissionType.All));
-                }
-                await _Repo.Context.SaveChangesAsync();
+                data.Id = GuidGen.NewGUID();
+                data.Creator = accid;
+                data.Modifier = accid;
+                data.CreatedTime = DateTime.Now;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.ProductSpec.Add(data);
+                await _DbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                Logger.LogError("SaveOrUpdateAsync", ex);
+                Logger.LogError("ProductSpecStore CreateAsync", ex);
+                return new ProductSpecDTO();
             }
+            return data.ToDTO();
+        }
+        #endregion
+
+        #region UpdateAsync 更新规格信息
+        /// <summary>
+        /// 更新规格信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<ProductSpecDTO> UpdateAsync(string accid, ProductSpec data)
+        {
+            try
+            {
+                data.Modifier = accid;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.ProductSpec.Update(data);
+                await _DbContext.SaveChangesAsync();
+                return data.ToDTO();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("ProductSpecStore UpdateAsync", ex);
+            }
+            return new ProductSpecDTO();
         }
         #endregion
 

@@ -1,5 +1,5 @@
 ﻿using ApiModel.Entities;
-using ApiServer.Models;
+using ApiServer.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -65,7 +65,7 @@ namespace ApiServer.Controllers
                 case Services.AuthMan.LoginResult.Frozen: err = "account is forzen by admin"; break;
                 case Services.AuthMan.LoginResult.NotActivation: err = "account not activate yet"; break;
             }
-            return BadRequest(new ErrorRespond() { Error = err });
+            return BadRequest(new ErrorRespondModel() { Message = err });
         }
 
         IActionResult MakeToken(string accid)

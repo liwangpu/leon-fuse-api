@@ -7,13 +7,14 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ApiServer.Stores
 {
     /// <summary>
     /// Material Store
     /// </summary>
-    public class MaterialStore : PermissionStore<Material>, IStore<Material>
+    public class MaterialStore : PermissionStore<Material>
     {
         #region 构造函数
         public MaterialStore(ApiDbContext context)
@@ -74,18 +75,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
+        /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task<string> CanCreate(string accid, Material data)
+        public async Task CanCreate(string accid, Material data, ModelStateDictionary modelState)
         {
-            var valid = _CanSave(accid, data);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return valid;
-
-            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-            {
-                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "材料名称", 50);
-            }
-            return await Task.FromResult(string.Empty);
+           await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -95,19 +89,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="data"></param>
+        /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task<string> CanUpdate(string accid, Material data)
+        public async Task CanUpdate(string accid, Material data, ModelStateDictionary modelState)
         {
-            var valid = _CanSave(accid, data);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return valid;
-
-            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
-            {
-                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "材料名称", 50);
-            }
-
-            return await Task.FromResult(string.Empty);
+            await Task.FromResult(string.Empty);
         }
         #endregion
 
@@ -118,19 +104,16 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<string> CanDelete(string accid, string id)
+        public async Task<bool> CanDelete(string accid, string id)
         {
-            var valid = _CanDelete(accid, id);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return valid;
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var query = from it in _DbContext.Materials
                         select it;
             _BasicPermissionPipe(ref query, currentAcc);
             var result = await query.CountAsync(x => x.Id == id);
             if (result == 0)
-                return ValidityMessage.V_NoPermissionMsg;
-            return await Task.FromResult(string.Empty);
+                return false;
+            return true;
         }
         #endregion
 
@@ -141,7 +124,7 @@ namespace ApiServer.Stores
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<string> CanRead(string accid, string id)
+        public async Task<bool> CanRead(string accid, string id)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var query = from it in _DbContext.Materials
@@ -149,8 +132,8 @@ namespace ApiServer.Stores
             _BasicPermissionPipe(ref query, currentAcc);
             var result = await query.CountAsync(x => x.Id == id);
             if (result == 0)
-                return ValidityMessage.V_NoPermissionReadMsg;
-            return await Task.FromResult(string.Empty);
+                return false;
+            return true;
         }
         #endregion
 
@@ -212,12 +195,14 @@ namespace ApiServer.Stores
         /// 删除材质信息
         /// </summary>
         /// <param name="accid"></param>
-        /// <param name="data"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        public async Task DeleteAsync(string accid, Material data)
+        public async Task DeleteAsync(string accid, string id)
         {
             try
             {
+                //TODO:不是直接删除,应该active flag 为false
+                var data = await _GetByIdAsync(id);
                 data.Modifier = accid;
                 data.ModifiedTime = DateTime.Now;
                 _DbContext.Materials.Remove(data);
@@ -227,6 +212,19 @@ namespace ApiServer.Stores
             {
                 Logger.LogError("MaterialStore DeleteAsync", ex);
             }
+        }
+        #endregion
+
+        #region Exist 判断材质信息是否存在
+        /// <summary>
+        /// 判断材质信息是否存在
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<bool> Exist(string id)
+        {
+            //TODO:Material应该有active flag
+            return await base.Exist(id);
         }
         #endregion
     }

@@ -1,11 +1,11 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers.Design
@@ -54,13 +54,15 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(MaterialDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Get(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var valid = await _materialStore.CanRead(accid, id);
-            if (!string.IsNullOrWhiteSpace(valid))
-                return BadRequest(valid);
+            var exist = await _materialStore.Exist(id);
+            if (!exist)
+                return NotFound();
+            var canRead = await _materialStore.CanRead(accid, id);
+            if (!canRead)
+                return Forbid();
             var dto = await _materialStore.GetByIdAsync(accid, id);
             return Ok(dto);
         }
@@ -73,9 +75,10 @@ namespace ApiServer.Controllers.Design
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateModel]
         [ProducesResponseType(typeof(MaterialDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> Post([FromBody]MaterialEditModel value)
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Post([FromBody]MaterialCreateModel value)
         {
             var accid = AuthMan.GetAccountId(this);
             var material = new Material();
@@ -83,9 +86,9 @@ namespace ApiServer.Controllers.Design
             material.Description = value.Description;
             material.FileAssetId = value.FileAssetId;
             material.CategoryId = value.CategoryId;
-            var msg = await _materialStore.CanCreate(accid, material);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return BadRequest(msg);
+            await _materialStore.CanCreate(accid, material, ModelState);
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
 
             var dto = await _materialStore.CreateAsync(accid, material);
             return Ok(dto);
@@ -99,21 +102,24 @@ namespace ApiServer.Controllers.Design
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPut]
+        [ValidateModel]
         [ProducesResponseType(typeof(MaterialDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]MaterialEditModel value)
         {
             var accid = AuthMan.GetAccountId(this);
+            var exist = await _materialStore.Exist(value.Id);
+            if (!exist)
+                return NotFound();
+
             var material = await _materialStore._GetByIdAsync(value.Id);
-            if (material == null)
-                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
             material.Name = value.Name;
             material.Description = value.Description;
             material.FileAssetId = value.FileAssetId;
             material.CategoryId = value.CategoryId;
-            var msg = await _materialStore.CanUpdate(accid, material);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return BadRequest(msg);
+            await _materialStore.CanUpdate(accid, material, ModelState);
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
             var dto = await _materialStore.UpdateAsync(accid, material);
             return Ok(dto);
         }
@@ -126,16 +132,17 @@ namespace ApiServer.Controllers.Design
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(Nullable), 200)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Delete(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var msg = await _materialStore.CanDelete(accid, id);
-            if (!string.IsNullOrWhiteSpace(msg))
-                return BadRequest(msg);
-            var material = await _materialStore._GetByIdAsync(id);
-            await _materialStore.DeleteAsync(accid, material);
+            var exist = await _materialStore.Exist(id);
+            if (!exist)
+                return NotFound();
+
+            var canDelete = await _materialStore.CanDelete(accid, id);
+            if (!canDelete)
+                return Forbid();
+            await _materialStore.DeleteAsync(accid, id);
             return Ok();
         }
         #endregion
@@ -147,11 +154,11 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [Route("NewOne")]
         [HttpGet]
-        [ProducesResponseType(typeof(MaterialEditModel), 200)]
+        [ProducesResponseType(typeof(MaterialCreateModel), 200)]
         public IActionResult NewOne()
         {
             return Ok(new MaterialEditModel());
-        } 
+        }
         #endregion
 
     }
