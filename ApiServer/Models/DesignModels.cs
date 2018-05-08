@@ -1,4 +1,6 @@
-﻿namespace ApiServer.Models
+﻿using System;
+
+namespace ApiServer.Models
 {
     #region ProductEditModel 产品编辑模型
     /// <summary>
@@ -39,5 +41,22 @@
         public string Name { get; set; }
         public string Description { get; set; }
     }
+    #endregion
+
+    #region MaterialEditModel 材质编辑模型
+    /// <summary>
+    /// 材质编辑模型
+    /// </summary>
+    public class MaterialEditModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
+        public string FileAssetId { get; set; }
+        public string Dependencies { get; set; }
+        public string Parameters { get; set; }
+        public string CategoryId { get; set; }
+    } 
     #endregion
 }

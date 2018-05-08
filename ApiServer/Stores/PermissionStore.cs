@@ -31,30 +31,37 @@ namespace ApiServer.Stores
         /// <param name="currentAcc"></param>
         protected void _BasicPermissionPipe(ref IQueryable<T> query, Account currentAcc)
         {
-            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            if (currentAcc != null)
             {
+                if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+                {
 
-            }
-            else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
-            {
-                var treeQ = from ps in _DbContext.PermissionTrees
-                            where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
-                            select ps;
-                query = from it in query
-                        join ps in treeQ on it.Creator equals ps.ObjId
-                        select it;
-            }
-            else if (currentAcc.Type == AppConst.AccountType_OrganMember)
-            {
-                query = from it in query
-                        where it.Creator == currentAcc.Id
-                        select it;
+                }
+                else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+                {
+                    var treeQ = from ps in _DbContext.PermissionTrees
+                                where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
+                                select ps;
+                    query = from it in query
+                            join ps in treeQ on it.Creator equals ps.ObjId
+                            select it;
+                }
+                else if (currentAcc.Type == AppConst.AccountType_OrganMember)
+                {
+                    query = from it in query
+                            where it.Creator == currentAcc.Id
+                            select it;
+                }
+                else
+                {
+                    query = from it in query
+                            where it.Creator == currentAcc.Id
+                            select it;
+                }
             }
             else
             {
-                query = from it in query
-                        where it.Creator == currentAcc.Id
-                        select it;
+                query = query.Take(0);
             }
         }
         #endregion

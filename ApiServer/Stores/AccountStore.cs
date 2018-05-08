@@ -332,6 +332,7 @@ namespace ApiServer.Stores
             {
                 try
                 {
+                    data.Id = GuidGen.NewGUID();
                     if (!string.IsNullOrWhiteSpace(data.DepartmentId))
                         data.Department = await _DbContext.Departments.FindAsync(data.DepartmentId);
                     _DbContext.Accounts.Add(data);

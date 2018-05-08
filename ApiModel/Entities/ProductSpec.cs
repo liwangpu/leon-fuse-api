@@ -84,8 +84,6 @@ namespace ApiModel.Entities
     /// </summary>
     public class ProductSpecDTO : DataBase
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
         public double Price { get; set; }

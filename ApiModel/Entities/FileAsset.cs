@@ -58,8 +58,6 @@ namespace ApiModel.Entities
 
     public class FileAssetDTO : DataBase
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Icon { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }

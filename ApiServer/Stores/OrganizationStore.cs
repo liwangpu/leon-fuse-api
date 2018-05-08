@@ -248,6 +248,7 @@ namespace ApiServer.Stores
             {
                 try
                 {
+                    data.Id= GuidGen.NewGUID();
                     _DbContext.Organizations.Add(data);
                     await _DbContext.SaveChangesAsync();
                     var otree = new PermissionTree();

@@ -5,8 +5,6 @@ namespace ApiModel.Entities
 {
     public class OrderStateItem : DataBase
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string OldState { get; set; }
         public string NewState { get; set; }
         public string OperatorAccount { get; set; }

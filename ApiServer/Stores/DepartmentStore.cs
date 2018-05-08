@@ -2,6 +2,7 @@
 using ApiModel.Entities;
 using ApiServer.Data;
 using BambooCommon;
+using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,7 @@ namespace ApiServer.Stores
             {
                 try
                 {
+                    data.Id = GuidGen.NewGUID();
                     _DbContext.Departments.Add(data);
                     await _DbContext.SaveChangesAsync();
                     var otree = new PermissionTree();

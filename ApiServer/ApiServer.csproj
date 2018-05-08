@@ -32,6 +32,8 @@
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
+    <Compile Remove="Migrations\20180507061354_LeonAddCategoryTreeToContext0507.cs" />
+    <Compile Remove="Migrations\20180507061354_LeonAddCategoryTreeToContext0507.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

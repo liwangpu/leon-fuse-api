@@ -1,17 +1,19 @@
 ﻿using ApiModel.Entities;
 using ApiServer.Data;
+using BambooCommon;
 using BambooCore;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiServer.Stores
 {
     /// <summary>
     /// Material Store
     /// </summary>
-    public class MaterialStore : StoreBase<Material>
+    public class MaterialStore : PermissionStore<Material>, IStore<Material>
     {
         #region 构造函数
         public MaterialStore(ApiDbContext context)
@@ -19,7 +21,7 @@ namespace ApiServer.Stores
         { }
         #endregion
 
-        #region SimpleQueryAsync 简单返回分页查询DTO信息
+        #region SimplePagedQueryAsync 简单返回分页查询DTO信息
         /// <summary>
         /// 简单返回分页查询DTO信息
         /// </summary>
@@ -28,14 +30,26 @@ namespace ApiServer.Stores
         /// <param name="pageSize"></param>
         /// <param name="orderBy"></param>
         /// <param name="desc"></param>
-        /// <param name="searchPredicate"></param>
+        /// <param name="searchExpression"></param>
         /// <returns></returns>
-        public async Task<PagedData<MaterialDTO>> SimpleQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Material, bool>> searchPredicate)
+        public async Task<PagedData<MaterialDTO>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<Material, bool>> searchExpression = null)
         {
-            //var pagedData = await _SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, searchPredicate);
-            //var dtos = pagedData.Data.Select(x => x.ToDTO());
-            //return new PagedData<MaterialDTO>() { Data = pagedData.Data.Select(x => x.ToDTO()), Page = pagedData.Page, Size = pagedData.Size, Total = pagedData.Total };
-            //TODO:
+            try
+            {
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Materials
+                            select it;
+                _OrderByPipe(ref query, orderBy, desc);
+                _SearchExpressionPipe(ref query, searchExpression);
+                _BasicPermissionPipe(ref query, currentAcc);
+                var result = await query.SimplePaging(page, pageSize);
+                if (result.Total > 0)
+                    return new PagedData<MaterialDTO>() { Data = result.Data.Select(x => x.ToDTO()), Total = result.Total, Page = page, Size = pageSize };
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("ProductStore SimplePagedQueryAsync", ex);
+            }
             return new PagedData<MaterialDTO>();
         }
         #endregion
@@ -49,8 +63,170 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task<MaterialDTO> GetByIdAsync(string accid, string id)
         {
-            var data = await _GetByIdAsync( id);
+            var data = await _GetByIdAsync(id);
             return data.ToDTO();
+        }
+        #endregion
+
+        #region CanCreate 判断材料是否符合存储规范
+        /// <summary>
+        /// 判断材料是否符合存储规范
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<string> CanCreate(string accid, Material data)
+        {
+            var valid = _CanSave(accid, data);
+            if (!string.IsNullOrWhiteSpace(valid))
+                return valid;
+
+            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
+            {
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "材料名称", 50);
+            }
+            return await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region CanUpdate 判断材料是否符合更新规范
+        /// <summary>
+        /// 判断材料是否符合更新规范
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<string> CanUpdate(string accid, Material data)
+        {
+            var valid = _CanSave(accid, data);
+            if (!string.IsNullOrWhiteSpace(valid))
+                return valid;
+
+            if (string.IsNullOrWhiteSpace(data.Name) || data.Name.Length > 50)
+            {
+                return string.Format(ValidityMessage.V_StringLengthRejectMsg, "材料名称", 50);
+            }
+
+            return await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region CanDelete 判断材料信息是否符合删除规范
+        /// <summary>
+        /// 判断材料信息是否符合删除规范
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<string> CanDelete(string accid, string id)
+        {
+            var valid = _CanDelete(accid, id);
+            if (!string.IsNullOrWhiteSpace(valid))
+                return valid;
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.Materials
+                        select it;
+            _BasicPermissionPipe(ref query, currentAcc);
+            var result = await query.CountAsync(x => x.Id == id);
+            if (result == 0)
+                return ValidityMessage.V_NoPermissionMsg;
+            return await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region CanRead 判断用户是否有权限读取该记录信息
+        /// <summary>
+        /// 判断用户是否有权限读取该记录信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<string> CanRead(string accid, string id)
+        {
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.Materials
+                        select it;
+            _BasicPermissionPipe(ref query, currentAcc);
+            var result = await query.CountAsync(x => x.Id == id);
+            if (result == 0)
+                return ValidityMessage.V_NoPermissionReadMsg;
+            return await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region CreateAsync 新建材质信息
+        /// <summary>
+        /// 新建材质信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<MaterialDTO> CreateAsync(string accid, Material data)
+        {
+            try
+            {
+                data.Id = GuidGen.NewGUID();
+                data.Creator = accid;
+                data.Modifier = accid;
+                data.CreatedTime = DateTime.Now;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.Materials.Add(data);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("MaterialStore CreateAsync", ex);
+                return new MaterialDTO();
+            }
+            return data.ToDTO();
+        }
+        #endregion
+
+        #region UpdateAsync 更新材质信息
+        /// <summary>
+        /// 更新材质信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<MaterialDTO> UpdateAsync(string accid, Material data)
+        {
+            try
+            {
+                data.Modifier = accid;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.Materials.Update(data);
+                await _DbContext.SaveChangesAsync();
+                return data.ToDTO();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("MaterialStore UpdateAsync", ex);
+            }
+            return new MaterialDTO();
+        }
+        #endregion
+
+        #region DeleteAsync 删除材质信息
+        /// <summary>
+        /// 删除材质信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task DeleteAsync(string accid, Material data)
+        {
+            try
+            {
+                data.Modifier = accid;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.Materials.Remove(data);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("MaterialStore DeleteAsync", ex);
+            }
         }
         #endregion
     }

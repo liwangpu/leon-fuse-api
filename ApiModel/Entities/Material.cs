@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Material : EntityBase, IAsset, IListable, IDTOTransfer<MaterialDTO>
+    public class Material : EntityBase, IAsset, IPermission, IListable, IDTOTransfer<MaterialDTO>
     {
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -21,7 +21,7 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-        
+
 
         public MaterialDTO ToDTO()
         {
@@ -48,8 +48,6 @@ namespace ApiModel.Entities
 
     public class MaterialDTO : DataBase
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }

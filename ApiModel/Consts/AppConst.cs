@@ -10,10 +10,12 @@
 
         public const int I_DataState_InActive = 0;
         public const int I_DataState_Active = 1;
+        //权限树节点类型
         public const string S_NodeType_Organization = "Organization";
         public const string S_NodeType_Department = "Department";
         public const string S_NodeType_Account = "Account";
-
+        //分类树节点类型
+        public const string S_NodeType_Product = "Product";
 
 
     }

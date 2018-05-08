@@ -60,8 +60,6 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Get(string id)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
             var accid = AuthMan.GetAccountId(this);
             var valid = await _OrganizationStore.CanRead(accid, id);
             if (!string.IsNullOrWhiteSpace(valid))
@@ -82,9 +80,6 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]OrganizationEditModel value)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
-
             var accid = AuthMan.GetAccountId(this);
             var organ = new Organization();
             organ.Name = value.Name;
@@ -115,18 +110,17 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]OrganizationEditModel value)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
             var accid = AuthMan.GetAccountId(this);
             var organ = await _OrganizationStore._GetByIdAsync(value.Id);
+            if (organ == null)
+                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
             organ.Name = value.Name;
             organ.Description = value.Description;
             organ.Mail = value.Mail;
             organ.Location = value.Location;
             organ.ModifiedTime = DateTime.Now;
             organ.Modifier = accid;
-            if (organ == null)
-                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
+
             var msg = await _OrganizationStore.CanUpdate(accid, organ);
             if (!string.IsNullOrWhiteSpace(msg))
                 return BadRequest(msg);

@@ -6,14 +6,6 @@ namespace ApiModel.Entities
     public class Wall : DataBase
     {
         /// <summary>
-        /// 在当前户型里唯一的ID
-        /// </summary>
-        public string Id { get; set; }
-        /// <summary>
-        /// 名称
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
         /// 厚度，mm
         /// </summary>
         public int ThicknessMM { get; set; }

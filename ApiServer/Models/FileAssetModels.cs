@@ -45,23 +45,6 @@ namespace ApiServer.Models
         }
     }
 
-    public class MaterialEditModel : IModel<Material>
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string FileAssetId { get; set; }
-        public string Description { get; set; }
-        public string Icon { get; set; }
-        public Material ToEntity()
-        {
-            var entity = new Material();
-            entity.Id = Id;
-            entity.Name = Name;
-            entity.Description = Description;
-            entity.Icon = FileAssetId;
-            return entity;
-        }
-    }
 
     #region StaticMeshUploadModel 规格模型上传模型
     /// <summary>

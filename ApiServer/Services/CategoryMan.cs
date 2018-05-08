@@ -1,6 +1,9 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Data;
+using ApiServer.Stores;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,13 +12,14 @@ namespace ApiServer.Services
 {
     public class CategoryMan
     {
-        Data.ApiDbContext context;
+        ApiDbContext context;
         DbSet<AssetCategory> dbset;
-
-        public CategoryMan(Data.ApiDbContext context)
+        protected readonly AssetCategoryTreeStore _categoryTreeStore;
+        public CategoryMan(ApiDbContext context)
         {
             this.context = context;
             dbset = context.Set<AssetCategory>();
+            _categoryTreeStore = new AssetCategoryTreeStore(context);
         }
 
 
@@ -48,10 +52,34 @@ namespace ApiServer.Services
                 rootNode.Description = "auto generated node for " + type + ", do not need to display this node";
                 dbset.Add(rootNode);
                 await context.SaveChangesAsync();
+
+                #region 添加tree节点
+                {
+                    var oTree = new AssetCategoryTree();
+                    oTree.NodeType = type;
+                    oTree.Name = rootNode.Name;
+                    oTree.ObjId = rootNode.Id;
+                    oTree.OrganizationId = organId;
+                    oTree.CreatedTime = DateTime.Now;
+                    await _categoryTreeStore.AddNewNode(oTree);
+                }
+                #endregion
+
                 root = rootNode.ToDTO();
             }
 
             return root;
+        }
+
+        /// <summary>
+        /// 获取扁平结构的分类信息
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="organId"></param>
+        /// <returns></returns>
+        public async Task<List<AssetCategoryDTO>> GetFlatCategory(string type, string organId)
+        {
+            return await _categoryTreeStore.GetFlatCategory(type, organId);
         }
 
         public async Task<AssetCategoryDTO> GetById(string id)
@@ -93,6 +121,23 @@ namespace ApiServer.Services
             cat.OrganizationId = dto.OrganizationId;
             dbset.Add(cat);
             await context.SaveChangesAsync();
+
+            #region 添加tree节点
+            {
+                var pNode = await context.AssetCategoryTrees.Where(x => x.ObjId == dto.ParentId && x.OrganizationId == dto.OrganizationId).FirstOrDefaultAsync();
+                if (pNode != null)
+                {
+                    var oTree = new AssetCategoryTree();
+                    oTree.NodeType = dto.Type;
+                    oTree.Name = cat.Name;
+                    oTree.ObjId = cat.Id;
+                    oTree.OrganizationId = dto.OrganizationId;
+                    oTree.CreatedTime = DateTime.Now;
+                    oTree.ParentId = pNode.Id;
+                    await _categoryTreeStore.AddChildNode(oTree);
+                }
+            }
+            #endregion
 
             return cat.ToDTO();
         }

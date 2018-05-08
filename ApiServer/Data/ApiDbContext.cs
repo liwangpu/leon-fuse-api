@@ -103,7 +103,15 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<Map> Maps { get; set; }
 
+        /// <summary>
+        /// 组织,部门,用户权限树
+        /// </summary>
         public DbSet<PermissionTree> PermissionTrees { get; set; }
+
+        /// <summary>
+        /// 分类资源树
+        /// </summary>
+        public DbSet<AssetCategoryTree> AssetCategoryTrees { get; set; }
 
         //------------------------------------------------------------------------
 

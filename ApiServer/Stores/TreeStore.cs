@@ -1,5 +1,4 @@
 ﻿using ApiModel;
-using ApiModel.Entities;
 using ApiServer.Data;
 using BambooCommon;
 using Microsoft.EntityFrameworkCore;
@@ -59,13 +58,23 @@ namespace ApiServer.Stores
                 {
                     data.LValue = parentNode.RValue;
                     data.RValue = data.LValue + 1;
-                    var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
+                    var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId&&x.RValue>=parentNode.RValue).ToListAsync();
                     for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                     {
                         var cur = refNodes[idx];
-                        cur.RValue += 2;
+                        //支线上只改变右值
+                        if (cur.LValue <= parentNode.LValue)
+                        {
+                            cur.RValue += 2;
+                        }
+                        else
+                        {
+                            cur.LValue += 2;
+                            cur.RValue += 2;
+                        }
                         _DbContext.Set<T>().Update(cur);
                     }
+                    //添加新节点
                     _DbContext.Set<T>().Add(data);
                     await _DbContext.SaveChangesAsync();
                 }

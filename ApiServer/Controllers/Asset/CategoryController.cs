@@ -28,7 +28,7 @@ namespace ApiServer.Controllers.Asset
         /// <param name="organId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<AssetCategoryDTO> Get(string type,string organId)
+        public async Task<AssetCategoryDTO> Get(string type, string organId)
         {
             if (string.IsNullOrEmpty(type))
                 type = "product";
@@ -42,12 +42,27 @@ namespace ApiServer.Controllers.Asset
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
             AssetCategoryDTO cat = null;
-            cat = await catman.GetCategoryAsync("product", organId); if(cat != null) pack.Categories.Add(cat);
+            cat = await catman.GetCategoryAsync("product", organId); if (cat != null) pack.Categories.Add(cat);
             cat = await catman.GetCategoryAsync("material", organId); if (cat != null) pack.Categories.Add(cat);
             cat = await catman.GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
             cat = await catman.GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
             return pack;
         }
+
+        #region GetFlat 获取扁平结构的分类信息
+        /// <summary>
+        /// 获取扁平结构的分类信息
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="organId"></param>
+        /// <returns></returns>
+        [Route("Flat")]
+        [HttpGet]
+        public async Task<List<AssetCategoryDTO>> GetFlat(string type, string organId)
+        {
+            return await catman.GetFlatCategory(type, organId);
+        } 
+        #endregion
 
         /// <summary>
         /// 创建一个分类。必须指定一个父级ID，不能主动创建根节点，根节点在get时会自动创建。
