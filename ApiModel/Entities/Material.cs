@@ -4,9 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Material : EntityBase, IAsset, IListable, IDTOTransfer<MaterialDTO>
+    public class Material : EntityBase, IAsset, IListable, IDTOTransfer<IData>
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
@@ -22,7 +21,7 @@ namespace ApiModel.Entities
         public FileAsset FileAsset { get; set; }
 
 
-        public MaterialDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new MaterialDTO();
             dto.Id = Id;

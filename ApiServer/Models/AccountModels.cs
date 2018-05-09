@@ -1,6 +1,7 @@
 ﻿using ApiModel.Entities;
 using BambooCore;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {
@@ -70,6 +71,25 @@ namespace ApiServer.Models
         public string OrganizationId { get; set; }
         public string DepartmentId { get; set; }
     }
+
+    #region OrganizationCreateModel 组织新建模型
+    /// <summary>
+    /// 组织新建模型
+    /// </summary>
+    public class OrganizationCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
+        public string Mail { get; set; }
+        [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
+        public string Location { get; set; }
+        public string ParentId { get; set; }
+    } 
+    #endregion
+
 
     public class OrganizationEditModel
     {

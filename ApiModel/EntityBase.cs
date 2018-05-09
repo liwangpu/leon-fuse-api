@@ -8,6 +8,7 @@ namespace ApiModel
     /// </summary>
     public class EntityBase : DataBase, ICloneable, IEntity
     {
+        public string Description { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }

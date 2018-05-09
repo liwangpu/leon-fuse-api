@@ -11,10 +11,6 @@ namespace ApiModel.Entities
     public class Package : EntityBase, IListable, IDTOTransfer<PackageDTO>
     {
         /// <summary>
-        /// 描述
-        /// </summary>
-        public string Description { get; set; }
-        /// <summary>
         /// 图标Asset Id
         /// </summary>
         public string Icon { get; set; }

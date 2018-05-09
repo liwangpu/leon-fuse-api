@@ -7,12 +7,8 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息
     /// </summary>
-    public class ProductSpec : EntityBase, IListable, IDTOTransfer<ProductSpecDTO>
+    public class ProductSpec : EntityBase, IListable, IDTOTransfer<IData>
     {
-        /// <summary>
-        /// 描述
-        /// </summary>
-        public string Description { get; set; }
         /// <summary>
         /// 图标
         /// </summary>
@@ -54,7 +50,7 @@ namespace ApiModel.Entities
             StaticMeshAsset = new List<StaticMesh>();
         }
 
-        public ProductSpecDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new ProductSpecDTO();
             dto.Id = Id;
@@ -92,7 +88,7 @@ namespace ApiModel.Entities
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public FileAssetDTO IconAsset { get; set; }
-        public List<StaticMeshDTO> StaticMeshes { get; set; }
+        public List<IData> StaticMeshes { get; set; }
         public List<FileAssetDTO> Charlets { get; set; }
     }
 

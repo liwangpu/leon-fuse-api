@@ -5,7 +5,6 @@ namespace ApiModel.Entities
 {
     public class Map : EntityBase, IListable
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
         [NotMapped]

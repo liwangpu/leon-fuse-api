@@ -1,14 +1,22 @@
 ﻿using ApiModel;
+using BambooCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
+
 namespace ApiServer.Stores
 {
     public interface IStore<T>
-        where T : IData
+             where T : class, IEntity, IDTOTransfer<IData>, new()
     {
-        //IQueryable<T> 
-        Task<string> CanCreate(string accid, T data);
-        Task<string> CanUpdate(string accid, T data);
-        Task<string> CanDelete(string accid, string id);
-        Task<string> CanRead(string accid, string id);
+        Task SatisfyCreate(string accid, T data, ModelStateDictionary modelState);
+        Task SatisfyUpdate(string accid, T data, ModelStateDictionary modelState);
+        Task<bool> CanCreate(string accid);
+        Task<bool> CanUpdate(string accid, string id);
+        Task<bool> CanDelete(string accid, string id);
+        Task<bool> CanRead(string accid, string id);
+        Task CreateAsync(string accid, T data);
+        Task UpdateAsync(string accid, T data);
+        Task DeleteAsync(string accid, string id);
+        Task<PagedData<T>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, string search);
     }
 }

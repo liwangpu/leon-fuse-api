@@ -7,7 +7,6 @@ using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -17,22 +16,17 @@ namespace ApiServer.Stores
     /// StoreBase是业务无关的,不关注任何业务信息
     /// StoreBase是DTO无关的,返回的信息只是最原始的实体数据信息
     /// 如果需要返回DTO数据,请在派生Store类里面实现
-    /// StoreBase应该是权限无关的,它只做简单操作,但是考虑到大部分资源都是权限相关的,所以提供了一个权限相关的_SimplePagedQueryWithPermissionAsync分页查询
-    /// 和一个权限无关的_SimplePagedQueryWithoutPermissionAsync分页查询
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class StoreBase<T>
-         where T : class, IEntity, new()
+         where T : class, IEntity, IDTOTransfer<IData>, new()
     {
         protected readonly ApiDbContext _DbContext;
-        protected readonly Repository1<T> _Repo;
 
         #region 构造函数
         public StoreBase(ApiDbContext context)
         {
             _DbContext = context;
-            //TODO:移除
-            _Repo = new Repository1<T>(context);
         }
         #endregion
 
@@ -112,18 +106,16 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region _SearchExpressionPipe 基本查询数据过滤管道 
+        #region _KeyWordSearchPipe 基本关键字过滤管道 
         /// <summary>
-        /// 基本查询数据过滤管道
+        /// 
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="searchExpression"></param>
-        protected void _SearchExpressionPipe(ref IQueryable<T> query, Expression<Func<T, bool>> searchExpression)
+        /// <param name="search"></param>
+        protected void _KeyWordSearchPipe(ref IQueryable<T> query, string search)
         {
-            if (searchExpression != null)
-            {
-                query = query.Where(searchExpression);
-            }
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
         }
         #endregion
 
@@ -166,114 +158,15 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region _SimplePagedQueryWithoutPermissionAsync 权限无关的分页查询
-        /// <summary>
-        /// 权限无关的分页查询
-        /// </summary>
-        /// <param name="accid"></param>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="desc"></param>
-        /// <param name="searchExpression"></param>
-        /// <returns></returns>
-        protected async Task<PagedData<T>> _SimplePagedQueryWithoutPermissionAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression)
-        {
-            try
-            {
-                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
-                var query = from it in _DbContext.Set<T>()
-                            select it;
-                _BasicPipe(ref query, currentAcc);
-                _OrderByPipe(ref query, orderBy, desc);
-                _SearchExpressionPipe(ref query, searchExpression);
-                return await query.SimplePaging(page, pageSize);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("_SimplePagedQueryAsync", ex);
-            }
-            return new PagedData<T>();
-        }
-        #endregion
-
-        #region _SimplePagedQueryWithPermissionAsync 权限相关的分页查询
-        /// <summary>
-        /// 权限相关的分页查询
-        /// </summary>
-        /// <param name="accid"></param>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="desc"></param>
-        /// <param name="searchExpression"></param>
-        /// <returns></returns>
-        protected async Task<PagedData<T>> _SimplePagedQueryWithPermissionAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression)
-        {
-            try
-            {
-                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
-                var query = from it in _DbContext.Set<T>()
-                            select it;
-                _BasicPipe(ref query, currentAcc);
-                _OrderByPipe(ref query, orderBy, desc);
-                _SearchExpressionPipe(ref query, searchExpression);
-                _BasicPermissionPipe(ref query, currentAcc);
-                return await query.SimplePaging(page, pageSize);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("_SimplePagedQueryAsync", ex);
-            }
-            return new PagedData<T>();
-        }
-        #endregion
-
-        #region _CanSave 简单判断数据是否为空
-        /// <summary>
-        /// 简单判断数据是否为空
-        /// </summary>
-        /// <param name="accid"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected string _CanSave(string accid, T data)
-        {
-            //为空验证
-            if (data == null)
-            {
-                return ValidityMessage.V_SubmitDataMsg;
-            }
-            return string.Empty;
-        }
-        #endregion
-
-        #region _CanDelete 简单判断数据id是否为空
-        /// <summary>
-        /// 简单判断数据id是否为空
-        /// </summary>
-        /// <param name="accid"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        protected string _CanDelete(string accid, string id)
-        {
-            //为空验证
-            if (id == null)
-            {
-                return ValidityMessage.V_NotDataOrPermissionMsg;
-            }
-            return string.Empty;
-        }
-        #endregion
-
         /**************** public method ****************/
 
-        #region _GetById 根据id信息返回实体数据信息
+        #region virtual GetById 根据id信息返回实体数据信息
         /// <summary>
         /// 根据id信息返回实体数据信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public T _GetById(string id)
+        public virtual T GetById(string id)
         {
             try
             {
@@ -281,19 +174,19 @@ namespace ApiServer.Stores
             }
             catch (Exception ex)
             {
-                Logger.LogError("_GetById", ex);
+                Logger.LogError("GetById", ex);
             }
             return null;
         }
         #endregion
 
-        #region _GetByIdAsync 根据id信息返回实体数据信息
+        #region virtual GetByIdAsync 根据id信息返回实体数据信息
         /// <summary>
         /// 根据id信息返回实体数据信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<T> _GetByIdAsync(string id)
+        public virtual async Task<T> GetByIdAsync(string id)
         {
             try
             {
@@ -301,77 +194,13 @@ namespace ApiServer.Stores
             }
             catch (Exception ex)
             {
-                Logger.LogError("_GetByIdAsync", ex);
+                Logger.LogError("GetByIdAsync", ex);
             }
             return null;
         }
         #endregion
 
-        #region _SaveOrUpdateAsync 更新或者保存实体数据信息
-        /// <summary>
-        /// 更新或者保存实体数据信息
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public async Task _SaveOrUpdateAsync(T data)
-        {
-            try
-            {
-                if (!data.IsPersistence())
-                    _DbContext.Set<T>().Add(data);
-                await _DbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("_SaveOrUpdateAsync", ex);
-            }
-        }
-        #endregion
-
-        #region _SaveOrUpdate 更新或者保存实体数据信息
-        /// <summary>
-        /// 更新或者保存实体数据信息
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public void _SaveOrUpdate(T data)
-        {
-            try
-            {
-                if (!data.IsPersistence())
-                    _DbContext.Set<T>().Add(data);
-                _DbContext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("_SaveOrUpdateAsync", ex);
-            }
-        }
-        #endregion
-
-        #region _DeleteAsync 根据id删除实体数据信息
-        /// <summary>
-        /// 根据id删除实体数据信息
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<bool> _DeleteAsync(string id)
-        {
-            try
-            {
-                var data = await _DbContext.Set<T>().FindAsync(id);
-                if (data != null)
-                    _DbContext.Set<T>().Remove(data);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("_DeleteAsync", ex);
-            }
-            return true;
-        }
-        #endregion
-
-        #region Exist 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
+        #region virtual Exist 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
         /// <summary>
         /// 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
         /// 提供虚方法以便复杂业务逻辑判断存在重写
@@ -385,5 +214,192 @@ namespace ApiServer.Stores
             return false;
         }
         #endregion
+
+        #region virtual CanCreate 判断用户是否有权限创建数据
+        /// <summary>
+        /// CanCreate
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> CanCreate(string accid)
+        {
+            return await Task.FromResult(true);
+        }
+        #endregion
+
+        #region virtual CanUpdate 判断用户是否有权限更新数据
+        /// <summary>
+        /// 判断用户是否有权限更新数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> CanUpdate(string accid, string id)
+        {
+            return await CanRead(accid, id);
+        }
+        #endregion
+
+        #region virtual CanDelete 判断用户是否有权限删除数据
+        /// <summary>
+        /// 判断用户是否有权限删除数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> CanDelete(string accid, string id)
+        {
+            return await CanRead(accid, id);
+        }
+        #endregion
+
+        #region virtual CanRead 判断用户是否有权限读取数据
+        /// <summary>
+        /// 判断用户是否有权限读取数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> CanRead(string accid, string id)
+        {
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.Set<T>()
+                        select it;
+            _BasicPipe(ref query, currentAcc);
+            _BasicPermissionPipe(ref query, currentAcc);
+            var result = await query.CountAsync(x => x.Id == id);
+            if (result == 0)
+                return false;
+            return true;
+        }
+        #endregion
+
+        #region virtual CreateAsync 新建实体信息
+        /// <summary>
+        /// 新建实体信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public virtual async Task CreateAsync(string accid, T data)
+        {
+            try
+            {
+                data.Id = GuidGen.NewGUID();
+                data.Creator = accid;
+                data.Modifier = accid;
+                data.CreatedTime = DateTime.Now;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.Set<T>().Add(data);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("CreateAsync", ex);
+            }
+        }
+        #endregion
+
+        #region virtual UpdateAsync 更新实体信息
+        /// <summary>
+        /// 更新实体信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public virtual async Task UpdateAsync(string accid, T data)
+        {
+            try
+            {
+                data.Modifier = accid;
+                data.ModifiedTime = DateTime.Now;
+                _DbContext.Set<T>().Update(data);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("UpdateAsync", ex);
+            }
+        }
+        #endregion
+
+        #region virtual DeleteAsync 删除实体信息
+        /// <summary>
+        /// 删除材质信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual async Task DeleteAsync(string accid, string id)
+        {
+            try
+            {
+                var data = await GetByIdAsync(id);
+                data.Modifier = accid;
+                data.ModifiedTime = DateTime.Now;
+                data.ActiveFlag = AppConst.I_DataState_InActive;
+                _DbContext.Set<T>().Update(data);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("DeleteAsync", ex);
+            }
+        }
+        #endregion
+
+        #region virtual SimplePagedQueryAsync 分页查询
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="search"></param>
+        /// <returns></returns>
+        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, string search)
+        {
+            try
+            {
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Set<T>()
+                            select it;
+                _BasicPipe(ref query, currentAcc);
+                _OrderByPipe(ref query, orderBy, desc);
+                _KeyWordSearchPipe(ref query, search);
+                _BasicPermissionPipe(ref query, currentAcc);
+                return await query.SimplePaging(page, pageSize);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("SimplePagedQueryAsync", ex);
+            }
+            return new PagedData<T>();
+        }
+        #endregion
+
+        /**************** public static method ****************/
+
+        #region static PageQueryDTOTransfer 将分页查询PagedData转为PagedData DTO
+        /// <summary>
+        /// 将分页查询PagedData转为PagedData DTO
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static PagedData<IData> PageQueryDTOTransfer(PagedData<T> result)
+        {
+            if (result != null)
+            {
+                if (result.Total > 0)
+                {
+                    return new PagedData<IData>() { Data = result.Data.Select(x => x.ToDTO()).ToList(), Page = result.Page, Size = result.Size, Total = result.Total };
+                }
+            }
+            return new PagedData<IData>();
+        }
+        #endregion
+
     }
 }

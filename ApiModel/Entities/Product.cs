@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
-    public class Product : EntityBase, IAsset, IDTOTransfer<ProductDTO>
+    public class Product : EntityBase, IAsset, IDTOTransfer<IData>
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
@@ -27,7 +26,7 @@ namespace ApiModel.Entities
         [NotMapped]
         public AssetCategory AssetCategory { get; set; }
 
-        public ProductDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new ProductDTO();
             dto.Id = Id;
@@ -58,7 +57,7 @@ namespace ApiModel.Entities
         public string AccountId { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
-        public List<ProductSpecDTO> Specifications { get; set; }
+        public List<IData> Specifications { get; set; }
     }
 
 }

@@ -8,7 +8,6 @@ namespace ApiModel.Entities
 {
     public class Account : EntityBase, IListable, ICloneable, IDTOTransfer<AccountDTO>
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string Mail { get; set; }
         public string Password { get; set; }

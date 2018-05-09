@@ -16,7 +16,7 @@ namespace ApiServer.Stores
         #region 构造函数
         public TreeStore(ApiDbContext context)
         {
-            _DbContext = context ;
+            _DbContext = context;
         }
         #endregion
 
@@ -123,6 +123,7 @@ namespace ApiServer.Stores
         public async Task MoveNode(T data, string newParentNodeId)
         {
             //TODO:
+            await Task.FromResult(string.Empty);
         }
     }
 }

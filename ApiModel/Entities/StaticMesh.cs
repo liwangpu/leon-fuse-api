@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
-    public class StaticMesh : EntityBase, IListable, IDTOTransfer<StaticMeshDTO>
+    public class StaticMesh : EntityBase, IListable, IDTOTransfer<IData>
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
@@ -22,7 +21,7 @@ namespace ApiModel.Entities
             Materials = new List<Material>();
         }
 
-        public StaticMeshDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new StaticMeshDTO();
             dto.Id = Id;
@@ -53,6 +52,6 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Url { get; set; }
         public FileAssetDTO FileAsset { get; set; }
-        public List<MaterialDTO> Materials { get; set; }
+        public List<IData> Materials { get; set; }
     }
 }

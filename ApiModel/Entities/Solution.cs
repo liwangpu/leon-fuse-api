@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ApiModel.Entities
 {
-    public class Solution : EntityBase, IAsset, IDTOTransfer<SolutionDTO>
+    public class Solution : EntityBase, IAsset, IDTOTransfer<IData>
     {
         public string Icon { get; set; }
         public string LayoutId { get; set; }
@@ -19,10 +19,9 @@ namespace ApiModel.Entities
         public string CategoryId { get; set; }
         public string AccountId { get; set; }
         public Account Account { get; set; }
-        public string Description { get; set; }
 
 
-        public SolutionDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new SolutionDTO();
             dto.Id = Id;

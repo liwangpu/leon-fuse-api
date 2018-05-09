@@ -8,7 +8,6 @@ namespace ApiModel.Entities
         public string CategoryId { get; set; }
         public string AccountId { get; set; }
         public Account Account { get; set; }
-        public string Description { get; set; }
         public string Icon { get; set; }
     }
 }

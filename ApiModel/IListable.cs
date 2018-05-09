@@ -1,15 +1,10 @@
-﻿using System;
-
-namespace ApiModel
+﻿namespace ApiModel
 {
     /// <summary>
     /// 列表类型资源接口
     /// </summary>
-    public interface IListable : IData
+    public interface IListable : IEntity
     {
-        string Description { get; set; }
         string Icon { get; set; }
-        DateTime CreatedTime { get; set; }
-        DateTime ModifiedTime { get; set; }
     }
 }

@@ -9,7 +9,6 @@ namespace ApiModel.Entities
         public string OrganizationId { get; set; }
         public Organization Organization { get; set; }
         public List<OrganMember> Members { get; set; }
-        public string Description { get; set; }
         public string Icon { get; set; }
 
         public DepartmentDTO ToDTO()

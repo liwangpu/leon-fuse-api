@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel;
+using ApiModel.Entities;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -36,13 +37,12 @@ namespace ApiServer.Controllers.Design
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<MaterialDTO>), 200)]
         [ProducesResponseType(typeof(PagedData<MaterialDTO>), 400)]
-        public async Task<PagedData<MaterialDTO>> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        public async Task<PagedData<IData>> Get(string search, int page, int pageSize, string orderBy, bool desc)
         {
             var accid = AuthMan.GetAccountId(this);
-            if (string.IsNullOrEmpty(search))
-                return await _materialStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc);
-            else
-                return await _materialStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+            var result = await _materialStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, search);
+            return MaterialStore.PageQueryDTOTransfer(result);
+
         }
         #endregion
 
@@ -63,8 +63,8 @@ namespace ApiServer.Controllers.Design
             var canRead = await _materialStore.CanRead(accid, id);
             if (!canRead)
                 return Forbid();
-            var dto = await _materialStore.GetByIdAsync(accid, id);
-            return Ok(dto);
+            var data = await _materialStore.GetByIdAsync(id);
+            return Ok(data.ToDTO());
         }
         #endregion
 
@@ -86,12 +86,12 @@ namespace ApiServer.Controllers.Design
             material.Description = value.Description;
             material.FileAssetId = value.FileAssetId;
             material.CategoryId = value.CategoryId;
-            await _materialStore.CanCreate(accid, material, ModelState);
+            await _materialStore.SatisfyCreate(accid, material, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
 
-            var dto = await _materialStore.CreateAsync(accid, material);
-            return Ok(dto);
+            await _materialStore.CreateAsync(accid, material);
+            return Ok(material.ToDTO());
         }
         #endregion
 
@@ -107,21 +107,23 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]MaterialEditModel value)
         {
-            var accid = AuthMan.GetAccountId(this);
             var exist = await _materialStore.Exist(value.Id);
             if (!exist)
                 return NotFound();
-
-            var material = await _materialStore._GetByIdAsync(value.Id);
+            var accid = AuthMan.GetAccountId(this);
+            var permission = await _materialStore.CanUpdate(accid, value.Id);
+            if (!permission)
+                return Forbid();
+            var material = await _materialStore.GetByIdAsync(value.Id);
             material.Name = value.Name;
             material.Description = value.Description;
             material.FileAssetId = value.FileAssetId;
             material.CategoryId = value.CategoryId;
-            await _materialStore.CanUpdate(accid, material, ModelState);
+            await _materialStore.SatisfyUpdate(accid, material, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            var dto = await _materialStore.UpdateAsync(accid, material);
-            return Ok(dto);
+            await _materialStore.UpdateAsync(accid, material);
+            return Ok(material.ToDTO());
         }
         #endregion
 

@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
     public class Texture : EntityBase, IListable
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
         [NotMapped]

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Organization : EntityBase, IListable, IDTOTransfer<OrganizationDTO>
+    public class Organization : EntityBase, IListable, IDTOTransfer<IData>
     {
         /// <summary>
         /// 父级组织的ID
@@ -50,12 +50,11 @@ namespace ApiModel.Entities
         public List<AssetFolder> Folders { get; set; }
         [JsonIgnore]
         public List<FileAsset> Files { get; set; }
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }
 
-        public OrganizationDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new OrganizationDTO();
             dto.Id = Id;
