@@ -28,7 +28,7 @@ namespace ApiModel.Entities
         /// <summary>
         /// 价格，单位为元
         /// </summary>
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         /// <summary>
         /// 第三方ID，此产品在供应商自己的系统比如ERP的ID
         /// </summary>
@@ -86,7 +86,7 @@ namespace ApiModel.Entities
     {
         public string Description { get; set; }
         public string Icon { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }
         public DateTime CreatedTime { get; set; }

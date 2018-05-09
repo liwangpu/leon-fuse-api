@@ -25,7 +25,7 @@ namespace ApiServer.Models
         public string AssetId { get; set; }
     }
 
-    public class StaticMeshEditModel : IModel<StaticMesh>
+    public class StaticMeshEditModel 
     {
         public string Id { get; set; }
         public string Name { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {
@@ -48,7 +49,7 @@ namespace ApiServer.Models
         public string ProductId { get; set; }
         public string CategoryId { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "价格信息有误")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
     #endregion
 
@@ -67,7 +68,7 @@ namespace ApiServer.Models
         public string ProductId { get; set; }
         public string CategoryId { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "价格信息有误")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
     #endregion
 
@@ -119,4 +120,40 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
     }
     #endregion
+
+    /// <summary>
+    /// 订单创建模型
+    /// </summary>
+    public class OrderCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Content { get; set; }
+        public string AccountId { get; set; }
+        public string State { get; set; }
+        public DateTime StateTime { get; set; }
+    }
+
+    /// <summary>
+    /// 订单创建模型
+    /// </summary>
+    public class OrderEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Content { get; set; }
+        public string AccountId { get; set; }
+        public string State { get; set; }
+        public DateTime StateTime { get; set; }
+    }
+
+
 }
