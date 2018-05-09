@@ -1,4 +1,6 @@
 ﻿using ApiModel;
+using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Data;
 using BambooCommon;
 using BambooCore;
@@ -15,13 +17,12 @@ namespace ApiServer.Stores
     /// StoreBase是业务无关的,不关注任何业务信息
     /// StoreBase是DTO无关的,返回的信息只是最原始的实体数据信息
     /// 如果需要返回DTO数据,请在派生Store类里面实现
-    /// StoreBase应该是权限无关的,它只做简单操作,如果需要对权限做操作,请在派生类里面实现
-    /// 有一个权限无关的_SimplePagedQueryWithoutPermissionAsync分页查询
-    /// 权限相关的_SimplePagedQueryWithPermissionAsync分页查询在PermissionStore,请继承它
+    /// StoreBase应该是权限无关的,它只做简单操作,但是考虑到大部分资源都是权限相关的,所以提供了一个权限相关的_SimplePagedQueryWithPermissionAsync分页查询
+    /// 和一个权限无关的_SimplePagedQueryWithoutPermissionAsync分页查询
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class StoreBase<T>
-         where T : class, IData, new()
+         where T : class, IEntity, new()
     {
         protected readonly ApiDbContext _DbContext;
         protected readonly Repository1<T> _Repo;
@@ -36,6 +37,80 @@ namespace ApiServer.Stores
         #endregion
 
         /**************** protected method ****************/
+
+        #region _BasicPipe 基本的数据过滤管道
+        /// <summary>
+        /// 基本的数据过滤管道
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected void _BasicPipe(ref IQueryable<T> query, Account currentAcc)
+        {
+            if (currentAcc != null)
+            {
+                if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+                {
+                    //TODO:管理员或者特殊角色可能需要查看InActive数据,待商榷
+                    query = from it in query
+                            where it.ActiveFlag == AppConst.I_DataState_Active
+                            select it;
+                }
+                else
+                {
+                    query = from it in query
+                            where it.ActiveFlag == AppConst.I_DataState_Active
+                            select it;
+                }
+            }
+            else
+            {
+                query = query.Take(0);
+            }
+        }
+        #endregion
+
+        #region _BasicPermissionPipe 基本的权限树数据过滤管道
+        /// <summary>
+        /// 基本的权限树数据过滤管道
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected void _BasicPermissionPipe(ref IQueryable<T> query, Account currentAcc)
+        {
+            if (currentAcc != null)
+            {
+                if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+                {
+
+                }
+                else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+                {
+                    var treeQ = from ps in _DbContext.PermissionTrees
+                                where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
+                                select ps;
+                    query = from it in query
+                            join ps in treeQ on it.Creator equals ps.ObjId
+                            select it;
+                }
+                else if (currentAcc.Type == AppConst.AccountType_OrganMember)
+                {
+                    query = from it in query
+                            where it.Creator == currentAcc.Id
+                            select it;
+                }
+                else
+                {
+                    query = from it in query
+                            where it.Creator == currentAcc.Id
+                            select it;
+                }
+            }
+            else
+            {
+                query = query.Take(0);
+            }
+        }
+        #endregion
 
         #region _SearchExpressionPipe 基本查询数据过滤管道 
         /// <summary>
@@ -109,8 +184,41 @@ namespace ApiServer.Stores
                 var currentAcc = await _DbContext.Accounts.FindAsync(accid);
                 var query = from it in _DbContext.Set<T>()
                             select it;
+                _BasicPipe(ref query, currentAcc);
                 _OrderByPipe(ref query, orderBy, desc);
                 _SearchExpressionPipe(ref query, searchExpression);
+                return await query.SimplePaging(page, pageSize);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("_SimplePagedQueryAsync", ex);
+            }
+            return new PagedData<T>();
+        }
+        #endregion
+
+        #region _SimplePagedQueryWithPermissionAsync 权限相关的分页查询
+        /// <summary>
+        /// 权限相关的分页查询
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="searchExpression"></param>
+        /// <returns></returns>
+        protected async Task<PagedData<T>> _SimplePagedQueryWithPermissionAsync(string accid, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression)
+        {
+            try
+            {
+                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+                var query = from it in _DbContext.Set<T>()
+                            select it;
+                _BasicPipe(ref query, currentAcc);
+                _OrderByPipe(ref query, orderBy, desc);
+                _SearchExpressionPipe(ref query, searchExpression);
+                _BasicPermissionPipe(ref query, currentAcc);
                 return await query.SimplePaging(page, pageSize);
             }
             catch (Exception ex)
@@ -156,8 +264,6 @@ namespace ApiServer.Stores
             return string.Empty;
         }
         #endregion
-
-
 
         /**************** public method ****************/
 
@@ -265,18 +371,17 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region Exist 简单判断id对应记录是否存在
+        #region Exist 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
         /// <summary>
-        /// 简单判断id对应记录是否存在
-        /// 基类简单判断id是否存在,但不做actived等校验
-        /// 如果需要校验actived已否,请在派生类重写
+        /// 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
+        /// 提供虚方法以便复杂业务逻辑判断存在重写
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public virtual async Task<bool> Exist(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
-                return await _DbContext.Set<T>().CountAsync(x => x.Id == id) > 0;
+                return await _DbContext.Set<T>().CountAsync(x => x.Id == id && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
             return false;
         }
         #endregion

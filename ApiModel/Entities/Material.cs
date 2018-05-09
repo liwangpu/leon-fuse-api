@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Material : EntityBase, IAsset, IPermission, IListable, IDTOTransfer<MaterialDTO>
+    public class Material : EntityBase, IAsset, IListable, IDTOTransfer<MaterialDTO>
     {
         public string Description { get; set; }
         public string Icon { get; set; }

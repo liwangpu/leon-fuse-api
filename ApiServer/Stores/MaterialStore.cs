@@ -14,7 +14,7 @@ namespace ApiServer.Stores
     /// <summary>
     /// Material Store
     /// </summary>
-    public class MaterialStore : PermissionStore<Material>
+    public class MaterialStore : StoreBase<Material>
     {
         #region 构造函数
         public MaterialStore(ApiDbContext context)
@@ -79,7 +79,7 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task CanCreate(string accid, Material data, ModelStateDictionary modelState)
         {
-           await Task.FromResult(string.Empty);
+            await Task.FromResult(string.Empty);
         }
         #endregion
 

@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class TreeStore<T> : StoreBase<T>
+    public class TreeStore<T>
               where T : class, ITree, new()
     {
-
+        protected readonly ApiDbContext _DbContext;
         #region 构造函数
         public TreeStore(ApiDbContext context)
-          : base(context)
         {
-
+            _DbContext = context ;
         }
         #endregion
 

@@ -132,7 +132,6 @@ namespace ApiServer.Models
         public string Description { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
-        public string AccountId { get; set; }
         public string State { get; set; }
         public DateTime StateTime { get; set; }
     }
@@ -150,7 +149,6 @@ namespace ApiServer.Models
         public string Description { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
-        public string AccountId { get; set; }
         public string State { get; set; }
         public DateTime StateTime { get; set; }
     }

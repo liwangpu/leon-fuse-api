@@ -88,7 +88,6 @@ namespace ApiServer.Controllers
             var order = new Order();
             order.Name = value.Name;
             order.Description = value.Description;
-            order.AccountId = value.AccountId;
             await _OrderStore.CanCreate(accid, order, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
@@ -138,37 +137,37 @@ namespace ApiServer.Controllers
             return NotFound(); // 或者权限不够
         }
 
-        [Route("ChangeState")]
-        [HttpPost]
-        public async Task<IActionResult> ChangeState(string id, [FromBody]OrderStateItem state)
-        {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+        //[Route("ChangeState")]
+        //[HttpPost]
+        //public async Task<IActionResult> ChangeState(string id, [FromBody]OrderStateItem state)
+        //{
+        //    if (ModelState.IsValid == false)
+        //        return BadRequest(ModelState);
 
-            string accid = AuthMan.GetAccountId(this);
-            var ok = await repo.CanUpdateAsync(accid, id);
-            if (ok == false)
-                return Forbid();
+        //    string accid = AuthMan.GetAccountId(this);
+        //    var ok = await repo.CanUpdateAsync(accid, id);
+        //    if (ok == false)
+        //        return Forbid();
 
-            var res = await repo.GetAsync(accid, id);
-            if (res == null)
-                return NotFound();
+        //    var res = await repo.GetAsync(accid, id);
+        //    if (res == null)
+        //        return NotFound();
 
-            res.StateTime = DateTime.UtcNow;
-            if (res.OrderStates == null)
-            {
-                res.OrderStates = new List<OrderStateItem>();
-            }
-            state.Id = GuidGen.NewGUID();
-            state.Order = res;
-            state.OrderId = res.Id;
-            state.OldState = res.State;
-            state.OperateTime = DateTime.UtcNow;
-            res.State = state.NewState;
-            res.OrderStates.Add(state);
-            await repo.SaveChangesAsync();
-            return Ok();
-        }
+        //    res.StateTime = DateTime.UtcNow;
+        //    if (res.OrderStates == null)
+        //    {
+        //        res.OrderStates = new List<OrderStateItem>();
+        //    }
+        //    state.Id = GuidGen.NewGUID();
+        //    state.Order = res;
+        //    state.OrderId = res.Id;
+        //    state.OldState = res.State;
+        //    state.OperateTime = DateTime.UtcNow;
+        //    res.State = state.NewState;
+        //    res.OrderStates.Add(state);
+        //    await repo.SaveChangesAsync();
+        //    return Ok();
+        //}
 
         #region ChangeContent 更新订单详情信息
         /// <summary>

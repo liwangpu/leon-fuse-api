@@ -4,16 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    #region Order 订单
+    #region Order 套餐
     /// <summary>
-    /// 订单
+    /// 套餐
     /// </summary>
-    public class Order : EntityBase, IListable, IDTOTransfer<OrderDTO>
+    public class Package : EntityBase, IListable, IDTOTransfer<PackageDTO>
     {
-        public Order()
-        {
-            StateTime = DateTime.Now;
-        }
         /// <summary>
         /// 描述
         /// </summary>
@@ -22,26 +18,18 @@ namespace ApiModel.Entities
         /// 图标Asset Id
         /// </summary>
         public string Icon { get; set; }
-        public string State { get; set; }
-        public DateTime StateTime { get; set; }
         /// <summary>
-        /// 子订单列表，由多个订单id用分号分隔而成
-        /// </summary>
-        public string ChildOrders { get; set; }
-        /// <summary>
-        /// 订单内容, 内容为OrderContent对象的json字符串
+        /// 套餐内容, 内容为OrderContent对象的json字符串
         /// </summary>
         public string Content { get; set; }
 
-        public List<OrderStateItem> OrderStates { get; set; }
-
-
         [NotMapped]
-        public OrderContent ContentIns { get; set; }
+        public PackageContent ContentIns { get; set; }
 
-        public OrderDTO ToDTO()
+        #region ToDTO
+        public PackageDTO ToDTO()
         {
-            var dto = new OrderDTO();
+            var dto = new PackageDTO();
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
@@ -52,47 +40,47 @@ namespace ApiModel.Entities
             if (ContentIns != null)
                 dto.ContentIns = ContentIns;
             return dto;
-        }
+        } 
+        #endregion
     }
     #endregion
 
-    #region OrderDTO 订单DTO
+    #region OrderDTO 套餐DTO
     /// <summary>
-    /// 订单DTO
+    /// 套餐DTO
     /// </summary>
-    public class OrderDTO : DataBase
+    public class PackageDTO : DataBase
     {
         public string Description { get; set; }
         public string Icon { get; set; }
-        public string AccountId { get; set; }
         public string State { get; set; }
         public string Content { get; set; }
-        public DateTime StateTime { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }
         public string Modifier { get; set; }
-        public OrderContent ContentIns { get; set; }
-    } 
+        public DateTime CreatedTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
+        public PackageContent ContentIns { get; set; }
+    }
     #endregion
 
-    #region OrderContent 订单内容(仅供序列化使用,非数据库实体)
+
+    #region OrderContent 套餐内容(仅供序列化使用,非数据库实体)
     /// <summary>
-    /// 订单内容(仅供序列化使用,非数据库实体)
+    /// 套餐内容(仅供序列化使用,非数据库实体)
     /// </summary>
-    public class OrderContent
+    public class PackageContent
     {
-        public List<OrderContentItem> Items { get; set; }
+        public List<PackageContentItem> Items { get; set; }
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
     }
     #endregion
 
-    #region OrderContentItem 订单项(仅供序列化使用,非数据库实体)
+    #region OrderContentItem 套餐项(仅供序列化使用,非数据库实体)
     /// <summary>
-    /// 订单项(仅供序列化使用,非数据库实体)
+    /// 套餐项(仅供序列化使用,非数据库实体)
     /// </summary>
-    public class OrderContentItem
+    public class PackageContentItem
     {
         public string ProductSpecId { get; set; }
         public int Num { get; set; }
@@ -101,6 +89,6 @@ namespace ApiModel.Entities
         public string Remark { get; set; }
         public string ProductName { get; set; }
         public string ProductSpecName { get; set; }
-    } 
+    }
     #endregion
 }

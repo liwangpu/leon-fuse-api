@@ -7,7 +7,7 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息
     /// </summary>
-    public class ProductSpec : EntityBase, IListable, IPermission, IDTOTransfer<ProductSpecDTO>
+    public class ProductSpec : EntityBase, IListable, IDTOTransfer<ProductSpecDTO>
     {
         /// <summary>
         /// 描述

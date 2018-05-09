@@ -2,12 +2,17 @@
 
 namespace ApiModel
 {
-    public class EntityBase : DataBase, ICloneable
+    #region EntityBase 标准的数据实体(供继承)
+    /// <summary>
+    /// 标准的数据实体(供继承)
+    /// </summary>
+    public class EntityBase : DataBase, ICloneable, IEntity
     {
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }
         public string Modifier { get; set; }
+        public int ActiveFlag { get; set; }
 
         public EntityBase()
         {
@@ -27,4 +32,5 @@ namespace ApiModel
             return MemberwiseClone();
         }
     }
+    #endregion
 }

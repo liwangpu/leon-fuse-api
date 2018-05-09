@@ -9,9 +9,11 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using ApiModel.Consts;
+
 namespace ApiServer.Stores
 {
-    public class OrderStore : PermissionStore<Order>
+    public class OrderStore : StoreBase<Order>
     {
         #region 构造函数
         public OrderStore(ApiDbContext context)
@@ -170,7 +172,6 @@ namespace ApiServer.Stores
                 data.Id = GuidGen.NewGUID();
                 data.Creator = accid;
                 data.Modifier = accid;
-                data.AccountId = accid;
                 data.CreatedTime = DateTime.Now;
                 data.ModifiedTime = DateTime.Now;
                 _DbContext.Orders.Add(data);
@@ -221,11 +222,11 @@ namespace ApiServer.Stores
         {
             try
             {
-                //TODO:不是直接删除,应该active flag 为false
                 var data = await _GetByIdAsync(id);
                 data.Modifier = accid;
                 data.ModifiedTime = DateTime.Now;
-                _DbContext.Orders.Remove(data);
+                data.ActiveFlag = AppConst.I_DataState_Active;
+                _DbContext.Orders.Update(data);
                 await _DbContext.SaveChangesAsync();
             }
             catch (Exception ex)

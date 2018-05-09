@@ -1,5 +1,8 @@
 ﻿namespace ApiModel
 {
+    /// <summary>
+    /// 树形资源类型接口
+    /// </summary>
     public interface ITree : IData
     {
         int LValue { get; set; }
