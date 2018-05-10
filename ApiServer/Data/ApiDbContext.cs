@@ -113,6 +113,11 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<AssetCategoryTree> AssetCategoryTrees { get; set; }
 
+        /// <summary>
+        /// 套餐
+        /// </summary>
+        public DbSet<Package> Packages { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

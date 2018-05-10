@@ -1,4 +1,5 @@
 ﻿using ApiServer.Data;
+using ApiServer.MiddleWares;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,6 +61,8 @@ namespace ApiServer
                     //options.Events.OnAuthenticationFailed  OnTokenValidated OnChallenge OnMessageReceived
                 });
 
+     
+
             services.AddMvc()
                 .AddJsonOptions(opts =>
                 {
@@ -83,6 +86,7 @@ namespace ApiServer
 
         void hostStaticFileServer(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             Console.WriteLine("content root path: " + env.ContentRootPath);
             Console.WriteLine("web root path: " + env.WebRootPath);
             if (Directory.Exists(env.WebRootPath) == false)

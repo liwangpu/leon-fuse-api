@@ -87,9 +87,9 @@ namespace ApiModel.Entities
         public string ProductId { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
-        public FileAssetDTO IconAsset { get; set; }
+        public IData IconAsset { get; set; }
         public List<IData> StaticMeshes { get; set; }
-        public List<FileAssetDTO> Charlets { get; set; }
+        public List<IData> Charlets { get; set; }
     }
 
     /// <summary>

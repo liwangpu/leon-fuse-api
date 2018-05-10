@@ -129,17 +129,7 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
                     b.Property<int>("LValue");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
 
@@ -584,6 +574,8 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("DepartmentId");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("JoinDepartmentTime");
 
                     b.Property<DateTime>("JoinOrganTime");
@@ -609,22 +601,40 @@ namespace ApiServer.Migrations
                     b.ToTable("OrganMember");
                 });
 
-            modelBuilder.Entity("ApiModel.Entities.PermissionTree", b =>
+            modelBuilder.Entity("ApiModel.Entities.Package", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("Content");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
 
-                    b.Property<int>("LValue");
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
 
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Packages");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.PermissionTree", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LValue");
 
                     b.Property<string>("Name");
 

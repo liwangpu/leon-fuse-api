@@ -2,16 +2,12 @@
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
-
 namespace ApiServer.Stores
 {
-    /// <summary>
-    /// Material Store
-    /// </summary>
-    public class MaterialStore : StoreBase<Material>, IStore<Material>
+    public class ProductStore : StoreBase<Product>, IStore<Product>
     {
         #region 构造函数
-        public MaterialStore(ApiDbContext context)
+        public ProductStore(ApiDbContext context)
         : base(context)
         { }
         #endregion
@@ -24,7 +20,7 @@ namespace ApiServer.Stores
         /// <param name="data"></param>
         /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task SatisfyCreateAsync(string accid, Material data, ModelStateDictionary modelState)
+        public async Task SatisfyCreateAsync(string accid, Product data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
         }
@@ -38,7 +34,7 @@ namespace ApiServer.Stores
         /// <param name="data"></param>
         /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task SatisfyUpdateAsync(string accid, Material data, ModelStateDictionary modelState)
+        public async Task SatisfyUpdateAsync(string accid, Product data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
         }

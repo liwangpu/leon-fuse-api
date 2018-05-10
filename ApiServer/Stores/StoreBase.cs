@@ -2,7 +2,7 @@
 using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiServer.Data;
-using BambooCommon;
+using ApiServer.Models;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,8 +14,6 @@ namespace ApiServer.Stores
     /// <summary>
     /// StoreBase是所有store仓库类的基类
     /// StoreBase是业务无关的,不关注任何业务信息
-    /// StoreBase是DTO无关的,返回的信息只是最原始的实体数据信息
-    /// 如果需要返回DTO数据,请在派生Store类里面实现
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class StoreBase<T>
@@ -160,54 +158,50 @@ namespace ApiServer.Stores
 
         /**************** public method ****************/
 
-        #region virtual GetById 根据id信息返回实体数据信息
+        #region _GetByIdAsync 根据id信息返回实体数据信息
         /// <summary>
         /// 根据id信息返回实体数据信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual T GetById(string id)
+        public async Task<T> _GetByIdAsync(string id)
         {
-            try
+            if (!string.IsNullOrWhiteSpace(id))
             {
-                return _DbContext.Set<T>().Find(id);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("GetById", ex);
+                var data = await _DbContext.Set<T>().FindAsync(id);
+                if (data != null)
+                    return data;
             }
             return null;
         }
         #endregion
 
-        #region virtual GetByIdAsync 根据id信息返回实体数据信息
+        #region virtual GetByIdAsync 根据id信息返回实体DTO数据信息
         /// <summary>
-        /// 根据id信息返回实体数据信息
+        /// 根据id信息返回实体DTO数据信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<T> GetByIdAsync(string id)
+        public virtual async Task<IData> GetByIdAsync(string id)
         {
-            try
+            if (!string.IsNullOrWhiteSpace(id))
             {
-                return await _DbContext.Set<T>().FindAsync(id);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("GetByIdAsync", ex);
+                var data = await _DbContext.Set<T>().FindAsync(id);
+                if (data != null)
+                    return data.ToDTO();
             }
             return null;
         }
         #endregion
 
-        #region virtual Exist 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
+        #region virtual ExistAsync 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
         /// <summary>
         /// 简单判断id对应记录是否存在(InActive状态类似不存在,返回false)
         /// 提供虚方法以便复杂业务逻辑判断存在重写
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<bool> Exist(string id)
+        public virtual async Task<bool> ExistAsync(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
                 return await _DbContext.Set<T>().CountAsync(x => x.Id == id && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
@@ -215,52 +209,52 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region virtual CanCreate 判断用户是否有权限创建数据
+        #region virtual CanCreateAsync 判断用户是否有权限创建数据
         /// <summary>
         /// CanCreate
         /// </summary>
         /// <param name="accid"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanCreate(string accid)
+        public virtual async Task<bool> CanCreateAsync(string accid)
         {
             return await Task.FromResult(true);
         }
         #endregion
 
-        #region virtual CanUpdate 判断用户是否有权限更新数据
+        #region virtual CanUpdateAsync 判断用户是否有权限更新数据
         /// <summary>
         /// 判断用户是否有权限更新数据
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanUpdate(string accid, string id)
+        public virtual async Task<bool> CanUpdateAsync(string accid, string id)
         {
-            return await CanRead(accid, id);
+            return await CanReadAsync(accid, id);
         }
         #endregion
 
-        #region virtual CanDelete 判断用户是否有权限删除数据
+        #region virtual CanDeleteAsync 判断用户是否有权限删除数据
         /// <summary>
         /// 判断用户是否有权限删除数据
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanDelete(string accid, string id)
+        public virtual async Task<bool> CanDeleteAsync(string accid, string id)
         {
-            return await CanRead(accid, id);
+            return await CanReadAsync(accid, id);
         }
         #endregion
 
-        #region virtual CanRead 判断用户是否有权限读取数据
+        #region virtual CanReadAsync 判断用户是否有权限读取数据
         /// <summary>
         /// 判断用户是否有权限读取数据
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanRead(string accid, string id)
+        public virtual async Task<bool> CanReadAsync(string accid, string id)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var query = from it in _DbContext.Set<T>()
@@ -283,20 +277,8 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task CreateAsync(string accid, T data)
         {
-            try
-            {
-                data.Id = GuidGen.NewGUID();
-                data.Creator = accid;
-                data.Modifier = accid;
-                data.CreatedTime = DateTime.Now;
-                data.ModifiedTime = DateTime.Now;
-                _DbContext.Set<T>().Add(data);
-                await _DbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("CreateAsync", ex);
-            }
+            _DbContext.Set<T>().Add(data);
+            await _DbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -309,17 +291,8 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task UpdateAsync(string accid, T data)
         {
-            try
-            {
-                data.Modifier = accid;
-                data.ModifiedTime = DateTime.Now;
-                _DbContext.Set<T>().Update(data);
-                await _DbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("UpdateAsync", ex);
-            }
+            _DbContext.Set<T>().Update(data);
+            await _DbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -332,19 +305,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task DeleteAsync(string accid, string id)
         {
-            try
-            {
-                var data = await GetByIdAsync(id);
-                data.Modifier = accid;
-                data.ModifiedTime = DateTime.Now;
-                data.ActiveFlag = AppConst.I_DataState_InActive;
-                _DbContext.Set<T>().Update(data);
-                await _DbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("DeleteAsync", ex);
-            }
+            var data = await _GetByIdAsync(id);
+            data.Modifier = accid;
+            data.ModifiedTime = DateTime.Now;
+            data.ActiveFlag = AppConst.I_DataState_InActive;
+            _DbContext.Set<T>().Update(data);
+            await _DbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -352,31 +318,19 @@ namespace ApiServer.Stores
         /// <summary>
         /// 分页查询
         /// </summary>
+        /// <param name="model"></param>
         /// <param name="accid"></param>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="desc"></param>
-        /// <param name="search"></param>
         /// <returns></returns>
-        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(string accid, int page, int pageSize, string orderBy, bool desc, string search)
+        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid)
         {
-            try
-            {
-                var currentAcc = await _DbContext.Accounts.FindAsync(accid);
-                var query = from it in _DbContext.Set<T>()
-                            select it;
-                _BasicPipe(ref query, currentAcc);
-                _OrderByPipe(ref query, orderBy, desc);
-                _KeyWordSearchPipe(ref query, search);
-                _BasicPermissionPipe(ref query, currentAcc);
-                return await query.SimplePaging(page, pageSize);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("SimplePagedQueryAsync", ex);
-            }
-            return new PagedData<T>();
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var query = from it in _DbContext.Set<T>()
+                        select it;
+            _BasicPipe(ref query, currentAcc);
+            _OrderByPipe(ref query, model.OrderBy, model.Desc);
+            _KeyWordSearchPipe(ref query, model.Search);
+            _BasicPermissionPipe(ref query, currentAcc);
+            return await query.SimplePaging(model.Page, model.PageSize);
         }
         #endregion
 
@@ -400,6 +354,7 @@ namespace ApiServer.Stores
             return new PagedData<IData>();
         }
         #endregion
+
 
     }
 }

@@ -1,127 +1,108 @@
-﻿//using ApiModel.Entities;
-//using ApiServer.Data;
-//using ApiServer.Models;
-//using ApiServer.Services;
-//using ApiServer.Stores;
-//using BambooCore;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using ApiModel.Entities;
+using ApiServer.Data;
+using ApiServer.Filters;
+using ApiServer.Models;
+using ApiServer.Stores;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+namespace ApiServer.Controllers
+{
+    /// <summary>
+    /// 部门管理控制器
+    /// </summary>
+    [Authorize]
+    [Route("/[controller]")]
+    public class DepartmentController : ListableController<Department, DepartmentCreateModel>
+    {
+        private readonly DepartmentStore _DepartmentStore;
 
-//namespace ApiServer.Controllers
-//{
-//    [Authorize]
-//    [Route("/[controller]")]
-//    public class DepartmentController : Controller
-//    {
-//        private readonly Repository<Department> repo;
-//        private readonly DepartmentStore _DepartmentStore;
-//        public DepartmentController(ApiDbContext context)
-//        {
-//            repo = new Repository<Department>(context);
-//            _DepartmentStore = new DepartmentStore(context);
-//        }
+        #region 构造函数
+        public DepartmentController(ApiDbContext context)
+        : base(new DepartmentStore(context))
+        {
+            _DepartmentStore = _Store as DepartmentStore;
+        }
+        #endregion
 
-//        [HttpGet("{id}")]
-//        [Produces(typeof(Department))]
-//        public async Task<IActionResult> Get(string id)
-//        {
-//            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
-//            if (res == null)
-//                return NotFound();
-//            await repo.Context.Entry(res).Collection(d => d.Members).LoadAsync();
-//            return Ok(res);//return Forbid();
-//        }
+        #region Get 根据id获取部门信息
+        /// <summary>
+        /// 根据id获取部门信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        public async Task<IActionResult> Get(string id)
+        {
+            return await _GetByIdRequest(id);
+        }
+        #endregion
 
-//        #region Post 新建部门信息
-//        /// <summary>
-//        /// 新建部门信息
-//        /// </summary>
-//        /// <param name="value"></param>
-//        /// <returns></returns>
-//        [HttpPost]
-//        [ProducesResponseType(typeof(DepartmentDTO), 200)]
-//        [ProducesResponseType(typeof(string), 400)]
-//        public async Task<IActionResult> Post([FromBody]DepartmentEditModel value)
-//        {
-//            if (ModelState.IsValid == false)
-//                return BadRequest(ModelState);
+        #region Post 新建部门信息
+        /// <summary>
+        /// 新建部门信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateModel]
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Post([FromBody]DepartmentCreateModel model)
+        {
+            var mapping = new Func<Department, Task<Department>>((entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.ParentId = model.ParentId;
+                entity.OrganizationId = model.OrganizationId;
+                return Task.FromResult(entity);
+            });
+            return await _PostRequest(mapping);
+        }
+        #endregion
 
-//            var accid = AuthMan.GetAccountId(this);
-//            var department = new Department();
-//            department.Name = value.Name;
-//            department.ParentId = value.ParentId;
-//            department.Description = value.Description;
-//            department.ModifiedTime = DateTime.Now;
-//            department.Creator = accid;
-//            department.OrganizationId = value.OrganizationId;
+        #region Put 编辑部门信息
+        /// <summary>
+        /// 编辑部门信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Put([FromBody]DepartmentEditModel model)
+        {
+            var mapping = new Func<Department, Task<Department>>((entity) =>
+            {
+                entity.Name = model.Name;
+                entity.ParentId = model.ParentId;
+                entity.Description = model.Description;
+                return Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
 
-//            var msg = await _DepartmentStore.CanCreate(accid, department);
-//            if (!string.IsNullOrWhiteSpace(msg))
-//                return BadRequest(msg);
+        #region GetByOrgan 根据组织id获取部门信息
+        /// <summary>
+        /// 根据组织id获取部门信息
+        /// </summary>
+        /// <param name="organId"></param>
+        /// <returns></returns>
+        [Route("ByOrgan")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<DepartmentDTO>), 200)]
+        public async Task<IActionResult> GetByOrgan(string organId)
+        {
+            var dtos = await _DepartmentStore.GetByOrgan(organId);
+            return Ok(dtos);
+        } 
+        #endregion
 
-//            var dto = await _DepartmentStore.CreateAsync(accid, department);
-//            return Ok(dto);
-//        }
-//        #endregion
-
-//        #region Put 编辑部门信息
-//        /// <summary>
-//        /// 编辑部门信息
-//        /// </summary>
-//        /// <param name="value"></param>
-//        /// <returns></returns>
-//        [HttpPut]
-//        [ProducesResponseType(typeof(DepartmentDTO), 200)]
-//        [ProducesResponseType(typeof(string), 400)]
-//        public async Task<IActionResult> Put([FromBody]DepartmentEditModel value)
-//        {
-//            if (ModelState.IsValid == false)
-//                return BadRequest(ModelState);
-//            var accid = AuthMan.GetAccountId(this);
-//            var department = await _DepartmentStore.GetByIdAsync(value.Id);
-//            department.Name = value.Name;
-//            department.ParentId = value.ParentId;
-//            department.Description = value.Description;
-//            department.ModifiedTime = DateTime.Now;
-//            department.Modifier = accid;
-
-//            if (department == null)
-//                return BadRequest(ValidityMessage.V_NotDataOrPermissionMsg);
-//            var msg = await _DepartmentStore.CanUpdate(accid, department);
-//            if (!string.IsNullOrWhiteSpace(msg))
-//                return BadRequest(msg);
-//            var dto = await _DepartmentStore.UpdateAsync(accid, department);
-//            return Ok(dto);
-//        }
-//        #endregion
-
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> Delete(string id)
-//        {
-//            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
-//            if (bOk)
-//                return Ok();
-//            return NotFound();//return Forbid();
-//        }
-
-
-//        [Route("ByOrgan")]
-//        [HttpGet]
-//        [ProducesResponseType(typeof(List<DepartmentDTO>), 200)]
-//        public async Task<IActionResult> GetByOrgan(string organId)
-//        {
-//            var dtos = await _DepartmentStore.GetByOrgan(organId);
-//            return Ok(dtos);
-//        }
-
-
-
-
-
-//    }
-//}
+    }
+}

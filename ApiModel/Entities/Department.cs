@@ -2,7 +2,7 @@
 
 namespace ApiModel.Entities
 {
-    public class Department : EntityBase, IListable, IDTOTransfer<DepartmentDTO>
+    public class Department : EntityBase, IListable, IDTOTransfer<IData>
     {
         public string ParentId { get; set; }
         public Department Parent { get; set; }
@@ -11,7 +11,7 @@ namespace ApiModel.Entities
         public List<OrganMember> Members { get; set; }
         public string Icon { get; set; }
 
-        public DepartmentDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new DepartmentDTO();
             dto.Id = Id;

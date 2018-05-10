@@ -36,8 +36,8 @@ namespace ApiServer.Services
                 acc.Password = Md5.CalcString(param.Password);
                 acc.Mail = mail;
                 acc.Frozened = false;
-                acc.ActivationTime = param.ActivationTime!=null? (DateTime)param.ActivationTime:DateTime.MinValue;
-                acc.ExpireTime =  param.ExpireTime != null ? (DateTime)param.ExpireTime : DateTime.MinValue;
+                acc.ActivationTime = DataHelper.ParseDateTime(param.ActivationTime);
+                acc.ExpireTime = DataHelper.ParseDateTime(param.ExpireTime);
                 acc.Type = param.Type;
                 acc.Location = param.Location;
                 acc.Phone = param.Phone;
@@ -59,8 +59,8 @@ namespace ApiServer.Services
             model.Phone = acc.Phone;
             model.Location = acc.Location;
             model.Type = acc.Type;
-            model.ActivationTime = acc.ActivationTime;
-            model.ExpireTime = acc.ExpireTime;
+            model.ActivationTime = DataHelper.FormatDateTime(acc.ActivationTime);
+            model.ExpireTime = DataHelper.FormatDateTime(acc.ExpireTime);
             return model;
         }
 

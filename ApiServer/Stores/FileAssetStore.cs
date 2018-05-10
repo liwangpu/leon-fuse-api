@@ -5,16 +5,14 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    /// <summary>
-    /// Material Store
-    /// </summary>
-    public class MaterialStore : StoreBase<Material>, IStore<Material>
+    public class FileAssetStore : StoreBase<FileAsset>, IStore<FileAsset>
     {
         #region 构造函数
-        public MaterialStore(ApiDbContext context)
+        public FileAssetStore(ApiDbContext context)
         : base(context)
         { }
         #endregion
+
 
         #region SatisfyCreateAsync 判断数据是否满足存储规范
         /// <summary>
@@ -24,7 +22,7 @@ namespace ApiServer.Stores
         /// <param name="data"></param>
         /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task SatisfyCreateAsync(string accid, Material data, ModelStateDictionary modelState)
+        public async Task SatisfyCreateAsync(string accid, FileAsset data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
         }
@@ -38,7 +36,7 @@ namespace ApiServer.Stores
         /// <param name="data"></param>
         /// <param name="modelState"></param>
         /// <returns></returns>
-        public async Task SatisfyUpdateAsync(string accid, Material data, ModelStateDictionary modelState)
+        public async Task SatisfyUpdateAsync(string accid, FileAsset data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
         }

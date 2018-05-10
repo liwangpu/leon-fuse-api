@@ -8,7 +8,7 @@ namespace ApiModel.Entities
     /// <summary>
     /// 套餐
     /// </summary>
-    public class Package : EntityBase, IListable, IDTOTransfer<PackageDTO>
+    public class Package : EntityBase, IListable, IDTOTransfer<IData>
     {
         /// <summary>
         /// 图标Asset Id
@@ -23,7 +23,7 @@ namespace ApiModel.Entities
         public PackageContent ContentIns { get; set; }
 
         #region ToDTO
-        public PackageDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new PackageDTO();
             dto.Id = Id;

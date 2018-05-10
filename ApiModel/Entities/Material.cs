@@ -54,7 +54,7 @@ namespace ApiModel.Entities
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public string Url { get; set; }
-        public FileAssetDTO FileAsset { get; set; }
+        public IData FileAsset { get; set; }
         public string CategoryId { get; set; }
     }
 }

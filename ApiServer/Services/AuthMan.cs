@@ -1,5 +1,6 @@
 ﻿using ApiModel.Entities;
 using ApiServer.Models;
+using BambooCommon;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -64,8 +65,8 @@ namespace ApiServer.Services
                 var model = new AccountEditModel();
                 model.Id = acc.Id;
                 model.Frozened = acc.Frozened;
-                model.ActivationTime = acc.ActivationTime;
-                model.ExpireTime = acc.ExpireTime;
+                model.ActivationTime = DataHelper.FormatDateTime(acc.ActivationTime);
+                model.ExpireTime = DataHelper.FormatDateTime(acc.ExpireTime);
                 model.Password = acc.Password;
                 result.acc = model;
             }
@@ -80,10 +81,10 @@ namespace ApiServer.Services
                     result.loginResult = LoginResult.Frozen;
 
                 var now = DateTime.UtcNow;
-                if (now < result.acc.ActivationTime)
+                if (now < DataHelper.ParseDateTime(result.acc.ActivationTime))
                     result.loginResult = LoginResult.NotActivation;
 
-                if (now > result.acc.ExpireTime)
+                if (now > DataHelper.ParseDateTime(result.acc.ExpireTime))
                     result.loginResult = LoginResult.Expired;
 
                 if (result.acc.Password != pwd)

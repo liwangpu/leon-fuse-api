@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Account : EntityBase, IListable, ICloneable, IDTOTransfer<AccountDTO>
+    public class Account : EntityBase, IListable, ICloneable, IDTOTransfer<IData>
     {
         public string Icon { get; set; }
         public string Mail { get; set; }
@@ -52,7 +52,7 @@ namespace ApiModel.Entities
 
         public List<PermissionItem> Permissions { get; set; }
 
-        public AccountDTO ToDTO()
+        public IData ToDTO()
         {
             var dto = new AccountDTO();
             dto.Id = Id;

@@ -9,64 +9,62 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace ApiServer.Controllers.Design
+namespace ApiServer.Controllers
 {
     /// <summary>
-    /// 解决方案控制器
+    /// 套餐管理控制器
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class SolutionController : ListableController<Solution, SolutionCreateModel>
+    public class PackageController : ListableController<Package, PackageCreateModel>
     {
         #region 构造函数
-        public SolutionController(ApiDbContext context)
-        : base(new SolutionStore(context))
+        public PackageController(ApiDbContext context)
+        : base(new PackageStore(context))
         { }
         #endregion
 
-        #region Get 根据分页查询信息获取解决方案概要信息
+        #region Get 根据分页查询信息获取套餐概要信息
         /// <summary>
-        /// 根据分页查询信息获取解决方案概要信息
+        /// 根据分页查询信息获取套餐概要信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             return await _GetPagingRequest(model);
         }
         #endregion
 
-        #region Get 根据id获取解决方案信息
+        #region Get 根据id获取套餐信息
         /// <summary>
-        /// 根据id获取解决方案信息
+        /// 根据id获取套餐信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(SolutionDTO), 200)]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
             return await _GetByIdRequest(id);
         }
         #endregion
 
-        #region Post 新建解决方案信息
+        #region Post 新建套餐信息
         /// <summary>
-        /// 新建解决方案信息
+        /// 新建套餐信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(Solution), 200)]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> Post([FromBody]SolutionCreateModel model)
+        public async Task<IActionResult> Post([FromBody]PackageCreateModel model)
         {
-            var mapping = new Func<Solution, Task<Solution>>((entity) =>
+            var mapping = new Func<Package, Task<Package>>((entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
@@ -76,25 +74,45 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
-        #region Put 更新解决方案信息
+        #region Put 更新套餐信息
         /// <summary>
-        /// 更新解决方案信息
+        /// 更新套餐信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(Solution), 200)]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> Put([FromBody]SolutionEditModel model)
+        public async Task<IActionResult> Put([FromBody]PackageEditModel model)
         {
-            var mapping = new Func<Solution, Task<Solution>>((entity) =>
+            var mapping = new Func<Package, Task<Package>>((entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 return Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region ChangeContent 更新套餐详情信息
+        /// <summary>
+        /// 更新套餐详情信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [Route("ChangeContent")]
+        [HttpPost]
+        public async Task<IActionResult> ChangeContent(string id, [FromBody]OrderContent content)
+        {
+            var mapping = new Func<Package, Task<Package>>((entity) =>
+            {
+                entity.Content = Newtonsoft.Json.JsonConvert.SerializeObject(content);
+                return Task.FromResult(entity);
+            });
+            return await _PutRequest(id, mapping);
         }
         #endregion
     }

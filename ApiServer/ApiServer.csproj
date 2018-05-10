@@ -29,18 +29,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\DemoController.cs" />
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
+    <Compile Remove="Migrations\20180502102321_LeonAddCategoryIdToProductSpec0502.cs" />
+    <Compile Remove="Migrations\20180502102321_LeonAddCategoryIdToProductSpec0502.Designer.cs" />
+    <Compile Remove="Migrations\20180503021822_LeonAddOrganIdToCategory.cs" />
+    <Compile Remove="Migrations\20180503021822_LeonAddOrganIdToCategory.Designer.cs" />
+    <Compile Remove="Migrations\20180503054832_LeonAddPermission0503.cs" />
+    <Compile Remove="Migrations\20180503054832_LeonAddPermission0503.Designer.cs" />
+    <Compile Remove="Migrations\20180507053438_LeonAddCategoryTree0507.cs" />
+    <Compile Remove="Migrations\20180507053438_LeonAddCategoryTree0507.Designer.cs" />
     <Compile Remove="Migrations\20180507061354_LeonAddCategoryTreeToContext0507.cs" />
     <Compile Remove="Migrations\20180507061354_LeonAddCategoryTreeToContext0507.Designer.cs" />
+    <Compile Remove="Migrations\20180509051250_LeonChangePriceToDecimal.cs" />
+    <Compile Remove="Migrations\20180509051250_LeonChangePriceToDecimal.Designer.cs" />
+    <Compile Remove="Migrations\20180509080146_LeonAddPackage0509.cs" />
+    <Compile Remove="Migrations\20180509080146_LeonAddPackage0509.Designer.cs" />
+    <Compile Remove="Migrations\20180510012448_LeonAddPackage0510.cs" />
+    <Compile Remove="Migrations\20180510012448_LeonAddPackage0510.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Controllers\Design\LayoutController.cs" />
     <Compile Include="Controllers\Design\MaterialController.cs" />
+    <Compile Include="Controllers\Design\PackageController.cs" />
     <Compile Include="Controllers\Design\ProductsController.cs" />
+    <Compile Include="Controllers\Design\ProductsController_tmp.cs" />
     <Compile Include="Controllers\Design\ProductSpecController.cs" />
     <Compile Include="Controllers\Design\SolutionController.cs" />
     <Compile Include="Controllers\Design\TextureController.cs" />

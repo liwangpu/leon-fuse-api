@@ -72,14 +72,30 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region SolutionCreateModel 解决方案新建模型
+    /// <summary>
+    /// 解决方案新建模型
+    /// </summary>
+    public class SolutionCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+    }
+    #endregion
+
     #region SolutionEditModel 解决方案编辑模型
     /// <summary>
     /// 解决方案编辑模型
     /// </summary>
     public class SolutionEditModel
     {
+        [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
     }
     #endregion
@@ -121,6 +137,7 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region OrderCreateModel 订单创建模型
     /// <summary>
     /// 订单创建模型
     /// </summary>
@@ -130,12 +147,13 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
         public string State { get; set; }
         public DateTime StateTime { get; set; }
     }
+    #endregion
 
+    #region OrderEditModel 订单创建模型
     /// <summary>
     /// 订单创建模型
     /// </summary>
@@ -147,11 +165,43 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
         public string State { get; set; }
         public DateTime StateTime { get; set; }
     }
+    #endregion
 
+    #region PackageCreateModel 套餐创建模型
+    /// <summary>
+    /// 套餐创建模型
+    /// </summary>
+    public class PackageCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string Content { get; set; }
+        public string State { get; set; }
+        public DateTime StateTime { get; set; }
+    }
+    #endregion
 
+    #region PackageEditModel 订单编辑模型
+    /// <summary>
+    /// 订单编辑模型
+    /// </summary>
+    public class PackageEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string Content { get; set; }
+        public string State { get; set; }
+        public DateTime StateTime { get; set; }
+    }
+    #endregion
 }

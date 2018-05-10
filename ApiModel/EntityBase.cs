@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApiModel.Consts;
+using System;
 
 namespace ApiModel
 {
@@ -21,6 +22,7 @@ namespace ApiModel
             {
                 CreatedTime = DateTime.Now;
                 ModifiedTime = DateTime.Now;
+                ActiveFlag = AppConst.I_DataState_Active;
             }
             else
             {

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiServer.Filters;
+using ApiServer.Models;
 using ApiServer.Stores;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,25 +15,13 @@ namespace ApiServer.Controllers
 {
     [Produces("application/json")]
     [Route("api/Demo")]
-    [ValidateModel]
     public class DemoController : Controller
     {
-        public IActionResult Post([FromBody]DemoEditModel model)
+        [HttpGet]
+        public IActionResult Post([FromQuery] PagingRequestModel model)
         {
-            var code = 0;
-            Hello(out code);
 
-            ModelState.AddModelError("自定义", "反正就是错");
-            return new ValidationFailedResult(ModelState);
-            //return BadRequest(ModelState);
-
-
-        }
-
-
-        public void Hello(out int he)
-        {
-            he = 1;
+            return Ok(1);
         }
     }
 
@@ -50,11 +39,8 @@ namespace ApiServer.Controllers
 
     public class DemoEditModel
     {
-        [Required(ErrorMessage = "Please insert id   2")]
         public string Id { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "sdfsdf")]
         public string Name { get; set; }
-        [Range(1, 99, ErrorMessage = "年龄不规范")]
         public int Age { get; set; }
 
     }

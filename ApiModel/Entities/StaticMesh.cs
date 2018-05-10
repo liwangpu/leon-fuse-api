@@ -51,7 +51,7 @@ namespace ApiModel.Entities
         public string Properties { get; set; }
         public string FileAssetId { get; set; }
         public string Url { get; set; }
-        public FileAssetDTO FileAsset { get; set; }
+        public IData FileAsset { get; set; }
         public List<IData> Materials { get; set; }
     }
 }

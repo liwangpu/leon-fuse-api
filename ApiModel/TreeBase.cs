@@ -3,7 +3,7 @@
     /// <summary>
     /// 树形结构实体(供继承)
     /// </summary>
-    public class TreeBase : EntityBase, ITree
+    public class TreeBase : DataBase, ITree
     {
         public int LValue { get; set; }
         public int RValue { get; set; }
