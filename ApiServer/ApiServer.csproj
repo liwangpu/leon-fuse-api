@@ -57,10 +57,11 @@
     <Compile Include="Controllers\Design\ProductsController.cs" />
     <Compile Include="Controllers\Design\ProductsController_tmp.cs" />
     <Compile Include="Controllers\Design\ProductSpecController.cs" />
+    <Compile Include="Controllers\Design\ProductSpecController_tmp.cs" />
     <Compile Include="Controllers\Design\SolutionController.cs" />
+    <Compile Include="Controllers\Design\StaticMeshController.cs" />
     <Compile Include="Controllers\Design\TextureController.cs" />
     <Compile Include="Controllers\Design\MapController.cs" />
-    <Compile Include="Controllers\Design\StaticMeshController.cs" />
     <Compile Include="Controllers\Order\OrdersController.cs" />
   </ItemGroup>
 

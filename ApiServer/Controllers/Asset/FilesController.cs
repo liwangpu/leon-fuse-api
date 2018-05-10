@@ -20,7 +20,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class FilesController : ListableController<FileAsset, FileAssetCreateModel>
+    public class FilesController : ListableController<FileAsset>
     {
         private readonly FileAssetStore _FileAssetStore;
         private readonly Repository<FileAsset> repo;

@@ -17,7 +17,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class AccountController : ListableController<Account, RegisterAccountModel>
+    public class AccountController : ListableController<Account>
     {
         private readonly ApiDbContext _Context;
 
@@ -132,6 +132,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Profile")]
         [HttpGet]
+        [ProducesResponseType(typeof(AccountProfileModel), 200)]
         public async Task<AccountProfileModel> GetProfile()
         {
             var accid = AuthMan.GetAccountId(this);
@@ -156,6 +157,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Navigation")]
         [HttpGet]
+        [ProducesResponseType(typeof(NavigationModel), 200)]
         public async Task<NavigationModel> GetNavigationData()
         {
             var accid = AuthMan.GetAccountId(this);

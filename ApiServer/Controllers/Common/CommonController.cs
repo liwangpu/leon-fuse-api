@@ -14,10 +14,8 @@ namespace ApiServer.Controllers
     /// 通用RestFull CRUD常用请求处理控制器
     /// </summary>
     /// <typeparam name="T">实体对象</typeparam>
-    /// <typeparam name="U">Post示例数据对象</typeparam>
-    public class CommonController<T, U> : Controller
+    public class CommonController<T> : Controller
          where T : class, IEntity, IDTOTransfer<IData>, new()
-        where U : class, new()
     {
         protected bool RequestValid;
         protected IStore<T> _Store;
@@ -163,19 +161,6 @@ namespace ApiServer.Controllers
         public virtual async Task<IActionResult> Delete(string id)
         {
             return await _DeleteRequest(id);
-        }
-        #endregion
-
-        #region NewOne Post示例数据
-        /// <summary>
-        /// Post,Put示例数据
-        /// </summary>
-        /// <returns></returns>
-        [Route("NewOne")]
-        [HttpGet]
-        public IActionResult NewOne()
-        {
-            return Ok(new U());
         }
         #endregion
     }

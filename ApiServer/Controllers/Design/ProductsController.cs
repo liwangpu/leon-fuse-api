@@ -3,6 +3,7 @@ using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Stores;
+using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,7 +13,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductsController : ListableController<Product, ProductCreateModel>
+    public class ProductsController : ListableController<Product>
     {
         #region 构造函数
         public ProductsController(ApiDbContext context)
@@ -21,26 +22,18 @@ namespace ApiServer.Controllers
         #endregion
 
         #region Get 根据分页查询信息获取产品概要信息
-        ///// <summary>
-        ///// 根据分页查询信息获取产品概要信息
-        ///// </summary>
-        ///// <param name="page"></param>
-        ///// <param name="pageSize"></param>
-        ///// <param name="orderBy"></param>
-        ///// <param name="desc"></param>
-        ///// <param name="search"></param>
-        ///// <param name="categoryId">分类Id</param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[ProducesResponseType(typeof(PagedData<ProductDTO>), 200)]
-        //public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "")
-        //{
-        //    var accid = AuthMan.GetAccountId(this);
-        //    if (string.IsNullOrEmpty(search))
-        //        return await _ProductStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, categoryId);
-        //    else
-        //        return await _ProductStore.SimplePagedQueryAsync(accid, page, pageSize, orderBy, desc, categoryId, d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
-        //}
+        /// <summary>
+        /// 根据分页查询信息获取产品概要信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedData<ProductDTO>), 200)]
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "")
+        {
+            return await _GetPagingRequest(model);
+        }
         #endregion
 
         #region Get 根据id获取产品信息

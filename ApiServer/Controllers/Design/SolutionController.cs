@@ -18,7 +18,7 @@ namespace ApiServer.Controllers.Design
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class SolutionController : ListableController<Solution, SolutionCreateModel>
+    public class SolutionController : ListableController<Solution>
     {
         #region 构造函数
         public SolutionController(ApiDbContext context)
@@ -63,7 +63,6 @@ namespace ApiServer.Controllers.Design
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(typeof(Solution), 200)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]SolutionCreateModel model)
         {
             var mapping = new Func<Solution, Task<Solution>>((entity) =>
@@ -85,7 +84,6 @@ namespace ApiServer.Controllers.Design
         [HttpPut]
         [ValidateModel]
         [ProducesResponseType(typeof(Solution), 200)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]SolutionEditModel model)
         {
             var mapping = new Func<Solution, Task<Solution>>((entity) =>

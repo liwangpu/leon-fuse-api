@@ -16,7 +16,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class PackageController : ListableController<Package, PackageCreateModel>
+    public class PackageController : ListableController<Package>
     {
         #region 构造函数
         public PackageController(ApiDbContext context)

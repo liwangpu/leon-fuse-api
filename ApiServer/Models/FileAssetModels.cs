@@ -57,25 +57,35 @@ namespace ApiServer.Models
         public string AssetId { get; set; }
     }
 
+    #region StaticMeshCreateModel 模型文件创建模型
+    /// <summary>
+    /// 模型文件创建模型
+    /// </summary>
+    public class StaticMeshCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string FileAssetId { get; set; }
+    }
+    #endregion
+
+    #region StaticMeshEditModel 模型文件编辑模型
+    /// <summary>
+    /// 模型文件编辑模型
+    /// </summary>
     public class StaticMeshEditModel
     {
+        [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
-        public string FileAssetId { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        public string Icon { get; set; }
-
-        public StaticMesh ToEntity()
-        {
-            var entity = new StaticMesh();
-            entity.Id = Id;
-            entity.Name = Name;
-            entity.Description = Description;
-            entity.FileAssetId = FileAssetId;
-            entity.Icon = Icon;
-            return entity;
-        }
+        public string FileAssetId { get; set; }
     }
+    #endregion
 
 
     #region StaticMeshUploadModel 规格模型上传模型
