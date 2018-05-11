@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.Text;
+using System.Collections.Generic;
 
 namespace ApiServer.Controllers
 {
@@ -32,7 +34,14 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<ProductDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "")
         {
-            return await _GetPagingRequest(model);
+            var qMapping = new Action<List<string>>((query) =>
+            {
+                if (!string.IsNullOrWhiteSpace(categoryId))
+                    query.Add(string.Format("CategoryId={0}", categoryId));
+
+                //query.AddRange(KeyWordSearchQ(model.Search));
+            });
+            return await _GetPagingRequest(model, qMapping);
         }
         #endregion
 
@@ -62,11 +71,11 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]ProductCreateModel model)
         {
-            var mapping = new Func<Product, Task<Product>>((entity) =>
+            var mapping = new Func<Product, Task<Product>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -84,13 +93,13 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]ProductEditModel model)
         {
-            var mapping = new Func<Product, Task<Product>>((entity) =>
+            var mapping = new Func<Product, Task<Product>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.CategoryId = model.CategoryId;
                 entity.FolderId = model.FolderId;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }

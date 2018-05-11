@@ -7,6 +7,8 @@ using BambooCore;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.Text;
+using System.Collections.Generic;
 
 namespace ApiServer.Controllers
 {
@@ -29,13 +31,23 @@ namespace ApiServer.Controllers
 
         #region _GetPagingRequest 根据查询参数获取分页信息
         /// <summary>
-        ///根据查询参数获取分页信息
+        /// 
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="qMapping"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model)
+        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null)
         {
             var accid = AuthMan.GetAccountId(this);
+            var qs = new List<string>();
+            qMapping?.Invoke(qs);
+            if (qs.Count > 0)
+            {
+                var builder = new StringBuilder();
+                foreach (var item in qs)
+                    builder.AppendFormat(";{0}", item);
+                model.Q = builder.ToString();
+            }
             var result = await _Store.SimplePagedQueryAsync(model, accid);
             return Ok(StoreBase<T>.PageQueryDTOTransfer(result));
         }
@@ -161,6 +173,24 @@ namespace ApiServer.Controllers
         public virtual async Task<IActionResult> Delete(string id)
         {
             return await _DeleteRequest(id);
+        }
+        #endregion
+
+        #region KeyWordSearchQ 基本关键词查询
+        /// <summary>
+        /// 基本关键词查询
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        public static List<string> KeyWordSearchQ(string keyword)
+        {
+            var list = new List<string>();
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                list.Add(string.Format("Name like {0}", keyword));
+                //list.Add(string.Format("Description={0}", keyword));
+            }
+            return list;
         }
         #endregion
     }

@@ -60,12 +60,12 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(StaticMeshDTO), 200)]
         public async Task<IActionResult> Post([FromBody]StaticMeshCreateModel model)
         {
-            var mapping = new Func<StaticMesh, Task<StaticMesh>>((entity) =>
+            var mapping = new Func<StaticMesh, Task<StaticMesh>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -82,12 +82,12 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(StaticMeshDTO), 200)]
         public async Task<IActionResult> Put([FromBody]StaticMeshEditModel model)
         {
-            var mapping = new Func<StaticMesh, Task<StaticMesh>>((entity) =>
+            var mapping = new Func<StaticMesh, Task<StaticMesh>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }

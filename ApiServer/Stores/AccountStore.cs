@@ -2,10 +2,10 @@
 using ApiModel.Entities;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {

@@ -64,11 +64,11 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Post([FromBody]PackageCreateModel model)
         {
-            var mapping = new Func<Package, Task<Package>>((entity) =>
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -86,11 +86,11 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Put([FromBody]PackageEditModel model)
         {
-            var mapping = new Func<Package, Task<Package>>((entity) =>
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }
@@ -107,10 +107,10 @@ namespace ApiServer.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeContent(string id, [FromBody]OrderContent content)
         {
-            var mapping = new Func<Package, Task<Package>>((entity) =>
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
             {
                 entity.Content = Newtonsoft.Json.JsonConvert.SerializeObject(content);
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(id, mapping);
         }

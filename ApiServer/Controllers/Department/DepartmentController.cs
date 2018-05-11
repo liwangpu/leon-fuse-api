@@ -53,13 +53,13 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]DepartmentCreateModel model)
         {
-            var mapping = new Func<Department, Task<Department>>((entity) =>
+            var mapping = new Func<Department, Task<Department>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
                 entity.OrganizationId = model.OrganizationId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -77,12 +77,12 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]DepartmentEditModel model)
         {
-            var mapping = new Func<Department, Task<Department>>((entity) =>
+            var mapping = new Func<Department, Task<Department>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.ParentId = model.ParentId;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }
@@ -101,7 +101,7 @@ namespace ApiServer.Controllers
         {
             var dtos = await _DepartmentStore.GetByOrgan(organId);
             return Ok(dtos);
-        } 
+        }
         #endregion
 
     }

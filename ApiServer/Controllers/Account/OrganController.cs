@@ -68,14 +68,14 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]OrganizationCreateModel model)
         {
-            var mapping = new Func<Organization, Task<Organization>>((entity) =>
+            var mapping = new Func<Organization, Task<Organization>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.ParentId = model.ParentId;
                 entity.Description = model.Description;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -93,14 +93,14 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]OrganizationEditModel model)
         {
-            var mapping = new Func<Organization, Task<Organization>>((entity) =>
+            var mapping = new Func<Organization, Task<Organization>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.ParentId = model.ParentId;
                 entity.Description = model.Description;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }

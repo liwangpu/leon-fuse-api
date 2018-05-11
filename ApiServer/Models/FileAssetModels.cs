@@ -53,7 +53,9 @@ namespace ApiServer.Models
 
     public class IconModel
     {
+        [Required(ErrorMessage = "必填信息")]
         public string ObjId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
         public string AssetId { get; set; }
     }
 
@@ -94,7 +96,9 @@ namespace ApiServer.Models
     /// </summary>
     public class SpecStaticMeshUploadModel
     {
+        [Required(ErrorMessage = "必填信息")]
         public string ProductSpecId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
         public string AssetId { get; set; }
     }
     #endregion
@@ -105,8 +109,11 @@ namespace ApiServer.Models
     /// </summary>
     public class SpecMaterialUploadModel
     {
+        [Required(ErrorMessage = "必填信息")]
         public string ProductSpecId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
         public string StaticMeshId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
         public string AssetId { get; set; }
     }
     #endregion

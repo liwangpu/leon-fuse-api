@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel;
+using ApiModel.Entities;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
@@ -37,6 +38,34 @@ namespace ApiServer.Stores
         public async Task SatisfyUpdateAsync(string accid, Product data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region GetByIdAsync 根据Id返回实体DTO数据信息
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<IData> GetByIdAsync(string id)
+        {
+            var data = await _GetByIdAsync(id);
+            _DbContext.Entry(data).Collection(d => d.Specifications).Load();
+            if (data.Specifications != null && data.Specifications.Count > 0)
+            {
+                for (int nidx = data.Specifications.Count - 1; nidx >= 0; nidx--)
+                {
+                    var spec = data.Specifications[nidx];
+                    if (!string.IsNullOrWhiteSpace(spec.Icon))
+                    {
+                        var iconass = await _DbContext.Files.FindAsync(spec.Icon);
+                        spec.IconFileAsset = iconass;
+                    }
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(data.CategoryId))
+                data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
+            return data.ToDTO();
         }
         #endregion
     }

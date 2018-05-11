@@ -81,7 +81,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]FileAssetCreateModel model)
         {
-            var mapping = new Func<FileAsset, Task<FileAsset>>((entity) =>
+            var mapping = new Func<FileAsset, Task<FileAsset>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Icon = model.Icon;
@@ -95,7 +95,7 @@ namespace ApiServer.Controllers
                 entity.FolderId = model.FolderId;
                 entity.CategoryId = model.CategoryId;
                 entity.AccountId = model.AccountId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -113,7 +113,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]FileAssetEditModel model)
         {
-            var mapping = new Func<FileAsset, Task<FileAsset>>((entity) =>
+            var mapping = new Func<FileAsset, Task<FileAsset>>(async (entity) =>
             {
                 entity.Id = model.Id;
                 entity.Name = model.Name;
@@ -128,12 +128,11 @@ namespace ApiServer.Controllers
                 entity.FolderId = model.FolderId;
                 entity.CategoryId = model.CategoryId;
                 entity.AccountId = model.AccountId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }
         #endregion
-
 
 
         /// <summary>
@@ -218,6 +217,11 @@ namespace ApiServer.Controllers
             return res;
         }
 
+        /// <summary>
+        /// FormData上传一个文件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [Route("UploadFormFile")]
         [HttpPost]
         public async Task<IActionResult> UploadFormFile(IFormFile file)
@@ -245,6 +249,7 @@ namespace ApiServer.Controllers
                 fs.Flush();
             }
 
+            var accid = AuthMan.GetAccountId(this);
             FileAsset res = new FileAsset();
             res.Name = file.FileName;
             res.FileExt = extName;
@@ -252,6 +257,10 @@ namespace ApiServer.Controllers
             res.Md5 = Md5.CalcFile(filename); //计算md5
             res.Id = res.Md5; //将ID和url改为md5
             res.Url = "/upload/" + res.Id + res.FileExt;
+            res.Creator = accid;
+            res.CreatedTime = DateTime.Now;
+            res.Modifier = accid;
+            res.ModifiedTime = DateTime.Now;
 
             //string renamedPath = uploadPath + res.Id + res.FileExt;
             string renamedPath = Path.Combine(uploadPath, res.Id + res.FileExt);

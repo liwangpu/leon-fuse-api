@@ -65,11 +65,11 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(Solution), 200)]
         public async Task<IActionResult> Post([FromBody]SolutionCreateModel model)
         {
-            var mapping = new Func<Solution, Task<Solution>>((entity) =>
+            var mapping = new Func<Solution, Task<Solution>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -86,11 +86,11 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(Solution), 200)]
         public async Task<IActionResult> Put([FromBody]SolutionEditModel model)
         {
-            var mapping = new Func<Solution, Task<Solution>>((entity) =>
+            var mapping = new Func<Solution, Task<Solution>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }

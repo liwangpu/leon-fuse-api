@@ -17,6 +17,12 @@
         //分类树节点类型
         public const string S_NodeType_Product = "Product";
 
+        public const string S_QueryOperate_Eq = "eq";
+        public const string S_QueryOperate_Lt = "lt";
+        public const string S_QueryOperate_Le = "le";
+        public const string S_QueryOperate_Gt = "gt";
+        public const string S_QueryOperate_Ge = "ge";
+        public const string S_QueryOperate_Like = "like";
 
     }
 }

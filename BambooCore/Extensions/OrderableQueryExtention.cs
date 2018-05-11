@@ -19,6 +19,7 @@ namespace BambooCore
         {
             var entityType = typeof(TSource);
 
+ 
             //Create x=>x.PropName
             var propertyInfo = entityType.GetProperty(propertyName);
             ParameterExpression arg = Expression.Parameter(entityType, "x");

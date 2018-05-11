@@ -69,7 +69,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]RegisterAccountModel model)
         {
-            var mapping = new Func<Account, Task<Account>>((entity) =>
+            var mapping = new Func<Account, Task<Account>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
@@ -86,7 +86,7 @@ namespace ApiServer.Controllers
                 entity.Mail = model.Mail;
                 entity.OrganizationId = model.OrganizationId;
                 entity.DepartmentId = model.DepartmentId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -104,7 +104,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]AccountEditModel model)
         {
-            var mapping = new Func<Account, Task<Account>>((entity) =>
+            var mapping = new Func<Account, Task<Account>>(async(entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
@@ -119,7 +119,7 @@ namespace ApiServer.Controllers
                 entity.Phone = model.Phone;
                 entity.Mail = model.Mail;
                 entity.DepartmentId = model.DepartmentId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }

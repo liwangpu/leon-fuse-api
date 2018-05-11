@@ -7,6 +7,7 @@ using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -29,6 +30,23 @@ namespace ApiServer.Stores
         #endregion
 
         /**************** protected method ****************/
+
+        #region _QSearchPipe 查询参数过滤管道 
+        /// <summary>
+        /// 查询参数过滤管道
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="q"></param>
+        protected void _QSearchPipe(ref IQueryable<T> query, string q)
+        {
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var wheres = QueryParser.Parse<T>(q);
+                foreach (var item in wheres)
+                    query = query.Where(item);
+            }
+        }
+        #endregion
 
         #region _BasicPipe 基本的数据过滤管道
         /// <summary>
@@ -326,6 +344,7 @@ namespace ApiServer.Stores
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var query = from it in _DbContext.Set<T>()
                         select it;
+            _QSearchPipe(ref query, model.Q);
             _BasicPipe(ref query, currentAcc);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
             _KeyWordSearchPipe(ref query, model.Search);

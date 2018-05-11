@@ -1,6 +1,10 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel;
+using ApiModel.Entities;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -38,6 +42,69 @@ namespace ApiServer.Stores
         public async Task SatisfyUpdateAsync(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region GetByIdAsync 根据Id返回实体DTO数据信息
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<IData> GetByIdAsync(string id)
+        {
+            var res = await _GetByIdAsync(id);
+            if (!string.IsNullOrWhiteSpace(res.Icon))
+            {
+                var ass = await _DbContext.Files.FindAsync(res.Icon);
+                if (ass != null)
+                    res.IconFileAsset = ass;
+            }
+            if (!string.IsNullOrWhiteSpace(res.CharletIds))
+            {
+                var chartletIds = res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
+                {
+                    var ass = await _DbContext.Files.FindAsync(chartletIds[idx]);
+                    if (ass != null)
+                        res.CharletAsset.Add(ass);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
+            {
+                var map = JsonConvert.DeserializeObject<SpecMeshMap>(res.StaticMeshIds);
+                for (int idx = map.Items.Count - 1; idx >= 0; idx--)
+                {
+                    var refMesh = await _DbContext.StaticMeshs.FindAsync(map.Items[idx].StaticMeshId);
+                    if (refMesh != null)
+                    {
+                        var tmp = await _DbContext.Files.FindAsync(refMesh.FileAssetId);
+                        if (tmp != null)
+                            refMesh.FileAsset = tmp;
+                    }
+
+                    if (map.Items[idx].MaterialIds != null && map.Items[idx].MaterialIds.Count > 0)
+                    {
+                        var matids = map.Items[idx].MaterialIds;
+                        foreach (var item in matids)
+                        {
+                            var refMat = await _DbContext.Materials.FindAsync(item);
+                            if (refMat != null)
+                            {
+                                var tmp = await _DbContext.Files.FindAsync(refMat.FileAssetId);
+                                if (tmp != null)
+                                {
+                                    refMat.FileAsset = tmp;
+                                    refMesh.Materials.Add(refMat);
+                                }
+                            }
+                        }
+                    }
+                    res.StaticMeshAsset.Add(refMesh);
+                }
+            }
+
+            return res.ToDTO();
         }
         #endregion
     }

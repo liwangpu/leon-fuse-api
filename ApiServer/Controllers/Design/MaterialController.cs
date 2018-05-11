@@ -61,13 +61,13 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]MaterialCreateModel model)
         {
-            var mapping = new Func<Material, Task<Material>>((entity) =>
+            var mapping = new Func<Material, Task<Material>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
                 entity.CategoryId = model.CategoryId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
@@ -85,13 +85,13 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]MaterialEditModel model)
         {
-            var mapping = new Func<Material, Task<Material>>((entity) =>
+            var mapping = new Func<Material, Task<Material>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
                 entity.CategoryId = model.CategoryId;
-                return Task.FromResult(entity);
+                return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }

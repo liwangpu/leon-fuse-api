@@ -55,9 +55,7 @@
     <Compile Include="Controllers\Design\MaterialController.cs" />
     <Compile Include="Controllers\Design\PackageController.cs" />
     <Compile Include="Controllers\Design\ProductsController.cs" />
-    <Compile Include="Controllers\Design\ProductsController_tmp.cs" />
     <Compile Include="Controllers\Design\ProductSpecController.cs" />
-    <Compile Include="Controllers\Design\ProductSpecController_tmp.cs" />
     <Compile Include="Controllers\Design\SolutionController.cs" />
     <Compile Include="Controllers\Design\StaticMeshController.cs" />
     <Compile Include="Controllers\Design\TextureController.cs" />
