@@ -1,4 +1,5 @@
 ﻿using ApiModel.Consts;
+using ApiModel.Enums;
 using System;
 
 namespace ApiModel
@@ -14,8 +15,14 @@ namespace ApiModel
         public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }
         public string Modifier { get; set; }
+        /// <summary>
+        /// 启用状态 1启用 0禁用
+        /// </summary>
         public int ActiveFlag { get; set; }
-
+        /// <summary>
+        /// 资源开放类型 具体查看ResourceTypeEnum
+        /// </summary>
+        public int ResourceType { get; set; }
         public EntityBase()
         {
             if (string.IsNullOrWhiteSpace(Id))
@@ -23,6 +30,7 @@ namespace ApiModel
                 CreatedTime = DateTime.Now;
                 ModifiedTime = DateTime.Now;
                 ActiveFlag = AppConst.I_DataState_Active;
+                ResourceType = (int)ResourceTypeEnum.Personal;
             }
             else
             {

@@ -10,5 +10,6 @@ namespace ApiModel
         string Creator { get; set; }
         string Modifier { get; set; }
         int ActiveFlag { get; set; }
+        int ResourceType { get; set; }
     }
 }

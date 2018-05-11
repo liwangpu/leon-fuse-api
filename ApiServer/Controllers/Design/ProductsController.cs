@@ -10,6 +10,7 @@ using System;
 using System.Threading.Tasks;
 using System.Text;
 using System.Collections.Generic;
+using ApiModel.Enums;
 
 namespace ApiServer.Controllers
 {
@@ -75,6 +76,7 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);

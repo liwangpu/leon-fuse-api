@@ -1,13 +1,13 @@
 ﻿using ApiModel;
 using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Models;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -31,13 +31,13 @@ namespace ApiServer.Stores
 
         /**************** protected method ****************/
 
-        #region _QSearchPipe 查询参数过滤管道 
+        #region _QSearchFilter 查询参数过滤
         /// <summary>
-        /// 查询参数过滤管道
+        /// 查询参数过滤
         /// </summary>
         /// <param name="query"></param>
         /// <param name="q"></param>
-        protected void _QSearchPipe(ref IQueryable<T> query, string q)
+        protected void _QSearchFilter(ref IQueryable<T> query, string q)
         {
             if (!string.IsNullOrWhiteSpace(q))
             {
@@ -48,13 +48,13 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region _BasicPipe 基本的数据过滤管道
+        #region _BasicFilter 基本的数据过滤
         /// <summary>
-        /// 基本的数据过滤管道
+        /// 基本的数据过滤
         /// </summary>
         /// <param name="query"></param>
         /// <param name="currentAcc"></param>
-        protected void _BasicPipe(ref IQueryable<T> query, Account currentAcc)
+        protected void _BasicFilter(ref IQueryable<T> query, Account currentAcc)
         {
             if (currentAcc != null)
             {
@@ -79,13 +79,64 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region _BasicPermissionPipe 基本的权限树数据过滤管道
-        /// <summary>
-        /// 基本的权限树数据过滤管道
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="currentAcc"></param>
-        protected void _BasicPermissionPipe(ref IQueryable<T> query, Account currentAcc)
+        protected IQueryable<T> _BasicResourceTypeFilter(IQueryable<T> query, Account account, PermissionTree organNode, PermissionTree departmentNode, DataOperateEnum operate)
+        {
+            #region 获取全开放状态的资源
+            {
+                var dataQ = from rs in query
+                            where rs.ResourceType >= (int)ResourceTypeEnum.NoLimit + (int)operate * AppConst.I_Permission_GradeStep
+                            select rs;
+                query = dataQ;
+
+                var sql = query.ToString();
+            }
+            #endregion
+
+            #region 组织开放状态资源
+            {
+                var dataQ = from rs in query
+                            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
+                            select rs;
+                var treeQ = from ps in _DbContext.PermissionTrees
+                            where ps.OrganizationId == organNode.ObjId && ps.NodeType == AppConst.S_NodeType_Account
+                            select ps;
+                var typeQ = from rs in dataQ
+                            join ps in treeQ on rs.Creator equals ps.ObjId
+                            select rs;
+                query = query.Union(typeQ);
+            }
+            #endregion
+
+            #region 部门开放状态资源
+            {
+                var dataQ = from rs in query
+                            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
+                            select rs;
+                var treeQ = from ps in _DbContext.PermissionTrees
+                            where ps.OrganizationId == organNode.ObjId && ps.LValue > departmentNode.LValue && ps.RValue < departmentNode.RValue && ps.NodeType == AppConst.S_NodeType_Account
+                            select ps;
+                var typeQ = from rs in dataQ
+                            join ps in treeQ on rs.Creator equals ps.ObjId
+                            select rs;
+                query = query.Union(typeQ);
+            }
+            #endregion
+
+            #region 个人资源
+            {
+                var dataQ = from it in query
+                            where it.Creator == account.Id
+                            select it;
+                query = query.Union(dataQ);
+            }
+            #endregion
+
+            return query;
+        }
+
+        #region _BasicPermissionFilter 基本的权限树数据过滤
+
+        protected void _BasicPermissionFilter(ref IQueryable<T> query, Account currentAcc, PermissionTree organNode, PermissionTree departmentNode, DataOperateEnum operate)
         {
             if (currentAcc != null)
             {
@@ -95,18 +146,27 @@ namespace ApiServer.Stores
                 }
                 else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
                 {
+                    var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
+
                     var treeQ = from ps in _DbContext.PermissionTrees
                                 where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
                                 select ps;
                     query = from it in query
                             join ps in treeQ on it.Creator equals ps.ObjId
                             select it;
+
+                    query = query.Union(openedResourceQ);
+
                 }
                 else if (currentAcc.Type == AppConst.AccountType_OrganMember)
                 {
+                    var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
+
                     query = from it in query
                             where it.Creator == currentAcc.Id
                             select it;
+
+                    query.Union(openedResourceQ);
                 }
                 else
                 {
@@ -122,13 +182,13 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        #region _KeyWordSearchPipe 基本关键字过滤管道 
+        #region _KeyWordSearchFilter 基本关键字过滤
         /// <summary>
-        /// 
+        /// 基本关键字过滤
         /// </summary>
         /// <param name="query"></param>
         /// <param name="search"></param>
-        protected void _KeyWordSearchPipe(ref IQueryable<T> query, string search)
+        protected void _KeyWordSearchFilter(ref IQueryable<T> query, string search)
         {
             if (!string.IsNullOrWhiteSpace(search))
                 query = query.Where(d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
@@ -277,8 +337,9 @@ namespace ApiServer.Stores
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var query = from it in _DbContext.Set<T>()
                         select it;
-            _BasicPipe(ref query, currentAcc);
-            _BasicPermissionPipe(ref query, currentAcc);
+            _BasicFilter(ref query, currentAcc);
+            //TODO:
+            //_BasicPermissionFilter(ref query, currentAcc);
             var result = await query.CountAsync(x => x.Id == id);
             if (result == 0)
                 return false;
@@ -342,13 +403,15 @@ namespace ApiServer.Stores
         public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
+            var departmentNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.DepartmentId);
             var query = from it in _DbContext.Set<T>()
                         select it;
-            _QSearchPipe(ref query, model.Q);
-            _BasicPipe(ref query, currentAcc);
+            _QSearchFilter(ref query, model.Q);
+            _BasicFilter(ref query, currentAcc);  
+            _KeyWordSearchFilter(ref query, model.Search);
+            _BasicPermissionFilter(ref query, currentAcc, organNode, departmentNode, DataOperateEnum.CR);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
-            _KeyWordSearchPipe(ref query, model.Search);
-            _BasicPermissionPipe(ref query, currentAcc);
             return await query.SimplePaging(model.Page, model.PageSize);
         }
         #endregion

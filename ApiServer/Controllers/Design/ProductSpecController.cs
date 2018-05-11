@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -56,6 +57,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.ProductId = model.ProductId;
                 entity.Price = model.Price;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);

@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -65,6 +66,7 @@ namespace ApiServer.Controllers.Design
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);

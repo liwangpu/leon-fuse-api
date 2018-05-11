@@ -24,5 +24,14 @@
         public const string S_QueryOperate_Ge = "ge";
         public const string S_QueryOperate_Like = "like";
 
+        /// <summary>
+        /// 不同层级之间差距
+        /// </summary>
+        public const int I_Permission_GradeStep = 10;
+        /// <summary>
+        /// 不同类型直接差距
+        /// </summary>
+        public const int I_Permission_TypeStep = 100;
+
     }
 }
