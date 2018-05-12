@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-
+using NLog.Web;
+using Microsoft.Extensions.Logging;
 namespace ApiServer
 {
     public class Program
@@ -22,6 +23,12 @@ namespace ApiServer
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseConfiguration(config)
+                .ConfigureLogging(logging =>
+                   {
+                       logging.ClearProviders();
+                       logging.SetMinimumLevel(LogLevel.Trace);
+                   })
+                .UseNLog()
                 .Build();
         }
     }

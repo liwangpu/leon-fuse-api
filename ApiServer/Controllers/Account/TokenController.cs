@@ -20,7 +20,6 @@ namespace ApiServer.Controllers
     public class TokenController : Controller
     {
         Services.AuthMan authman;
-
         public TokenController(Data.ApiDbContext context)
         {
             authman = new Services.AuthMan(this, context);

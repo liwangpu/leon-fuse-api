@@ -1,5 +1,6 @@
 ﻿using ApiServer.Filters;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Net;
@@ -10,9 +11,10 @@ namespace ApiServer.MiddleWares
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate next;
-
-        public ErrorHandlingMiddleware(RequestDelegate next)
+        private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
+            _logger = logger;
             this.next = next;
         }
 
@@ -24,6 +26,7 @@ namespace ApiServer.MiddleWares
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex,"");
                 await HandleExceptionAsync(context, ex);
             }
         }
