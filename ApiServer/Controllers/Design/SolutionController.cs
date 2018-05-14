@@ -18,7 +18,7 @@ namespace ApiServer.Controllers.Design
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class SolutionController : ListableController<Solution>
+    public class SolutionController : ListableController<Solution, SolutionDTO>
     {
         #region 构造函数
         public SolutionController(ApiDbContext context)

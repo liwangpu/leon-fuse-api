@@ -8,7 +8,7 @@ namespace ApiModel.Entities
     /// <summary>
     /// 订单
     /// </summary>
-    public class Order : EntityBase, IListable, IDTOTransfer<IData>
+    public class Order : EntityBase, IListable, IDTOTransfer<OrderDTO>
     {
         public Order()
         {
@@ -35,7 +35,7 @@ namespace ApiModel.Entities
         [NotMapped]
         public OrderContent ContentIns { get; set; }
 
-        public IData ToDTO()
+        public OrderDTO ToDTO()
         {
             var dto = new OrderDTO();
             dto.Id = Id;

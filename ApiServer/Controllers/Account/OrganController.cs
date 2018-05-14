@@ -16,7 +16,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class OrganController : ListableController<Organization>
+    public class OrganController : ListableController<Organization, OrganizationDTO>
     {
         private readonly OrganizationStore _OrganStore;
 

@@ -16,7 +16,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductsController : ListableController<Product>
+    public class ProductsController : ListableController<Product, ProductDTO>
     {
         #region 构造函数
         public ProductsController(ApiDbContext context)

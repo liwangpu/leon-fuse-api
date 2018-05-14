@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class OrganizationStore : StoreBase<Organization>, IStore<Organization>
+    public class OrganizationStore : StoreBase<Organization, OrganizationDTO>, IStore<Organization, OrganizationDTO>
     {
         protected PermissionTreeStore _PermissionTreeStore;
         protected DepartmentStore _DepartmentStore;

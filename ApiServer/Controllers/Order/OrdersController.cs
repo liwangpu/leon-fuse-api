@@ -17,7 +17,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class OrdersController : ListableController<Order>
+    public class OrdersController : ListableController<Order, OrderDTO>
     {
         #region 构造函数
         public OrdersController(ApiDbContext context)
@@ -125,7 +125,7 @@ namespace ApiServer.Controllers
                 return Task.FromResult(entity);
             });
             return await _PutRequest(id, mapping);
-        } 
+        }
         #endregion
 
         #region ChangeContent 更新订单详情信息

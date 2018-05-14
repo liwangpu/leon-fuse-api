@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
 namespace ApiServer.Stores
 {
-    public class ProductStore : StoreBase<Product>, IStore<Product>
+    public class ProductStore : StoreBase<Product, ProductDTO>, IStore<Product, ProductDTO>
     {
         #region 构造函数
         public ProductStore(ApiDbContext context)
@@ -47,7 +47,7 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public override async Task<IData> GetByIdAsync(string id)
+        public override async Task<ProductDTO> GetByIdAsync(string id)
         {
             var data = await _GetByIdAsync(id);
             _DbContext.Entry(data).Collection(d => d.Specifications).Load();

@@ -17,8 +17,10 @@ namespace ApiServer.Stores
     /// StoreBase是业务无关的,不关注任何业务信息
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class StoreBase<T>
-         where T : class, IEntity, IDTOTransfer<IData>, new()
+    /// <typeparam name="DTO"></typeparam>
+    public class StoreBase<T, DTO>
+         where T : class, IEntity, IDTOTransfer<DTO>, new()
+        where DTO : class, IData, new()
     {
         protected readonly ApiDbContext _DbContext;
 
@@ -94,40 +96,40 @@ namespace ApiServer.Stores
 
             #region 组织开放状态资源
             {
-                var dataQ = from rs in query
-                            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
-                            select rs;
-                var treeQ = from ps in _DbContext.PermissionTrees
-                            where ps.OrganizationId == organNode.ObjId && ps.NodeType == AppConst.S_NodeType_Account
-                            select ps;
-                var typeQ = from rs in dataQ
-                            join ps in treeQ on rs.Creator equals ps.ObjId
-                            select rs;
-                query = query.Union(typeQ);
+                //var dataQ = from rs in query
+                //            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
+                //            select rs;
+                //var treeQ = from ps in _DbContext.PermissionTrees
+                //            where ps.OrganizationId == organNode.ObjId && ps.NodeType == AppConst.S_NodeType_Account
+                //            select ps;
+                //var typeQ = from rs in dataQ
+                //            join ps in treeQ on rs.Creator equals ps.ObjId
+                //            select rs;
+                //query = query.Union(typeQ);
             }
             #endregion
 
             #region 部门开放状态资源
             {
-                var dataQ = from rs in query
-                            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
-                            select rs;
-                var treeQ = from ps in _DbContext.PermissionTrees
-                            where ps.OrganizationId == organNode.ObjId && ps.LValue > departmentNode.LValue && ps.RValue < departmentNode.RValue && ps.NodeType == AppConst.S_NodeType_Account
-                            select ps;
-                var typeQ = from rs in dataQ
-                            join ps in treeQ on rs.Creator equals ps.ObjId
-                            select rs;
-                query = query.Union(typeQ);
+                //var dataQ = from rs in query
+                //            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
+                //            select rs;
+                //var treeQ = from ps in _DbContext.PermissionTrees
+                //            where ps.OrganizationId == organNode.ObjId && ps.LValue > departmentNode.LValue && ps.RValue < departmentNode.RValue && ps.NodeType == AppConst.S_NodeType_Account
+                //            select ps;
+                //var typeQ = from rs in dataQ
+                //            join ps in treeQ on rs.Creator equals ps.ObjId
+                //            select rs;
+                //query = query.Union(typeQ);
             }
             #endregion
 
             #region 个人资源
             {
-                var dataQ = from it in query
-                            where it.Creator == account.Id
-                            select it;
-                query = query.Union(dataQ);
+                //var dataQ = from it in query
+                //            where it.Creator == account.Id
+                //            select it;
+                //query = query.Union(dataQ);
             }
             #endregion
 
@@ -146,7 +148,8 @@ namespace ApiServer.Stores
                 }
                 else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
                 {
-                    var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
+                    //var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
+                    //var r1 = openedResourceQ.ToList();
 
                     var treeQ = from ps in _DbContext.PermissionTrees
                                 where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
@@ -155,18 +158,18 @@ namespace ApiServer.Stores
                             join ps in treeQ on it.Creator equals ps.ObjId
                             select it;
 
-                    query = query.Union(openedResourceQ);
+                    //query = query.Union(openedResourceQ);
 
                 }
                 else if (currentAcc.Type == AppConst.AccountType_OrganMember)
                 {
-                    var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
+                    //var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
 
                     query = from it in query
                             where it.Creator == currentAcc.Id
                             select it;
 
-                    query.Union(openedResourceQ);
+                    //query = query.Union(openedResourceQ);
                 }
                 else
                 {
@@ -260,7 +263,7 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<IData> GetByIdAsync(string id)
+        public virtual async Task<DTO> GetByIdAsync(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
@@ -408,7 +411,7 @@ namespace ApiServer.Stores
             var query = from it in _DbContext.Set<T>()
                         select it;
             _QSearchFilter(ref query, model.Q);
-            _BasicFilter(ref query, currentAcc);  
+            _BasicFilter(ref query, currentAcc);
             _KeyWordSearchFilter(ref query, model.Search);
             _BasicPermissionFilter(ref query, currentAcc, organNode, departmentNode, DataOperateEnum.CR);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);

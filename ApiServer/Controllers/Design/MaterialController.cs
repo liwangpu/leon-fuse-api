@@ -14,7 +14,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MaterialController : ListableController<Material>
+    public class MaterialController : ListableController<Material, MaterialDTO>
     {
         #region 构造函数
         public MaterialController(ApiDbContext context)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class FileAssetStore : StoreBase<FileAsset>, IStore<FileAsset>
+    public class FileAssetStore : StoreBase<FileAsset, FileAssetDTO>, IStore<FileAsset, FileAssetDTO>
     {
         #region 构造函数
         public FileAssetStore(ApiDbContext context)

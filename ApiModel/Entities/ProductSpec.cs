@@ -7,16 +7,16 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息
     /// </summary>
-    public class ProductSpec : EntityBase, IListable, IDTOTransfer<IData>
+    public class ProductSpec : EntityBase, IListable, IDTOTransfer<ProductSpecDTO>
     {
         /// <summary>
         /// 图标
         /// </summary>
         public string Icon { get; set; }
         /// <summary>
-        /// 贴图ids(逗号分隔的FileAssetId)
+        /// 图册ids(逗号分隔的FileAssetId)
         /// </summary>
-        public string CharletIds { get; set; }
+        public string Album { get; set; }
         /// <summary>
         /// 模型材质依赖信息(格式为SpecMeshMap,请看下文)
         /// </summary>
@@ -40,17 +40,17 @@ namespace ApiModel.Entities
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
         [NotMapped]
-        public List<FileAsset> CharletAsset { get; set; }
+        public List<FileAsset> AlbumAsset { get; set; }
         [NotMapped]
         public List<StaticMesh> StaticMeshAsset { get; set; }
 
         public ProductSpec()
         {
-            CharletAsset = new List<FileAsset>();
+            AlbumAsset = new List<FileAsset>();
             StaticMeshAsset = new List<StaticMesh>();
         }
 
-        public IData ToDTO()
+        public ProductSpecDTO ToDTO()
         {
             var dto = new ProductSpecDTO();
             dto.Id = Id;
@@ -67,8 +67,8 @@ namespace ApiModel.Entities
                 dto.IconAsset = IconFileAsset.ToDTO();
                 dto.Icon = IconFileAsset.Url;
             }
-            if (CharletAsset != null && CharletAsset.Count > 0)
-                dto.Charlets = CharletAsset.Select(x => x.ToDTO()).ToList();
+            if (AlbumAsset != null && AlbumAsset.Count > 0)
+                dto.Album = AlbumAsset.Select(x => x.ToDTO()).ToList();
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
                 dto.StaticMeshes = StaticMeshAsset.Select(x => x.ToDTO()).ToList();
             return dto;
@@ -87,9 +87,9 @@ namespace ApiModel.Entities
         public string ProductId { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
-        public IData IconAsset { get; set; }
-        public List<IData> StaticMeshes { get; set; }
-        public List<IData> Charlets { get; set; }
+        public FileAssetDTO IconAsset { get; set; }
+        public List<StaticMeshDTO> StaticMeshes { get; set; }
+        public List<FileAssetDTO> Album { get; set; }
     }
 
     /// <summary>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class AccountStore : StoreBase<Account>, IStore<Account>
+    public class AccountStore : StoreBase<Account, AccountDTO>, IStore<Account, AccountDTO>
     {
         protected PermissionTreeStore _PermissionTreeStore;
 

@@ -17,7 +17,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class AccountController : ListableController<Account>
+    public class AccountController : ListableController<Account, AccountDTO>
     {
         private readonly ApiDbContext _Context;
 

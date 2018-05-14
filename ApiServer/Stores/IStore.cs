@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public interface IStore<T>
-             where T : class, IEntity, IDTOTransfer<IData>, new()
+    public interface IStore<T, DTO>
+             where T : class, IEntity, IDTOTransfer<DTO>, new()
+                   where DTO : class, IData, new()
     {
         Task SatisfyCreateAsync(string accid, T data, ModelStateDictionary modelState);
         Task SatisfyUpdateAsync(string accid, T data, ModelStateDictionary modelState);
@@ -20,7 +21,7 @@ namespace ApiServer.Stores
         Task DeleteAsync(string accid, string id);
         Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid);
         Task<bool> ExistAsync(string id);
-        Task<IData> GetByIdAsync(string id);
+        Task<DTO> GetByIdAsync(string id);
         Task<T> _GetByIdAsync(string id);
     }
 }

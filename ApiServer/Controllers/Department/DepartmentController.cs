@@ -15,7 +15,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class DepartmentController : ListableController<Department>
+    public class DepartmentController : ListableController<Department, DepartmentDTO>
     {
         private readonly DepartmentStore _DepartmentStore;
 

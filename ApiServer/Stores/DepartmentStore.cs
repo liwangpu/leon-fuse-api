@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class DepartmentStore : StoreBase<Department>, IStore<Department>
+    public class DepartmentStore : StoreBase<Department, DepartmentDTO>, IStore<Department, DepartmentDTO>
     {
         protected PermissionTreeStore _PermissionTreeStore;
 
@@ -107,7 +107,7 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="organId"></param>
         /// <returns></returns>
-        public async Task<List<IData>> GetByOrgan(string organId)
+        public async Task<List<DepartmentDTO>> GetByOrgan(string organId)
         {
             var treeQ = from ps in _DbContext.Set<PermissionTree>()
                         where ps.OrganizationId == organId && ps.NodeType == AppConst.S_NodeType_Department

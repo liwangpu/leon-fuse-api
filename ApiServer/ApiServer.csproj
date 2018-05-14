@@ -18,17 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Design\**" />
-    <Compile Remove="Controllers\Order\**" />
-    <Content Remove="Controllers\Design\**" />
-    <Content Remove="Controllers\Order\**" />
-    <EmbeddedResource Remove="Controllers\Design\**" />
-    <EmbeddedResource Remove="Controllers\Order\**" />
-    <None Remove="Controllers\Design\**" />
-    <None Remove="Controllers\Order\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
@@ -48,19 +37,6 @@
     <Compile Remove="Migrations\20180509080146_LeonAddPackage0509.Designer.cs" />
     <Compile Remove="Migrations\20180510012448_LeonAddPackage0510.cs" />
     <Compile Remove="Migrations\20180510012448_LeonAddPackage0510.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Controllers\Design\LayoutController.cs" />
-    <Compile Include="Controllers\Design\MaterialController.cs" />
-    <Compile Include="Controllers\Design\PackageController.cs" />
-    <Compile Include="Controllers\Design\ProductsController.cs" />
-    <Compile Include="Controllers\Design\ProductSpecController.cs" />
-    <Compile Include="Controllers\Design\SolutionController.cs" />
-    <Compile Include="Controllers\Design\StaticMeshController.cs" />
-    <Compile Include="Controllers\Design\TextureController.cs" />
-    <Compile Include="Controllers\Design\MapController.cs" />
-    <Compile Include="Controllers\Order\OrdersController.cs" />
   </ItemGroup>
 
   <ItemGroup>

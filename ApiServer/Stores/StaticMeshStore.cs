@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class StaticMeshStore : StoreBase<StaticMesh>, IStore<StaticMesh>
+    public class StaticMeshStore : StoreBase<StaticMesh, StaticMeshDTO>, IStore<StaticMesh, StaticMeshDTO>
     {
         #region 构造函数
         public StaticMeshStore(ApiDbContext context)

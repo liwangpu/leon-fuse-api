@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class PackageStore : StoreBase<Package>, IStore<Package>
+    public class PackageStore : StoreBase<Package, PackageDTO>, IStore<Package, PackageDTO>
     {
         #region 构造函数
         public PackageStore(ApiDbContext context)
@@ -50,7 +50,7 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public override async Task<IData> GetByIdAsync(string id)
+        public override async Task<PackageDTO> GetByIdAsync(string id)
         {
             var data = await _GetByIdAsync(id);
             if (!string.IsNullOrWhiteSpace(data.Content))

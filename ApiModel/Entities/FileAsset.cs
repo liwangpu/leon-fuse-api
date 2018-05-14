@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ApiModel.Entities
 {
-    public class FileAsset : EntityBase, IAsset, IDTOTransfer<IData>
+    public class FileAsset : EntityBase, IAsset, IDTOTransfer<FileAssetDTO>
     {
         /// <summary>
         /// 原始文件路径
@@ -35,7 +35,7 @@ namespace ApiModel.Entities
         public Account Account { get; set; }
         public string Icon { get; set; }
 
-        public IData ToDTO()
+        public FileAssetDTO ToDTO()
         {
             var dto = new FileAssetDTO();
             dto.Id = Id;

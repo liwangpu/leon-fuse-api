@@ -16,14 +16,16 @@ namespace ApiServer.Controllers
     /// 通用RestFull CRUD常用请求处理控制器
     /// </summary>
     /// <typeparam name="T">实体对象</typeparam>
-    public class CommonController<T> : Controller
-         where T : class, IEntity, IDTOTransfer<IData>, new()
+    /// <typeparam name="DTO">DTO实体对象</typeparam>
+    public class CommonController<T, DTO> : Controller
+         where T : class, IEntity, IDTOTransfer<DTO>, new()
+           where DTO : class, IData, new()
     {
         protected bool RequestValid;
-        protected IStore<T> _Store;
+        protected IStore<T, DTO> _Store;
 
         #region 构造函数
-        public CommonController(IStore<T> store)
+        public CommonController(IStore<T, DTO> store)
         {
             _Store = store;
         }
@@ -49,7 +51,7 @@ namespace ApiServer.Controllers
                 model.Q = builder.ToString();
             }
             var result = await _Store.SimplePagedQueryAsync(model, accid);
-            return Ok(StoreBase<T>.PageQueryDTOTransfer(result));
+            return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));
         }
         #endregion
 

@@ -15,9 +15,12 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 产品规格管理控制器
+    /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class ProductSpecController : ListableController<ProductSpec>
+    public class ProductSpecController : ListableController<ProductSpec, ProductSpecDTO>
     {
         #region 构造函数
         public ProductSpecController(ApiDbContext context)
@@ -213,46 +216,24 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-        #region ChangeICon 更新图标信息
+        #region UploadAlbum 上传规格详细相册信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
         /// <summary>
-        /// 更新图标信息
+        /// 上传规格详细相册信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
         /// </summary>
         /// <param name="icon"></param>
         /// <returns></returns>
-        [Route("ChangeICon")]
+        [Route("UploadAlbum")]
         [HttpPut]
         [ValidateModel]
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> ChangeICon([FromBody]IconModel icon)
+        public async Task<IActionResult> UploadAlbum([FromBody]IconModel icon)
         {
             var mapping = new Func<ProductSpec, Task<ProductSpec>>(async (spec) =>
             {
-                spec.Icon = icon.AssetId;
-                return await Task.FromResult(spec);
-            });
-            return await _PutRequest(icon.ObjId, mapping);
-        }
-        #endregion
-
-        #region UploadChartlet 上传规格详细图片信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
-        /// <summary>
-        /// 上传规格详细图片信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
-        /// </summary>
-        /// <param name="icon"></param>
-        /// <returns></returns>
-        [Route("UploadChartlet")]
-        [HttpPut]
-        [ValidateModel]
-        [ProducesResponseType(typeof(ProductSpecDTO), 200)]
-        [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> UploadChartlet([FromBody]IconModel icon)
-        {
-            var mapping = new Func<ProductSpec, Task<ProductSpec>>(async (spec) =>
-            {
-                var chartletIds = string.IsNullOrWhiteSpace(spec.CharletIds) ? new List<string>() : spec.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                chartletIds.Add(icon.AssetId);
-                spec.CharletIds = string.Join(",", chartletIds);
+                var albumIds = string.IsNullOrWhiteSpace(spec.Album) ? new List<string>() : spec.Album.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                albumIds.Add(icon.AssetId);
+                spec.Album = string.Join(",", albumIds);
                 return await Task.FromResult(spec);
             });
             return await _PutRequest(icon.ObjId, mapping);
@@ -265,22 +246,22 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="icon"></param>
         /// <returns></returns>
-        [Route("DeleteChartlet")]
+        [Route("DeleteAlbum")]
         [HttpPut]
         [ValidateModel]
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> DeleteChartlet([FromBody]IconModel icon)
+        public async Task<IActionResult> DeleteAlbum([FromBody]IconModel icon)
         {
             var mapping = new Func<ProductSpec, Task<ProductSpec>>(async (spec) =>
             {
-                var chartletIds = string.IsNullOrWhiteSpace(spec.CharletIds) ? new List<string>() : spec.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
+                var albumIds = string.IsNullOrWhiteSpace(spec.Album) ? new List<string>() : spec.Album.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = albumIds.Count - 1; idx >= 0; idx--)
                 {
-                    if (chartletIds[idx] == icon.AssetId)
-                        chartletIds.RemoveAt(idx);
+                    if (albumIds[idx] == icon.AssetId)
+                        albumIds.RemoveAt(idx);
                 }
-                spec.CharletIds = string.Join(",", chartletIds);
+                spec.Album = string.Join(",", albumIds);
                 return await Task.FromResult(spec);
             });
             return await _PutRequest(icon.ObjId, mapping);

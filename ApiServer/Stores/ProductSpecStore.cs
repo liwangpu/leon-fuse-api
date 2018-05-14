@@ -1,5 +1,4 @@
-﻿using ApiModel;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class ProductSpecStore : StoreBase<ProductSpec>, IStore<ProductSpec>
+    public class ProductSpecStore : StoreBase<ProductSpec, ProductSpecDTO>, IStore<ProductSpec, ProductSpecDTO>
     {
         #region 构造函数
         public ProductSpecStore(ApiDbContext context)
@@ -51,7 +50,7 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public override async Task<IData> GetByIdAsync(string id)
+        public override async Task<ProductSpecDTO> GetByIdAsync(string id)
         {
             var res = await _GetByIdAsync(id);
             if (!string.IsNullOrWhiteSpace(res.Icon))
@@ -60,14 +59,14 @@ namespace ApiServer.Stores
                 if (ass != null)
                     res.IconFileAsset = ass;
             }
-            if (!string.IsNullOrWhiteSpace(res.CharletIds))
+            if (!string.IsNullOrWhiteSpace(res.Album))
             {
-                var chartletIds = res.CharletIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int idx = chartletIds.Count - 1; idx >= 0; idx--)
+                var albumIds = res.Album.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int idx = albumIds.Count - 1; idx >= 0; idx--)
                 {
-                    var ass = await _DbContext.Files.FindAsync(chartletIds[idx]);
+                    var ass = await _DbContext.Files.FindAsync(albumIds[idx]);
                     if (ass != null)
-                        res.CharletAsset.Add(ass);
+                        res.AlbumAsset.Add(ass);
                 }
             }
             if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
