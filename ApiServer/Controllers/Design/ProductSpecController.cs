@@ -38,7 +38,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -106,11 +106,11 @@ namespace ApiServer.Controllers
             var mapping = new Func<ProductSpec, Task<ProductSpec>>(async (entity) =>
             {
                 var map = string.IsNullOrWhiteSpace(entity.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(entity.StaticMeshIds);
-                var exist = map.Items.Where(x => x.StaticMeshId == mesh.AssetId).Count() > 0;
+                var exist = map.Items.Where(x => x.StaticMeshId == mesh.StaticMeshId).Count() > 0;
                 if (!exist)
                 {
                     var item = new SpecMeshMapItem();
-                    item.StaticMeshId = mesh.AssetId;
+                    item.StaticMeshId = mesh.StaticMeshId;
                     map.Items.Add(item);
                 }
                 entity.StaticMeshIds = JsonConvert.SerializeObject(map);
@@ -138,7 +138,7 @@ namespace ApiServer.Controllers
                 var map = string.IsNullOrWhiteSpace(entity.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(entity.StaticMeshIds);
                 for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                 {
-                    if (map.Items[idx].StaticMeshId == mesh.AssetId)
+                    if (map.Items[idx].StaticMeshId == mesh.StaticMeshId)
                         map.Items.RemoveAt(idx);
                 }
                 entity.StaticMeshIds = JsonConvert.SerializeObject(map);
@@ -169,7 +169,7 @@ namespace ApiServer.Controllers
                     if (map.Items[idx].StaticMeshId == material.StaticMeshId)
                     {
                         var metids = map.Items[idx].MaterialIds == null ? new List<string>() : map.Items[idx].MaterialIds;
-                        metids.Add(material.AssetId);
+                        metids.Add(material.MaterialId);
                         map.Items[idx].MaterialIds = metids;
                     }
                 }
@@ -203,7 +203,7 @@ namespace ApiServer.Controllers
                         var metids = map.Items[idx].MaterialIds;
                         for (int ndx = metids.Count - 1; ndx >= 0; ndx--)
                         {
-                            if (metids[ndx] == material.AssetId)
+                            if (metids[ndx] == material.MaterialId)
                                 metids.RemoveAt(ndx);
                         }
                         map.Items[idx].MaterialIds = metids;
@@ -240,7 +240,7 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-        #region DeleteChartlet 删除规格详细图片信息(文件已经提交到File,删除不会对文件进行真实删除)
+        #region DeleteAlbum 删除规格详细图片信息(文件已经提交到File,删除不会对文件进行真实删除)
         /// <summary>
         /// 删除规格详细图片信息(文件已经提交到File,删除不会对文件进行真实删除)
         /// </summary>

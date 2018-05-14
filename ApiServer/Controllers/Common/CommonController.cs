@@ -1,4 +1,5 @@
 ﻿using ApiModel;
+using ApiModel.Enums;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -6,9 +7,9 @@ using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Threading.Tasks;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -33,12 +34,13 @@ namespace ApiServer.Controllers
 
         #region _GetPagingRequest 根据查询参数获取分页信息
         /// <summary>
-        /// 
+        /// 根据查询参数获取分页信息
         /// </summary>
         /// <param name="model"></param>
         /// <param name="qMapping"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null)
+        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var accid = AuthMan.GetAccountId(this);
             var qs = new List<string>();
@@ -50,7 +52,7 @@ namespace ApiServer.Controllers
                     builder.AppendFormat(";{0}", item);
                 model.Q = builder.ToString();
             }
-            var result = await _Store.SimplePagedQueryAsync(model, accid);
+            var result = await _Store.SimplePagedQueryAsync(model, accid, resType);
             return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));
         }
         #endregion
@@ -60,14 +62,15 @@ namespace ApiServer.Controllers
         /// 根据id获取信息
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetByIdRequest(string id)
+        protected async Task<IActionResult> _GetByIdRequest(string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var accid = AuthMan.GetAccountId(this);
             var exist = await _Store.ExistAsync(id);
             if (!exist)
                 return NotFound();
-            var canRead = await _Store.CanReadAsync(accid, id);
+            var canRead = await _Store.CanReadAsync(accid, id, resType);
             if (!canRead)
                 return Forbid();
             var dto = await _Store.GetByIdAsync(id);
@@ -81,8 +84,9 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="mapping"></param>
         /// <param name="handle"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null)
+        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var accid = AuthMan.GetAccountId(this);
             var metadata = new T();
@@ -95,7 +99,7 @@ namespace ApiServer.Controllers
             await _Store.SatisfyCreateAsync(accid, data, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            var canCreate = await _Store.CanCreateAsync(accid);
+            var canCreate = await _Store.CanCreateAsync(accid, resType);
             if (!canCreate)
                 return Forbid();
             //如果handle不为空,由handle掌控Create流程和ActionResult
@@ -114,14 +118,15 @@ namespace ApiServer.Controllers
         /// <param name="id"></param>
         /// <param name="mapping"></param>
         /// <param name="handle"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null)
+        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var exist = await _Store.ExistAsync(id);
             if (!exist)
                 return NotFound();
             var accid = AuthMan.GetAccountId(this);
-            var permission = await _Store.CanUpdateAsync(accid, id);
+            var permission = await _Store.CanUpdateAsync(accid, id, resType);
             if (!permission)
                 return Forbid();
             var metadata = await _Store._GetByIdAsync(id);
@@ -147,15 +152,16 @@ namespace ApiServer.Controllers
         /// 处理Delete请求
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _DeleteRequest(string id)
+        protected async Task<IActionResult> _DeleteRequest(string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var accid = AuthMan.GetAccountId(this);
             var exist = await _Store.ExistAsync(id);
             if (!exist)
                 return NotFound();
 
-            var canDelete = await _Store.CanDeleteAsync(accid, id);
+            var canDelete = await _Store.CanDeleteAsync(accid, id, resType);
             if (!canDelete)
                 return Forbid();
             await _Store.DeleteAsync(accid, id);

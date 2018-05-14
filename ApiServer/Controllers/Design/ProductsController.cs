@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -7,10 +8,8 @@ using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Threading.Tasks;
-using System.Text;
 using System.Collections.Generic;
-using ApiModel.Enums;
+using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -42,7 +41,7 @@ namespace ApiServer.Controllers
 
                 //query.AddRange(KeyWordSearchQ(model.Search));
             });
-            return await _GetPagingRequest(model, qMapping);
+            return await _GetPagingRequest(model, qMapping, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -56,7 +55,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ProductDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -76,7 +75,7 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
+                //entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -106,34 +105,6 @@ namespace ApiServer.Controllers
             return await _PutRequest(model.Id, mapping);
         }
         #endregion
-
-        #region ChangeICon 更新图标信息
-        ///// <summary>
-        ///// 更新图标信息
-        ///// </summary>
-        ///// <param name="icon"></param>
-        ///// <returns></returns>
-        //[Route("ChangeICon")]
-        //[HttpPut]
-        //[ProducesResponseType(typeof(IconModel), 200)]
-        //[ProducesResponseType(typeof(List<string>), 404)]
-        //public async Task<IActionResult> ChangeICon([FromBody]IconModel icon)
-        //{
-        //    if (ModelState.IsValid == false)
-        //        return BadRequest(ModelState);
-
-        //    var accid = AuthMan.GetAccountId(this);
-        //    var spec = await _ProductStore.GetByIdAsync(icon.ObjId);
-        //    if (spec != null)
-        //    {
-        //        spec.Icon = icon.AssetId;
-        //        await _ProductStore._SaveOrUpdateAsync(spec);
-        //        return Ok(spec);
-        //    }
-        //    return NotFound();
-        //}
-        #endregion
-
 
     }
 }

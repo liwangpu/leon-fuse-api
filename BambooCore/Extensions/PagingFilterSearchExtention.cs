@@ -16,7 +16,7 @@ namespace BambooCore
     /// <typeparam name="T"></typeparam>
     public class PagedData<T>
     {
-        public IEnumerable<T> Data { get; set; }
+        public IList<T> Data { get; set; }
         public int Page { get; set; }
         public int Size { get; set; }
         public int Total { get; set; }
@@ -60,7 +60,7 @@ namespace BambooCore
             if (page < 1)
                 page = 1;
             if (pageSize < 1)
-                pageSize = 1;
+                pageSize = 10;
 
             res.Total = await data.CountAsync();
             res.Page = page;
@@ -97,56 +97,14 @@ namespace BambooCore
             return res;
         }
 
-        public static async Task<PagedData<T>> Paging1<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, bool desc, Expression<Func<T, bool>> searchExpression) where T : class, IData
-        {
-
-            var res = new PagedData<T>();
-            IQueryable<T> data = null;
-            if (searchExpression == null)
-                data = src;
-            else
-                data = src.Where(searchExpression);
-
-            if (page < 1)
-                page = 1;
-            if (pageSize < 1)
-                pageSize = 1;
-
-            res.Total = await data.CountAsync();
-            res.Page = page;
-
-            if (!string.IsNullOrEmpty(orderBy))
-            {
-                try
-                {
-                    data = data.OrderBy(orderBy);
-                    if (desc)
-                        data = data.OrderByDescendingBy(orderBy);
-                }
-                catch { }// orderBy参数有误，比如名称不是类的成员
-            }
-
-            if (((page - 1) * pageSize) > res.Total)
-            {
-                res.Data = new List<T>();
-                res.Size = 0;
-            }
-            else
-            {
-                try
-                {
-                    data = data.Skip((page - 1) * pageSize).Take(pageSize);
-                    res.Data = await data.ToListAsync();
-                    res.Size = res.Data.Count();
-                }
-                catch
-                {
-                }
-            }
-            return res;
-        }
-
-
+        /// <summary>
+        /// 简单分页查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="src"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         public static async Task<PagedData<T>> SimplePaging<T>(this IQueryable<T> src, int page, int pageSize) where T : class, IData
         {
             var res = new PagedData<T>();
@@ -156,7 +114,7 @@ namespace BambooCore
             if (page < 1)
                 page = 1;
             if (pageSize < 1)
-                pageSize = 1;
+                pageSize = 10;
 
             res.Total = await data.CountAsync();
             res.Page = page;

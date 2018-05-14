@@ -33,6 +33,68 @@ namespace ApiServer.Stores
 
         /**************** protected method ****************/
 
+        #region virtual _PermissionTreeResourceFilter 权限树资源类型过滤
+        /// <summary>
+        /// 权限树资源类型过滤
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected virtual void _PermissionTreeResourceFilter(ref IQueryable<T> query, Account currentAcc)
+        {
+            //TODO:待完善权限树获取资源类型
+
+            //var treeQ = from ps in _DbContext.PermissionTrees
+            //            where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
+            //            select ps;
+            //query = from it in query
+            //        join ps in treeQ on it.Creator equals ps.ObjId
+            //        select it;
+        }
+        #endregion
+
+        #region virtual _PersonalResourceFilter 获取个人资源
+        /// <summary>
+        /// 获取个人资源
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected virtual void _PersonalResourceFilter(ref IQueryable<T> query, Account currentAcc)
+        {
+            query = from it in query
+                    where it.Creator == currentAcc.Id
+                    select it;
+        }
+        #endregion
+
+        #region virtual _DepartmentalResourceFilter 获取部门共享资源
+        /// <summary>
+        /// 获取部门共享资源
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected virtual void _DepartmentalResourceFilter(ref IQueryable<T> query, Account currentAcc)
+        {
+
+        }
+        #endregion
+
+        #region virtual _OrganizationalResourceFilter 获取组织共享资源
+        /// <summary>
+        /// 获取组织共享资源
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        protected virtual void _OrganizationalResourceFilter(ref IQueryable<T> query, Account currentAcc)
+        {
+            var treeQ = from ps in _DbContext.PermissionTrees
+                        where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
+                        select ps;
+            query = from it in query
+                    join ps in treeQ on it.Creator equals ps.ObjId
+                    select it;
+        }
+        #endregion
+
         #region _QSearchFilter 查询参数过滤
         /// <summary>
         /// 查询参数过滤
@@ -81,64 +143,74 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        protected IQueryable<T> _BasicResourceTypeFilter(IQueryable<T> query, Account account, PermissionTree organNode, PermissionTree departmentNode, DataOperateEnum operate)
-        {
-            #region 获取全开放状态的资源
-            {
-                var dataQ = from rs in query
-                            where rs.ResourceType >= (int)ResourceTypeEnum.NoLimit + (int)operate * AppConst.I_Permission_GradeStep
-                            select rs;
-                query = dataQ;
+        #region tmp
+        //protected IQueryable<T> _BasicResourceTypeFilter(IQueryable<T> query, Account account, PermissionTree organNode, PermissionTree departmentNode, DataOperateEnum operate)
+        //{
+        //    #region 获取全开放状态的资源
+        //    {
+        //        var dataQ = from rs in query
+        //                    where rs.ResourceType >= (int)ResourceTypeEnum.NoLimit + (int)operate * AppConst.I_Permission_GradeStep
+        //                    select rs;
+        //        query = dataQ;
 
-                var sql = query.ToString();
-            }
-            #endregion
+        //        var sql = query.ToString();
+        //    }
+        //    #endregion
 
-            #region 组织开放状态资源
-            {
-                //var dataQ = from rs in query
-                //            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
-                //            select rs;
-                //var treeQ = from ps in _DbContext.PermissionTrees
-                //            where ps.OrganizationId == organNode.ObjId && ps.NodeType == AppConst.S_NodeType_Account
-                //            select ps;
-                //var typeQ = from rs in dataQ
-                //            join ps in treeQ on rs.Creator equals ps.ObjId
-                //            select rs;
-                //query = query.Union(typeQ);
-            }
-            #endregion
+        //    #region 组织开放状态资源
+        //    {
+        //        //var dataQ = from rs in query
+        //        //            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
+        //        //            select rs;
+        //        //var treeQ = from ps in _DbContext.PermissionTrees
+        //        //            where ps.OrganizationId == organNode.ObjId && ps.NodeType == AppConst.S_NodeType_Account
+        //        //            select ps;
+        //        //var typeQ = from rs in dataQ
+        //        //            join ps in treeQ on rs.Creator equals ps.ObjId
+        //        //            select rs;
+        //        //query = query.Union(typeQ);
+        //    }
+        //    #endregion
 
-            #region 部门开放状态资源
-            {
-                //var dataQ = from rs in query
-                //            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
-                //            select rs;
-                //var treeQ = from ps in _DbContext.PermissionTrees
-                //            where ps.OrganizationId == organNode.ObjId && ps.LValue > departmentNode.LValue && ps.RValue < departmentNode.RValue && ps.NodeType == AppConst.S_NodeType_Account
-                //            select ps;
-                //var typeQ = from rs in dataQ
-                //            join ps in treeQ on rs.Creator equals ps.ObjId
-                //            select rs;
-                //query = query.Union(typeQ);
-            }
-            #endregion
+        //    #region 部门开放状态资源
+        //    {
+        //        //var dataQ = from rs in query
+        //        //            where rs.ResourceType >= (int)ResourceTypeEnum.Organizational + (int)operate * AppConst.I_Permission_GradeStep
+        //        //            select rs;
+        //        //var treeQ = from ps in _DbContext.PermissionTrees
+        //        //            where ps.OrganizationId == organNode.ObjId && ps.LValue > departmentNode.LValue && ps.RValue < departmentNode.RValue && ps.NodeType == AppConst.S_NodeType_Account
+        //        //            select ps;
+        //        //var typeQ = from rs in dataQ
+        //        //            join ps in treeQ on rs.Creator equals ps.ObjId
+        //        //            select rs;
+        //        //query = query.Union(typeQ);
+        //    }
+        //    #endregion
 
-            #region 个人资源
-            {
-                //var dataQ = from it in query
-                //            where it.Creator == account.Id
-                //            select it;
-                //query = query.Union(dataQ);
-            }
-            #endregion
+        //    #region 个人资源
+        //    {
+        //        //var dataQ = from it in query
+        //        //            where it.Creator == account.Id
+        //        //            select it;
+        //        //query = query.Union(dataQ);
+        //    }
+        //    #endregion
 
-            return query;
-        }
+        //    return query;
+        //} 
+        #endregion
 
         #region _BasicPermissionFilter 基本的权限树数据过滤
-
-        protected void _BasicPermissionFilter(ref IQueryable<T> query, Account currentAcc, PermissionTree organNode, PermissionTree departmentNode, DataOperateEnum operate)
+        /// <summary>
+        /// 基本的权限树数据过滤
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="currentAcc"></param>
+        /// <param name="accountNode"></param>
+        /// <param name="organNode"></param>
+        /// <param name="departmentNode"></param>
+        /// <param name="resType"></param>
+        protected void _BasicPermissionFilter(ref IQueryable<T> query, Account currentAcc, PermissionTree accountNode, PermissionTree organNode, PermissionTree departmentNode, ResourceTypeEnum resType)
         {
             if (currentAcc != null)
             {
@@ -148,34 +220,20 @@ namespace ApiServer.Stores
                 }
                 else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
                 {
-                    //var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
-                    //var r1 = openedResourceQ.ToList();
-
-                    var treeQ = from ps in _DbContext.PermissionTrees
-                                where ps.OrganizationId == currentAcc.OrganizationId && ps.NodeType == AppConst.S_NodeType_Account
-                                select ps;
-                    query = from it in query
-                            join ps in treeQ on it.Creator equals ps.ObjId
-                            select it;
-
-                    //query = query.Union(openedResourceQ);
-
+                    _OrganizationalResourceFilter(ref query, currentAcc);
                 }
                 else if (currentAcc.Type == AppConst.AccountType_OrganMember)
                 {
-                    //var openedResourceQ = _BasicResourceTypeFilter(query, currentAcc, organNode, departmentNode, operate);
-
-                    query = from it in query
-                            where it.Creator == currentAcc.Id
-                            select it;
-
-                    //query = query.Union(openedResourceQ);
+                    if (resType == ResourceTypeEnum.Organizational)
+                        _OrganizationalResourceFilter(ref query, currentAcc);
+                    else if (resType == ResourceTypeEnum.Departmental)
+                        _DepartmentalResourceFilter(ref query, currentAcc);
+                    else
+                        _PersonalResourceFilter(ref query, currentAcc);
                 }
                 else
                 {
-                    query = from it in query
-                            where it.Creator == currentAcc.Id
-                            select it;
+                    _PersonalResourceFilter(ref query, currentAcc);
                 }
             }
             else
@@ -292,11 +350,12 @@ namespace ApiServer.Stores
 
         #region virtual CanCreateAsync 判断用户是否有权限创建数据
         /// <summary>
-        /// CanCreate
+        /// 判断用户是否有权限创建数据
         /// </summary>
         /// <param name="accid"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanCreateAsync(string accid)
+        public virtual async Task<bool> CanCreateAsync(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             return await Task.FromResult(true);
         }
@@ -308,10 +367,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanUpdateAsync(string accid, string id)
+        public virtual async Task<bool> CanUpdateAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
-            return await CanReadAsync(accid, id);
+            return await CanReadAsync(accid, id, resType);
         }
         #endregion
 
@@ -321,10 +381,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanDeleteAsync(string accid, string id)
+        public virtual async Task<bool> CanDeleteAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
-            return await CanReadAsync(accid, id);
+            return await CanReadAsync(accid, id, resType);
         }
         #endregion
 
@@ -334,15 +395,18 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="accid"></param>
         /// <param name="id"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        public virtual async Task<bool> CanReadAsync(string accid, string id)
+        public virtual async Task<bool> CanReadAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
+            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
+            var departmentNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.DepartmentId);
             var query = from it in _DbContext.Set<T>()
                         select it;
             _BasicFilter(ref query, currentAcc);
-            //TODO:
-            //_BasicPermissionFilter(ref query, currentAcc);
+            _BasicPermissionFilter(ref query, currentAcc, accountNode, organNode, departmentNode, resType);
             var result = await query.CountAsync(x => x.Id == id);
             if (result == 0)
                 return false;
@@ -402,10 +466,12 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="model"></param>
         /// <param name="accid"></param>
+        /// <param name="resType"></param>
         /// <returns></returns>
-        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid)
+        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
             var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
             var departmentNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.DepartmentId);
             var query = from it in _DbContext.Set<T>()
@@ -413,7 +479,7 @@ namespace ApiServer.Stores
             _QSearchFilter(ref query, model.Q);
             _BasicFilter(ref query, currentAcc);
             _KeyWordSearchFilter(ref query, model.Search);
-            _BasicPermissionFilter(ref query, currentAcc, organNode, departmentNode, DataOperateEnum.CR);
+            _BasicPermissionFilter(ref query, currentAcc, accountNode, organNode, departmentNode, resType);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
             return await query.SimplePaging(model.Page, model.PageSize);
         }
@@ -427,16 +493,16 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static PagedData<IData> PageQueryDTOTransfer(PagedData<T> result)
+        public static PagedData<DTO> PageQueryDTOTransfer(PagedData<T> result)
         {
             if (result != null)
             {
                 if (result.Total > 0)
                 {
-                    return new PagedData<IData>() { Data = result.Data.Select(x => x.ToDTO()).ToList(), Page = result.Page, Size = result.Size, Total = result.Total };
+                    return new PagedData<DTO>() { Data = result.Data.Select(x => x.ToDTO()).ToList(), Page = result.Page, Size = result.Size, Total = result.Total };
                 }
             }
-            return new PagedData<IData>();
+            return new PagedData<DTO>();
         }
         #endregion
 

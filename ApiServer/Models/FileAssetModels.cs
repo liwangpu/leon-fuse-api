@@ -1,5 +1,4 @@
-﻿using ApiModel.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {
@@ -51,6 +50,10 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region IconModel ICon信息上传模型
+    /// <summary>
+    /// ICon信息上传模型
+    /// </summary>
     public class IconModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -58,6 +61,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string AssetId { get; set; }
     }
+    #endregion
 
     #region StaticMeshCreateModel 模型文件创建模型
     /// <summary>
@@ -89,7 +93,6 @@ namespace ApiServer.Models
     }
     #endregion
 
-
     #region StaticMeshUploadModel 规格模型上传模型
     /// <summary>
     /// 规格模型上传模型
@@ -99,7 +102,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ProductSpecId { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string AssetId { get; set; }
+        public string StaticMeshId { get; set; }
     }
     #endregion
 
@@ -114,7 +117,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string StaticMeshId { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string AssetId { get; set; }
+        public string MaterialId { get; set; }
     }
     #endregion
 

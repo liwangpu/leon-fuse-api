@@ -14,12 +14,12 @@ namespace ApiModel.Entities
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
         public string AccountId { get; set; }
-        [JsonIgnore]
-        public Account Account { get; set; }
 
+        public Account Account { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         public MaterialDTO ToDTO()
         {
@@ -38,6 +38,9 @@ namespace ApiModel.Entities
                 dto.FileAsset = FileAsset.ToDTO();
                 dto.Url = FileAsset.Url;
             }
+
+            if (IconFileAsset != null)
+                dto.Icon = IconFileAsset.Url;
             dto.CategoryId = CategoryId;
 
             return dto;
@@ -54,7 +57,7 @@ namespace ApiModel.Entities
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public string Url { get; set; }
-        public IData FileAsset { get; set; }
+        public FileAssetDTO FileAsset { get; set; }
         public string CategoryId { get; set; }
     }
 }

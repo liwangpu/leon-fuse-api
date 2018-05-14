@@ -1,5 +1,8 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Models;
+using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
 
@@ -38,6 +41,49 @@ namespace ApiServer.Stores
         public async Task SatisfyUpdateAsync(string accid, StaticMesh data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
+        }
+        #endregion
+
+        #region override GetByIdAsync 根据Id返回实体DTO数据信息
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<StaticMeshDTO> GetByIdAsync(string id)
+        {
+            var data = await _GetByIdAsync(id);
+
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+            {
+                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            }
+            return data.ToDTO();
+        }
+        #endregion
+
+        #region override SimplePagedQueryAsync
+        /// <summary>
+        /// SimplePagedQueryAsync
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="accid"></param>
+        /// <param name="resType"></param>
+        /// <returns></returns>
+        public override async Task<PagedData<StaticMesh>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        {
+            var result = await base.SimplePagedQueryAsync(model, accid, resType);
+
+            if (result.Total > 0)
+            {
+                for (int idx = result.Total - 1; idx >= 0; idx--)
+                {
+                    var curData = result.Data[idx];
+                    if (!string.IsNullOrWhiteSpace(curData.Icon))
+                        curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
+                }
+            }
+            return result;
         }
         #endregion
     }
