@@ -8,9 +8,6 @@ namespace ApiModel
     /// </summary>
     public interface IAsset : IListable
     {
-        string FolderId { get; set; }
         string CategoryId { get; set; }
-        string AccountId { get; set; }
-        Account Account { get; set; }
     }
 }

@@ -69,6 +69,9 @@ namespace ApiServer.Controllers.Design
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
+                entity.Data = model.Data;
+                entity.LayoutId = model.LayoutId;
+                entity.CategoryId = model.CategoryId;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -90,6 +93,9 @@ namespace ApiServer.Controllers.Design
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
+                entity.Data = model.Data;
+                entity.LayoutId = model.LayoutId;
+                entity.CategoryId = model.CategoryId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

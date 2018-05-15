@@ -8,17 +8,15 @@ namespace ApiModel.Entities
     {
         public string Icon { get; set; }
         public string LayoutId { get; set; }
-        [JsonIgnore]
+
+
         public Layout Layout { get; set; }
 
         /// <summary>
         /// 内容为 SolutionData 对象的 json字符串
         /// </summary>
         public string Data { get; set; }
-        public string FolderId { get; set; }
         public string CategoryId { get; set; }
-        public string AccountId { get; set; }
-        public Account Account { get; set; }
 
 
         public SolutionDTO ToDTO()
@@ -28,9 +26,7 @@ namespace ApiModel.Entities
             dto.Name = Name;
             dto.Description = Description;
             dto.Icon = Icon;
-            dto.FolderId = FolderId;
             dto.CategoryId = CategoryId;
-            dto.AccountId = AccountId;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
             dto.Data = Data;
@@ -43,9 +39,7 @@ namespace ApiModel.Entities
     {
         public string Description { get; set; }
         public string Icon { get; set; }
-        public string FolderId { get; set; }
         public string CategoryId { get; set; }
-        public string AccountId { get; set; }
         public string Data { get; set; }
         public string LayoutId { get; set; }
         public DateTime CreatedTime { get; set; }

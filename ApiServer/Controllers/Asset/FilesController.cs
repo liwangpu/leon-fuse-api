@@ -229,6 +229,17 @@ namespace ApiServer.Controllers
             if (file == null)
                 return BadRequest();
 
+
+            string fileExt = "";
+            string localPath = "";
+            string description = "";
+            Microsoft.Extensions.Primitives.StringValues headerVar;
+            Request.Headers.TryGetValue("fileExt", out headerVar); if (headerVar.Count > 0) fileExt = headerVar[0].Trim();
+            Request.Headers.TryGetValue("localPath", out headerVar); if (headerVar.Count > 0) localPath = headerVar[0].Trim();
+            Request.Headers.TryGetValue("description", out headerVar); if (headerVar.Count > 0) description = headerVar[0].Trim();
+
+
+
             // 原文件名（包括路径）
             var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
             // 扩展名
