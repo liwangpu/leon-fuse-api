@@ -93,6 +93,15 @@ namespace ApiModel.Entities
     }
 
     /// <summary>
+    /// 上传static mesh文件自动生成/关联 产品&规格信息DTO
+    /// </summary>
+    public class ProductSpecAutoRelatedDTO
+    {
+        public string ProductId { get; set; }
+        public string ProductSpecId { get; set; }
+    }
+
+    /// <summary>
     /// 产品规格-模型和材质文件依赖,对应ProductSpec.StaticMeshIds(仅用来序列化反序列化字符串信息,非数据持久类)
     /// </summary>
     public class SpecMeshMap

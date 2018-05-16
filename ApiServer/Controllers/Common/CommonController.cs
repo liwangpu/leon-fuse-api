@@ -91,11 +91,6 @@ namespace ApiServer.Controllers
             var accid = AuthMan.GetAccountId(this);
             var metadata = new T();
             var data = await mapping(metadata);
-            metadata.Id = GuidGen.NewGUID();
-            metadata.Creator = accid;
-            metadata.Modifier = accid;
-            metadata.CreatedTime = DateTime.Now;
-            metadata.ModifiedTime = DateTime.Now;
             await _Store.SatisfyCreateAsync(accid, data, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
@@ -132,9 +127,6 @@ namespace ApiServer.Controllers
             var metadata = await _Store._GetByIdAsync(id);
             var entity = await mapping(metadata);
             metadata.Id = id;
-            metadata.Modifier = accid;
-            metadata.ModifiedTime = DateTime.Now;
-
             await _Store.SatisfyUpdateAsync(accid, entity, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
@@ -168,6 +160,7 @@ namespace ApiServer.Controllers
             return Ok();
         }
         #endregion
+
 
         /**************** common method ****************/
 

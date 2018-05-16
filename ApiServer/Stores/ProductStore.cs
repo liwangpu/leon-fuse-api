@@ -4,7 +4,12 @@ using ApiServer.Data;
 using ApiServer.Models;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using Newtonsoft.Json;
+
 namespace ApiServer.Stores
 {
     public class ProductStore : StoreBase<Product, ProductDTO>, IStore<Product, ProductDTO>
@@ -63,6 +68,40 @@ namespace ApiServer.Stores
                         var iconass = await _DbContext.Files.FindAsync(spec.Icon);
                         spec.IconFileAsset = iconass;
                     }
+
+                    if (!string.IsNullOrWhiteSpace(spec.StaticMeshIds))
+                    {
+                        var map = JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds);
+                        for (int idx = map.Items.Count - 1; idx >= 0; idx--)
+                        {
+                            var refMesh = await _DbContext.StaticMeshs.FindAsync(map.Items[idx].StaticMeshId);
+                            if (refMesh != null)
+                            {
+                                var tmp = await _DbContext.Files.FindAsync(refMesh.FileAssetId);
+                                if (tmp != null)
+                                    refMesh.FileAsset = tmp;
+                            }
+
+                            if (map.Items[idx].MaterialIds != null && map.Items[idx].MaterialIds.Count > 0)
+                            {
+                                var matids = map.Items[idx].MaterialIds;
+                                foreach (var item in matids)
+                                {
+                                    var refMat = await _DbContext.Materials.FindAsync(item);
+                                    if (refMat != null)
+                                    {
+                                        var tmp = await _DbContext.Files.FindAsync(refMat.FileAssetId);
+                                        if (tmp != null)
+                                        {
+                                            refMat.FileAsset = tmp;
+                                            refMesh.Materials.Add(refMat);
+                                        }
+                                    }
+                                }
+                            }
+                            spec.StaticMeshAsset.Add(refMesh);
+                        }
+                    }
                 }
             }
 
@@ -98,6 +137,30 @@ namespace ApiServer.Stores
                 }
             }
             return result;
+        }
+        #endregion
+
+        #region GetSpecByStaticMesh 根据产品Id和模型id获取该产品中模型为输入模型id的所有产品规格列表
+        /// <summary>
+        /// 根据产品Id和模型id获取该产品中模型为输入模型id的所有产品规格列表
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="staticMeshId"></param>
+        /// <returns></returns>
+        public async Task<List<ProductSpec>> GetSpecByStaticMesh(string productId, string staticMeshId)
+        {
+            var specs = new List<ProductSpec>();
+            var product = await _DbContext.Products.Include(x => x.Specifications).FirstOrDefaultAsync(x => x.Id == productId);
+            if (product != null)
+            {
+                foreach (var spec in product.Specifications)
+                {
+                    var map = !string.IsNullOrWhiteSpace(spec.StaticMeshIds) ? JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds) : new SpecMeshMap();
+                    if (map.Items.Count(x => x.StaticMeshId == staticMeshId) > 0)
+                        specs.Add(spec);
+                }
+            }
+            return specs;
         }
         #endregion
     }

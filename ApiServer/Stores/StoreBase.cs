@@ -311,7 +311,7 @@ namespace ApiServer.Stores
                 if (data != null)
                     return data;
             }
-            return null;
+            return new T();
         }
         #endregion
 
@@ -329,7 +329,7 @@ namespace ApiServer.Stores
                 if (data != null)
                     return data.ToDTO();
             }
-            return null;
+            return new DTO();
         }
         #endregion
 
@@ -423,6 +423,11 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task CreateAsync(string accid, T data)
         {
+            data.Id = GuidGen.NewGUID();
+            data.Creator = accid;
+            data.Modifier = accid;
+            data.CreatedTime = DateTime.Now;
+            data.ModifiedTime = DateTime.Now;
             _DbContext.Set<T>().Add(data);
             await _DbContext.SaveChangesAsync();
         }
@@ -437,6 +442,8 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task UpdateAsync(string accid, T data)
         {
+            data.Modifier = accid;
+            data.ModifiedTime = DateTime.Now;
             _DbContext.Set<T>().Update(data);
             await _DbContext.SaveChangesAsync();
         }

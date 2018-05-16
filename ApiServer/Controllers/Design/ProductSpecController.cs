@@ -3,6 +3,7 @@ using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Services;
 using ApiServer.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,16 @@ namespace ApiServer.Controllers
     [Route("/[controller]")]
     public class ProductSpecController : ListableController<ProductSpec, ProductSpecDTO>
     {
+        private readonly ProductStore _ProductStore;
+        private readonly ApiDbContext _DbContext;
+
         #region 构造函数
         public ProductSpecController(ApiDbContext context)
         : base(new ProductSpecStore(context))
-        { }
+        {
+            _ProductStore = new ProductStore(context);
+            _DbContext = context;
+        }
         #endregion
 
         #region Get 根据id获取产品规格信息
@@ -94,29 +101,21 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 上传模型文件信息(非真实上传文件,文件已经提交到File,此处只是添加文件id到规格相关字段信息)
         /// </summary>
-        /// <param name="mesh"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
         [Route("UploadStaticMesh")]
         [HttpPut]
         [ValidateModel]
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> UploadStaticMesh([FromBody]SpecStaticMeshUploadModel mesh)
+        public async Task<IActionResult> UploadStaticMesh([FromBody]SpecStaticMeshUploadModel model)
         {
             var mapping = new Func<ProductSpec, Task<ProductSpec>>(async (entity) =>
             {
-                var map = string.IsNullOrWhiteSpace(entity.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(entity.StaticMeshIds);
-                var exist = map.Items.Where(x => x.StaticMeshId == mesh.StaticMeshId).Count() > 0;
-                if (!exist)
-                {
-                    var item = new SpecMeshMapItem();
-                    item.StaticMeshId = mesh.StaticMeshId;
-                    map.Items.Add(item);
-                }
-                entity.StaticMeshIds = JsonConvert.SerializeObject(map);
+                (_Store as ProductSpecStore).AddStaticMeshRelated(entity, model.StaticMeshId);
                 return await Task.FromResult(entity);
             });
-            return await _PutRequest(mesh.ProductSpecId, mapping);
+            return await _PutRequest(model.ProductSpecId, mapping);
         }
         #endregion
 
@@ -124,27 +123,21 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 删除模型文件信息(文件已经提交到File,删除不会对文件进行真实删除)
         /// </summary>
-        /// <param name="mesh"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
         [Route("DeleteStaticMesh")]
         [HttpPut]
         [ValidateModel]
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> DeleteStaticMesh([FromBody]SpecStaticMeshUploadModel mesh)
+        public async Task<IActionResult> DeleteStaticMesh([FromBody]SpecStaticMeshUploadModel model)
         {
             var mapping = new Func<ProductSpec, Task<ProductSpec>>(async (entity) =>
             {
-                var map = string.IsNullOrWhiteSpace(entity.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(entity.StaticMeshIds);
-                for (int idx = map.Items.Count - 1; idx >= 0; idx--)
-                {
-                    if (map.Items[idx].StaticMeshId == mesh.StaticMeshId)
-                        map.Items.RemoveAt(idx);
-                }
-                entity.StaticMeshIds = JsonConvert.SerializeObject(map);
+                (_Store as ProductSpecStore).RemoveStaticMeshRelated(entity, model.StaticMeshId);
                 return await Task.FromResult(entity);
             });
-            return await _PutRequest(mesh.ProductSpecId, mapping);
+            return await _PutRequest(model.ProductSpecId, mapping);
         }
         #endregion
 
@@ -268,5 +261,85 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region AutoRelateSpec 根据模型文件Id自动创建/关联 产品以及产品规格信息
+        /// <summary>
+        /// 根据模型文件Id自动创建/关联 产品以及产品规格信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("AutoRelateSpec")]
+        [HttpPost]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ProductSpecAutoRelatedDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AutoRelateSpec([FromBody]ProductSpecAutoRelatedEditModel model)
+        {
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
+
+            var dto = new ProductSpecAutoRelatedDTO();
+            var accid = AuthMan.GetAccountId(this);
+            if (!string.IsNullOrWhiteSpace(model.ProductId))
+            {
+                var canRead = await _ProductStore.CanReadAsync(accid, model.ProductId, ResourceTypeEnum.Organizational);
+                if (!canRead)
+                    return Forbid();
+            }
+
+            var staticMesh = await _DbContext.StaticMeshs.FindAsync(model.StaticMeshId);
+            var product = await _ProductStore._GetByIdAsync(model.ProductId);
+            if (!product.IsPersistence())
+            {
+                #region 创建产品
+                product.Name = staticMesh.Name;
+                await _ProductStore.SatisfyCreateAsync(accid, product, ModelState);
+                if (!ModelState.IsValid)
+                    return new ValidationFailedResult(ModelState);
+
+                await _ProductStore.CreateAsync(accid, product);
+                #endregion
+
+                #region 创建规格
+                var spec = new ProductSpec();
+                spec.Name = staticMesh.Name;
+                spec.Product = product;
+                (_Store as ProductSpecStore).AddStaticMeshRelated(spec, model.StaticMeshId);
+                await _Store.SatisfyCreateAsync(accid, spec, ModelState);
+                if (!ModelState.IsValid)
+                    return new ValidationFailedResult(ModelState);
+
+                await _Store.CreateAsync(accid, spec);
+                #endregion
+
+                dto.ProductSpecId = spec.Id;
+            }
+            else
+            {
+                var specs = await _ProductStore.GetSpecByStaticMesh(product.Id, model.StaticMeshId);
+                if (specs.Count == 0)
+                {
+                    #region 创建规格
+                    var spec = new ProductSpec();
+                    spec.Name = staticMesh.Name;
+                    spec.Product = product;
+                    (_Store as ProductSpecStore).AddStaticMeshRelated(spec, model.StaticMeshId);
+                    await _Store.SatisfyCreateAsync(accid, spec, ModelState);
+                    if (!ModelState.IsValid)
+                        return new ValidationFailedResult(ModelState);
+
+                    await _Store.CreateAsync(accid, spec);
+                    #endregion
+
+                    dto.ProductSpecId = spec.Id;
+                }
+                else
+                {
+                    dto.ProductSpecId = specs[0].Id;
+                }
+            }
+            dto.ProductId = product.Id;
+            return Ok(dto);
+        }
+        #endregion
     }
 }

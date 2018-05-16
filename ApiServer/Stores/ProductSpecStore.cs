@@ -106,5 +106,44 @@ namespace ApiServer.Stores
             return res.ToDTO();
         }
         #endregion
+
+        #region AddStaticMeshRelated 往产品规格里面添加模型依赖信息
+        /// <summary>
+        /// 往产品规格里面添加模型依赖信息
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="staticMeshId"></param>
+        public void AddStaticMeshRelated(ProductSpec entity, string staticMeshId)
+        {
+            var map = string.IsNullOrWhiteSpace(entity.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(entity.StaticMeshIds);
+            var exist = map.Items.Where(x => x.StaticMeshId == staticMeshId).Count() > 0;
+            if (!exist)
+            {
+                var item = new SpecMeshMapItem();
+                item.StaticMeshId = staticMeshId;
+                map.Items.Add(item);
+            }
+            entity.StaticMeshIds = JsonConvert.SerializeObject(map);
+        }
+        #endregion
+
+        #region RemoveStaticMeshRelated 往产品规格里面移除模型依赖信息
+        /// <summary>
+        /// 往产品规格里面移除模型依赖信息
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="staticMeshId"></param>
+        public void RemoveStaticMeshRelated(ProductSpec entity, string staticMeshId)
+        {
+            var map = string.IsNullOrWhiteSpace(entity.StaticMeshIds) ? new SpecMeshMap() : JsonConvert.DeserializeObject<SpecMeshMap>(entity.StaticMeshIds);
+            for (int idx = map.Items.Count - 1; idx >= 0; idx--)
+            {
+                if (map.Items[idx].StaticMeshId == staticMeshId)
+                    map.Items.RemoveAt(idx);
+            }
+            entity.StaticMeshIds = JsonConvert.SerializeObject(map);
+        } 
+        #endregion
+
     }
 }

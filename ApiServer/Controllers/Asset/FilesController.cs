@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 
@@ -134,8 +133,8 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-
-        /// <summary>
+        #region Upload 上传一个文件，文件放在body中。服务器会把此文件存在upload文件夹中，并在账号上创建一个FileAsset，并返回数据给客户端。
+        /// <summary> 
         /// 上传一个文件，文件放在body中。服务器会把此文件存在upload文件夹中，并在账号上创建一个FileAsset，并返回数据给客户端。
         /// 文件的内容可以在Header里面附加，也可以再次使用PUT /files API来修改此FileAsset。
         /// 在Header里面附加的内容一定要用urlencode封装一下，否则遇到中文会被框架拦截，返回500错误。
@@ -143,7 +142,53 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Upload")]
         [HttpPost]
-        public async Task<FileAsset> Upload()
+        public async Task<IActionResult> Upload()
+        {
+            Action<string> saveFile = (path) =>
+            {
+                using (StreamWriter sw = new StreamWriter(path))
+                {
+                    HttpContext.Request.Body.CopyTo(sw.BaseStream);
+                }
+            };
+
+            return await SaveUpload(saveFile);
+        }
+        #endregion
+
+        #region UploadFormFile Form表单方式上传一个文件
+        /// <summary>
+        /// FormData上传一个文件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Route("UploadFormFile")]
+        [HttpPost]
+        public async Task<IActionResult> UploadFormFile(IFormFile file)
+        {
+            if (file == null)
+                return BadRequest();
+
+            Action<string> saveFile = (path) =>
+            {
+                using (FileStream fs = System.IO.File.Create(path))
+                {
+                    file.CopyTo(fs);
+                    // 清空缓冲区数据
+                    fs.Flush();
+                }
+            };
+            return await SaveUpload(saveFile);
+        }
+        #endregion
+
+        #region private SaveUpload 真实保存上传文件过程
+        /// <summary>
+        /// 真实保存上传文件过程
+        /// </summary>
+        /// <param name="saveFile"></param>
+        /// <returns></returns>
+        private async Task<IActionResult> SaveUpload(Action<string> saveFile)
         {
             string fileExt = "";
             string localPath = "";
@@ -172,16 +217,13 @@ namespace ApiServer.Controllers
             string savePath = Path.Combine(uploadPath, res.Id);
             try
             {
-                using (StreamWriter sw = new StreamWriter(savePath))
-                {
-                    HttpContext.Request.Body.CopyTo(sw.BaseStream);
-                }
+                saveFile(savePath);
             }
             catch
             {
                 res.Id = "";
                 res.Url = "";
-                return res;
+                return Ok(res);
             }
             FileInfo fi = new FileInfo(savePath);
             res.Size = fi.Length;
@@ -199,7 +241,13 @@ namespace ApiServer.Controllers
                 {
                     System.IO.File.Move(savePath, renamedPath); //重命名文件
                 }
-                return existRecord;
+                else
+                {
+                    //删除冗余文件
+                    System.IO.File.Delete(savePath);
+
+                }
+                return Ok(existRecord);
             }
             else // 没有上传记录
             {
@@ -211,94 +259,10 @@ namespace ApiServer.Controllers
                 System.IO.File.Move(savePath, renamedPath); //重命名文件
             }
 
-
             await repo.CreateAsync(AuthMan.GetAccountId(this), res, false); //记录到数据库
 
-            return res;
+            return Ok(res);
         }
-
-        /// <summary>
-        /// FormData上传一个文件
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        [Route("UploadFormFile")]
-        [HttpPost]
-        public async Task<IActionResult> UploadFormFile(IFormFile file)
-        {
-            if (file == null)
-                return BadRequest();
-
-
-            string fileExt = "";
-            string localPath = "";
-            string description = "";
-            Microsoft.Extensions.Primitives.StringValues headerVar;
-            Request.Headers.TryGetValue("fileExt", out headerVar); if (headerVar.Count > 0) fileExt = headerVar[0].Trim();
-            Request.Headers.TryGetValue("localPath", out headerVar); if (headerVar.Count > 0) localPath = headerVar[0].Trim();
-            Request.Headers.TryGetValue("description", out headerVar); if (headerVar.Count > 0) description = headerVar[0].Trim();
-
-
-
-            // 原文件名（包括路径）
-            var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
-            // 扩展名
-            //var extName = filename.Substring(filename.LastIndexOf('.')).Replace("\"", "");
-            var extName = Path.GetExtension(filename).Replace("\"", "");
-            // 新文件名
-            string shortfilename = $"{Guid.NewGuid()}{extName}";
-            // 新文件名（包括路径）
-            //filename = hostEnv.WebRootPath + @"\upload\" + shortfilename;
-            filename = Path.Combine(hostEnv.WebRootPath, "upload", shortfilename);
-            // 设置文件大小
-            long size = file.Length;
-            // 创建新文件
-            using (FileStream fs = System.IO.File.Create(filename))
-            {
-                file.CopyTo(fs);
-                // 清空缓冲区数据
-                fs.Flush();
-            }
-
-            var accid = AuthMan.GetAccountId(this);
-            FileAsset res = new FileAsset();
-            res.Name = file.FileName;
-            res.FileExt = extName;
-            res.Size = file.Length;
-            res.Md5 = Md5.CalcFile(filename); //计算md5
-            res.Id = res.Md5; //将ID和url改为md5
-            res.Url = "/upload/" + res.Id + res.FileExt;
-            res.Creator = accid;
-            res.CreatedTime = DateTime.Now;
-            res.Modifier = accid;
-            res.ModifiedTime = DateTime.Now;
-
-            //string renamedPath = uploadPath + res.Id + res.FileExt;
-            string renamedPath = Path.Combine(uploadPath, res.Id + res.FileExt);
-
-            // 检查是否已经上传过此文件
-            var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
-            if (existRecord != null)
-            {
-                // 数据库记录还在，但是文件不在了，重新保存下文件。
-                if (System.IO.File.Exists(renamedPath) == false)
-                {
-                    System.IO.File.Move(filename, renamedPath); //重命名文件
-                }
-                return Ok(existRecord);
-            }
-            else // 没有上传记录
-            {
-                //没上传记录，但是已经有这个文件了，先删除已有的文件，使用用户的文件覆盖
-                if (System.IO.File.Exists(renamedPath))
-                {
-                    System.IO.File.Delete(renamedPath);
-                }
-                System.IO.File.Move(filename, renamedPath); //重命名文件
-            }
-
-            var ass = await repo.CreateAsync(AuthMan.GetAccountId(this), res, false); //记录到数据库
-            return Ok(ass);
-        }
+        #endregion
     }
 }

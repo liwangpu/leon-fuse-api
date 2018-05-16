@@ -72,6 +72,18 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region ProductSpecAutoRelatedEditModel 根据规格自动创建或者关联产品规格编辑模型
+    /// <summary>
+    /// 根据规格自动创建或者关联产品规格编辑模型
+    /// </summary>
+    public class ProductSpecAutoRelatedEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string StaticMeshId { get; set; }
+        public string ProductId { get; set; }
+    } 
+    #endregion
+
     #region SolutionCreateModel 解决方案新建模型
     /// <summary>
     /// 解决方案新建模型
