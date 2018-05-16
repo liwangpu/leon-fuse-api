@@ -10,7 +10,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 namespace ApiServer.Stores
 {
     public class OrganizationStore : StoreBase<Organization, OrganizationDTO>, IStore<Organization, OrganizationDTO>
@@ -38,7 +37,9 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyCreateAsync(string accid, Organization data, ModelStateDictionary modelState)
         {
-            await Task.FromResult(string.Empty);
+            var organMailExist = await _DbContext.Organizations.CountAsync(x => x.Mail == data.Mail) > 0;
+            if (organMailExist)
+                modelState.AddModelError("Mail", "该邮箱已经使用");
         }
         #endregion
 
@@ -52,7 +53,9 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyUpdateAsync(string accid, Organization data, ModelStateDictionary modelState)
         {
-            await Task.FromResult(string.Empty);
+            var organMailExist = await _DbContext.Organizations.CountAsync(x => x.Mail == data.Mail && x.Id != data.Id) > 0;
+            if (organMailExist)
+                modelState.AddModelError("Mail", "该邮箱已经使用");
         }
         #endregion
 
@@ -120,7 +123,7 @@ namespace ApiServer.Stores
                 account.Id = GuidGen.NewGUID();
                 account.Type = AppConst.AccountType_OrganAdmin;
                 account.Name = "组织管理员";
-                account.Mail = data.Mail;
+                account.Mail = GuidGen.NewGUID();
                 account.Password = ConstVar.DefaultNormalPasswordMd5;
                 account.Location = data.Location;
 

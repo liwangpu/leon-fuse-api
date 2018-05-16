@@ -31,7 +31,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyCreateAsync(string accid, Account data, ModelStateDictionary modelState)
         {
-            await Task.FromResult(string.Empty);
+            var existMail = await _DbContext.Accounts.CountAsync(x => x.Mail == data.Mail) > 0;
+            if (existMail)
+                modelState.AddModelError("Mail", "该邮箱已经使用");
+            var existPhone = await _DbContext.Accounts.CountAsync(x => x.Phone == data.Phone) > 0;
+            if (existPhone)
+                modelState.AddModelError("Phone", "该电话已经使用");
         }
         #endregion
 
@@ -45,7 +50,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyUpdateAsync(string accid, Account data, ModelStateDictionary modelState)
         {
-            await Task.FromResult(string.Empty);
+            var existMail = await _DbContext.Accounts.CountAsync(x => x.Mail == data.Mail && x.Id != data.Id) > 0;
+            if (existMail)
+                modelState.AddModelError("Mail", "该邮箱已经使用");
+            var existPhone = await _DbContext.Accounts.CountAsync(x => x.Phone == data.Phone && x.Id != data.Id) > 0;
+            if (existPhone)
+                modelState.AddModelError("Phone", "该电话已经使用");
         }
         #endregion
 

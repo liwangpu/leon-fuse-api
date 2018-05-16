@@ -281,12 +281,27 @@ namespace ApiServer.Controllers
             var accid = AuthMan.GetAccountId(this);
             if (!string.IsNullOrWhiteSpace(model.ProductId))
             {
+                var exist = await _ProductStore.ExistAsync(model.ProductId);
+                if (!exist)
+                {
+                    ModelState.AddModelError("ProductId", "没有对应产品记录信息");
+                    return new ValidationFailedResult(ModelState);
+                }
                 var canRead = await _ProductStore.CanReadAsync(accid, model.ProductId, ResourceTypeEnum.Organizational);
                 if (!canRead)
-                    return Forbid();
+                {
+                    ModelState.AddModelError("ProductId", "没有操作权限");
+                    return new ValidationFailedResult(ModelState);
+                }
             }
 
             var staticMesh = await _DbContext.StaticMeshs.FindAsync(model.StaticMeshId);
+            if (staticMesh == null)
+            {
+                ModelState.AddModelError("StaticMeshId", "没有对应模型记录信息");
+                return new ValidationFailedResult(ModelState);
+            }
+
             var product = await _ProductStore._GetByIdAsync(model.ProductId);
             if (!product.IsPersistence())
             {

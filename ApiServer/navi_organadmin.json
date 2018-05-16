@@ -88,6 +88,30 @@
           "type": "item",
           "icon": "alarm",
           "url": "/app/materials"
+        },
+        {
+          "id": "solution",
+          "title": "nav.InteriorDesignSolutions",
+          "type": "item",
+          "icon": "alarm",
+          "url": "/app/solutions",
+          "field": "value"
+        },
+        {
+          "id": "order",
+          "title": "nav.Order",
+          "type": "item",
+          "icon": "alarm",
+          "url": "/app/orders",
+          "field": "value"
+        },
+        {
+          "id": "package",
+          "title": "nav.Package",
+          "type": "item",
+          "icon": "alarm",
+          "url": "/app/packages",
+          "field": "value"
         }
       ]
     }

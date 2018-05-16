@@ -94,7 +94,6 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string Data { get; set; }
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
@@ -113,7 +112,6 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string Data { get; set; }
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }

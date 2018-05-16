@@ -55,39 +55,41 @@
       "icon": "pages",
       "children": [
         {
-          "id": "solutions",
+          "id": "solution",
           "title": "nav.InteriorDesignSolutions",
           "type": "item",
           "icon": "alarm",
-          "url": "/pages/solution"
+          "url": "/app/solutions",
+          "field": "value"
         },
         {
-          "id": "products",
+          "id": "product",
           "title": "nav.InteriorDesignProducts",
           "type": "item",
           "icon": "alarm",
-          "url": "app/products"
+          "url": "/app/products"
         },
         {
-          "id": "orders",
-          "title": "Orders",
+          "id": "order",
+          "title": "nav.Order",
           "type": "item",
           "icon": "alarm",
-          "url": "/pages/orders"
+          "url": "/app/orders",
+          "field": "value"
         },
         {
-          "id": "category",
-          "title": "category",
+          "id": "staticmesh",
+          "title": "nav.StaticMesh",
           "type": "item",
           "icon": "alarm",
-          "url": "/pages/category"
+          "url": "/app/staticmeshs"
         },
         {
-          "id": "customer",
-          "title": "customer",
+          "id": "material",
+          "title": "nav.Material",
           "type": "item",
           "icon": "alarm",
-          "url": "/pages/customer"
+          "url": "/app/materials"
         },
         {
           "id": "layout",
@@ -105,31 +107,11 @@
         },
         {
           "id": "package",
-          "title": "package",
+          "title": "nav.Package",
           "type": "item",
           "icon": "alarm",
-          "url": "/pages/package"
-        },
-        {
-          "id": "supplier",
-          "title": "supplier",
-          "type": "item",
-          "icon": "alarm",
-          "url": "/pages/supplier"
-        },
-        {
-          "id": "tags",
-          "title": "tags",
-          "type": "item",
-          "icon": "alarm",
-          "url": "/pages/tags"
-        },
-        {
-          "id": "icons",
-          "title": "icons",
-          "type": "item",
-          "icon": "alarm",
-          "url": "/pages/icons"
+          "url": "/app/packages",
+          "field": "value"
         }
       ]
     }
