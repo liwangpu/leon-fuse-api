@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -10,6 +11,9 @@ namespace ApiModel.Entities
         public string ParentId { get; set; }
         public int DisplayIndex { get; set; }
         public string OrganizationId { get; set; }
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
+
 
         public AssetCategoryDTO ToDTO()
         {

@@ -74,6 +74,9 @@ namespace ApiServer.Models
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string FileAssetId { get; set; }
+        public string IconAssetId { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
     }
     #endregion
 
@@ -90,6 +93,9 @@ namespace ApiServer.Models
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string FileAssetId { get; set; }
+        public string IconAssetId { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
     }
     #endregion
 

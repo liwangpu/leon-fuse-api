@@ -34,10 +34,11 @@ namespace ApiServer.Controllers
         /// 根据分页获取用户信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="departmentId"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<AccountDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string departmentId)
         {
             return await _GetPagingRequest(model);
         }
@@ -104,7 +105,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]AccountEditModel model)
         {
-            var mapping = new Func<Account, Task<Account>>(async(entity) =>
+            var mapping = new Func<Account, Task<Account>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -11,13 +12,15 @@ namespace ApiModel.Entities
         public List<OrganMember> Members { get; set; }
         public string Icon { get; set; }
 
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
+
         public DepartmentDTO ToDTO()
         {
             var dto = new DepartmentDTO();
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.ParentId = ParentId;
             return dto;
         }

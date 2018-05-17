@@ -10,12 +10,10 @@ namespace ApiModel.Entities
         /// <summary>
         /// 父级组织的ID
         /// </summary>
-        [JsonIgnore]
         public string ParentId { get; set; }
         /// <summary>
         /// 父级组织
         /// </summary>
-        [JsonIgnore]
         public Organization Parent { get; set; }
 
         /// <summary>
@@ -25,10 +23,12 @@ namespace ApiModel.Entities
         /// <summary>
         /// 拥有者，反向引用
         /// </summary>
-        [JsonIgnore]
         [InverseProperty("Organization")]
         [ForeignKey("OwnerId")]
         public Account Owner { get; set; }
+
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         /// <summary>
         /// 部门
@@ -60,7 +60,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.Mail = Mail;
             dto.Location = Location;
             dto.CreatedTime = CreatedTime;

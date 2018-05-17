@@ -91,9 +91,7 @@ namespace ApiServer.Controllers
                 entity.FileExt = model.FileExt;
                 entity.LocalPath = model.LocalPath;
                 entity.UploadTime = model.UploadTime;
-                entity.FolderId = model.FolderId;
                 entity.CategoryId = model.CategoryId;
-                entity.AccountId = model.AccountId;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -124,9 +122,7 @@ namespace ApiServer.Controllers
                 entity.FileExt = model.FileExt;
                 entity.LocalPath = model.LocalPath;
                 entity.UploadTime = model.UploadTime;
-                entity.FolderId = model.FolderId;
                 entity.CategoryId = model.CategoryId;
-                entity.AccountId = model.AccountId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

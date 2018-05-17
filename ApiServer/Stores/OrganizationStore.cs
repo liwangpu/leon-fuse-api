@@ -37,9 +37,13 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyCreateAsync(string accid, Organization data, ModelStateDictionary modelState)
         {
-            var organMailExist = await _DbContext.Organizations.CountAsync(x => x.Mail == data.Mail) > 0;
-            if (organMailExist)
-                modelState.AddModelError("Mail", "该邮箱已经使用");
+            if (!string.IsNullOrWhiteSpace(data.Mail))
+            {
+                var organMailExist = await _DbContext.Organizations.CountAsync(x => x.Mail == data.Mail) > 0;
+                if (organMailExist)
+                    modelState.AddModelError("Mail", "该邮箱已经使用");
+            }
+
         }
         #endregion
 
@@ -53,9 +57,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyUpdateAsync(string accid, Organization data, ModelStateDictionary modelState)
         {
-            var organMailExist = await _DbContext.Organizations.CountAsync(x => x.Mail == data.Mail && x.Id != data.Id) > 0;
-            if (organMailExist)
-                modelState.AddModelError("Mail", "该邮箱已经使用");
+            if (!string.IsNullOrWhiteSpace(data.Mail))
+            {
+                var organMailExist = await _DbContext.Organizations.CountAsync(x => x.Mail == data.Mail && x.Id != data.Id) > 0;
+                if (organMailExist)
+                    modelState.AddModelError("Mail", "该邮箱已经使用");
+            }
         }
         #endregion
 
@@ -73,8 +80,7 @@ namespace ApiServer.Stores
             {
                 try
                 {
-                    _DbContext.Organizations.Add(data);
-                    await _DbContext.SaveChangesAsync();
+                    await base.CreateAsync(accid, data);
                     var otree = new PermissionTree();
                     otree.Id = GuidGen.NewGUID();
                     otree.Name = data.Name;
@@ -109,18 +115,14 @@ namespace ApiServer.Stores
             {
                 #region 创建默认部门
                 var department = new Department();
-                department.Id = GuidGen.NewGUID();
                 department.OrganizationId = data.Id;
                 department.Organization = data;
                 department.Name = data.Name;
-                department.Creator = accid;
-                department.Modifier = accid;
                 await _DepartmentStore.CreateAsync(accid, department);
                 #endregion
 
                 #region 创建默认管理员
                 var account = new Account();
-                account.Id = GuidGen.NewGUID();
                 account.Type = AppConst.AccountType_OrganAdmin;
                 account.Name = "组织管理员";
                 account.Mail = GuidGen.NewGUID();

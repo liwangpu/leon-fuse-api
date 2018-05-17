@@ -28,7 +28,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.FileAssetId = FileAssetId;
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
@@ -41,7 +40,11 @@ namespace ApiModel.Entities
             }
 
             if (IconFileAsset != null)
+            {
                 dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
+            }
+
             return dto;
         }
     }
@@ -50,6 +53,7 @@ namespace ApiModel.Entities
     public class StaticMeshDTO : DataBase
     {
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public string Description { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }

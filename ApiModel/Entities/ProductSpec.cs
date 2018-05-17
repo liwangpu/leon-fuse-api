@@ -56,7 +56,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
             dto.Price = Price;
@@ -66,6 +65,7 @@ namespace ApiModel.Entities
             {
                 dto.IconAsset = IconFileAsset.ToDTO();
                 dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
             }
             if (AlbumAsset != null && AlbumAsset.Count > 0)
                 dto.Album = AlbumAsset.Select(x => x.ToDTO()).ToList();
@@ -82,6 +82,7 @@ namespace ApiModel.Entities
     {
         public string Description { get; set; }
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public decimal Price { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }

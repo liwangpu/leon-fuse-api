@@ -21,6 +21,8 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public PackageContent ContentIns { get; set; }
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         #region ToDTO
         public PackageDTO ToDTO()
@@ -29,7 +31,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
             dto.Content = Content;

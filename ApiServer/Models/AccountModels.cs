@@ -27,7 +27,7 @@ namespace ApiServer.Models
         public string Mail { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
         public string Password { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
@@ -48,7 +48,7 @@ namespace ApiServer.Models
         public string Mail { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
         public string Password { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }

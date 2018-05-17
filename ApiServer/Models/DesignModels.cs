@@ -15,6 +15,7 @@ namespace ApiServer.Models
         public string Description { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -32,6 +33,7 @@ namespace ApiServer.Models
         public string Description { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -50,6 +52,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "价格信息有误")]
         public decimal Price { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -69,6 +72,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "价格信息有误")]
         public decimal Price { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -81,7 +85,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string StaticMeshId { get; set; }
         public string ProductId { get; set; }
-    } 
+    }
     #endregion
 
     #region SolutionCreateModel 解决方案新建模型
@@ -97,6 +101,7 @@ namespace ApiServer.Models
         public string Data { get; set; }
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -115,6 +120,7 @@ namespace ApiServer.Models
         public string Data { get; set; }
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -132,6 +138,7 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
         public string CategoryId { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -152,6 +159,7 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
         public string CategoryId { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 
@@ -224,6 +232,40 @@ namespace ApiServer.Models
         public string Content { get; set; }
         public string State { get; set; }
         public DateTime StateTime { get; set; }
+    }
+    #endregion
+
+    #region MapCreateModel 地图创建模型
+    /// <summary>
+    /// 地图创建模型
+    /// </summary>
+    public class MapCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
+        public string IconAssetId { get; set; }
+    }
+    #endregion
+
+    #region MapEditModel 地图编辑模型
+    /// <summary>
+    /// 地图编辑模型
+    /// </summary>
+    public class MapEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
+        public string IconAssetId { get; set; }
     }
     #endregion
 }

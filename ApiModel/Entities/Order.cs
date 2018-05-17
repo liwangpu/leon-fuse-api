@@ -29,6 +29,9 @@ namespace ApiModel.Entities
         /// </summary>
         public string Content { get; set; }
 
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
+
         public List<OrderStateItem> OrderStates { get; set; }
 
 
@@ -41,7 +44,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
             dto.Content = Content;

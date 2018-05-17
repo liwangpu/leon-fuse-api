@@ -38,13 +38,6 @@ namespace ApiServer.Controllers
             return Ok(res);//return Forbid();
         }
 
-        [Route("NewOne")]
-        [HttpGet]
-        public Layout NewOne()
-        {
-            return EntityFactory<Layout>.New();
-        }
-
         [HttpPost]
         [Produces(typeof(Layout))]
         public async Task<IActionResult> Post([FromBody]Layout value)

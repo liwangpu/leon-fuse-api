@@ -67,6 +67,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.ProductId = model.ProductId;
                 entity.Price = model.Price;
+                entity.Icon = model.IconAssetId;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -91,6 +92,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Price = model.Price;
+                entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
@@ -307,6 +309,7 @@ namespace ApiServer.Controllers
             {
                 #region 创建产品
                 product.Name = staticMesh.Name;
+                product.Icon = staticMesh.Icon;
                 await _ProductStore.SatisfyCreateAsync(accid, product, ModelState);
                 if (!ModelState.IsValid)
                     return new ValidationFailedResult(ModelState);
@@ -318,6 +321,7 @@ namespace ApiServer.Controllers
                 var spec = new ProductSpec();
                 spec.Name = staticMesh.Name;
                 spec.Product = product;
+                spec.Icon = staticMesh.Icon;
                 (_Store as ProductSpecStore).AddStaticMeshRelated(spec, model.StaticMeshId);
                 await _Store.SatisfyCreateAsync(accid, spec, ModelState);
                 if (!ModelState.IsValid)
@@ -337,6 +341,7 @@ namespace ApiServer.Controllers
                     var spec = new ProductSpec();
                     spec.Name = staticMesh.Name;
                     spec.Product = product;
+                    spec.Icon = staticMesh.Icon;
                     (_Store as ProductSpecStore).AddStaticMeshRelated(spec, model.StaticMeshId);
                     await _Store.SatisfyCreateAsync(accid, spec, ModelState);
                     if (!ModelState.IsValid)

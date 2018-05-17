@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -29,11 +30,11 @@ namespace ApiModel.Entities
         /// 资源上传时间
         /// </summary>
         public string UploadTime { get; set; }
-        public string FolderId { get; set; }
         public string CategoryId { get; set; }
-        public string AccountId { get; set; }
-        public Account Account { get; set; }
         public string Icon { get; set; }
+
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         public FileAssetDTO ToDTO()
         {
@@ -48,9 +49,7 @@ namespace ApiModel.Entities
             dto.FileExt = FileExt;
             dto.LocalPath = LocalPath;
             dto.UploadTime = UploadTime;
-            dto.FolderId = FolderId;
             dto.CategoryId = CategoryId;
-            dto.AccountId = AccountId;
             return dto;
         }
     }
@@ -65,9 +64,7 @@ namespace ApiModel.Entities
         public string FileExt { get; set; }
         public string LocalPath { get; set; }
         public string UploadTime { get; set; }
-        public string FolderId { get; set; }
         public string CategoryId { get; set; }
-        public string AccountId { get; set; }
     }
 
 }

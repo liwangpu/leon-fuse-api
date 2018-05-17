@@ -75,7 +75,8 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                //entity.ResourceType = (int)ResourceTypeEnum.Organizational;
+                entity.Icon = model.IconAssetId;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -98,8 +99,8 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.CategoryId = model.CategoryId;
-                entity.FolderId = model.FolderId;
                 entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

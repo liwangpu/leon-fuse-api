@@ -45,6 +45,8 @@ namespace ApiModel.Entities
         public List<FileAsset> Files { get; set; }
         public List<AccountOpenId> OpenIds { get; set; }
 
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         /// <summary>
         /// 权限记录，记录能访问的所有类型资源的所有权限设置。不在此列出的则无法访问。
@@ -58,7 +60,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.Mail = Mail;
             dto.Location = Location;
             dto.OrganizationId = OrganizationId;

@@ -79,7 +79,7 @@ namespace ApiServer.Stores
 
             if (result.Total > 0)
             {
-                for (int idx = result.Total - 1; idx >= 0; idx--)
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
                 {
                     var curData = result.Data[idx];
                     if (!string.IsNullOrWhiteSpace(curData.Icon))
@@ -89,6 +89,5 @@ namespace ApiServer.Stores
             return result;
         }
         #endregion
-
     }
 }

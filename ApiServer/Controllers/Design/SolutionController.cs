@@ -69,9 +69,11 @@ namespace ApiServer.Controllers.Design
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.Data = model.Data;
+                entity.Icon = model.IconAssetId;
                 entity.LayoutId = model.LayoutId;
                 entity.CategoryId = model.CategoryId;
+
+                entity.Data = model.Data;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -92,10 +94,12 @@ namespace ApiServer.Controllers.Design
             var mapping = new Func<Solution, Task<Solution>>(async (entity) =>
             {
                 entity.Name = model.Name;
-                entity.Description = model.Description;
-                entity.Data = model.Data;
+                entity.Description = model.Description;       
                 entity.LayoutId = model.LayoutId;
+                entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
+
+                entity.Data = model.Data;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

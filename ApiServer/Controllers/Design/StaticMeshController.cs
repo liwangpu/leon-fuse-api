@@ -32,7 +32,7 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(PagedData<StaticMeshDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _GetPagingRequest(model);
+            return await _GetPagingRequest(model, null, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(StaticMeshDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -66,6 +66,9 @@ namespace ApiServer.Controllers.Design
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
+                entity.Icon = model.IconAssetId;
+                entity.Dependencies = model.Dependencies;
+                entity.Properties = model.Properties;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -89,6 +92,9 @@ namespace ApiServer.Controllers.Design
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
+                entity.Icon = model.IconAssetId;
+                entity.Dependencies = model.Dependencies;
+                entity.Properties = model.Properties;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

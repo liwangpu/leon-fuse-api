@@ -1,4 +1,6 @@
-﻿namespace ApiModel
+﻿using ApiModel.Entities;
+
+namespace ApiModel
 {
     /// <summary>
     /// 列表类型资源接口
@@ -6,5 +8,6 @@
     public interface IListable : IEntity
     {
         string Icon { get; set; }
+        FileAsset IconFileAsset { get; set; }
     }
 }

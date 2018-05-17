@@ -24,27 +24,7 @@
           "id": "my-resources",
           "title": "nav.MyResources",
           "type": "collapse",
-          "icon": "dashboard",
-          "children": [
-            {
-              "id": "meshes",
-              "title": "nav.MyResourcesMeshes",
-              "type": "item",
-              "url": "/pages/faq"
-            },
-            {
-              "id": "materials",
-              "title": "nav.MyResourcesMaterials",
-              "type": "item",
-              "url": "/pages/knowledge-base"
-            },
-            {
-              "id": "textures",
-              "title": "nav.MyResourcesTextures",
-              "type": "item",
-              "url": "/omega/page1"
-            }
-          ]
+          "icon": "dashboard"
         }
       ]
     },

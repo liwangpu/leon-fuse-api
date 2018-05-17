@@ -1,81 +1,110 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
-using ApiServer.Services;
+using ApiServer.Filters;
+using ApiServer.Models;
+using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MapController : Controller
+    public class MapController : ListableController<Map, MapDTO>
     {
-        private readonly ApiDbContext _ApiContext;
-        private readonly Repository<Map> repo;
-
+        #region 构造函数
         public MapController(ApiDbContext context)
-        {
-            repo = new Repository<Map>(context);
-            _ApiContext = context;
-        }
+        : base(new MapStore(context))
+        { }
+        #endregion
 
+        #region Get 根据分页查询信息获取地图概要信息
+        /// <summary>
+        /// 根据分页查询信息获取地图概要信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<PagedData<Map>> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        [ProducesResponseType(typeof(PagedData<MapDTO>), 200)]
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-                d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+            var qMapping = new Action<List<string>>((query) =>
+            {
+
+            });
+            return await _GetPagingRequest(model, qMapping, ResourceTypeEnum.Organizational);
         }
+        #endregion
 
-
+        #region Get 根据id获取地图信息
+        /// <summary>
+        /// 根据id获取地图信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces(typeof(Map))]
+        [ProducesResponseType(typeof(MapDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
-            if (res == null)
-                return NotFound();
-            return Ok(res);//return Forbid();
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
+        #endregion
 
-
+        #region Post 新建地图信息
+        /// <summary>
+        /// 新建地图信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Produces(typeof(Map))]
-        public async Task<IActionResult> Post([FromBody]Map value)
+        [ValidateModel]
+        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Post([FromBody]MapCreateModel model)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
-
-            if (string.IsNullOrEmpty(value.FileAssetId) == false)
+            var mapping = new Func<Map, Task<Map>>(async (entity) =>
             {
-                value.FileAsset = await repo.Context.Set<FileAsset>().FindAsync(value.FileAssetId);
-            }
-            value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
-            return CreatedAtAction("Get", value);
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
+                entity.Dependencies = model.Dependencies;
+                entity.Properties = model.Properties;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
+                return await Task.FromResult(entity);
+            });
+            return await _PostRequest(mapping);
         }
+        #endregion
 
+        #region Put 更新地图信息
+        /// <summary>
+        /// 更新地图信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
-        [Produces(typeof(Map))]
-        public async Task<IActionResult> Put([FromBody]Map value)
+        [ValidateModel]
+        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Put([FromBody]MapEditModel model)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
-
-            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
-            if (res == null)
-                return NotFound();
-            return Ok(value);
+            var mapping = new Func<Map, Task<Map>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
+                entity.Dependencies = model.Dependencies;
+                entity.Properties = model.Properties;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
         }
+        #endregion
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
-            if (bOk)
-                return Ok();
-            return NotFound();//return Forbid();
-        }
     }
 }

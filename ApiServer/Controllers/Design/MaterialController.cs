@@ -32,7 +32,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<MaterialDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _GetPagingRequest(model);
+            return await _GetPagingRequest(model,null, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(MaterialDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -65,9 +65,13 @@ namespace ApiServer.Controllers
             var mapping = new Func<Material, Task<Material>>(async (entity) =>
             {
                 entity.Name = model.Name;
+                entity.Icon = model.IconAssetId;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
-                entity.CategoryId = model.CategoryId;
+
+                entity.CategoryId = model.CategoryId;   
+                entity.Dependencies = model.Dependencies;
+                entity.Parameters = model.Parameters;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -91,8 +95,12 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
+
                 entity.FileAssetId = model.FileAssetId;
                 entity.CategoryId = model.CategoryId;
+                entity.Dependencies = model.Dependencies;
+                entity.Parameters = model.Parameters;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

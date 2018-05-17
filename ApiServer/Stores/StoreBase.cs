@@ -265,6 +265,13 @@ namespace ApiServer.Stores
         /// <param name="desc"></param>
         protected void _OrderByPipe(ref IQueryable<T> query, string orderBy, bool desc)
         {
+            //默认以修改时间作为排序
+            if (string.IsNullOrWhiteSpace(orderBy))
+            {
+                orderBy = "ModifiedTime";
+                desc = true;
+            }
+
             if (!string.IsNullOrWhiteSpace(orderBy))
             {
                 /*
@@ -424,8 +431,11 @@ namespace ApiServer.Stores
         public virtual async Task CreateAsync(string accid, T data)
         {
             data.Id = GuidGen.NewGUID();
-            data.Creator = accid;
-            data.Modifier = accid;
+            //如果创建人和修改人有指定,说明有自定义需要,应该按传入的参数处理
+            if (string.IsNullOrWhiteSpace(data.Creator))
+                data.Creator = accid;
+            if (string.IsNullOrWhiteSpace(data.Modifier))
+                data.Modifier = accid;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = DateTime.Now;
             _DbContext.Set<T>().Add(data);
@@ -442,7 +452,9 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task UpdateAsync(string accid, T data)
         {
-            data.Modifier = accid;
+            //如果修改人有指定,说明有自定义需要,应该按传入的参数处理
+            if (string.IsNullOrWhiteSpace(data.Modifier))
+                data.Modifier = accid;
             data.ModifiedTime = DateTime.Now;
             _DbContext.Set<T>().Update(data);
             await _DbContext.SaveChangesAsync();

@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -34,7 +35,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _GetPagingRequest(model);
+            return await _GetPagingRequest(model, null, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -48,7 +49,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PackageDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
         #endregion
 
@@ -69,6 +70,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Content = model.Content;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);

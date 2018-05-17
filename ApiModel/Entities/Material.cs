@@ -10,12 +10,8 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
-
-        public string FolderId { get; set; }
         public string CategoryId { get; set; }
-        public string AccountId { get; set; }
 
-        public Account Account { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }
         [NotMapped]
@@ -27,7 +23,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.FileAssetId = FileAssetId;
             dto.Dependencies = Dependencies;
             dto.Parameters = Parameters;
@@ -40,7 +35,11 @@ namespace ApiModel.Entities
             }
 
             if (IconFileAsset != null)
+            {
                 dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
+            }
+
             dto.CategoryId = CategoryId;
 
             return dto;
@@ -51,6 +50,7 @@ namespace ApiModel.Entities
     {
         public string Description { get; set; }
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }

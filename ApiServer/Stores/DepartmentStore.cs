@@ -64,8 +64,7 @@ namespace ApiServer.Stores
             {
                 try
                 {
-                    _DbContext.Departments.Add(data);
-                    await _DbContext.SaveChangesAsync();
+                    await base.CreateAsync(accid, data);
                     var otree = new PermissionTree();
                     otree.Name = data.Name;
                     otree.OrganizationId = data.OrganizationId;

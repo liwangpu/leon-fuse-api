@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -17,7 +18,8 @@ namespace ApiModel.Entities
         /// </summary>
         public string Data { get; set; }
         public string CategoryId { get; set; }
-
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         public SolutionDTO ToDTO()
         {
