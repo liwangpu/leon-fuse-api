@@ -1,94 +1,135 @@
 ﻿using ApiModel.Entities;
-using ApiServer.Services;
+using ApiModel.Enums;
+using ApiServer.Data;
+using ApiServer.Filters;
+using ApiServer.Models;
+using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 户型管理控制器
+    /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class LayoutController : Controller
+    public class LayoutController : ListableController<Layout, LayoutDTO>
     {
-        private readonly Repository<Layout> repo;
+        #region 构造函数
+        public LayoutController(ApiDbContext context)
+        : base(new LayoutStore(context))
+        { }
+        #endregion
 
-        public LayoutController(Data.ApiDbContext context)
-        {
-            repo = new Repository<Layout>(context);
-        }
-
+        #region Get 根据分页查询信息获取户型概要信息
+        /// <summary>
+        /// 根据分页查询信息获取户型概要信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<PagedData<Layout>> Get(string search, int page, int pageSize, string orderBy, bool desc)
+        [ProducesResponseType(typeof(PagedData<LayoutDTO>), 200)]
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            PagingMan.CheckParam(ref search, ref page, ref pageSize);
-            return await repo.GetAsync(AuthMan.GetAccountId(this), page, pageSize, orderBy, desc,
-                d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
-        }
+            var qMapping = new Action<List<string>>((query) =>
+            {
 
+            });
+            return await _GetPagingRequest(model, qMapping, ResourceTypeEnum.Organizational);
+        }
+        #endregion
+
+        #region Get 根据id获取户型信息
+        /// <summary>
+        /// 根据id获取户型信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces(typeof(Layout))]
+        [ProducesResponseType(typeof(LayoutDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            var res = await repo.GetAsync(AuthMan.GetAccountId(this), id);
-            if (res == null)
-                return NotFound();
-            return Ok(res);//return Forbid();
+            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
         }
+        #endregion
 
+        #region Post 新建户型信息
+        /// <summary>
+        /// 新建户型信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Produces(typeof(Layout))]
-        public async Task<IActionResult> Post([FromBody]Layout value)
+        [ValidateModel]
+        [ProducesResponseType(typeof(LayoutDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Post([FromBody]LayoutCreateModel model)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
-
-            value = await repo.CreateAsync(AuthMan.GetAccountId(this), value);
-            return CreatedAtAction("Get", value);
+            var mapping = new Func<Layout, Task<Layout>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
+                entity.CategoryId = model.CategoryId;
+                entity.Data = model.Data;
+                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
+                return await Task.FromResult(entity);
+            });
+            return await _PostRequest(mapping);
         }
+        #endregion
 
+        #region Put 更新户型信息
+        /// <summary>
+        /// 更新户型信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
-        [Produces(typeof(Layout))]
-        public async Task<IActionResult> Put([FromBody]Layout value)
+        [ValidateModel]
+        [ProducesResponseType(typeof(LayoutDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Put([FromBody]LayoutEditModel model)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
-
-            var res = await repo.UpdateAsync(AuthMan.GetAccountId(this), value);
-            if (res == null)
-                return NotFound();
-            return Ok(value);
+            var mapping = new Func<Layout, Task<Layout>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
+                entity.CategoryId = model.CategoryId;
+                entity.Data = model.Data;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
         }
+        #endregion
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            bool bOk = await repo.DeleteAsync(AuthMan.GetAccountId(this), id);
-            if (bOk)
-                return Ok();
-            return NotFound();//return Forbid();
-        }
-
+        #region UpdateData 更新Data数据信息
+        /// <summary>
+        /// 更新Data数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [Route("UpdateData")]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> UpdateData(string id, [FromBody]string data)
         {
-            if (data == null)
-                data = "";
-            string accid = AuthMan.GetAccountId(this);
-            var ok = await repo.CanUpdateAsync(accid, id);
-            if (ok == false)
-                return Forbid();
-
-            var obj = await repo.GetAsync(accid, id);
-            if (obj == null)
-                return Forbid();
-            obj.Data = data;
-            await repo.SaveChangesAsync();
-
-            return Ok();
+            var mapping = new Func<Layout, Task<Layout>>(async (entity) =>
+            {
+                entity.Data = data;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(id, mapping);
         }
+        #endregion
+
     }
 }

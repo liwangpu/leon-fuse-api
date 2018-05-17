@@ -30,6 +30,7 @@ namespace ApiModel.Entities
             dto.CategoryId = CategoryId;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.Modifier = Modifier;
             if (Specifications != null && Specifications.Count > 0)
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
             if (IconFileAsset != null)
@@ -44,15 +45,12 @@ namespace ApiModel.Entities
         }
     }
 
-    public class ProductDTO : DataBase
+    public class ProductDTO : EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string CategoryId { get; set; }
         public string CategoryName { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public List<ProductSpecDTO> Specifications { get; set; }
     }
 

@@ -268,4 +268,73 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
     }
     #endregion
+
+    #region LayoutCreateModel 户型创建模型
+    /// <summary>
+    /// 户型创建模型
+    /// </summary>
+    public class LayoutCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string IconAssetId { get; set; }
+        public string CategoryId { get; set; }
+        public string Data { get; set; }
+    }
+    #endregion
+
+    #region LayoutEditModel 户型编辑模型
+    /// <summary>
+    /// 户型编辑模型
+    /// </summary>
+    public class LayoutEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string IconAssetId { get; set; }
+        public string CategoryId { get; set; }
+        public string Data { get; set; }
+    }
+    #endregion
+
+
+    #region TextureCreateModel 贴图创建模型
+    /// <summary>
+    /// 贴图创建模型
+    /// </summary>
+    public class TextureCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string IconAssetId { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
+    }
+    #endregion
+
+    #region TextureEditModel 贴图编辑模型
+    /// <summary>
+    /// 贴图编辑模型
+    /// </summary>
+    public class TextureEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string IconAssetId { get; set; }
+        public string Dependencies { get; set; }
+        public string Properties { get; set; }
+    }
+    #endregion
 }
