@@ -90,6 +90,13 @@
           "url": "/app/materials"
         },
         {
+          "id": "map",
+          "title": "nav.Map",
+          "type": "item",
+          "icon": "alarm",
+          "url": "/app/maps"
+        },
+        {
           "id": "solution",
           "title": "nav.InteriorDesignSolutions",
           "type": "item",

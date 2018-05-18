@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
@@ -27,24 +25,26 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.Icon = Icon;
             dto.CategoryId = CategoryId;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
             dto.Data = Data;
             dto.LayoutId = LayoutId;
+            if (IconFileAsset != null)
+            {
+                dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
+            }
             return dto;
         }
     }
 
-    public class SolutionDTO : DataBase
+    public class SolutionDTO : EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public string CategoryId { get; set; }
         public string Data { get; set; }
         public string LayoutId { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
     }
 }

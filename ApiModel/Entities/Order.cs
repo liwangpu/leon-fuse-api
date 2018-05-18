@@ -49,6 +49,11 @@ namespace ApiModel.Entities
             dto.Content = Content;
             if (ContentIns != null)
                 dto.ContentIns = ContentIns;
+            if (IconFileAsset != null)
+            {
+                dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
+            }
             return dto;
         }
     }
@@ -58,20 +63,16 @@ namespace ApiModel.Entities
     /// <summary>
     /// 订单DTO
     /// </summary>
-    public class OrderDTO : DataBase
+    public class OrderDTO : EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public string AccountId { get; set; }
         public string State { get; set; }
         public string Content { get; set; }
         public DateTime StateTime { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
-        public string Creator { get; set; }
-        public string Modifier { get; set; }
         public OrderContent ContentIns { get; set; }
-    } 
+    }
     #endregion
 
     #region OrderContent 订单内容(仅供序列化使用,非数据库实体)
@@ -99,6 +100,6 @@ namespace ApiModel.Entities
         public string Remark { get; set; }
         public string ProductName { get; set; }
         public string ProductSpecName { get; set; }
-    } 
+    }
     #endregion
 }

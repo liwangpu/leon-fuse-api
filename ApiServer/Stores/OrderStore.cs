@@ -1,5 +1,4 @@
-﻿using ApiModel;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class OrderStore : StoreBase<Order, OrderDTO>, IStore<Order, OrderDTO>
+    public class OrderStore : ListableStore<Order, OrderDTO>, IStore<Order, OrderDTO>
     {
         #region 构造函数
         public OrderStore(ApiDbContext context)
@@ -73,6 +72,10 @@ namespace ApiServer.Stores
                             data.ContentIns.Items[idx] = cur;
                         }
                     }
+                }
+                if (!string.IsNullOrWhiteSpace(data.Icon))
+                {
+                    data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
                 }
             }
             return data.ToDTO();

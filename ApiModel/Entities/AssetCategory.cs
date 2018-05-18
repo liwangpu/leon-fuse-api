@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class AssetCategory :EntityBase, IListable
+    public class AssetCategory : EntityBase, IListable
     {
         public string Icon { get; set; }
         public string Type { get; set; }
@@ -21,6 +21,7 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.ParentId = ParentId;
             dto.Name = Name;
+            dto.Value = Name;
             dto.Description = Description;
             dto.Icon = Icon;
             dto.Type = Type;
@@ -35,6 +36,7 @@ namespace ApiModel.Entities
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string Value { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
         public string ParentId { get; set; }

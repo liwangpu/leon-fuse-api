@@ -72,6 +72,13 @@
           "url": "/app/materials"
         },
         {
+          "id": "map",
+          "title": "nav.Map",
+          "type": "item",
+          "icon": "alarm",
+          "url": "/app/maps"
+        },
+        {
           "id": "layout",
           "title": "layout",
           "type": "item",

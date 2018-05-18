@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class PackageStore : StoreBase<Package, PackageDTO>, IStore<Package, PackageDTO>
+    public class PackageStore : ListableStore<Package, PackageDTO>, IStore<Package, PackageDTO>
     {
         #region 构造函数
         public PackageStore(ApiDbContext context)
@@ -75,6 +75,12 @@ namespace ApiServer.Stores
                     }
                 }
             }
+
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+            {
+                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            }
+
             return data.ToDTO();
         }
         #endregion

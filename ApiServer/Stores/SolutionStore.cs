@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
-    public class SolutionStore : StoreBase<Solution, SolutionDTO>, IStore<Solution, SolutionDTO>
+    public class SolutionStore : ListableStore<Solution, SolutionDTO>, IStore<Solution, SolutionDTO>
     {
         #region 构造函数
         public SolutionStore(ApiDbContext context)

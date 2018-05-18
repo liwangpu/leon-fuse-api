@@ -1,9 +1,12 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using System.Linq;
+using ApiServer.Services;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiServer.Controllers
@@ -13,10 +16,11 @@ namespace ApiServer.Controllers
     public class CategoryController : Controller
     {
         Services.CategoryMan catman;
-
-        public CategoryController(Data.ApiDbContext context)
+        private readonly ApiDbContext _context;
+        public CategoryController(ApiDbContext context)
         {
             catman = new Services.CategoryMan(context);
+            _context = context;
         }
 
         /// <summary>
@@ -37,6 +41,14 @@ namespace ApiServer.Controllers
         [HttpGet]
         public async Task<AssetCategoryPack> GetAll(string organId)
         {
+            if (string.IsNullOrWhiteSpace(organId))
+            {
+                var accid = AuthMan.GetAccountId(this);
+                var organ = _context.Accounts.Include(x => x.Organization).First(x => x.Id == accid).Organization;
+                if (organ != null)
+                    organId = organ.Id;
+            }
+
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
             AssetCategoryDTO cat = null;
@@ -58,6 +70,13 @@ namespace ApiServer.Controllers
         [HttpGet]
         public async Task<List<AssetCategoryDTO>> GetFlat(string type, string organId)
         {
+            if (string.IsNullOrWhiteSpace(organId))
+            {
+                var accid = AuthMan.GetAccountId(this);
+                var organ = _context.Accounts.Include(x => x.Organization).First(x => x.Id == accid).Organization;
+                if (organ != null)
+                    organId = organ.Id;
+            }
             return await catman.GetFlatCategory(type, organId);
         }
         #endregion

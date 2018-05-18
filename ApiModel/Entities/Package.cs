@@ -36,6 +36,11 @@ namespace ApiModel.Entities
             dto.Content = Content;
             if (ContentIns != null)
                 dto.ContentIns = ContentIns;
+            if (IconFileAsset != null)
+            {
+                dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
+            }
             return dto;
         } 
         #endregion
@@ -46,16 +51,12 @@ namespace ApiModel.Entities
     /// <summary>
     /// 套餐DTO
     /// </summary>
-    public class PackageDTO : DataBase
+    public class PackageDTO : EntityBase
     {
-        public string Description { get; set; }
+        public string IconAssetId { get; set; }
         public string Icon { get; set; }
         public string State { get; set; }
         public string Content { get; set; }
-        public string Creator { get; set; }
-        public string Modifier { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public PackageContent ContentIns { get; set; }
     }
     #endregion
