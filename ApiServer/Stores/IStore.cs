@@ -3,6 +3,8 @@ using ApiModel.Enums;
 using ApiServer.Models;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -20,7 +22,7 @@ namespace ApiServer.Stores
         Task CreateAsync(string accid, T data);
         Task UpdateAsync(string accid, T data);
         Task DeleteAsync(string accid, string id);
-        Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
+        Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null);
         Task<bool> ExistAsync(string id);
         Task<DTO> GetByIdAsync(string id);
         Task<T> _GetByIdAsync(string id);

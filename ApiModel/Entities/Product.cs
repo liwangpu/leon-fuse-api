@@ -13,7 +13,6 @@ namespace ApiModel.Entities
         /// <summary>
         /// 规格
         /// </summary>
-        [JsonIgnore]
         public List<ProductSpec> Specifications { get; set; }
 
         [NotMapped]

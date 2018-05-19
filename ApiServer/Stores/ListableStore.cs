@@ -3,6 +3,8 @@ using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Models;
 using BambooCore;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -43,8 +45,9 @@ namespace ApiServer.Stores
         /// <param name="model"></param>
         /// <param name="accid"></param>
         /// <param name="resType"></param>
+        /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public override async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        public override async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
             var result = await base.SimplePagedQueryAsync(model, accid, resType);
 

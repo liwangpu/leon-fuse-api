@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Stores
 {
+
+
     /// <summary>
     /// StoreBase是所有store仓库类的基类
     /// StoreBase是业务无关的,不关注任何业务信息
@@ -22,6 +24,7 @@ namespace ApiServer.Stores
          where T : class, IEntity, IDTOTransfer<DTO>, new()
         where DTO : class, IData, new()
     {
+
         protected readonly ApiDbContext _DbContext;
 
         #region 构造函数
@@ -486,8 +489,9 @@ namespace ApiServer.Stores
         /// <param name="model"></param>
         /// <param name="accid"></param>
         /// <param name="resType"></param>
+        /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
@@ -498,6 +502,8 @@ namespace ApiServer.Stores
             _QSearchFilter(ref query, model.Q);
             _BasicFilter(ref query, currentAcc);
             _KeyWordSearchFilter(ref query, model.Search);
+            if (advanceQuery != null)
+                query = await advanceQuery(query);
             _BasicPermissionFilter(ref query, currentAcc, accountNode, organNode, departmentNode, resType);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
             return await query.SimplePaging(model.Page, model.PageSize);

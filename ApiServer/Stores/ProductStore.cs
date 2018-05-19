@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Newtonsoft.Json;
+using System;
 
 namespace ApiServer.Stores
 {
@@ -122,14 +123,15 @@ namespace ApiServer.Stores
         /// <param name="model"></param>
         /// <param name="accid"></param>
         /// <param name="resType"></param>
+        /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public override async Task<PagedData<Product>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        public override async Task<PagedData<Product>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<Product>, Task<IQueryable<Product>>> advanceQuery = null)
         {
-            var result = await base.SimplePagedQueryAsync(model, accid, resType);
+            var result = await base.SimplePagedQueryAsync(model, accid, resType, advanceQuery);
 
             if (result.Total > 0)
             {
-                for (int idx = result.Data.Count-1; idx >= 0; idx--)
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
                 {
                     var curData = result.Data[idx];
                     if (!string.IsNullOrWhiteSpace(curData.Icon))

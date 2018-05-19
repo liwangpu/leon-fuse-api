@@ -4,6 +4,8 @@ using ApiServer.Data;
 using ApiServer.Models;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -69,8 +71,9 @@ namespace ApiServer.Stores
         /// <param name="model"></param>
         /// <param name="accid"></param>
         /// <param name="resType"></param>
+        /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public override async Task<PagedData<StaticMesh>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        public override async Task<PagedData<StaticMesh>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<StaticMesh>, Task<IQueryable<StaticMesh>>> advanceQuery = null)
         {
             var result = await base.SimplePagedQueryAsync(model, accid, resType);
 

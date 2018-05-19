@@ -13,6 +13,11 @@ namespace ApiServer.Models
         public bool Desc { get; set; }
 
         /// <summary>
+        /// 明确指定过滤参数,在q语句完全支持前的过渡
+        /// </summary>
+        public List<QueryFilter> explicitFilters = new List<QueryFilter>();
+
+        /// <summary>
         /// 从Q解析过滤参数
         /// </summary>
         /// <returns></returns>

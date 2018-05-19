@@ -56,6 +56,19 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region ProductBulkChangeCategoryModel 批量修改产品分类模型
+    /// <summary>
+    /// 批量修改产品分类模型
+    /// </summary>
+    public class ProductBulkChangeCategoryModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Ids { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string CategoryId { get; set; }
+    } 
+    #endregion
+
     #region ProductSpecEditModel 产品规格编辑模型
     /// <summary>
     /// 产品规格编辑模型

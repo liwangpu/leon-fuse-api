@@ -4,12 +4,13 @@ using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
-using BambooCore;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace ApiServer.Controllers
 {
@@ -39,8 +40,9 @@ namespace ApiServer.Controllers
         /// <param name="model"></param>
         /// <param name="qMapping"></param>
         /// <param name="resType"></param>
+        /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
             var accid = AuthMan.GetAccountId(this);
             var qs = new List<string>();
@@ -52,7 +54,7 @@ namespace ApiServer.Controllers
                     builder.AppendFormat(";{0}", item);
                 model.Q = builder.ToString();
             }
-            var result = await _Store.SimplePagedQueryAsync(model, accid, resType);
+            var result = await _Store.SimplePagedQueryAsync(model, accid, resType, advanceQuery);
             return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));
         }
         #endregion
