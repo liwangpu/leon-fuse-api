@@ -46,11 +46,24 @@ namespace ApiServer.Controllers
                 if (classify)
                 {
                     if (!string.IsNullOrWhiteSpace(categoryId))
-                        query = query.Where(x => x.CategoryId == categoryId);
+                    {
+                        var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        //如果是根节点,把所有取出,不做分类过滤
+                        if (curCategoryTree != null && curCategoryTree.LValue > 1)
+                        {
+                            var categoryQ = from it in _context.AssetCategoryTrees
+                                            where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                            && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                            select it;
+                            query = from it in query
+                                    join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                    select it;
+                        }
+                    }
                 }
                 else
                 {
-                    query = query.Where(x => !string.IsNullOrWhiteSpace(x.CategoryId));
+                    query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
                 }
                 return await Task.FromResult(query);
             });
@@ -130,12 +143,12 @@ namespace ApiServer.Controllers
         [Route("BulkChangeCategory")]
         [ValidateModel]
         [HttpPut]
-        public async Task<IActionResult> BulkChangeCategory([FromBody]ProductBulkChangeCategoryModel model)
+        public async Task<IActionResult> BulkChangeCategory([FromBody]BulkChangeCategoryModel model)
         {
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
             var existCategory = await _context.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
-            if (existCategory)
+            if (!existCategory)
             {
                 ModelState.AddModelError("categoryId", "对应记录不存在");
                 return new ValidationFailedResult(ModelState);
@@ -171,7 +184,7 @@ namespace ApiServer.Controllers
                 }
             }
             return Ok();
-        } 
+        }
         #endregion
     }
 }

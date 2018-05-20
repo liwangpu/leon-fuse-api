@@ -69,6 +69,13 @@
           "url": "/app/product-category"
         },
         {
+          "id": "material-category",
+          "title": "nav.MaterialCategorys",
+          "type": "item",
+          "icon": "alarm",
+          "url": "/app/material-category"
+        },
+        {
           "id": "product",
           "title": "nav.InteriorDesignProducts",
           "type": "item",

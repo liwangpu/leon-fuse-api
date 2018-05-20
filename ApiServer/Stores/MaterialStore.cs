@@ -60,9 +60,10 @@ namespace ApiServer.Stores
             var data = await _GetByIdAsync(id);
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
-            {
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
-            }
+
+            if (!string.IsNullOrWhiteSpace(data.CategoryId))
+                data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
             return data.ToDTO();
         }
         #endregion
@@ -78,7 +79,7 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public override async Task<PagedData<Material>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<Material>, Task<IQueryable<Material>>> advanceQuery = null)
         {
-            var result = await base.SimplePagedQueryAsync(model, accid, resType);
+            var result = await base.SimplePagedQueryAsync(model, accid, resType, advanceQuery);
 
             if (result.Total > 0)
             {
