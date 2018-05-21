@@ -15,13 +15,30 @@ namespace ApiServer.Controllers
     [Route("/[controller]")]
     public class CategoryController : Controller
     {
-        Services.CategoryMan catman;
+        CategoryMan catman;
         private readonly ApiDbContext _context;
         public CategoryController(ApiDbContext context)
         {
-            catman = new Services.CategoryMan(context);
+            catman = new CategoryMan(context);
             _context = context;
         }
+
+        #region GetCurrentUserOrganId 获取当前用户组织id
+        /// <summary>
+        /// 获取当前用户组织id
+        /// </summary>
+        /// <param name="organId"></param>
+        private void GetCurrentUserOrganId(ref string organId)
+        {
+            if (string.IsNullOrWhiteSpace(organId))
+            {
+                var accid = AuthMan.GetAccountId(this);
+                var organ = _context.Accounts.Include(x => x.Organization).First(x => x.Id == accid).Organization;
+                if (organ != null)
+                    organId = organ.Id;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 获取整个类型(product, material)下的所有分类信息，已经整理成一个树结构。
@@ -32,6 +49,8 @@ namespace ApiServer.Controllers
         [HttpGet]
         public async Task<AssetCategoryDTO> Get(string type, string organId)
         {
+            GetCurrentUserOrganId(ref organId);
+
             if (string.IsNullOrEmpty(type))
                 type = "product";
             return await catman.GetCategoryAsync(type, organId);
@@ -41,13 +60,7 @@ namespace ApiServer.Controllers
         [HttpGet]
         public async Task<AssetCategoryPack> GetAll(string organId)
         {
-            if (string.IsNullOrWhiteSpace(organId))
-            {
-                var accid = AuthMan.GetAccountId(this);
-                var organ = _context.Accounts.Include(x => x.Organization).First(x => x.Id == accid).Organization;
-                if (organ != null)
-                    organId = organ.Id;
-            }
+            GetCurrentUserOrganId(ref organId);
 
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
@@ -70,13 +83,7 @@ namespace ApiServer.Controllers
         [HttpGet]
         public async Task<List<AssetCategoryDTO>> GetFlat(string type, string organId)
         {
-            if (string.IsNullOrWhiteSpace(organId))
-            {
-                var accid = AuthMan.GetAccountId(this);
-                var organ = _context.Accounts.Include(x => x.Organization).First(x => x.Id == accid).Organization;
-                if (organ != null)
-                    organId = organ.Id;
-            }
+            GetCurrentUserOrganId(ref organId);
             return await catman.GetFlatCategory(type, organId);
         }
         #endregion
