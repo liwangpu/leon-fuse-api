@@ -169,8 +169,6 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("FolderId");
-
                     b.Property<string>("Icon");
 
                     b.Property<DateTime>("ModifiedTime");
@@ -236,8 +234,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Creator");
 
                     b.Property<string>("Description");
-
-                    b.Property<string>("FolderId");
 
                     b.Property<string>("Icon");
 
@@ -315,8 +311,6 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("FileExt");
 
-                    b.Property<string>("FolderId");
-
                     b.Property<string>("Icon");
 
                     b.Property<string>("LocalPath");
@@ -366,8 +360,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Data");
 
                     b.Property<string>("Description");
-
-                    b.Property<string>("FolderId");
 
                     b.Property<string>("Icon");
 
@@ -429,8 +421,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountId");
-
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -445,8 +435,6 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("FileAssetId");
 
-                    b.Property<string>("FolderId");
-
                     b.Property<string>("Icon");
 
                     b.Property<DateTime>("ModifiedTime");
@@ -460,8 +448,6 @@ namespace ApiServer.Migrations
                     b.Property<int>("ResourceType");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.ToTable("Materials");
                 });
@@ -698,8 +684,6 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("FolderId");
-
                     b.Property<string>("Icon");
 
                     b.Property<DateTime>("ModifiedTime");
@@ -778,8 +762,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountId");
-
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -789,8 +771,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Creator");
 
                     b.Property<string>("Description");
-
-                    b.Property<string>("FolderId");
 
                     b.Property<string>("Icon");
 
@@ -803,8 +783,6 @@ namespace ApiServer.Migrations
                     b.Property<int>("ResourceType");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.ToTable("Skirtings");
                 });
@@ -827,8 +805,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Data");
 
                     b.Property<string>("Description");
-
-                    b.Property<string>("FolderId");
 
                     b.Property<string>("Icon");
 
@@ -959,7 +935,7 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.AssetFolder", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("Folders")
                         .HasForeignKey("AccountId");
 
@@ -970,7 +946,7 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.ClientAsset", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("ClientAssets")
                         .HasForeignKey("AccountId");
 
@@ -992,7 +968,7 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.FileAsset", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("Files")
                         .HasForeignKey("AccountId");
 
@@ -1003,20 +979,13 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Layout", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("Layouts")
                         .HasForeignKey("AccountId");
 
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Layouts")
                         .HasForeignKey("OrganizationId");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.Material", b =>
-                {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.Order", b =>
@@ -1069,7 +1038,7 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Product", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("Products")
                         .HasForeignKey("AccountId");
 
@@ -1085,16 +1054,9 @@ namespace ApiServer.Migrations
                         .HasForeignKey("ProductId");
                 });
 
-            modelBuilder.Entity("ApiModel.Entities.Skirting", b =>
-                {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId");
-                });
-
             modelBuilder.Entity("ApiModel.Entities.Solution", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Account")
+                    b.HasOne("ApiModel.Entities.Account")
                         .WithMany("Solutions")
                         .HasForeignKey("AccountId");
 

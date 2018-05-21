@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ApiServer.Migrations
 {
-    public partial class OmgInit0416 : Migration
+    public partial class LeonInitDb0521 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,11 +13,19 @@ namespace ApiServer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
+                    DisplayIndex = table.Column<int>(nullable: false),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ParentId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false),
+                    Type = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,19 +33,127 @@ namespace ApiServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AssetCategoryTrees",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    LValue = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    NodeType = table.Column<string>(nullable: true),
+                    ObjId = table.Column<string>(nullable: true),
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ParentId = table.Column<string>(nullable: true),
+                    RValue = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssetCategoryTrees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AssetTags",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AssetTags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Maps",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
+                    Dependencies = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    FileAssetId = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Properties = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Maps", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Materials",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
+                    Dependencies = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    FileAssetId = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Parameters = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Materials", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Packages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    Content = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Packages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PermissionTrees",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    LValue = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    NodeType = table.Column<string>(nullable: true),
+                    ObjId = table.Column<string>(nullable: true),
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ParentId = table.Column<string>(nullable: true),
+                    RValue = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionTrees", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,6 +166,73 @@ namespace ApiServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Settings", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Skirtings",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skirtings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StaticMeshs",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
+                    Dependencies = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    FileAssetId = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Properties = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StaticMeshs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Textures",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
+                    Dependencies = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    FileAssetId = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Properties = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Textures", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,14 +255,17 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CategoryId = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    OrganizationId = table.Column<string>(nullable: true)
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,14 +278,17 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CategoryId = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    OrganizationId = table.Column<string>(nullable: true)
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,17 +301,20 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CategoryId = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     FileExt = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     LocalPath = table.Column<string>(nullable: true),
                     Md5 = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false),
                     Size = table.Column<long>(nullable: false),
                     UploadTime = table.Column<string>(nullable: true),
                     Url = table.Column<string>(nullable: true)
@@ -138,15 +330,18 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CategoryId = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Data = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    OrganizationId = table.Column<string>(nullable: true)
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,14 +354,18 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     ChildOrders = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false),
                     State = table.Column<string>(nullable: true),
                     StateTime = table.Column<DateTime>(nullable: false)
                 },
@@ -180,13 +379,19 @@ namespace ApiServer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
+                    Location = table.Column<string>(nullable: true),
+                    Mail = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OwnerId = table.Column<string>(nullable: true),
-                    ParentId = table.Column<string>(nullable: true)
+                    ParentId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,31 +405,35 @@ namespace ApiServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Department",
+                name: "Departments",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OrganizationId = table.Column<string>(nullable: true),
-                    ParentId = table.Column<string>(nullable: true)
+                    ParentId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Department", x => x.Id);
+                    table.PrimaryKey("PK_Departments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Department_Organizations_OrganizationId",
+                        name: "FK_Departments_Organizations_OrganizationId",
                         column: x => x.OrganizationId,
                         principalTable: "Organizations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Department_Department_ParentId",
+                        name: "FK_Departments_Departments_ParentId",
                         column: x => x.ParentId,
-                        principalTable: "Department",
+                        principalTable: "Departments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -235,7 +444,9 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     ActivationTime = table.Column<DateTime>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     DepartmentId = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     ExpireTime = table.Column<DateTime>(nullable: false),
@@ -245,20 +456,22 @@ namespace ApiServer.Migrations
                     Mail = table.Column<string>(nullable: true),
                     MailValid = table.Column<bool>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OrganizationId = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
                     PhoneValid = table.Column<bool>(nullable: false),
+                    ResourceType = table.Column<int>(nullable: false),
                     Type = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Accounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Accounts_Department_DepartmentId",
+                        name: "FK_Accounts_Departments_DepartmentId",
                         column: x => x.DepartmentId,
-                        principalTable: "Department",
+                        principalTable: "Departments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -269,13 +482,18 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     DepartmentId = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     JoinDepartmentTime = table.Column<DateTime>(nullable: false),
                     JoinOrganTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false),
                     Role = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -288,9 +506,9 @@ namespace ApiServer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OrganMember_Department_DepartmentId",
+                        name: "FK_OrganMember_Departments_DepartmentId",
                         column: x => x.DepartmentId,
-                        principalTable: "Department",
+                        principalTable: "Departments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -328,14 +546,17 @@ namespace ApiServer.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CategoryId = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    OrganizationId = table.Column<string>(nullable: true)
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -355,46 +576,24 @@ namespace ApiServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Skirtings",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    AccountId = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<string>(nullable: true),
-                    CreatedTime = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
-                    Icon = table.Column<string>(nullable: true),
-                    ModifiedTime = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skirtings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Skirtings_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Solutions",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
                     AccountId = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
                     CategoryId = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Data = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    FolderId = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     LayoutId = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    OrganizationId = table.Column<string>(nullable: true)
+                    OrganizationId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -424,14 +623,19 @@ namespace ApiServer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Charlets = table.Column<string>(nullable: true),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    Album = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Modifier = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Price = table.Column<int>(nullable: false),
+                    Price = table.Column<decimal>(nullable: false),
                     ProductId = table.Column<string>(nullable: true),
+                    ResourceType = table.Column<int>(nullable: false),
+                    StaticMeshIds = table.Column<string>(nullable: true),
                     TPID = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -477,58 +681,6 @@ namespace ApiServer.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "StaticMeshs",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    CreatedTime = table.Column<DateTime>(nullable: false),
-                    Dependencies = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    FileAssetId = table.Column<string>(nullable: true),
-                    Icon = table.Column<string>(nullable: true),
-                    ModifiedTime = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    ProductSpecId = table.Column<string>(nullable: true),
-                    Tags = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StaticMeshs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StaticMeshs_ProductSpec_ProductSpecId",
-                        column: x => x.ProductSpecId,
-                        principalTable: "ProductSpec",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Materials",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    CreatedTime = table.Column<DateTime>(nullable: false),
-                    Dependencies = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    FileAssetId = table.Column<string>(nullable: true),
-                    Icon = table.Column<string>(nullable: true),
-                    ModifiedTime = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Parameters = table.Column<string>(nullable: true),
-                    StaticMeshId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Materials", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Materials_StaticMeshs_StaticMeshId",
-                        column: x => x.StaticMeshId,
-                        principalTable: "StaticMeshs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AccountOpenId_AccountId",
                 table: "AccountOpenId",
@@ -560,13 +712,13 @@ namespace ApiServer.Migrations
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Department_OrganizationId",
-                table: "Department",
+                name: "IX_Departments_OrganizationId",
+                table: "Departments",
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Department_ParentId",
-                table: "Department",
+                name: "IX_Departments_ParentId",
+                table: "Departments",
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
@@ -588,11 +740,6 @@ namespace ApiServer.Migrations
                 name: "IX_Layouts_OrganizationId",
                 table: "Layouts",
                 column: "OrganizationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Materials_StaticMeshId",
-                table: "Materials",
-                column: "StaticMeshId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_AccountId",
@@ -661,11 +808,6 @@ namespace ApiServer.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Skirtings_AccountId",
-                table: "Skirtings",
-                column: "AccountId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Solutions_AccountId",
                 table: "Solutions",
                 column: "AccountId");
@@ -679,11 +821,6 @@ namespace ApiServer.Migrations
                 name: "IX_Solutions_OrganizationId",
                 table: "Solutions",
                 column: "OrganizationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StaticMeshs_ProductSpecId",
-                table: "StaticMeshs",
-                column: "ProductSpecId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AccountOpenId_Accounts_AccountId",
@@ -795,6 +932,9 @@ namespace ApiServer.Migrations
                 name: "AssetCategories");
 
             migrationBuilder.DropTable(
+                name: "AssetCategoryTrees");
+
+            migrationBuilder.DropTable(
                 name: "AssetFolders");
 
             migrationBuilder.DropTable(
@@ -807,6 +947,9 @@ namespace ApiServer.Migrations
                 name: "Files");
 
             migrationBuilder.DropTable(
+                name: "Maps");
+
+            migrationBuilder.DropTable(
                 name: "Materials");
 
             migrationBuilder.DropTable(
@@ -816,7 +959,16 @@ namespace ApiServer.Migrations
                 name: "OrganMember");
 
             migrationBuilder.DropTable(
+                name: "Packages");
+
+            migrationBuilder.DropTable(
                 name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "PermissionTrees");
+
+            migrationBuilder.DropTable(
+                name: "ProductSpec");
 
             migrationBuilder.DropTable(
                 name: "Settings");
@@ -828,25 +980,25 @@ namespace ApiServer.Migrations
                 name: "StaticMeshs");
 
             migrationBuilder.DropTable(
+                name: "Textures");
+
+            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Solutions");
 
             migrationBuilder.DropTable(
-                name: "ProductSpec");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Layouts");
 
             migrationBuilder.DropTable(
-                name: "Products");
-
-            migrationBuilder.DropTable(
                 name: "Accounts");
 
             migrationBuilder.DropTable(
-                name: "Department");
+                name: "Departments");
 
             migrationBuilder.DropTable(
                 name: "Organizations");
