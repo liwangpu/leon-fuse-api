@@ -305,6 +305,18 @@ namespace ApiServer.Stores
         }
         #endregion
 
+        protected async Task<IQueryable<T>> _GetPermisionData(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        {
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
+            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
+            var departmentNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.DepartmentId);
+            var query = from it in _DbContext.Set<T>()
+                        select it;
+            _BasicPermissionFilter(ref query, currentAcc, accountNode, organNode, departmentNode, resType);
+            _BasicFilter(ref query, currentAcc);
+            return query;
+        }
         /**************** public method ****************/
 
         #region _GetByIdAsync 根据id信息返回实体数据信息
@@ -409,14 +421,7 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task<bool> CanReadAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
-            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
-            var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
-            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
-            var departmentNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.DepartmentId);
-            var query = from it in _DbContext.Set<T>()
-                        select it;
-            _BasicFilter(ref query, currentAcc);
-            _BasicPermissionFilter(ref query, currentAcc, accountNode, organNode, departmentNode, resType);
+            var query = await _GetPermisionData(accid, resType);
             var result = await query.CountAsync(x => x.Id == id);
             if (result == 0)
                 return false;
@@ -494,17 +499,11 @@ namespace ApiServer.Stores
         public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
-            var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
-            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
-            var departmentNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.DepartmentId);
-            var query = from it in _DbContext.Set<T>()
-                        select it;
-            _QSearchFilter(ref query, model.Q);
-            _BasicFilter(ref query, currentAcc);
-            _KeyWordSearchFilter(ref query, model.Search);
+            var query = await _GetPermisionData(accid, resType);
             if (advanceQuery != null)
                 query = await advanceQuery(query);
-            _BasicPermissionFilter(ref query, currentAcc, accountNode, organNode, departmentNode, resType);
+            _QSearchFilter(ref query, model.Q);
+            _KeyWordSearchFilter(ref query, model.Search);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
             return await query.SimplePaging(model.Page, model.PageSize);
         }

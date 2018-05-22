@@ -3,9 +3,12 @@ using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Services;
 using ApiServer.Stores;
 using BambooCore;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -186,5 +189,48 @@ namespace ApiServer.Controllers
             return Ok();
         }
         #endregion
+
+        #region UploadFormFile Form表单方式上传一个文件
+        /// <summary>
+        /// FormData上传一个文件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Route("ImportProductAndCategory")]
+        [HttpPost]
+        public async Task<IActionResult> ImportProductAndCategory(IFormFile file)
+        {
+            var accid = AuthMan.GetAccountId(this);
+            var importOp = new Func<ProductAndCategoryCSV, Task<string>>(async (data) =>
+            {
+                //var mapProductCount = await _Store.get.CountAsync(x => x.&& x.Name.Trim() == data.ProductName.Trim());
+                //var map
+                //var refProduct = _context.Products.Where(x => x.Name.Trim() == data.ProductName.Trim());
+
+
+                return await Task.FromResult(string.Empty);
+            });
+            return await _ImportRequest(file, importOp);
+        }
+        #endregion
+
+        #region [ProductAndCategoryCSV] 批量修改产品列表Matedata
+        /// <summary>
+        /// 批量修改产品列表Matedata
+        /// </summary>
+        class ProductAndCategoryCSV : ImportMap<ProductAndCategoryCSV>
+        {
+            public ProductAndCategoryCSV()
+            {
+                Map(m => m.ProductName);
+                Map(m => m.CategoryName);
+            }
+
+            public string ProductName { get; set; }
+            public string CategoryName { get; set; }
+        }
+        #endregion
     }
+
+
 }

@@ -4,9 +4,13 @@ using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,6 +167,72 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region _ImportRequest 处理导入请求
+        /// <summary>
+        /// 处理导入请求
+        /// </summary>
+        /// <typeparam name="CSV"></typeparam>
+        /// <param name="file"></param>
+        /// <param name="importOp"></param>
+        /// <returns></returns>
+        protected async Task<IActionResult> _ImportRequest<CSV>(IFormFile file, Func<CSV, Task<string>> importOp)
+              where CSV : class, ImportData, new()
+        {
+            if (file == null)
+                return BadRequest();
+            var tmpFileName = Path.GetTempFileName();
+            var errorRecords = new List<CSV>();
+            try
+            {
+                using (FileStream fs = System.IO.File.Create(tmpFileName))
+                {
+                    await file.CopyToAsync(fs);
+                    fs.Flush();
+                }
+                using (var sr = new StreamReader(tmpFileName, Encoding.UTF8))
+                {
+                    var reader = new CsvReader(sr);
+                    var records = reader.GetRecords<CSV>();
+                    foreach (var item in records)
+                    {
+                        var msg = await importOp(item);
+                        if (!string.IsNullOrWhiteSpace(msg))
+                        {
+                            item.ErrorMsg = msg;
+                            errorRecords.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tmpFileName))
+                    System.IO.File.Delete(tmpFileName);
+            }
+
+            if (errorRecords.Count > 0)
+            {
+
+                using (var ms = new MemoryStream())
+                {
+                    using (TextWriter writer = new StreamWriter(ms))
+                    {
+                        var config = new Configuration();
+                        config.Encoding = Encoding.UTF8;
+                        var csv = new CsvWriter(writer, config);
+                        csv.WriteRecords(errorRecords);
+                    }
+                    return File(ms, "application/octet-stream");
+                }
+            }
+
+            return Ok();
+        }
+        #endregion
 
         /**************** common method ****************/
 
@@ -196,6 +266,19 @@ namespace ApiServer.Controllers
             return list;
         }
         #endregion
+
+
+        protected class ImportMap<U> : ClassMap<U>, ImportData
+              where U : class, new()
+        {
+            public string ErrorMsg { get; set; }
+        }
+
+        protected interface ImportData
+        {
+            string ErrorMsg { get; set; }
+        }
+
     }
 }
 
