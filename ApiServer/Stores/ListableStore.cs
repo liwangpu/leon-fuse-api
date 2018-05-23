@@ -44,12 +44,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="model"></param>
         /// <param name="accid"></param>
-        /// <param name="resType"></param>
         /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public override async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+        public override async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
-            var result = await base.SimplePagedQueryAsync(model, accid, resType);
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
 
             if (result.Total > 0)
             {

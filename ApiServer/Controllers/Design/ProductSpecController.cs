@@ -45,7 +45,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
+            return await _GetByIdRequest(id);
         }
         #endregion
 
@@ -289,7 +289,7 @@ namespace ApiServer.Controllers
                     ModelState.AddModelError("ProductId", "没有对应产品记录信息");
                     return new ValidationFailedResult(ModelState);
                 }
-                var canRead = await _ProductStore.CanReadAsync(accid, model.ProductId, ResourceTypeEnum.Organizational);
+                var canRead = await _ProductStore.CanReadAsync(accid, model.ProductId);
                 if (!canRead)
                 {
                     ModelState.AddModelError("ProductId", "没有操作权限");

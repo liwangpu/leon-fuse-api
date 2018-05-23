@@ -7,7 +7,6 @@ namespace ApiModel.Entities
     {
         public string ParentId { get; set; }
         public Department Parent { get; set; }
-        public string OrganizationId { get; set; }
         public Organization Organization { get; set; }
         public List<OrganMember> Members { get; set; }
         public string Icon { get; set; }

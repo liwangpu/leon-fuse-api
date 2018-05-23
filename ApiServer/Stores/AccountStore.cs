@@ -1,5 +1,6 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,6 @@ namespace ApiServer.Stores
     public class AccountStore : StoreBase<Account, AccountDTO>, IStore<Account, AccountDTO>
     {
         protected PermissionTreeStore _PermissionTreeStore;
-
         #region 构造函数
         public AccountStore(ApiDbContext context)
         : base(context)
@@ -70,6 +70,34 @@ namespace ApiServer.Stores
                 if (existPhone)
                     modelState.AddModelError("Phone", "该电话已经使用");
             }
+        }
+        #endregion
+
+        #region CanCreateAsync 判断数据是否满足创建规范
+        /// <summary>
+        /// CanCreateAsync
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <returns></returns>
+        public override async Task<bool> CanCreateAsync(string accid)
+        {
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            if (currentAcc == null)
+                return false;
+
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            {
+                return true;
+            }
+            else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+            {
+                return true;
+            }
+            else
+            {
+
+            }
+            return await Task.FromResult(false);
         }
         #endregion
 

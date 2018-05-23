@@ -1,5 +1,6 @@
 ﻿using ApiModel;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,17 @@ namespace ApiServer.Stores
 {
     public class PackageStore : ListableStore<Package, PackageDTO>, IStore<Package, PackageDTO>
     {
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
+
         #region 构造函数
         public PackageStore(ApiDbContext context)
         : base(context)

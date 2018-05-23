@@ -15,17 +15,17 @@ namespace ApiServer.Stores
     {
         Task SatisfyCreateAsync(string accid, T data, ModelStateDictionary modelState);
         Task SatisfyUpdateAsync(string accid, T data, ModelStateDictionary modelState);
-        Task<bool> CanCreateAsync(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
-        Task<bool> CanUpdateAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
-        Task<bool> CanDeleteAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
-        Task<bool> CanReadAsync(string accid, string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
+        Task<bool> CanCreateAsync(string accid);
+        Task<bool> CanUpdateAsync(string accid, string id);
+        Task<bool> CanDeleteAsync(string accid, string id);
+        Task<bool> CanReadAsync(string accid, string id);
         Task CreateAsync(string accid, T data);
         Task UpdateAsync(string accid, T data);
         Task DeleteAsync(string accid, string id);
-        Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null);
-        Task<bool> ExistAsync(string id);
+        Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null);
+        Task<bool> ExistAsync(string id, bool withInActive = false);
         Task<DTO> GetByIdAsync(string id);
         Task<T> _GetByIdAsync(string id);
-        Task<IQueryable<T>> _GetPermisionData(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
+        Task<IQueryable<T>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false);
     }
 }

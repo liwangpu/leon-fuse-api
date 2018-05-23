@@ -15,7 +15,6 @@ namespace ApiModel.Entities
         public bool MailValid { get; set; }
         public bool PhoneValid { get; set; }
         public bool Frozened { get; set; }
-        public string OrganizationId { get; set; }
         public string DepartmentId { get; set; }
         public string Location { get; set; }
         /// <summary>

@@ -1,6 +1,6 @@
-﻿using ApiModel;
-using ApiModel.Consts;
+﻿using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,17 @@ namespace ApiServer.Stores
     public class DepartmentStore : StoreBase<Department, DepartmentDTO>, IStore<Department, DepartmentDTO>
     {
         protected PermissionTreeStore _PermissionTreeStore;
+
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
 
         #region 构造函数
         public DepartmentStore(ApiDbContext context)

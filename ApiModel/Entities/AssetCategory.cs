@@ -10,7 +10,6 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string ParentId { get; set; }
         public int DisplayIndex { get; set; }
-        public string OrganizationId { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 
@@ -37,7 +36,6 @@ namespace ApiModel.Entities
         public string Value { get; set; }
         public string Icon { get; set; }
         public string ParentId { get; set; }
-        public string OrganizationId { get; set; }
         /// <summary>
         /// 分类的类型，比如产品product, 材质material
         /// </summary>

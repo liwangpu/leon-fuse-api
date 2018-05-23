@@ -8,7 +8,6 @@ namespace ApiModel.Entities
     {
         public string AccountId { get; set; }
 
-        public string OrganizationId { get; set; }
         [JsonIgnore]
         public Organization Organization { get; set; }
         public string DepartmentId { get; set; }

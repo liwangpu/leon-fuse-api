@@ -42,7 +42,7 @@ namespace ApiServer.Controllers
             {
 
             });
-            return await _GetPagingRequest(model, qMapping, ResourceTypeEnum.Organizational);
+            return await _GetPagingRequest(model, qMapping);
         }
         #endregion
 
@@ -56,7 +56,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(LayoutDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
+            return await _GetByIdRequest(id);
         }
         #endregion
 

@@ -67,7 +67,7 @@ namespace ApiServer.Controllers
                 return await Task.FromResult(query);
             });
 
-            return await _GetPagingRequest(model, null, ResourceTypeEnum.Organizational, advanceQuery);
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
@@ -81,7 +81,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(MaterialDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
+            return await _GetByIdRequest(id);
         }
         #endregion
 

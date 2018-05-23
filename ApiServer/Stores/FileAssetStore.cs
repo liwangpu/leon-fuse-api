@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
@@ -7,6 +8,17 @@ namespace ApiServer.Stores
 {
     public class FileAssetStore : StoreBase<FileAsset, FileAssetDTO>, IStore<FileAsset, FileAssetDTO>
     {
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
+
         #region 构造函数
         public FileAssetStore(ApiDbContext context)
         : base(context)

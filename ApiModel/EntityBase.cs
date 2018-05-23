@@ -15,6 +15,7 @@ namespace ApiModel
         public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }
         public string Modifier { get; set; }
+        public string OrganizationId { get; set; }
         /// <summary>
         /// 启用状态 1启用 0禁用
         /// </summary>

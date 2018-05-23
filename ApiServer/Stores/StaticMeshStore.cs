@@ -12,6 +12,17 @@ namespace ApiServer.Stores
 {
     public class StaticMeshStore : ListableStore<StaticMesh, StaticMeshDTO>, IStore<StaticMesh, StaticMeshDTO>
     {
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
+
         #region 构造函数
         public StaticMeshStore(ApiDbContext context)
         : base(context)
@@ -70,12 +81,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="model"></param>
         /// <param name="accid"></param>
-        /// <param name="resType"></param>
         /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public override async Task<PagedData<StaticMesh>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<StaticMesh>, Task<IQueryable<StaticMesh>>> advanceQuery = null)
+        public override async Task<PagedData<StaticMesh>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<StaticMesh>, Task<IQueryable<StaticMesh>>> advanceQuery = null)
         {
-            var result = await base.SimplePagedQueryAsync(model, accid, resType);
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
 
             if (result.Total > 0)
             {

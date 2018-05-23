@@ -15,6 +15,17 @@ namespace ApiServer.Stores
 {
     public class ProductStore : StoreBase<Product, ProductDTO>, IStore<Product, ProductDTO>
     {
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
+
         #region 构造函数
         public ProductStore(ApiDbContext context)
         : base(context)
@@ -122,12 +133,11 @@ namespace ApiServer.Stores
         /// </summary>
         /// <param name="model"></param>
         /// <param name="accid"></param>
-        /// <param name="resType"></param>
         /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        public override async Task<PagedData<Product>> SimplePagedQueryAsync(PagingRequestModel model, string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<Product>, Task<IQueryable<Product>>> advanceQuery = null)
+        public override async Task<PagedData<Product>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<Product>, Task<IQueryable<Product>>> advanceQuery = null)
         {
-            var result = await base.SimplePagedQueryAsync(model, accid, resType, advanceQuery);
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
 
             if (result.Total > 0)
             {

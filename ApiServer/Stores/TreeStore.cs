@@ -1,8 +1,7 @@
 ﻿using ApiModel;
 using ApiServer.Data;
-using BambooCommon;
+using BambooCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,17 +27,11 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task AddNewNode(T data)
         {
-            try
-            {
-                data.LValue = 1;
-                data.RValue = 2;
-                _DbContext.Set<T>().Add(data);
-                await _DbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("PermissionTreeStore AddNewNode", ex);
-            }
+            data.Id = GuidGen.NewGUID();
+            data.LValue = 1;
+            data.RValue = 2;
+            _DbContext.Set<T>().Add(data);
+            await _DbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -50,37 +43,31 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task AddChildNode(T data)
         {
-            try
+            var parentNode = await _DbContext.Set<T>().FindAsync(data.ParentId);
+            if (parentNode != null)
             {
-                var parentNode = await _DbContext.Set<T>().FindAsync(data.ParentId);
-                if (parentNode != null)
+                data.Id = GuidGen.NewGUID();
+                data.LValue = parentNode.RValue;
+                data.RValue = data.LValue + 1;
+                var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
+                for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                 {
-                    data.LValue = parentNode.RValue;
-                    data.RValue = data.LValue + 1;
-                    var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
-                    for (int idx = refNodes.Count - 1; idx >= 0; idx--)
+                    var cur = refNodes[idx];
+                    //支线上只改变右值
+                    if (cur.LValue <= parentNode.LValue)
                     {
-                        var cur = refNodes[idx];
-                        //支线上只改变右值
-                        if (cur.LValue <= parentNode.LValue)
-                        {
-                            cur.RValue += 2;
-                        }
-                        else
-                        {
-                            cur.LValue += 2;
-                            cur.RValue += 2;
-                        }
-                        _DbContext.Set<T>().Update(cur);
+                        cur.RValue += 2;
                     }
-                    //添加新节点
-                    _DbContext.Set<T>().Add(data);
-                    await _DbContext.SaveChangesAsync();
+                    else
+                    {
+                        cur.LValue += 2;
+                        cur.RValue += 2;
+                    }
+                    _DbContext.Set<T>().Update(cur);
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("PermissionTreeStore AddChildNode", ex);
+                //添加新节点
+                _DbContext.Set<T>().Add(data);
+                await _DbContext.SaveChangesAsync();
             }
         }
         #endregion
@@ -94,28 +81,21 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task AddSiblingNode(T data, string sibling)
         {
-            try
+            var siblingNode = await _DbContext.Set<T>().FindAsync(sibling);
+            if (siblingNode != null)
             {
-                var siblingNode = await _DbContext.Set<T>().FindAsync(sibling);
-                if (siblingNode != null)
+                data.Id = GuidGen.NewGUID();
+                data.LValue = siblingNode.RValue + 1;
+                data.RValue = data.LValue + 1;
+                var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= siblingNode.RValue).ToListAsync();
+                for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                 {
-
-                    data.LValue = siblingNode.RValue + 1;
-                    data.RValue = data.LValue + 1;
-                    var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= siblingNode.RValue).ToListAsync();
-                    for (int idx = refNodes.Count - 1; idx >= 0; idx--)
-                    {
-                        var cur = refNodes[idx];
-                        cur.RValue += 2;
-                        _DbContext.Set<T>().Update(cur);
-                    }
-                    _DbContext.Set<T>().Add(data);
-                    await _DbContext.SaveChangesAsync();
+                    var cur = refNodes[idx];
+                    cur.RValue += 2;
+                    _DbContext.Set<T>().Update(cur);
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("PermissionTreeStore AddSiblingNode", ex);
+                _DbContext.Set<T>().Add(data);
+                await _DbContext.SaveChangesAsync();
             }
         }
         #endregion

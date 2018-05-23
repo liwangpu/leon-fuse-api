@@ -1,6 +1,9 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -10,6 +13,17 @@ namespace ApiServer.Stores
 {
     public class ProductSpecStore : StoreBase<ProductSpec, ProductSpecDTO>, IStore<ProductSpec, ProductSpecDTO>
     {
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
+
         #region 构造函数
         public ProductSpecStore(ApiDbContext context)
         : base(context)
@@ -26,6 +40,9 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyCreateAsync(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
+            var existProduct = await _DbContext.Products.CountAsync(x => x.Id == data.ProductId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+            if (!existProduct)
+                modelState.AddModelError("ProductId", "对应产品记录不存在");
             await Task.FromResult(string.Empty);
         }
         #endregion
@@ -40,6 +57,9 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyUpdateAsync(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
+            var existProduct = await _DbContext.Products.CountAsync(x => x.Id == data.ProductId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+            if (!existProduct)
+                modelState.AddModelError("ProductId", "对应产品记录不存在");
             await Task.FromResult(string.Empty);
         }
         #endregion
@@ -142,7 +162,7 @@ namespace ApiServer.Stores
                     map.Items.RemoveAt(idx);
             }
             entity.StaticMeshIds = JsonConvert.SerializeObject(map);
-        } 
+        }
         #endregion
 
     }

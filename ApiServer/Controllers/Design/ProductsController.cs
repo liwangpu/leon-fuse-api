@@ -68,10 +68,11 @@ namespace ApiServer.Controllers
                 {
                     query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
                 }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return await Task.FromResult(query);
             });
 
-            return await _GetPagingRequest(model, null, ResourceTypeEnum.Organizational, advanceQuery);
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
@@ -85,7 +86,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ProductDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
+            return await _GetByIdRequest(id);
         }
         #endregion
 
@@ -202,7 +203,7 @@ namespace ApiServer.Controllers
         {
             var accid = AuthMan.GetAccountId(this);
             var currentAcc = await _context.Accounts.FindAsync(accid);
-            var psProductQuery = await _Store._GetPermisionData(accid, ResourceTypeEnum.Organizational);
+            var psProductQuery = await _Store._GetPermissionData(accid, DataOperateEnum.Update);
             var psCategoryQuery = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
             var importOp = new Func<ProductAndCategoryCSV, Task<string>>(async (data) =>
             {
@@ -224,11 +225,11 @@ namespace ApiServer.Controllers
                 return await Task.FromResult(string.Empty);
             });
 
-            var done = new Action(async () =>
+            var doneOp = new Action(async () =>
             {
                 await _context.SaveChangesAsync();
             });
-            return await _ImportRequest(file, importOp, done);
+            return await _ImportRequest(file, importOp, doneOp);
         }
         #endregion
 

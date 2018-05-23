@@ -35,7 +35,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _GetPagingRequest(model, null, ResourceTypeEnum.Organizational);
+            return await _GetPagingRequest(model, null);
         }
         #endregion
 
@@ -49,7 +49,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PackageDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id, ResourceTypeEnum.Organizational);
+            return await _GetByIdRequest(id);
         }
         #endregion
 

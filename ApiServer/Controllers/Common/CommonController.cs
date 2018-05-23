@@ -43,10 +43,9 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <param name="qMapping"></param>
-        /// <param name="resType"></param>
         /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
             var accid = AuthMan.GetAccountId(this);
             var qs = new List<string>();
@@ -58,7 +57,7 @@ namespace ApiServer.Controllers
                     builder.AppendFormat(";{0}", item);
                 model.Q = builder.ToString();
             }
-            var result = await _Store.SimplePagedQueryAsync(model, accid, resType, advanceQuery);
+            var result = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
             return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));
         }
         #endregion
@@ -68,15 +67,14 @@ namespace ApiServer.Controllers
         /// 根据id获取信息
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetByIdRequest(string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        protected async Task<IActionResult> _GetByIdRequest(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var exist = await _Store.ExistAsync(id);
             if (!exist)
                 return NotFound();
-            var canRead = await _Store.CanReadAsync(accid, id, resType);
+            var canRead = await _Store.CanReadAsync(accid, id);
             if (!canRead)
                 return Forbid();
             var dto = await _Store.GetByIdAsync(id);
@@ -90,19 +88,18 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="mapping"></param>
         /// <param name="handle"></param>
-        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null)
         {
             var accid = AuthMan.GetAccountId(this);
             var metadata = new T();
+            var canCreate = await _Store.CanCreateAsync(accid);
+            if (!canCreate)
+                return Forbid();
             var data = await mapping(metadata);
             await _Store.SatisfyCreateAsync(accid, data, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            var canCreate = await _Store.CanCreateAsync(accid, resType);
-            if (!canCreate)
-                return Forbid();
             //如果handle不为空,由handle掌控Create流程和ActionResult
             if (handle != null)
                 return await handle(data);
@@ -119,15 +116,14 @@ namespace ApiServer.Controllers
         /// <param name="id"></param>
         /// <param name="mapping"></param>
         /// <param name="handle"></param>
-        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null)
         {
             var exist = await _Store.ExistAsync(id);
             if (!exist)
                 return NotFound();
             var accid = AuthMan.GetAccountId(this);
-            var permission = await _Store.CanUpdateAsync(accid, id, resType);
+            var permission = await _Store.CanUpdateAsync(accid, id);
             if (!permission)
                 return Forbid();
             var metadata = await _Store._GetByIdAsync(id);
@@ -150,16 +146,15 @@ namespace ApiServer.Controllers
         /// 处理Delete请求
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="resType"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _DeleteRequest(string id, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        protected async Task<IActionResult> _DeleteRequest(string id)
         {
             var accid = AuthMan.GetAccountId(this);
             var exist = await _Store.ExistAsync(id);
             if (!exist)
                 return NotFound();
 
-            var canDelete = await _Store.CanDeleteAsync(accid, id, resType);
+            var canDelete = await _Store.CanDeleteAsync(accid, id);
             if (!canDelete)
                 return Forbid();
             await _Store.DeleteAsync(accid, id);
@@ -174,9 +169,9 @@ namespace ApiServer.Controllers
         /// <typeparam name="CSV"></typeparam>
         /// <param name="file"></param>
         /// <param name="importOp"></param>
-        /// <param name="done"></param>
+        /// <param name="doneOp"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _ImportRequest<CSV>(IFormFile file, Func<CSV, Task<string>> importOp, Action done = null)
+        protected async Task<IActionResult> _ImportRequest<CSV>(IFormFile file, Func<CSV, Task<string>> importOp, Action doneOp = null)
               where CSV : class, ImportData, new()
         {
             if (file == null)
@@ -206,7 +201,7 @@ namespace ApiServer.Controllers
                         }
                     }
                 }
-                done?.Invoke();
+                doneOp?.Invoke();
             }
             catch (Exception ex)
             {
@@ -224,7 +219,7 @@ namespace ApiServer.Controllers
                 var tmpResFileName = Path.GetTempFileName();
                 using (var fs = new FileStream(tmpResFileName, FileMode.OpenOrCreate))
                 {
-                    using (TextWriter writer = new StreamWriter(fs,Encoding.UTF8))
+                    using (TextWriter writer = new StreamWriter(fs, Encoding.UTF8))
                     {
                         var config = new Configuration();
                         config.Encoding = Encoding.UTF8;
