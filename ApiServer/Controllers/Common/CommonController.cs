@@ -174,8 +174,9 @@ namespace ApiServer.Controllers
         /// <typeparam name="CSV"></typeparam>
         /// <param name="file"></param>
         /// <param name="importOp"></param>
+        /// <param name="done"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _ImportRequest<CSV>(IFormFile file, Func<CSV, Task<string>> importOp)
+        protected async Task<IActionResult> _ImportRequest<CSV>(IFormFile file, Func<CSV, Task<string>> importOp, Action done = null)
               where CSV : class, ImportData, new()
         {
             if (file == null)
@@ -186,13 +187,15 @@ namespace ApiServer.Controllers
             {
                 using (FileStream fs = System.IO.File.Create(tmpFileName))
                 {
-                    await file.CopyToAsync(fs);
+                    file.CopyTo(fs);
                     fs.Flush();
                 }
                 using (var sr = new StreamReader(tmpFileName, Encoding.UTF8))
                 {
                     var reader = new CsvReader(sr);
-                    var records = reader.GetRecords<CSV>();
+                    reader.Configuration.HeaderValidated = null;
+                    reader.Configuration.MissingFieldFound = null;
+                    var records = reader.GetRecords<CSV>().ToList();
                     foreach (var item in records)
                     {
                         var msg = await importOp(item);
@@ -203,10 +206,12 @@ namespace ApiServer.Controllers
                         }
                     }
                 }
+                done?.Invoke();
             }
             catch (Exception ex)
             {
-
+                ModelState.AddModelError("Import Data", ex.Message);
+                return new ValidationFailedResult(ModelState);
             }
             finally
             {
@@ -216,18 +221,18 @@ namespace ApiServer.Controllers
 
             if (errorRecords.Count > 0)
             {
-
-                using (var ms = new MemoryStream())
+                var tmpResFileName = Path.GetTempFileName();
+                using (var fs = new FileStream(tmpResFileName, FileMode.OpenOrCreate))
                 {
-                    using (TextWriter writer = new StreamWriter(ms))
+                    using (TextWriter writer = new StreamWriter(fs,Encoding.UTF8))
                     {
                         var config = new Configuration();
                         config.Encoding = Encoding.UTF8;
                         var csv = new CsvWriter(writer, config);
                         csv.WriteRecords(errorRecords);
                     }
-                    return File(ms, "application/octet-stream");
                 }
+                return File(new FileStream(tmpResFileName, FileMode.Open), "application/octet-stream");
             }
 
             return Ok();
@@ -271,6 +276,10 @@ namespace ApiServer.Controllers
         protected class ImportMap<U> : ClassMap<U>, ImportData
               where U : class, new()
         {
+            public ImportMap()
+            {
+                AutoMap();
+            }
             public string ErrorMsg { get; set; }
         }
 

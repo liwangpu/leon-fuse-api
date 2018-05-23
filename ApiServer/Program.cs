@@ -29,6 +29,11 @@ namespace ApiServer
                        logging.SetMinimumLevel(LogLevel.Trace);
                    })
                 .UseNLog()
+                .UseKestrel(options =>
+                {
+                    //最大文件上传3G
+                    options.Limits.MaxRequestBodySize = 3 * 1024 * 1024 * 1024L;
+                })
                 .Build();
         }
     }

@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
@@ -6,7 +7,6 @@ using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
 using BambooCore;
-using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -190,27 +190,45 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-        #region UploadFormFile Form表单方式上传一个文件
+        #region ImportProductAndCategory 根据CSV批量分类产品
         /// <summary>
-        /// FormData上传一个文件
+        /// 根据CSV批量分类产品
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
         [Route("ImportProductAndCategory")]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> ImportProductAndCategory(IFormFile file)
         {
             var accid = AuthMan.GetAccountId(this);
+            var currentAcc = await _context.Accounts.FindAsync(accid);
+            var psProductQuery = await _Store._GetPermisionData(accid, ResourceTypeEnum.Organizational);
+            var psCategoryQuery = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
             var importOp = new Func<ProductAndCategoryCSV, Task<string>>(async (data) =>
             {
-                //var mapProductCount = await _Store.get.CountAsync(x => x.&& x.Name.Trim() == data.ProductName.Trim());
-                //var map
-                //var refProduct = _context.Products.Where(x => x.Name.Trim() == data.ProductName.Trim());
+                var mapProductCount = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).CountAsync();
+                if (mapProductCount == 0)
+                    return "没有找到该产品或您没有权限修改该条数据";
+                if (mapProductCount > 1)
+                    return "产品名称有重复,请手动分配该产品";
+                var mapCategoryCount = await psCategoryQuery.Where(x => x.Name == data.CategoryName).CountAsync();
+                if (mapCategoryCount == 0)
+                    return "没有找到该分类,请确认分类名称是否有误";
+                if (mapCategoryCount > 1)
+                    return "分类名称有重复,请手动分配该产品";
 
-
+                var refProduct = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).FirstAsync();
+                var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
+                refProduct.CategoryId = refCategory.Id;
+                _context.Products.Update(refProduct);
                 return await Task.FromResult(string.Empty);
             });
-            return await _ImportRequest(file, importOp);
+
+            var done = new Action(async () =>
+            {
+                await _context.SaveChangesAsync();
+            });
+            return await _ImportRequest(file, importOp, done);
         }
         #endregion
 
@@ -218,13 +236,11 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 批量修改产品列表Matedata
         /// </summary>
-        class ProductAndCategoryCSV : ImportMap<ProductAndCategoryCSV>
+        class ProductAndCategoryCSV : ImportMap<ProductAndCategoryCSV>, ImportData
         {
             public ProductAndCategoryCSV()
-            {
-                Map(m => m.ProductName);
-                Map(m => m.CategoryName);
-            }
+                : base()
+            { }
 
             public string ProductName { get; set; }
             public string CategoryName { get; set; }

@@ -33,5 +33,8 @@
         /// </summary>
         public const int I_Permission_TypeStep = 100;
 
+
+        public const string S_Category_Product = "product";
+
     }
 }

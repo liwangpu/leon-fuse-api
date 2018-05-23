@@ -1,9 +1,9 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Stores;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +50,7 @@ namespace ApiServer.Services
                 rootNode.Name = type + "_root";
                 rootNode.Icon = "";
                 rootNode.Description = "auto generated node for " + type + ", do not need to display this node";
+                rootNode.ResourceType = (int)ResourceTypeEnum.Organizational;
                 dbset.Add(rootNode);
                 await context.SaveChangesAsync();
 
@@ -118,6 +119,7 @@ namespace ApiServer.Services
             cat.ParentId = dto.ParentId;
             cat.DisplayIndex = childrenCount; //index start from 0.
             cat.OrganizationId = dto.OrganizationId;
+            cat.ResourceType = (int)ResourceTypeEnum.Organizational;
             dbset.Add(cat);
             await context.SaveChangesAsync();
 

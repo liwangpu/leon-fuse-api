@@ -26,5 +26,6 @@ namespace ApiServer.Stores
         Task<bool> ExistAsync(string id);
         Task<DTO> GetByIdAsync(string id);
         Task<T> _GetByIdAsync(string id);
+        Task<IQueryable<T>> _GetPermisionData(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal);
     }
 }

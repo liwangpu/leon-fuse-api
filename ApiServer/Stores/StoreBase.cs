@@ -305,7 +305,16 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        protected async Task<IQueryable<T>> _GetPermisionData(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
+        /**************** public method ****************/
+
+        #region _GetPermisionData 获取用户可以操作的数据信息
+        /// <summary>
+        /// 获取用户可以操作的数据信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="resType"></param>
+        /// <returns></returns>
+        public async Task<IQueryable<T>> _GetPermisionData(string accid, ResourceTypeEnum resType = ResourceTypeEnum.Personal)
         {
             var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             var accountNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.Id);
@@ -317,7 +326,7 @@ namespace ApiServer.Stores
             _BasicFilter(ref query, currentAcc);
             return query;
         }
-        /**************** public method ****************/
+        #endregion
 
         #region _GetByIdAsync 根据id信息返回实体数据信息
         /// <summary>
