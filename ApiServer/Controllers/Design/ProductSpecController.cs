@@ -321,6 +321,7 @@ namespace ApiServer.Controllers
                 var spec = new ProductSpec();
                 spec.Name = staticMesh.Name;
                 spec.Product = product;
+                spec.ProductId = product.Id;
                 spec.Icon = staticMesh.Icon;
                 (_Store as ProductSpecStore).AddStaticMeshRelated(spec, model.StaticMeshId);
                 await _Store.SatisfyCreateAsync(accid, spec, ModelState);

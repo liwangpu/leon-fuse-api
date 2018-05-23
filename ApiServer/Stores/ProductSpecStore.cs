@@ -40,7 +40,17 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyCreateAsync(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
-            var existProduct = await _DbContext.Products.CountAsync(x => x.Id == data.ProductId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+            var existProduct = false;
+            if (data.Product != null)
+            {
+                existProduct = true;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(data.ProductId))
+                    existProduct = await _DbContext.Products.CountAsync(x => x.Id == data.ProductId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+            }
+
             if (!existProduct)
                 modelState.AddModelError("ProductId", "对应产品记录不存在");
             await Task.FromResult(string.Empty);
@@ -57,7 +67,17 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyUpdateAsync(string accid, ProductSpec data, ModelStateDictionary modelState)
         {
-            var existProduct = await _DbContext.Products.CountAsync(x => x.Id == data.ProductId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+            var existProduct = false;
+            if (data.Product != null)
+            {
+                existProduct = true;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(data.ProductId))
+                    existProduct = await _DbContext.Products.CountAsync(x => x.Id == data.ProductId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+            }
+
             if (!existProduct)
                 modelState.AddModelError("ProductId", "对应产品记录不存在");
             await Task.FromResult(string.Empty);
