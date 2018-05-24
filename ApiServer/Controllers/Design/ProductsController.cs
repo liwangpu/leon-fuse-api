@@ -7,6 +7,7 @@ using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
 using BambooCore;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -205,7 +206,7 @@ namespace ApiServer.Controllers
             var currentAcc = await _context.Accounts.FindAsync(accid);
             var psProductQuery = await _Store._GetPermissionData(accid, DataOperateEnum.Update);
             var psCategoryQuery = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
-            var importOp = new Func<ProductAndCategoryCSV, Task<string>>(async (data) =>
+            var importOp = new Func<ProductAndCategoryImportCSV, Task<string>>(async (data) =>
             {
                 var mapProductCount = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).CountAsync();
                 if (mapProductCount == 0)
@@ -233,15 +234,34 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-        #region [ProductAndCategoryCSV] 批量修改产品列表Matedata
-        /// <summary>
-        /// 批量修改产品列表Matedata
-        /// </summary>
-        class ProductAndCategoryCSV : ImportMap<ProductAndCategoryCSV>, ImportData
+
+        [HttpGet]
+        [Route("ProductAndCategoryImportTemplate")]
+        public IActionResult ProductAndCategoryImportTemplate()
         {
-            public ProductAndCategoryCSV()
+            return _ExportCSVTemplateRequest<ProductAndCategoryExportCSV>();
+        }
+
+        #region  批量修改产品列表CSV Matedata
+        class ProductAndCategoryImportCSV : ClassMap<ProductAndCategoryImportCSV>, ImportData
+        {
+            public ProductAndCategoryImportCSV()
                 : base()
-            { }
+            {
+                AutoMap();
+            }
+            public string ProductName { get; set; }
+            public string CategoryName { get; set; }
+            public string ErrorMsg { get; set; }
+        }
+
+        class ProductAndCategoryExportCSV : ClassMap<ProductAndCategoryImportCSV>
+        {
+            public ProductAndCategoryExportCSV()
+                : base()
+            {
+                AutoMap();
+            }
 
             public string ProductName { get; set; }
             public string CategoryName { get; set; }

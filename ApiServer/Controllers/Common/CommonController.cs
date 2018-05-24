@@ -176,18 +176,16 @@ namespace ApiServer.Controllers
         {
             if (file == null)
                 return BadRequest();
-            var tmpFileName = Path.GetTempFileName();
+
             var errorRecords = new List<CSV>();
             try
             {
-                using (FileStream fs = System.IO.File.Create(tmpFileName))
+                using (var fs = new MemoryStream())
+                using (var sr = new StreamReader(fs, Encoding.UTF8))
+                using (var reader = new CsvReader(sr))
                 {
                     file.CopyTo(fs);
-                    fs.Flush();
-                }
-                using (var sr = new StreamReader(tmpFileName, Encoding.UTF8))
-                {
-                    var reader = new CsvReader(sr);
+                    fs.Position = 0;
                     reader.Configuration.HeaderValidated = null;
                     reader.Configuration.MissingFieldFound = null;
                     var records = reader.GetRecords<CSV>().ToList();
@@ -200,6 +198,7 @@ namespace ApiServer.Controllers
                             errorRecords.Add(item);
                         }
                     }
+
                 }
                 doneOp?.Invoke();
             }
@@ -208,29 +207,52 @@ namespace ApiServer.Controllers
                 ModelState.AddModelError("Import Data", ex.Message);
                 return new ValidationFailedResult(ModelState);
             }
-            finally
-            {
-                if (System.IO.File.Exists(tmpFileName))
-                    System.IO.File.Delete(tmpFileName);
-            }
 
             if (errorRecords.Count > 0)
             {
-                var tmpResFileName = Path.GetTempFileName();
-                using (var fs = new FileStream(tmpResFileName, FileMode.OpenOrCreate))
+                var ms = new MemoryStream();
+
+                var config = new Configuration();
+                config.Encoding = Encoding.UTF8;
+                using (var stream = new MemoryStream())
+                using (var writer = new StreamWriter(stream, Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, config))
                 {
-                    using (TextWriter writer = new StreamWriter(fs, Encoding.UTF8))
-                    {
-                        var config = new Configuration();
-                        config.Encoding = Encoding.UTF8;
-                        var csv = new CsvWriter(writer, config);
-                        csv.WriteRecords(errorRecords);
-                    }
+                    csv.WriteRecords(errorRecords);
+                    writer.Flush();
+                    stream.Position = 0;
+                    stream.CopyTo(ms);
+                    ms.Position = 0;
                 }
-                return File(new FileStream(tmpResFileName, FileMode.Open), "application/octet-stream");
+                return File(ms, "application/octet-stream");
             }
 
             return Ok();
+        }
+        #endregion
+
+        #region _ExportCSVTemplateRequest 处理导出模版请求
+        /// <summary>
+        /// 处理导出模版请求
+        /// </summary>
+        /// <typeparam name="CSV"></typeparam>
+        /// <returns></returns>
+        protected IActionResult _ExportCSVTemplateRequest<CSV>()
+            where CSV : ClassMap, new()
+        {
+            var ms = new MemoryStream();
+            using (var stream = new MemoryStream())
+            using (var writer = new StreamWriter(stream))
+            using (var csv = new CsvWriter(writer))
+            {
+                csv.WriteHeader<CSV>();
+                csv.NextRecord();
+                writer.Flush();
+                stream.Position = 0;
+                stream.CopyTo(ms);
+                ms.Position = 0;
+            }
+            return File(ms, "application/octet-stream");
         }
         #endregion
 
@@ -267,21 +289,15 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-
-        protected class ImportMap<U> : ClassMap<U>, ImportData
-              where U : class, new()
-        {
-            public ImportMap()
-            {
-                AutoMap();
-            }
-            public string ErrorMsg { get; set; }
-        }
-
+        #region interface ImportData
+        /// <summary>
+        /// CSV导入模型接口
+        /// </summary>
         protected interface ImportData
         {
             string ErrorMsg { get; set; }
         }
+        #endregion
 
     }
 }
