@@ -86,6 +86,7 @@ namespace ApiServer
 
         void hostStaticFileServer(IApplicationBuilder app, IHostingEnvironment env)
         {
+            Console.WriteLine("=======",env.EnvironmentName);
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             Console.WriteLine("content root path: " + env.ContentRootPath);
             Console.WriteLine("web root path: " + env.WebRootPath);

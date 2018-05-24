@@ -27,22 +27,25 @@
           "icon": "dashboard",
           "children": [
             {
-              "id": "meshes",
-              "title": "nav.MyResourcesMeshes",
+              "id": "staticmesh",
+              "title": "nav.StaticMesh",
               "type": "item",
-              "url": "/pages/faq"
+              "icon": "domain",
+              "url": "/app/staticmeshs"
             },
             {
-              "id": "materials",
-              "title": "nav.MyResourcesMaterials",
+              "id": "material",
+              "title": "nav.Material",
               "type": "item",
-              "url": "/pages/knowledge-base"
+              "icon": "healing",
+              "url": "/app/materials"
             },
             {
-              "id": "textures",
-              "title": "nav.MyResourcesTextures",
+              "id": "map",
+              "title": "nav.Map",
               "type": "item",
-              "url": "/omega/page1"
+              "icon": "map",
+              "url": "/app/maps"
             }
           ]
         }
@@ -58,56 +61,35 @@
           "id": "organ-account",
           "title": "nav.OrganAccounts",
           "type": "item",
-          "icon": "alarm",
+          "icon": "people",
           "url": "/app/organ-account"
         },
         {
           "id": "product-category",
           "title": "nav.ProductCategorys",
           "type": "item",
-          "icon": "alarm",
+          "icon": "chrome_reader_mode",
           "url": "/app/product-category"
         },
         {
           "id": "material-category",
           "title": "nav.MaterialCategorys",
           "type": "item",
-          "icon": "alarm",
+          "icon": "chrome_reader_mode",
           "url": "/app/material-category"
         },
         {
           "id": "product",
           "title": "nav.InteriorDesignProducts",
           "type": "item",
-          "icon": "alarm",
+          "icon": "shopping_basket",
           "url": "/app/products"
-        },
-        {
-          "id": "staticmesh",
-          "title": "nav.StaticMesh",
-          "type": "item",
-          "icon": "alarm",
-          "url": "/app/staticmeshs"
-        },
-        {
-          "id": "material",
-          "title": "nav.Material",
-          "type": "item",
-          "icon": "alarm",
-          "url": "/app/materials"
-        },
-        {
-          "id": "map",
-          "title": "nav.Map",
-          "type": "item",
-          "icon": "alarm",
-          "url": "/app/maps"
         },
         {
           "id": "solution",
           "title": "nav.InteriorDesignSolutions",
           "type": "item",
-          "icon": "alarm",
+          "icon": "note",
           "url": "/app/solutions",
           "field": "value"
         },
@@ -115,7 +97,7 @@
           "id": "order",
           "title": "nav.Order",
           "type": "item",
-          "icon": "alarm",
+          "icon": "assignment",
           "url": "/app/orders",
           "field": "value"
         },
@@ -123,7 +105,7 @@
           "id": "package",
           "title": "nav.Package",
           "type": "item",
-          "icon": "alarm",
+          "icon": "extension",
           "url": "/app/packages",
           "field": "value"
         }

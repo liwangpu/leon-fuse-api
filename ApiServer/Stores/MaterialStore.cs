@@ -75,6 +75,10 @@ namespace ApiServer.Stores
 
             if (!string.IsNullOrWhiteSpace(data.CategoryId))
                 data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
+
+            if (!string.IsNullOrWhiteSpace(data.FileAssetId))
+                data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
+
             return data.ToDTO();
         }
         #endregion

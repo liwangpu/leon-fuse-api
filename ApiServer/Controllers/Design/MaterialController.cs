@@ -1,11 +1,15 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Services;
 using ApiServer.Stores;
 using BambooCore;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -192,6 +196,87 @@ namespace ApiServer.Controllers
                 }
             }
             return Ok();
+        }
+        #endregion
+
+        #region ImportMaterialAndCategory 根据CSV批量分类材质
+        /// <summary>
+        /// 根据CSV批量分类材质
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Route("ImportMaterialAndCategory")]
+        [HttpPut]
+        public async Task<IActionResult> ImportMaterialAndCategory(IFormFile file)
+        {
+            var accid = AuthMan.GetAccountId(this);
+            var currentAcc = await _context.Accounts.FindAsync(accid);
+            var psMaterialQuery = await _Store._GetPermissionData(accid, DataOperateEnum.Update);
+            var psCategoryQuery = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Material && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
+            var importOp = new Func<MaterialAndCategoryImportCSV, Task<string>>(async (data) =>
+            {
+                var mapProductCount = await psMaterialQuery.Where(x => x.Name.Trim() == data.MaterialName.Trim()).CountAsync();
+                if (mapProductCount == 0)
+                    return "没有找到该材质或您没有权限修改该条数据";
+                if (mapProductCount > 1)
+                    return "材质名称有重复,请手动分配该材质";
+                var mapCategoryCount = await psCategoryQuery.Where(x => x.Name == data.CategoryName).CountAsync();
+                if (mapCategoryCount == 0)
+                    return "没有找到该分类,请确认分类名称是否有误";
+                if (mapCategoryCount > 1)
+                    return "分类名称有重复,请手动分配该材质";
+
+                var refProduct = await psMaterialQuery.Where(x => x.Name.Trim() == data.MaterialName.Trim()).FirstAsync();
+                var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
+                refProduct.CategoryId = refCategory.Id;
+                _context.Materials.Update(refProduct);
+                return await Task.FromResult(string.Empty);
+            });
+
+            var doneOp = new Action(async () =>
+            {
+                await _context.SaveChangesAsync();
+            });
+            return await _ImportRequest(file, importOp, doneOp);
+        }
+        #endregion
+
+        #region MaterialAndCategoryImportTemplate 导出根据CSV批量分类材质模版
+        /// <summary>
+        /// 导出根据CSV批量分类材质模版
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("MaterialAndCategoryImportTemplate")]
+        public IActionResult MaterialAndCategoryImportTemplate()
+        {
+            return _ExportCSVTemplateRequest<MaterialAndCategoryExportCSV>();
+        }
+        #endregion
+
+        #region  [ CSV Matedata ]
+        class MaterialAndCategoryImportCSV : ClassMap<MaterialAndCategoryImportCSV>, ImportData
+        {
+            public MaterialAndCategoryImportCSV()
+                : base()
+            {
+                AutoMap();
+            }
+            public string MaterialName { get; set; }
+            public string CategoryName { get; set; }
+            public string ErrorMsg { get; set; }
+        }
+
+        class MaterialAndCategoryExportCSV : ClassMap<MaterialAndCategoryExportCSV>
+        {
+            public MaterialAndCategoryExportCSV()
+                : base()
+            {
+                AutoMap();
+            }
+
+            public string MaterialName { get; set; }
+            public string CategoryName { get; set; }
         }
         #endregion
     }

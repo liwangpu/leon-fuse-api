@@ -16,14 +16,14 @@
           "id": "product",
           "title": "nav.InteriorDesignProducts",
           "type": "item",
-          "icon": "alarm",
+          "icon": "shopping_basket",
           "url": "/app/products"
         },
         {
           "id": "solution",
           "title": "nav.InteriorDesignSolutions",
           "type": "item",
-          "icon": "alarm",
+          "icon": "note",
           "url": "/app/solutions",
           "field": "value"
         },
@@ -31,15 +31,15 @@
           "id": "order",
           "title": "nav.Order",
           "type": "item",
-          "icon": "alarm",
+          "icon": "assignment",
           "url": "/app/orders",
           "field": "value"
         },
         {
-          "id": "order",
+          "id": "package",
           "title": "nav.Package",
           "type": "item",
-          "icon": "alarm",
+          "icon": "extension",
           "url": "/app/packages",
           "field": "value"
         }

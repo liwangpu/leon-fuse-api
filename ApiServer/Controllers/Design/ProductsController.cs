@@ -234,15 +234,20 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-
+        #region ProductAndCategoryImportTemplate 导出根据CSV批量分类产品模版
+        /// <summary>
+        /// 导出根据CSV批量分类产品模版
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("ProductAndCategoryImportTemplate")]
         public IActionResult ProductAndCategoryImportTemplate()
         {
             return _ExportCSVTemplateRequest<ProductAndCategoryExportCSV>();
         }
+        #endregion
 
-        #region  批量修改产品列表CSV Matedata
+        #region  [ CSV Matedata ]
         class ProductAndCategoryImportCSV : ClassMap<ProductAndCategoryImportCSV>, ImportData
         {
             public ProductAndCategoryImportCSV()

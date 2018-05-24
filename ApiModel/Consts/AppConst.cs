@@ -2,12 +2,16 @@
 {
     public class AppConst
     {
+        //用户角色
         public const string AccountType_SysAdmin = "sysadmin";
         public const string AccountType_SysService = "sysservice";
         public const string AccountType_OrganAdmin = "organadmin";
         public const string AccountType_OrganMember = "organmember";
-
-
+        public const string AccountType_PartnerAdmin = "partneradmin";
+        public const string AccountType_PartnerMember = "partnermember";
+        public const string AccountType_SupplierAdmin = "supplieradmin";
+        public const string AccountType_SupplierMember = "suppliermember";
+        //数据状态
         public const int I_DataState_InActive = 0;
         public const int I_DataState_Active = 1;
         //权限树节点类型
@@ -16,7 +20,7 @@
         public const string S_NodeType_Account = "Account";
         //分类树节点类型
         public const string S_NodeType_Product = "Product";
-
+        //Query Operate
         public const string S_QueryOperate_Eq = "eq";
         public const string S_QueryOperate_Lt = "lt";
         public const string S_QueryOperate_Le = "le";
@@ -35,6 +39,6 @@
 
 
         public const string S_Category_Product = "product";
-
+        public const string S_Category_Material = "material";
     }
 }

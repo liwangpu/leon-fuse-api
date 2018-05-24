@@ -125,7 +125,25 @@ namespace ApiServer.Stores
 
         /**************** public method ****************/
 
-        #region _GetPermissionData 获取用户权限数据
+        #region _GetByIdAsync 根据id信息返回实体数据信息
+        /// <summary>
+        /// 根据id信息返回实体数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<T> _GetByIdAsync(string id)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                var data = await _DbContext.Set<T>().FindAsync(id);
+                if (data != null)
+                    return data;
+            }
+            return new T();
+        }
+        #endregion
+
+        #region virtual _GetPermissionData 获取用户权限数据
         /// <summary>
         /// 获取用户权限数据
         /// </summary>
@@ -191,24 +209,6 @@ namespace ApiServer.Stores
                 }
             }
             #endregion
-        }
-        #endregion
-
-        #region _GetByIdAsync 根据id信息返回实体数据信息
-        /// <summary>
-        /// 根据id信息返回实体数据信息
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<T> _GetByIdAsync(string id)
-        {
-            if (!string.IsNullOrWhiteSpace(id))
-            {
-                var data = await _DbContext.Set<T>().FindAsync(id);
-                if (data != null)
-                    return data;
-            }
-            return new T();
         }
         #endregion
 

@@ -1,5 +1,4 @@
 ﻿using ApiModel;
-using ApiModel.Enums;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
