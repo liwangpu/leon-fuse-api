@@ -141,7 +141,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 材质创建模型
     /// </summary>
-    public class MaterialCreateModel
+    public class MaterialCreateModel : ClientAsstCommonEditModel
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
@@ -159,7 +159,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 材质编辑模型
     /// </summary>
-    public class MaterialEditModel
+    public class MaterialEditModel : ClientAsstCommonEditModel
     {
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
@@ -250,7 +250,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 地图创建模型
     /// </summary>
-    public class MapCreateModel
+    public class MapCreateModel : ClientAsstCommonEditModel
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
@@ -266,7 +266,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 地图编辑模型
     /// </summary>
-    public class MapEditModel
+    public class MapEditModel : ClientAsstCommonEditModel
     {
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
@@ -319,7 +319,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 贴图创建模型
     /// </summary>
-    public class TextureCreateModel
+    public class TextureCreateModel : ClientAsstCommonEditModel
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
@@ -335,7 +335,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 贴图编辑模型
     /// </summary>
-    public class TextureEditModel
+    public class TextureEditModel : ClientAsstCommonEditModel
     {
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }

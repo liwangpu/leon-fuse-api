@@ -7,6 +7,7 @@ using ApiServer.Models;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -97,7 +98,7 @@ namespace ApiServer.Stores
             {
                 /*
                  * api提供的字段信息是大小写不敏感,或者说经过转换大小写了
-                 * client在排序的时候并不知道真实属性的名字,需要经过反射获取原来属性的名字信息
+                 * client在排序的时候并不知道真实属性的名字,server需要经过反射获取原来属性的名字信息
                  * 确保在排序的时候不会出现异常
                  */
                 var realProperty = string.Empty;
@@ -156,7 +157,7 @@ namespace ApiServer.Stores
             var emptyQuery = Enumerable.Empty<T>().AsQueryable();
             var query = emptyQuery;
 
-            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            var currentAcc = await _DbContext.Accounts.Include(x => x.Organization).FirstAsync(x => x.Id == accid);
             if (currentAcc == null)
                 return query;
 
@@ -172,9 +173,10 @@ namespace ApiServer.Stores
                 {
                     return query;
                 }
-                else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+                else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
                 {
-                    return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
                 }
                 else
                 {
@@ -183,32 +185,78 @@ namespace ApiServer.Stores
             }
             #endregion
 
-            #region 资源类型过滤-数据操作类型过滤(基本用户类型,不用考虑角色了,只考虑资源类型和操作过滤)
+            #region func getPersonalResource 不单独定义方法了,用一个Func返回query就好了
+            var getPersonalResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
             {
-                #region getPersonalResource 不单独定义方法了,用一个Func返回query就好了
-                var getPersonalResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
-                {
-                    return q.Where(x => x.Creator == currentAcc.Id);
-                });
-                #endregion
+                return q.Where(x => x.Creator == currentAcc.Id);
+            });
+            #endregion
 
+            #region 资源类型过滤-数据操作类型过滤
+            {
+                #region NoLimit
                 if (ResourceTypeSetting == ResourceTypeEnum.NoLimit)
                 {
-                    return query;
+                    if (dataOp == DataOperateEnum.Read)
+                        return query;
                 }
-                else if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+                #endregion
+
+
+                #region Organizational
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                 {
                     if (dataOp == DataOperateEnum.Read)
+                    {
+                        var pass = new List<string>()
+                        {
+                            AppConst.AccountType_PartnerAdmin,
+                            AppConst.AccountType_PartnerMember,
+                            AppConst.AccountType_SupplierAdmin,
+                            AppConst.AccountType_SupplierMember,
+                        };
+
+                        if (pass.Contains(currentAcc.Type))
+                            return query.Where(x => x.OrganizationId == currentAcc.Organization.ParentId);
+
                         return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    }
                     else
+                    {
                         return getPersonalResource(query);
+                    }
                 }
-                else
+                #endregion
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_DownView_UpView_OwnEdit)
                 {
-                    return getPersonalResource(query);
+                    if (dataOp == DataOperateEnum.Read)
+                    {
+                        var pass = new List<string>()
+                        {
+                            AppConst.AccountType_PartnerAdmin,
+                            AppConst.AccountType_PartnerMember,
+                            AppConst.AccountType_SupplierAdmin,
+                            AppConst.AccountType_SupplierMember,
+                        };
+
+                        if (pass.Contains(currentAcc.Type))
+                            return query.Where(x => x.OrganizationId == currentAcc.Organization.ParentId);
+
+
+
+
+                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    }
+                    else
+                    {
+                        return getPersonalResource(query);
+                    }
                 }
+
             }
             #endregion
+
+            return getPersonalResource(query);
         }
         #endregion
 
@@ -265,7 +313,7 @@ namespace ApiServer.Stores
             {
                 return true;
             }
-            else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+            else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
             {
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                     return true;

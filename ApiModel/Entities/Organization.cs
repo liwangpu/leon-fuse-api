@@ -12,6 +12,11 @@ namespace ApiModel.Entities
         /// </summary>
         public string ParentId { get; set; }
         /// <summary>
+        /// 组织类型,可能为品牌商(brand),合伙人(partner),供应商(supplier)
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
         /// 父级组织
         /// </summary>
         public Organization Parent { get; set; }
@@ -64,6 +69,7 @@ namespace ApiModel.Entities
             dto.Location = Location;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.Type = Type;
             return dto;
         }
     }
@@ -80,5 +86,6 @@ namespace ApiModel.Entities
         public string OwnerId { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
+        public string Type { get; set; }
     }
 }

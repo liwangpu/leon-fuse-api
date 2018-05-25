@@ -89,7 +89,7 @@ namespace ApiServer.Stores
             {
                 return true;
             }
-            else if (currentAcc.Type == AppConst.AccountType_OrganAdmin)
+            else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
             {
                 return true;
             }

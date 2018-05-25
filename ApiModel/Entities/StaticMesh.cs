@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
 {
-    public class StaticMesh : EntityBase, IListable, IDTOTransfer<StaticMeshDTO>
+    public class StaticMesh : ClientAssetEntity, IListable, IDTOTransfer<StaticMeshDTO>
     {
         public string Icon { get; set; }
         public string FileAssetId { get; set; }

@@ -69,6 +69,7 @@ namespace ApiServer.Controllers.Design
                 entity.Icon = model.IconAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;
+                entity.PackageName = model.PackageName;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -95,6 +96,7 @@ namespace ApiServer.Controllers.Design
                 entity.Icon = model.IconAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;
+                entity.PackageName = model.PackageName;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

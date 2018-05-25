@@ -107,7 +107,7 @@ namespace ApiServer.Controllers
                 entity.Icon = model.IconAssetId;
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
-
+                entity.PackageName = model.PackageName;
                 entity.CategoryId = model.CategoryId;
                 entity.Dependencies = model.Dependencies;
                 entity.Parameters = model.Parameters;
@@ -135,7 +135,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-
+                entity.PackageName = model.PackageName;
                 entity.FileAssetId = model.FileAssetId;
                 entity.CategoryId = model.CategoryId;
                 entity.Dependencies = model.Dependencies;

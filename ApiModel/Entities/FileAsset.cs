@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -32,7 +30,10 @@ namespace ApiModel.Entities
         public string UploadTime { get; set; }
         public string CategoryId { get; set; }
         public string Icon { get; set; }
-
+        /// <summary>
+        /// 扩展属性1,各实体根据自己需要存储
+        /// </summary>
+        public string ExtraProperty1 { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 

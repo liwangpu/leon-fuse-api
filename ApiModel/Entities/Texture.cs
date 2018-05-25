@@ -2,7 +2,7 @@
 
 namespace ApiModel.Entities
 {
-    public class Texture : EntityBase, IListable,IDTOTransfer<TextureDTO>
+    public class Texture : ClientAssetEntity, IListable, IDTOTransfer<TextureDTO>
     {
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
@@ -29,6 +29,9 @@ namespace ApiModel.Entities
                 dto.Icon = IconFileAsset.Url;
                 dto.IconAssetId = IconFileAsset.Id;
             }
+            if (FileAsset != null)
+                dto.FileAsset = FileAsset.ToDTO();
+
             return dto;
         }
     }
@@ -40,5 +43,6 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public FileAssetDTO FileAsset { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
@@ -7,6 +8,17 @@ namespace ApiServer.Stores
 {
     public class SolutionStore : ListableStore<Solution, SolutionDTO>, IStore<Solution, SolutionDTO>
     {
+        /// <summary>
+        /// 资源访问类型
+        /// </summary>
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational_DownView_UpView_OwnEdit;
+            }
+        }
+
         #region 构造函数
         public SolutionStore(ApiDbContext context)
         : base(context)

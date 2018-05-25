@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
-    public class Material : EntityBase, IAsset, IListable, IDTOTransfer<MaterialDTO>
+    public class Material : ClientAssetEntity, IAsset, IListable, IDTOTransfer<MaterialDTO>
     {
         public string Icon { get; set; }
         public string FileAssetId { get; set; }

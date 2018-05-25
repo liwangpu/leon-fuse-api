@@ -63,11 +63,21 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region ClientAsstCommonEditModel 客户端通用编辑模型基类
+    /// <summary>
+    /// 客户端通用编辑模型基类
+    /// </summary>
+    public class ClientAsstCommonEditModel
+    {
+        public string PackageName { get; set; }
+    } 
+    #endregion
+
     #region StaticMeshCreateModel 模型文件创建模型
     /// <summary>
     /// 模型文件创建模型
     /// </summary>
-    public class StaticMeshCreateModel
+    public class StaticMeshCreateModel: ClientAsstCommonEditModel
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
@@ -84,7 +94,7 @@ namespace ApiServer.Models
     /// <summary>
     /// 模型文件编辑模型
     /// </summary>
-    public class StaticMeshEditModel
+    public class StaticMeshEditModel: ClientAsstCommonEditModel
     {
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }

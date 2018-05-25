@@ -107,6 +107,7 @@ namespace ApiServer.Models
         [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
         public string Location { get; set; }
         public string ParentId { get; set; }
+        public string Type { get; set; }
     }
     #endregion
 

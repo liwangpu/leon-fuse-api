@@ -2,7 +2,7 @@
 
 namespace ApiModel.Entities
 {
-    public class Map : EntityBase, IListable, IDTOTransfer<MapDTO>
+    public class Map : ClientAssetEntity, IListable, IDTOTransfer<MapDTO>
     {
         public string Icon { get; set; }
         public string FileAssetId { get; set; }

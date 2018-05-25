@@ -5,12 +5,16 @@
         //用户角色
         public const string AccountType_SysAdmin = "sysadmin";
         public const string AccountType_SysService = "sysservice";
-        public const string AccountType_OrganAdmin = "organadmin";
-        public const string AccountType_OrganMember = "organmember";
+        public const string AccountType_BrandAdmin = "organadmin";
+        public const string AccountType_BrandMember = "organmember";
         public const string AccountType_PartnerAdmin = "partneradmin";
         public const string AccountType_PartnerMember = "partnermember";
         public const string AccountType_SupplierAdmin = "supplieradmin";
         public const string AccountType_SupplierMember = "suppliermember";
+        //组织类型
+        public const string OrganType_Brand = "brand";
+        public const string OrganType_Partner = "partner";
+        public const string OrganType_Supplier = "supplier";
         //数据状态
         public const int I_DataState_InActive = 0;
         public const int I_DataState_Active = 1;

@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -71,7 +72,10 @@ namespace ApiServer.Controllers
             var mapping = new Func<Organization, Task<Organization>>(async (entity) =>
             {
                 entity.Name = model.Name;
-                entity.ParentId = model.ParentId;
+                if (string.IsNullOrWhiteSpace(model.Type))
+                    entity.Type = AppConst.OrganType_Brand;
+                else
+                    entity.Type = model.Type;
                 entity.Description = model.Description;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
