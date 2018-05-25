@@ -1,7 +1,10 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -35,7 +38,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyCreateAsync(string accid, Solution data, ModelStateDictionary modelState)
         {
-            await Task.FromResult(string.Empty);
+            if (!string.IsNullOrEmpty(data.LayoutId))
+            {
+                var exist = await _DbContext.Layouts.CountAsync(x => x.Id == data.LayoutId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+                if (!exist)
+                    modelState.AddModelError("LayoutId", "没有找到该记录信息");
+            }
         }
         #endregion
 
@@ -49,7 +57,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task SatisfyUpdateAsync(string accid, Solution data, ModelStateDictionary modelState)
         {
-            await Task.FromResult(string.Empty);
+            if (!string.IsNullOrEmpty(data.LayoutId))
+            {
+                var exist = await _DbContext.Layouts.CountAsync(x => x.Id == data.LayoutId && x.ActiveFlag == AppConst.I_DataState_Active) > 0;
+                if (!exist)
+                    modelState.AddModelError("LayoutId", "没有找到该记录信息");
+            }
         }
         #endregion
     }

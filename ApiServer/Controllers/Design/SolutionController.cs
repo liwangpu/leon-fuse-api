@@ -70,9 +70,9 @@ namespace ApiServer.Controllers.Design
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.LayoutId = model.LayoutId;
+                if (!string.IsNullOrWhiteSpace(model.LayoutId))
+                    entity.LayoutId = model.LayoutId;
                 entity.CategoryId = model.CategoryId;
-
                 entity.Data = model.Data;
                 return await Task.FromResult(entity);
             });
@@ -94,8 +94,9 @@ namespace ApiServer.Controllers.Design
             var mapping = new Func<Solution, Task<Solution>>(async (entity) =>
             {
                 entity.Name = model.Name;
-                entity.Description = model.Description;       
-                entity.LayoutId = model.LayoutId;
+                entity.Description = model.Description;
+                if (!string.IsNullOrWhiteSpace(model.LayoutId))
+                    entity.LayoutId = model.LayoutId;
                 entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
 

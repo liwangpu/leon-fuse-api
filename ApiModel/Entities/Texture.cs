@@ -18,6 +18,7 @@ namespace ApiModel.Entities
             var dto = new TextureDTO();
             dto.Id = Id;
             dto.Name = Name;
+            dto.PackageName = PackageName;
             dto.Description = Description;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
@@ -43,6 +44,7 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string PackageName { get; set; }
         public FileAssetDTO FileAsset { get; set; }
     }
 }

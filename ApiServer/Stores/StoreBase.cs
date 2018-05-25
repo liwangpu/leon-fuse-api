@@ -193,15 +193,17 @@ namespace ApiServer.Stores
             #endregion
 
             #region 资源类型过滤-数据操作类型过滤
+            for (int i = 0; i < 1; i++)
             {
                 #region NoLimit
                 if (ResourceTypeSetting == ResourceTypeEnum.NoLimit)
                 {
                     if (dataOp == DataOperateEnum.Read)
                         return query;
+
+                    break;
                 }
                 #endregion
-
 
                 #region Organizational
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
@@ -221,38 +223,33 @@ namespace ApiServer.Stores
 
                         return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
                     }
-                    else
-                    {
-                        return getPersonalResource(query);
-                    }
+
+                    break;
                 }
                 #endregion
+
+                #region Organizational_DownView_UpView_OwnEdit
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational_DownView_UpView_OwnEdit)
                 {
                     if (dataOp == DataOperateEnum.Read)
                     {
-                        var pass = new List<string>()
+                        if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_BrandMember)
                         {
-                            AppConst.AccountType_PartnerAdmin,
-                            AppConst.AccountType_PartnerMember,
-                            AppConst.AccountType_SupplierAdmin,
-                            AppConst.AccountType_SupplierMember,
-                        };
+                            var organQ = from it in _DbContext.Organizations
+                                         where it.ParentId == currentAcc.OrganizationId || it.Id == currentAcc.OrganizationId
+                                         select it;
+                            var dataQ = from q in query
+                                        join it in organQ on q.OrganizationId equals it.Id
+                                        select q;
+                            return dataQ;
+                        }
 
-                        if (pass.Contains(currentAcc.Type))
-                            return query.Where(x => x.OrganizationId == currentAcc.Organization.ParentId);
-
-
-
-
-                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId || x.OrganizationId == currentAcc.Organization.ParentId);
                     }
-                    else
-                    {
-                        return getPersonalResource(query);
-                    }
+
+                    break;
                 }
-
+                #endregion
             }
             #endregion
 
@@ -305,25 +302,25 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task<bool> CanCreateAsync(string accid)
         {
-            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
-            if (currentAcc == null)
-                return false;
+            //var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            //if (currentAcc == null)
+            //    return false;
 
-            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
-            {
-                return true;
-            }
-            else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
-            {
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
-                    return true;
-            }
-            else
-            {
-                if (ResourceTypeSetting == ResourceTypeEnum.Personal)
-                    return true;
-            }
-            return await Task.FromResult(false);
+            //if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            //{
+            //    return true;
+            //}
+            //else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
+            //{
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+            //        return true;
+            //}
+            //else
+            //{
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Personal || ResourceTypeSetting == ResourceTypeEnum.Organizational_DownView_UpView_OwnEdit)
+            //        return true;
+            //}
+            return await Task.FromResult(true);
         }
         #endregion
 

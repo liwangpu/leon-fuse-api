@@ -20,6 +20,7 @@ namespace ApiModel.Entities
             var dto = new MapDTO();
             dto.Id = Id;
             dto.Name = Name;
+            dto.PackageName = PackageName;
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
             dto.Description = Description;
@@ -43,6 +44,7 @@ namespace ApiModel.Entities
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string PackageName { get; set; }
         public FileAssetDTO FileAsset { get; set; }
     }
 

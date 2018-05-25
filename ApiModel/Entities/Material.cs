@@ -22,6 +22,7 @@ namespace ApiModel.Entities
             var dto = new MaterialDTO();
             dto.Id = Id;
             dto.Name = Name;
+            dto.PackageName = PackageName;
             dto.Description = Description;
             dto.FileAssetId = FileAssetId;
             dto.Dependencies = Dependencies;
@@ -55,6 +56,7 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
+        public string PackageName { get; set; }
         public string Url { get; set; }
         public FileAssetDTO FileAsset { get; set; }
         public string CategoryId { get; set; }
