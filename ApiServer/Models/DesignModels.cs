@@ -189,6 +189,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
         public string State { get; set; }
+        public string IconAssetId { get; set; }
         public DateTime StateTime { get; set; }
     }
     #endregion
@@ -208,6 +209,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
         public string State { get; set; }
+        public string IconAssetId { get; set; }
         public DateTime StateTime { get; set; }
     }
     #endregion
@@ -224,13 +226,14 @@ namespace ApiServer.Models
         public string Description { get; set; }
         public string Content { get; set; }
         public string State { get; set; }
+        public string IconAssetId { get; set; }
         public DateTime StateTime { get; set; }
     }
     #endregion
 
-    #region PackageEditModel 订单编辑模型
+    #region PackageEditModel 套餐编辑模型
     /// <summary>
-    /// 订单编辑模型
+    /// 套餐编辑模型
     /// </summary>
     public class PackageEditModel
     {
@@ -242,6 +245,7 @@ namespace ApiServer.Models
         public string Description { get; set; }
         public string Content { get; set; }
         public string State { get; set; }
+        public string IconAssetId { get; set; }
         public DateTime StateTime { get; set; }
     }
     #endregion

@@ -419,11 +419,14 @@ namespace ApiServer.Stores
         public virtual async Task DeleteAsync(string accid, string id)
         {
             var data = await _GetByIdAsync(id);
-            data.Modifier = accid;
-            data.ModifiedTime = DateTime.Now;
-            data.ActiveFlag = AppConst.I_DataState_InActive;
-            _DbContext.Set<T>().Update(data);
-            await _DbContext.SaveChangesAsync();
+            if (data != null)
+            {
+                data.Modifier = accid;
+                data.ModifiedTime = DateTime.Now;
+                data.ActiveFlag = AppConst.I_DataState_InActive;
+                _DbContext.Set<T>().Update(data);
+                await _DbContext.SaveChangesAsync();
+            }
         }
         #endregion
 

@@ -270,6 +270,46 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region BatchDelete 批量删除数据信息
+        /// <summary>
+        /// 批量删除数据信息
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [Route("BatchDelete")]
+        [HttpDelete]
+        public virtual async Task<IActionResult> BatchDelete(string ids)
+        {
+            if (!string.IsNullOrWhiteSpace(ids))
+            {
+                var accid = AuthMan.GetAccountId(this);
+                var arr = ids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                for (int idx = arr.Length - 1; idx >= 0; idx--)
+                {
+                    var curid = arr[idx];
+                    var exist = await _Store.ExistAsync(curid);
+                    if (!exist)
+                    {
+                        ModelState.AddModelError("id", $"\"{curid}\"对应记录不存在");
+                        return new ValidationFailedResult(ModelState);
+                    }
+
+                    var canDelete = await _Store.CanDeleteAsync(accid, curid);
+                    if (!canDelete)
+                    {
+                        ModelState.AddModelError("id", $"您没有权限删除\"{curid}\"信息");
+                        return new ValidationFailedResult(ModelState);
+                    }
+
+                    await _Store.DeleteAsync(accid, curid);
+                }
+                return Ok();
+            }
+            return BadRequest();
+        } 
+        #endregion
+
         #region KeyWordSearchQ 基本关键词查询
         /// <summary>
         /// 基本关键词查询

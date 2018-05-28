@@ -43,6 +43,7 @@ namespace ApiServer.Data
                 acc.ActivationTime = DateTime.UtcNow;
                 acc.ExpireTime = DateTime.UtcNow.AddYears(100);
                 acc.Type = "sysadmin";
+                acc.Name = "超级管理员";
                 context.Accounts.Add(acc);
             }
 
