@@ -33,7 +33,8 @@
           "type": "item",
           "icon": "assignment",
           "url": "/app/orders",
-          "field": "value"
+          "field": "value",
+          "EditOp": "true"
         },
         {
           "id": "package",

@@ -31,21 +31,24 @@
               "title": "nav.StaticMesh",
               "type": "item",
               "icon": "domain",
-              "url": "/app/staticmeshs"
+              "url": "/app/staticmeshs",
+              "EditOp": "true"
             },
             {
               "id": "material",
               "title": "nav.Material",
               "type": "item",
               "icon": "healing",
-              "url": "/app/materials"
+              "url": "/app/materials",
+              "EditOp": "true"
             },
             {
               "id": "map",
               "title": "nav.Map",
               "type": "item",
               "icon": "map",
-              "url": "/app/maps"
+              "url": "/app/maps",
+              "EditOp": "true"
             }
           ]
         }
@@ -62,14 +65,16 @@
           "title": "nav.Organization",
           "type": "item",
           "icon": "device_hub",
-          "url": "/app/organ"
+          "url": "/app/organ",
+          "EditOp": "true"
         },
         {
           "id": "product",
           "title": "nav.InteriorDesignProducts",
           "type": "item",
           "icon": "shopping_basket",
-          "url": "/app/products"
+          "url": "/app/products",
+          "EditOp": "true"
         },
         {
           "id": "solution",
@@ -77,7 +82,8 @@
           "type": "item",
           "icon": "note",
           "url": "/app/solutions",
-          "field": "value"
+          "field": "value",
+          "EditOp": "true"
         },
         {
           "id": "order",
@@ -85,7 +91,8 @@
           "type": "item",
           "icon": "assignment",
           "url": "/app/orders",
-          "field": "value"
+          "field": "value",
+          "EditOp": "true"
         },
         {
           "id": "package",
@@ -93,7 +100,8 @@
           "type": "item",
           "icon": "extension",
           "url": "/app/packages",
-          "field": "value"
+          "field": "value",
+          "EditOp": "true"
         }
       ]
     }

@@ -37,6 +37,10 @@ namespace BambooCommon
         /// </summary>
         public string url { get; set; }
         /// <summary>
+        /// 用户是否有编辑权限
+        /// </summary>
+        public bool editOp { get; set; }
+        /// <summary>
         /// 徽章，也就是消息数量提醒用。可以为null。
         /// </summary>
         public NavigationItemBadge badge { get; set; }
