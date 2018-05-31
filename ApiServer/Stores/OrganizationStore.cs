@@ -3,6 +3,7 @@ using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Models;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -237,6 +238,48 @@ namespace ApiServer.Stores
             return emptyQuery;
 
         }
+
+        #region override SimplePagedQueryAsync
+        /// <summary>
+        /// SimplePagedQueryAsync
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="accid"></param>
+        /// <param name="advanceQuery"></param>
+        /// <returns></returns>
+        public override async Task<PagedData<Organization>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<Organization>, Task<IQueryable<Organization>>> advanceQuery = null)
+        {
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
+
+            if (result.Total > 0)
+            {
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var curData = result.Data[idx];
+                    if (!string.IsNullOrWhiteSpace(curData.Icon))
+                        curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
+                }
+            }
+            return result;
+        }
+        #endregion
+
+        #region GetByIdAsync 根据Id返回实体DTO数据信息
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<OrganizationDTO> GetByIdAsync(string id)
+        {
+            var data = await _GetByIdAsync(id);
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+            {
+                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            }
+            return data.ToDTO();
+        }
+        #endregion
 
         #region GetOrganOwner 根据组织Id获取组织管理员信息
         /// <summary>

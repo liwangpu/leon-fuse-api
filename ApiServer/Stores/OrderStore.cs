@@ -73,10 +73,10 @@ namespace ApiServer.Stores
                         }
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(data.Icon))
-                {
-                    data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
-                }
+            }
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+            {
+                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
             }
             return data.ToDTO();
         }

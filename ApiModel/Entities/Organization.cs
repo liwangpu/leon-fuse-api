@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
@@ -38,23 +36,15 @@ namespace ApiModel.Entities
         /// <summary>
         /// 部门
         /// </summary>
-        [JsonIgnore]
         public List<Department> Departments { get; set; }
-
-        [JsonIgnore]
         public List<ClientAsset> ClientAssets { get; set; }
-        [JsonIgnore]
         public List<Product> Products { get; set; }
-        [JsonIgnore]
         public List<Solution> Solutions { get; set; }
-        [JsonIgnore]
         public List<Layout> Layouts { get; set; }
-        [JsonIgnore]
         public List<Order> Orders { get; set; }
-        [JsonIgnore]
         public List<AssetFolder> Folders { get; set; }
-        [JsonIgnore]
         public List<FileAsset> Files { get; set; }
+
         public string Icon { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }
@@ -70,22 +60,25 @@ namespace ApiModel.Entities
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
             dto.Type = Type;
+            if (IconFileAsset != null)
+            {
+                dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
+            }
             return dto;
         }
     }
 
 
 
-    public class OrganizationDTO : DataBase
+    public class OrganizationDTO : EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }
         public string ParentId { get; set; }
         public string OwnerId { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public string Type { get; set; }
     }
 }

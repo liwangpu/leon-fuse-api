@@ -102,6 +102,15 @@
           "url": "/app/packages",
           "field": "value",
           "EditOp": "true"
+        },
+        {
+          "id": "layout",
+          "title": "nav.Layout",
+          "type": "item",
+          "icon": "account_balance",
+          "url": "/app/layouts",
+          "field": "value",
+          "EditOp": "true"
         }
       ]
     }

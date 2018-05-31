@@ -77,6 +77,7 @@ namespace ApiServer.Controllers
                 else
                     entity.Type = model.Type;
                 entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
                 return await Task.FromResult(entity);
@@ -102,6 +103,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.ParentId = model.ParentId;
                 entity.Description = model.Description;
+                entity.Icon = model.IconAssetId;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
                 return await Task.FromResult(entity);
