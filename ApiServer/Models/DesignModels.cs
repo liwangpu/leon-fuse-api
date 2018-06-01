@@ -263,6 +263,7 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
+        public string FileAssetId { get; set; }
     }
     #endregion
 
@@ -281,6 +282,7 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
+        public string FileAssetId { get; set; }
     }
     #endregion
 

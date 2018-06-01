@@ -66,7 +66,7 @@ namespace ApiServer.Stores
             if (!string.IsNullOrWhiteSpace(data.Icon))
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
-                data.FileAsset = await _DbContext.Files.FindAsync(data.Icon);
+                data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
             return data.ToDTO();
         }
         #endregion

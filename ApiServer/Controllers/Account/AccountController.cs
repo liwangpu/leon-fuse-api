@@ -141,7 +141,8 @@ namespace ApiServer.Controllers
             if (acc == null)
                 return null;
             AccountProfileModel p = new AccountProfileModel();
-            p.Nickname = acc.Name;
+            p.Id = acc.Id;
+            p.Name = acc.Name;
             p.Avatar = acc.Icon;
             p.Brief = acc.Description;
             p.Location = acc.Location;

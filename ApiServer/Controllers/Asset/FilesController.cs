@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,15 +23,17 @@ namespace ApiServer.Controllers
     [Route("/[controller]")]
     public class FilesController : ListableController<FileAsset, FileAssetDTO>
     {
+        private readonly ApiDbContext _DbContent;
         private readonly FileAssetStore _FileAssetStore;
         private readonly Repository<FileAsset> repo;
         private IHostingEnvironment hostEnv;
         private string uploadPath;
 
         #region 构造函数
-        public FilesController(Data.ApiDbContext context, IHostingEnvironment env)
+        public FilesController(ApiDbContext context, IHostingEnvironment env)
             : base(new FileAssetStore(context))
         {
+            _DbContent = context;
             _FileAssetStore = new FileAssetStore(context);
             repo = new Repository<FileAsset>(context);
             hostEnv = env;
@@ -201,6 +205,9 @@ namespace ApiServer.Controllers
             if (fileExt.Length > 0 && fileExt[0] != '.')
                 fileExt = "." + fileExt;
 
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _DbContent.Accounts.FindAsync(accid);
+
             FileAsset res = new FileAsset();
             res.Id = GuidGen.NewGUID(); //先生成临时ID，用于保存文件
             res.Name = localPath.Length > 0 ? Path.GetFileName(localPath) : res.Id;
@@ -208,6 +215,10 @@ namespace ApiServer.Controllers
             res.FileExt = fileExt;
             res.LocalPath = localPath;
             res.Description = description;
+            res.Creator = accid;
+            res.Modifier = accid;
+            res.OrganizationId = account.OrganizationId;
+
 
             //保存
             string savePath = Path.Combine(uploadPath, res.Id);
@@ -255,7 +266,7 @@ namespace ApiServer.Controllers
                 System.IO.File.Move(savePath, renamedPath); //重命名文件
             }
 
-            await repo.CreateAsync(AuthMan.GetAccountId(this), res, false); //记录到数据库
+            await repo.CreateAsync(accid, res, false); //记录到数据库
 
             return Ok(res);
         }

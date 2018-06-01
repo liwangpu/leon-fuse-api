@@ -73,6 +73,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
                 entity.PackageName = model.PackageName;
+                entity.FileAssetId = model.FileAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
@@ -99,6 +100,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.PackageName = model.PackageName;
+                entity.FileAssetId = model.FileAssetId;
                 entity.Icon = model.IconAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;

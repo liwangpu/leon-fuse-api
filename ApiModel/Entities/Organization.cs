@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ApiModel.Consts;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
@@ -65,6 +66,22 @@ namespace ApiModel.Entities
                 dto.Icon = IconFileAsset.Url;
                 dto.IconAssetId = IconFileAsset.Id;
             }
+            switch (Type)
+            {
+                case AppConst.OrganType_Brand:
+                    dto.TypeName = "品牌商";
+                    break;
+                case AppConst.OrganType_Partner:
+                    dto.TypeName = "合伙人";
+                    break;
+                case AppConst.OrganType_Supplier:
+                    dto.TypeName = "供应商";
+                    break;
+                default:
+                    dto.TypeName = "组织";
+                    break;
+            }
+
             return dto;
         }
     }
@@ -80,5 +97,6 @@ namespace ApiModel.Entities
         public string ParentId { get; set; }
         public string OwnerId { get; set; }
         public string Type { get; set; }
+        public string TypeName { get; set; }
     }
 }

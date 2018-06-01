@@ -85,7 +85,7 @@ namespace ApiServer.Services
             if (acc == null)
                 return null;
             AccountProfileModel p = new AccountProfileModel();
-            p.Nickname = acc.Name;
+            p.Name = acc.Name;
             p.Avatar = acc.Icon;
             p.Brief = acc.Description;
             p.Location = acc.Location;
@@ -102,7 +102,7 @@ namespace ApiServer.Services
             Account acc = await context.Accounts.FindAsync(accid);
             if (acc == null)
                 return false;
-            acc.Name = param.Nickname;
+            acc.Name = param.Name;
             acc.Icon = param.Avatar;
             acc.Description = param.Brief;
             acc.Location = param.Location;

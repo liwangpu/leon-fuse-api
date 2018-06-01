@@ -61,6 +61,14 @@
       "icon": "pages",
       "children": [
         {
+          "id": "organ",
+          "title": "nav.Organization",
+          "type": "item",
+          "icon": "device_hub",
+          "url": "/app/organ",
+          "EditOp": "true"
+        },
+        {
           "id": "organ-account",
           "title": "nav.OrganAccounts",
           "type": "item",
