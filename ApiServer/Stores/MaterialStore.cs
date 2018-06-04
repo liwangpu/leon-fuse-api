@@ -102,6 +102,9 @@ namespace ApiServer.Stores
                     var curData = result.Data[idx];
                     if (!string.IsNullOrWhiteSpace(curData.Icon))
                         curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
+
+                    if (!string.IsNullOrWhiteSpace(curData.CategoryId))
+                        curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
                 }
             }
             return result;

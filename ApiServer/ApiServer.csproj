@@ -59,4 +59,6 @@
     <Content Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1Production_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>

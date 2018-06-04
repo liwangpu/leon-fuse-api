@@ -68,6 +68,7 @@ namespace ApiServer.Controllers
                 {
                     query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
                 }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return await Task.FromResult(query);
             });
 
