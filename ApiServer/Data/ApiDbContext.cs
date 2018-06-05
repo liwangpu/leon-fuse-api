@@ -118,6 +118,16 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<Package> Packages { get; set; }
 
+        /// <summary>
+        /// 媒体文件
+        /// </summary>
+        public DbSet<Media> Medias { get; set; }
+
+        /// <summary>
+        /// 媒体文件分享
+        /// </summary>
+        public DbSet<MediaShareResource> MediaShareResources { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

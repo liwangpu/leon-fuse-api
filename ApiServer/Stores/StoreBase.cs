@@ -386,6 +386,7 @@ namespace ApiServer.Stores
                 data.OrganizationId = currentAcc.OrganizationId;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = DateTime.Now;
+            data.OrganizationId = currentAcc.OrganizationId;
             _DbContext.Set<T>().Add(data);
             await _DbContext.SaveChangesAsync();
         }
@@ -400,10 +401,12 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public virtual async Task UpdateAsync(string accid, T data)
         {
+            //var currentAcc = await _DbContext.Accounts.FindAsync(accid);
             //如果修改人有指定,说明有自定义需要,应该按传入的参数处理
             if (string.IsNullOrWhiteSpace(data.Modifier))
                 data.Modifier = accid;
             data.ModifiedTime = DateTime.Now;
+            //data.OrganizationId = currentAcc.OrganizationId;
             _DbContext.Set<T>().Update(data);
             await _DbContext.SaveChangesAsync();
         }

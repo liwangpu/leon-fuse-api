@@ -126,6 +126,15 @@
           "url": "/app/packages",
           "field": "value",
           "EditOp": "true"
+        },
+        {
+          "id": "share",
+          "title": "nav.Share",
+          "type": "item",
+          "icon": "share",
+          "url": "/app/shares",
+          "field": "value",
+          "EditOp": "true"
         }
       ]
     }

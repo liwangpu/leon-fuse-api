@@ -3,6 +3,34 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {
+    #region EntityCreateModel Entity基本创建模型
+    /// <summary>
+    /// Entity基本创建模型
+    /// </summary>
+    public class EntityCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+    }
+    #endregion
+
+    #region EntityEditModel Entity基本编辑模型
+    /// <summary>
+    /// Entity基本编辑模型
+    /// </summary>
+    public class EntityEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+    }
+    #endregion
+
     #region ProductCreateModel 产品新建模型
     /// <summary>
     /// 产品新建模型
@@ -354,4 +382,52 @@ namespace ApiServer.Models
         public string Properties { get; set; }
     }
     #endregion
+
+    #region MediaCreateModel 媒体文件创建模型
+    /// <summary>
+    /// 媒体文件创建模型
+    /// </summary>
+    public class MediaCreateModel : EntityCreateModel
+    {
+        public string FileAssetId { get; set; }
+        public string IconAssetId { get; set; }
+        public string Rotation { get; set; }
+        public string Location { get; set; }
+        public string SolutionId { get; set; }
+        public string Type { get; set; }
+    }
+    #endregion
+
+    #region MediaEditModel 媒体文件编辑模型
+    /// <summary>
+    /// 媒体文件编辑模型
+    /// </summary>
+    public class MediaEditModel : EntityEditModel
+    {
+        public string FileAssetId { get; set; }
+        public string IconAssetId { get; set; }
+        public string Rotation { get; set; }
+        public string Location { get; set; }
+        public string SolutionId { get; set; }
+        public string Type { get; set; }
+    }
+    #endregion
+
+    public class MediaShareResourceCreateModel : EntityCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string MediaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public long StartShareTimeStamp { get; set; }
+        public long StopShareTimeStamp { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class MediaShareResourceEditModel : EntityEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public long StartShareTimeStamp { get; set; }
+        public long StopShareTimeStamp { get; set; }
+        public string Password { get; set; }
+    }
 }

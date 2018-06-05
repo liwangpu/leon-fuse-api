@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180605033156_LeonAddMedia0605")]
+    partial class LeonAddMedia0605
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -477,47 +478,11 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("Direction");
+
                     b.Property<string>("FileAssetId");
 
                     b.Property<string>("Icon");
-
-                    b.Property<string>("Location");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<int>("ResourceType");
-
-                    b.Property<string>("Rotation");
-
-                    b.Property<string>("SolutionId");
-
-                    b.Property<string>("Type");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Medias");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.MediaShareResource", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("MediaId");
 
                     b.Property<DateTime>("ModifiedTime");
 
@@ -531,15 +496,15 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ResourceType");
 
+                    b.Property<string>("Rotation");
+
                     b.Property<long>("StartShareTimeStamp");
 
                     b.Property<long>("StopShareTimeStamp");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MediaId");
-
-                    b.ToTable("MediaShareResources");
+                    b.ToTable("Medias");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.Order", b =>
@@ -1094,13 +1059,6 @@ namespace ApiServer.Migrations
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Layouts")
                         .HasForeignKey("OrganizationId");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.MediaShareResource", b =>
-                {
-                    b.HasOne("ApiModel.Entities.Media", "Media")
-                        .WithMany("MediaShareResources")
-                        .HasForeignKey("MediaId");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.Order", b =>

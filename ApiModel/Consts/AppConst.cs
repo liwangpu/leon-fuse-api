@@ -24,6 +24,8 @@
         public const string S_NodeType_Account = "Account";
         //分类树节点类型
         public const string S_NodeType_Product = "Product";
+        //媒体文件类型
+        public const string S_MediaType_ScreenShot = "ScreenShot";
         //Query Operate
         public const string S_QueryOperate_Eq = "eq";
         public const string S_QueryOperate_Lt = "lt";

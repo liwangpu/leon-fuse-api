@@ -66,8 +66,9 @@ namespace ApiServer.Controllers
         /// 根据id获取信息
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="handle"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetByIdRequest(string id)
+        protected async Task<IActionResult> _GetByIdRequest(string id, Func<DTO, Task<IActionResult>> handle = null)
         {
             var accid = AuthMan.GetAccountId(this);
             var exist = await _Store.ExistAsync(id);
@@ -76,7 +77,11 @@ namespace ApiServer.Controllers
             var canRead = await _Store.CanReadAsync(accid, id);
             if (!canRead)
                 return Forbid();
+
             var dto = await _Store.GetByIdAsync(id);
+            //如果handle不为空,由handle掌控ActionResult
+            if (handle != null)
+                return await handle(dto);
             return Ok(dto);
         }
         #endregion
@@ -99,11 +104,11 @@ namespace ApiServer.Controllers
             await _Store.SatisfyCreateAsync(accid, data, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            //如果handle不为空,由handle掌控Create流程和ActionResult
-            if (handle != null)
-                return await handle(data);
             await _Store.CreateAsync(accid, data);
             var dto = await _Store.GetByIdAsync(metadata.Id);
+            //如果handle不为空,由handle掌控ActionResult
+            if (handle != null)
+                return await handle(data);
             return Ok(dto);
         }
         #endregion
@@ -131,11 +136,11 @@ namespace ApiServer.Controllers
             await _Store.SatisfyUpdateAsync(accid, entity, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            //如果handle不为空,由handle掌控Update流程和ActionResult
-            if (handle != null)
-                return await handle(entity);
             await _Store.UpdateAsync(accid, entity);
             var dto = await _Store.GetByIdAsync(entity.Id);
+            //如果handle不为空,由handle掌控ActionResult
+            if (handle != null)
+                return await handle(entity);
             return Ok(dto);
         }
         #endregion
@@ -307,7 +312,7 @@ namespace ApiServer.Controllers
                 return Ok();
             }
             return BadRequest();
-        } 
+        }
         #endregion
 
         #region KeyWordSearchQ 基本关键词查询

@@ -43,6 +43,15 @@
           "icon": "extension",
           "url": "/app/packages",
           "field": "value"
+        },
+        {
+          "id": "share",
+          "title": "nav.Share",
+          "type": "item",
+          "icon": "share",
+          "url": "/app/shares",
+          "field": "value",
+          "EditOp": "true"
         }
       ]
     }

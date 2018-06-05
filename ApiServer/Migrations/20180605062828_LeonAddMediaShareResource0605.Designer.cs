@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180605062828_LeonAddMediaShareResource0605")]
+    partial class LeonAddMediaShareResource0605
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -477,11 +478,11 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("Direction");
+
                     b.Property<string>("FileAssetId");
 
                     b.Property<string>("Icon");
-
-                    b.Property<string>("Location");
 
                     b.Property<DateTime>("ModifiedTime");
 
@@ -494,10 +495,6 @@ namespace ApiServer.Migrations
                     b.Property<int>("ResourceType");
 
                     b.Property<string>("Rotation");
-
-                    b.Property<string>("SolutionId");
-
-                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
