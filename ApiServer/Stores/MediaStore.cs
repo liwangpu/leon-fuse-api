@@ -2,6 +2,7 @@
 using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -61,7 +62,7 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public override async Task<MediaDTO> GetByIdAsync(string id)
         {
-            var data = await _GetByIdAsync(id);
+            var data = await _DbContext.Medias.Include(x => x.MediaShareResources).FirstOrDefaultAsync(x => x.Id == id);
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);

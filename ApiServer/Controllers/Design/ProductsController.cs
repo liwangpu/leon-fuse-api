@@ -247,6 +247,93 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        [Route("Export")]
+        [HttpGet]
+        public Task<IActionResult> ExportData([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
+        {
+            var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
+            {
+                if (classify)
+                {
+                    if (!string.IsNullOrWhiteSpace(categoryId))
+                    {
+                        var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        //如果是根节点,把所有取出,不做分类过滤
+                        if (curCategoryTree != null && curCategoryTree.LValue > 1)
+                        {
+                            var categoryQ = from it in _context.AssetCategoryTrees
+                                            where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                            && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                            select it;
+                            query = from it in query
+                                    join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                    select it;
+                        }
+                    }
+                }
+                else
+                {
+                    query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
+                }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return query;
+            });
+
+            var transMapping = new Func<Product, Task<ProductExportDataCSV>>(async (entity) =>
+            {
+                var csData = new ProductExportDataCSV();
+                csData.ProductName = entity.Name;
+                csData.Description = entity.Description;
+                csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
+                csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
+                csData.Creator = entity.Creator;
+                csData.Modifier = entity.Modifier;
+                return await Task.FromResult(csData);
+            });
+
+            return _ExportDataRequest(model, transMapping);
+        }
+
+        //[Route("Export")]
+        //[HttpGet]
+        //[ProducesResponseType(typeof(PagedData<MediaShareResourceDTO>), 200)]
+        //public async Task<IActionResult> Export([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
+        //{
+        //    var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
+        //    {
+        //        if (classify)
+        //        {
+        //            if (!string.IsNullOrWhiteSpace(categoryId))
+        //            {
+        //                var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+        //                //如果是根节点,把所有取出,不做分类过滤
+        //                if (curCategoryTree != null && curCategoryTree.LValue > 1)
+        //                {
+        //                    var categoryQ = from it in _context.AssetCategoryTrees
+        //                                    where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+        //                                    && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+        //                                    select it;
+        //                    query = from it in query
+        //                            join cat in categoryQ on it.CategoryId equals cat.ObjId
+        //                            select it;
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
+        //        }
+        //        query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+        //        return query;
+        //    });
+
+        //var result = _GetPagingRequest(model, null, advanceQuery)
+
+
+
+        //    return await _GetPagingRequest(model, null, advanceQuery);
+        //}
+
         #region  [ CSV Matedata ]
         class ProductAndCategoryImportCSV : ClassMap<ProductAndCategoryImportCSV>, ImportData
         {
@@ -270,6 +357,23 @@ namespace ApiServer.Controllers
 
             public string ProductName { get; set; }
             public string CategoryName { get; set; }
+        }
+
+        class ProductExportDataCSV : ClassMap<ProductExportDataCSV>
+        {
+            public ProductExportDataCSV()
+             : base()
+            {
+                AutoMap();
+            }
+            public string ProductName { get; set; }
+            public string CategoryName { get; set; }
+            public string Description { get; set; }
+            public string CreatedTime { get; set; }
+            public string ModifiedTime { get; set; }
+            public string Creator { get; set; }
+            public string Modifier { get; set; }
+
         }
         #endregion
     }

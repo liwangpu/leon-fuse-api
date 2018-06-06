@@ -124,6 +124,11 @@ namespace ApiServer.Stores
         }
         #endregion
 
+        protected void _OwnerSupplementPipe(ref IQueryable<T> query)
+        {
+            //var creatorQ=from it in _DbContext.Accounts
+                         
+        }
         /**************** public method ****************/
 
         #region _GetByIdAsync 根据id信息返回实体数据信息

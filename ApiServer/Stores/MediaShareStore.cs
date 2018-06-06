@@ -62,7 +62,7 @@ namespace ApiServer.Stores
         public override async Task<MediaShareResourceDTO> GetByIdAsync(string id)
         {
             var data = await _GetByIdAsync(id);
-            var media =await _DbContext.Medias.FindAsync(data.MediaId);
+            var media = await _DbContext.Medias.FindAsync(data.MediaId);
             data.FileAssetId = media.FileAssetId;
             data.Rotation = media.Rotation;
             data.Location = media.Location;
@@ -72,6 +72,24 @@ namespace ApiServer.Stores
                 data.FileAsset = await _DbContext.Files.FindAsync(media.FileAssetId);
             return data.ToDTO();
         }
+        #endregion
+
+        #region DeleteAsync 删除实体信息
+        /// <summary>
+        /// 删除实体信息
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task DeleteAsync(string accid, string id)
+        {
+            var data = await _GetByIdAsync(id);
+            if (data != null)
+            {
+                _DbContext.MediaShareResources.Remove(data);
+                await _DbContext.SaveChangesAsync();
+            }
+        } 
         #endregion
     }
 }

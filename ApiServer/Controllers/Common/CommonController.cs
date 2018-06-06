@@ -3,6 +3,7 @@ using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
 using ApiServer.Stores;
+using BambooCore;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -246,7 +247,7 @@ namespace ApiServer.Controllers
         {
             var ms = new MemoryStream();
             using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream))
+            using (var writer = new StreamWriter(stream, Encoding.UTF8))
             using (var csv = new CsvWriter(writer))
             {
                 csv.WriteHeader<CSV>();
@@ -260,7 +261,86 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region _ExportDataRequest 处理导出数据请求
+        /// <summary>
+        /// 处理导出数据请求
+        /// </summary>
+        /// <typeparam name="CSV"></typeparam>
+        /// <param name="model"></param>
+        /// <param name="transMapping"></param>
+        /// <param name="qMapping"></param>
+        /// <param name="advanceQuery"></param>
+        /// <returns></returns>
+        protected async Task<IActionResult> _ExportDataRequest<CSV>(PagingRequestModel model, Func<T, Task<CSV>> transMapping, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+          where CSV : ClassMap, new()
+        {
+            model.Page = 0;
+            model.PageSize = int.MaxValue;
+            var accid = AuthMan.GetAccountId(this);
+            var qs = new List<string>();
+            qMapping?.Invoke(qs);
+            if (qs.Count > 0)
+            {
+                var builder = new StringBuilder();
+                foreach (var item in qs)
+                    builder.AppendFormat(";{0}", item);
+                model.Q = builder.ToString();
+            }
+
+            var list = new List<CSV>();
+            var resource = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
+            if (resource.Data != null && resource.Data.Count > 0)
+            {
+                foreach (var item in resource.Data)
+                {
+                    var csData = await transMapping(item);
+                    list.Add(csData);
+                }
+            }
+            var ms = new MemoryStream();
+            using (var stream = new MemoryStream())
+            using (var writer = new StreamWriter(stream,Encoding.UTF8))
+            using (var csv = new CsvWriter(writer))
+            {
+                csv.WriteHeader<CSV>();
+                csv.NextRecord();
+                csv.WriteRecords(list);
+                writer.Flush();
+                stream.Position = 0;
+                stream.CopyTo(ms);
+                ms.Position = 0;
+            }
+            return File(ms, "application/octet-stream");
+        }
+        #endregion
+
         /**************** common method ****************/
+
+        #region ExportData 根据分页查询信息导出查询数据
+        ///// <summary>
+        ///// 根据分页查询信息导出查询数据
+        ///// </summary>
+        ///// <param name="model"></param>
+        ///// <returns></returns>
+        //[Route("Export")]
+        //[HttpGet]
+        //public virtual async Task<IActionResult> ExportData([FromQuery] PagingRequestModel model)
+        //{
+        //    var transMapping = new Func<T, Task<EntityExportCSV>>(async (entity) =>
+        //    {
+        //        var csData = new EntityExportCSV();
+        //        csData.Name = entity.Name;
+        //        csData.Description = entity.Description;
+        //        csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
+        //        csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
+        //        csData.Creator = entity.Creator;
+        //        csData.Modifier = entity.Modifier;
+        //        return await Task.FromResult(csData);
+        //    });
+        //    return await _ExportDataRequest(model, transMapping);
+
+        //}
+        #endregion
 
         #region Delete 删除数据信息
         /// <summary>
@@ -341,6 +421,27 @@ namespace ApiServer.Controllers
         {
             string ErrorMsg { get; set; }
         }
+        #endregion
+
+        #region [EntityExportCSV] 默认的导出文件数据
+        /// <summary>
+        /// 默认的导出文件数据
+        /// </summary>
+        class EntityExportCSV : ClassMap<EntityExportCSV>
+        {
+            public EntityExportCSV()
+                : base()
+            {
+                AutoMap();
+            }
+
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string CreatedTime { get; set; }
+            public string ModifiedTime { get; set; }
+            public string Creator { get; set; }
+            public string Modifier { get; set; }
+        } 
         #endregion
 
     }

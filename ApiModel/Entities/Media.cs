@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Linq;
 namespace ApiModel.Entities
 {
     public class Media : EntityBase, IListable, IDTOTransfer<MediaDTO>
@@ -35,8 +35,24 @@ namespace ApiModel.Entities
             dto.OrganizationId = OrganizationId;
             dto.Type = Type;
             if (IconFileAsset != null)
+            {
                 dto.Icon = IconFileAsset.Url;
-
+                dto.IconAssetId = IconFileAsset.Id;
+            }
+            if (MediaShareResources != null && MediaShareResources.Count > 0)
+            {
+                var list = new List<MediaShareResourceDTO>();
+                for (int idx = MediaShareResources.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = MediaShareResources[idx];
+                    curItem.Rotation = Rotation;
+                    curItem.Location = Location;
+                    curItem.FileAssetId = FileAssetId;
+                    curItem.IconFileAsset = IconFileAsset;
+                    list.Add(curItem.ToDTO());
+                }
+                dto.MediaShares = list.OrderByDescending(x => x.CreatedTime).ToList();
+            }
             return dto;
         }
     }
@@ -80,6 +96,7 @@ namespace ApiModel.Entities
             dto.StartShareTimeStamp = StartShareTimeStamp;
             dto.StopShareTimeStamp = StopShareTimeStamp;
             dto.FileAssetId = FileAssetId;
+            dto.Password = Password;
             if (IconFileAsset != null)
                 dto.Icon = IconFileAsset.Url;
 
@@ -95,15 +112,19 @@ namespace ApiModel.Entities
         public string Location { get; set; }
         public long StartShareTimeStamp { get; set; }
         public long StopShareTimeStamp { get; set; }
+        public string Password { get; set; }
     }
 
     public class MediaDTO : EntityBase
     {
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
+        public string IconAssetId { get; set; }
         public string Rotation { get; set; }
         public string Location { get; set; }
         public string Type { get; set; }
         public string SolutionId { get; set; }
+        public List<MediaShareResourceDTO> MediaShares { get; set; }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Enums;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel
 {
@@ -16,6 +17,11 @@ namespace ApiModel
         public string Creator { get; set; }
         public string Modifier { get; set; }
         public string OrganizationId { get; set; }
+
+        [NotMapped]
+        public string CreatorName { get; set; }
+        [NotMapped]
+        public string ModifierName { get; set; }
         /// <summary>
         /// 启用状态 1启用 0禁用
         /// </summary>
