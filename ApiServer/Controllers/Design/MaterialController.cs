@@ -257,6 +257,64 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region ExportData 导出材质基本信息
+        /// <summary>
+        /// 导出材质基本信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="classify"></param>
+        /// <returns></returns>
+        [Route("Export")]
+        [HttpGet]
+        public Task<IActionResult> ExportData([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
+        {
+            var advanceQuery = new Func<IQueryable<Material>, Task<IQueryable<Material>>>(async (query) =>
+            {
+                if (classify)
+                {
+                    if (!string.IsNullOrWhiteSpace(categoryId))
+                    {
+                        var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        //如果是根节点,把所有取出,不做分类过滤
+                        if (curCategoryTree != null && curCategoryTree.LValue > 1)
+                        {
+                            var categoryQ = from it in _context.AssetCategoryTrees
+                                            where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                            && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                            select it;
+                            query = from it in query
+                                    join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                    select it;
+                        }
+                    }
+                }
+                else
+                {
+                    query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
+                }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return await Task.FromResult(query);
+            });
+
+            var transMapping = new Func<MaterialDTO, Task<MaterialExportDataCSV>>(async (entity) =>
+            {
+                var csData = new MaterialExportDataCSV();
+                csData.MaterialName = entity.Name;
+                csData.CategoryName = entity.CategoryName;
+                csData.Description = entity.Description;
+                csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
+                csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
+                csData.Creator = entity.Creator;
+                csData.Modifier = entity.Modifier;
+                return await Task.FromResult(csData);
+            });
+
+            return _ExportDataRequest(model, transMapping);
+        }
+
+        #endregion
+
         #region  [ CSV Matedata ]
         class MaterialAndCategoryImportCSV : ClassMap<MaterialAndCategoryImportCSV>, ImportData
         {
@@ -280,6 +338,23 @@ namespace ApiServer.Controllers
 
             public string MaterialName { get; set; }
             public string CategoryName { get; set; }
+        }
+
+        class MaterialExportDataCSV : ClassMap<MaterialExportDataCSV>
+        {
+            public MaterialExportDataCSV()
+             : base()
+            {
+                AutoMap();
+            }
+            public string MaterialName { get; set; }
+            public string CategoryName { get; set; }
+            public string Description { get; set; }
+            public string CreatedTime { get; set; }
+            public string ModifiedTime { get; set; }
+            public string Creator { get; set; }
+            public string Modifier { get; set; }
+
         }
         #endregion
     }
