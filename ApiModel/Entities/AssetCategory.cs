@@ -26,6 +26,12 @@ namespace ApiModel.Entities
             dto.Type = Type;
             dto.DisplayIndex = DisplayIndex;
             dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Children = new List<AssetCategoryDTO>();
             return dto;
         }

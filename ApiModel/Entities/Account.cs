@@ -68,18 +68,22 @@ namespace ApiModel.Entities
             dto.Type = Type;
             dto.ExpireTime = ExpireTime;
             dto.ActivationTime = ActivationTime;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             return dto;
         }
     }
 
 
-    public class AccountDTO : DataBase
+    public class AccountDTO :EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }
-        public string OrganizationId { get; set; }
         public string DepartmentId { get; set; }
         public string Phone { get; set; }
         public bool Frozened { get; set; }

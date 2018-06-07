@@ -9,6 +9,7 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string SrcFileAssetId { get; set; }
 
         [NotMapped]
         public FileAsset FileAsset { get; set; }
@@ -32,6 +33,16 @@ namespace ApiModel.Entities
             dto.FileAssetId = FileAssetId;
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
+            dto.UnCookedAssetId = UnCookedAssetId;
+            dto.SrcFileAssetId = SrcFileAssetId;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
+
             if (Materials != null && Materials.Count > 0)
                 dto.Materials = Materials.Select(x => x.ToDTO()).ToList();
             if (FileAsset != null)
@@ -51,16 +62,15 @@ namespace ApiModel.Entities
     }
 
 
-    public class StaticMeshDTO : DataBase
+    public class StaticMeshDTO : ClientAssetEntity
     {
         public string Icon { get; set; }
         public string IconAssetId { get; set; }
-        public string Description { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string FileAssetId { get; set; }
+        public string SrcFileAssetId { get; set; }
         public string Url { get; set; }
-        public string PackageName { get; set; }
         public FileAssetDTO FileAsset { get; set; }
         public List<MaterialDTO> Materials { get; set; }
     }

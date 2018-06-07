@@ -20,9 +20,13 @@ namespace ApiModel.Entities
             dto.Name = Name;
             dto.Description = Description;
             dto.CategoryId = CategoryId;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
-            dto.Modifier = Modifier;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Data = Data;
             dto.CategoryId = CategoryId;
             if (IconFileAsset != null)

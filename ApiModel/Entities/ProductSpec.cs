@@ -56,8 +56,13 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Price = Price;
             dto.TPID = TPID;
             dto.ProductId = ProductId;
@@ -78,16 +83,13 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息DTO
     /// </summary>
-    public class ProductSpecDTO : DataBase
+    public class ProductSpecDTO :EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public FileAssetDTO IconAsset { get; set; }
         public List<StaticMeshDTO> StaticMeshes { get; set; }
         public List<FileAssetDTO> Album { get; set; }

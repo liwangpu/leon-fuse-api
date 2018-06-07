@@ -25,9 +25,13 @@ namespace ApiModel.Entities
             dto.Name = Name;
             dto.Description = Description;
             dto.CategoryId = CategoryId;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
-            dto.Modifier = Modifier;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             if (Specifications != null && Specifications.Count > 0)
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
             if (IconFileAsset != null)

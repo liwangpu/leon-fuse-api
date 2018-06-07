@@ -20,9 +20,14 @@ namespace ApiModel.Entities
             dto.Name = Name;
             dto.PackageName = PackageName;
             dto.Description = Description;
+            dto.UnCookedAssetId = UnCookedAssetId;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
-            dto.Modifier = Modifier;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
             if (IconFileAsset != null)
@@ -37,14 +42,13 @@ namespace ApiModel.Entities
         }
     }
 
-    public class TextureDTO : EntityBase
+    public class TextureDTO : ClientAssetEntity
     {
         public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
-        public string PackageName { get; set; }
         public FileAssetDTO FileAsset { get; set; }
     }
 }

@@ -127,7 +127,7 @@ namespace ApiServer.Stores
         protected void _OwnerSupplementPipe(ref IQueryable<T> query)
         {
             //var creatorQ=from it in _DbContext.Accounts
-                         
+
         }
         /**************** public method ****************/
 
@@ -458,7 +458,74 @@ namespace ApiServer.Stores
             _QSearchFilter(ref query, model.Q);
             _KeyWordSearchFilter(ref query, model.Search);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
-            return await query.SimplePaging(model.Page, model.PageSize);
+            var result = await query.SimplePaging(model.Page, model.PageSize);
+            #region 补充CreateName,ModifierName信息
+            if (result.Data != null && result.Data.Count > 0)
+            {
+                var users = new List<Account>();
+                //如果用left join,那需要自己定义返回实体字段信息的值
+                //默认查询出该组织所有的人员,如果有creator,modifier不在组织里面,再进行查询,然后添加到users列表备用
+                var currentUser = await _DbContext.Accounts.FindAsync(accid);
+                if (string.IsNullOrWhiteSpace(currentUser.OrganizationId))
+                {
+                    users.AddRange(_DbContext.Accounts.Where(x => x.OrganizationId == currentUser.OrganizationId).Select(x => new Account() { Id = x.Id, Name = x.Name }));
+                }
+                else
+                {
+                    //如果是超级管理员,默认是没有组织的,这时候选出所有的用户,不过用户表可能比较大,这个是后期改善项
+                    users.AddRange(_DbContext.Accounts.Select(x => new Account() { Id = x.Id, Name = x.Name }));
+                }
+
+
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var item = result.Data[idx];
+
+                    #region 补充CreateName
+                    if (!string.IsNullOrWhiteSpace(item.Creator))
+                    {
+                        var refUser = users.FirstOrDefault(x => item.Creator == x.Id);
+                        if (refUser != null)
+                        {
+                            item.CreatorName = refUser.Name;
+                        }
+                        else
+                        {
+                            //去数据库查找该用户,然后添加到users列表
+                            var us = await _DbContext.Accounts.Where(x => x.Id == item.Creator).Select(x => new Account() { Id = x.Id, Name = x.Name }).FirstOrDefaultAsync();
+                            if (us != null)
+                            {
+                                item.CreatorName = us.Name;
+                                users.Add(us);
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region 补充ModifierName
+                    if (!string.IsNullOrWhiteSpace(item.Modifier))
+                    {
+                        var refUser = users.FirstOrDefault(x => item.Modifier == x.Id);
+                        if (refUser != null)
+                        {
+                            item.ModifierName = refUser.Name;
+                        }
+                        else
+                        {
+                            //去数据库查找该用户,然后添加到users列表
+                            var us = await _DbContext.Accounts.Where(x => x.Id == item.Modifier).Select(x => new Account() { Id = x.Id, Name = x.Name }).FirstOrDefaultAsync();
+                            if (us != null)
+                            {
+                                item.ModifierName = us.Name;
+                                users.Add(us);
+                            }
+                        }
+                    }
+                    #endregion
+                }
+            } 
+            #endregion
+            return result;
         }
         #endregion
 

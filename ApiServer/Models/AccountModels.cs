@@ -1,7 +1,4 @@
-﻿using ApiModel.Entities;
-using BambooCore;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {

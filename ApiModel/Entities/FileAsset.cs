@@ -51,14 +51,20 @@ namespace ApiModel.Entities
             dto.LocalPath = LocalPath;
             dto.UploadTime = UploadTime;
             dto.CategoryId = CategoryId;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             return dto;
         }
     }
 
-    public class FileAssetDTO : DataBase
+    public class FileAssetDTO : EntityBase
     {
         public string Icon { get; set; }
-        public string Description { get; set; }
         public string Url { get; set; }
         public string Md5 { get; set; }
         public long Size { get; set; }

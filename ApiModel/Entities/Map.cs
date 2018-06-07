@@ -24,8 +24,14 @@ namespace ApiModel.Entities
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
             dto.Description = Description;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
+            dto.UnCookedAssetId = UnCookedAssetId;
             if (FileAsset != null)
                 dto.FileAsset = FileAsset.ToDTO();
             if (IconFileAsset != null)
@@ -38,13 +44,12 @@ namespace ApiModel.Entities
         }
     }
 
-    public class MapDTO : EntityBase
+    public class MapDTO : ClientAssetEntity
     {
         public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
-        public string PackageName { get; set; }
         public FileAssetDTO FileAsset { get; set; }
     }
 

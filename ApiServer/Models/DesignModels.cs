@@ -3,34 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {
-    #region EntityCreateModel Entity基本创建模型
-    /// <summary>
-    /// Entity基本创建模型
-    /// </summary>
-    public class EntityCreateModel
-    {
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
-    }
-    #endregion
-
-    #region EntityEditModel Entity基本编辑模型
-    /// <summary>
-    /// Entity基本编辑模型
-    /// </summary>
-    public class EntityEditModel
-    {
-        [Required(ErrorMessage = "必填信息")]
-        public string Id { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
-    }
-    #endregion
-
     #region ProductCreateModel 产品新建模型
     /// <summary>
     /// 产品新建模型
@@ -169,12 +141,8 @@ namespace ApiServer.Models
     /// <summary>
     /// 材质创建模型
     /// </summary>
-    public class MaterialCreateModel : ClientAsstCommonEditModel
+    public class MaterialCreateModel : ClientAssetCreateModel
     {
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
@@ -187,14 +155,8 @@ namespace ApiServer.Models
     /// <summary>
     /// 材质编辑模型
     /// </summary>
-    public class MaterialEditModel : ClientAsstCommonEditModel
+    public class MaterialEditModel : ClientAssetEditModel
     {
-        [Required(ErrorMessage = "必填信息")]
-        public string Id { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
@@ -282,12 +244,8 @@ namespace ApiServer.Models
     /// <summary>
     /// 地图创建模型
     /// </summary>
-    public class MapCreateModel : ClientAsstCommonEditModel
+    public class MapCreateModel : ClientAssetCreateModel
     {
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
@@ -299,14 +257,8 @@ namespace ApiServer.Models
     /// <summary>
     /// 地图编辑模型
     /// </summary>
-    public class MapEditModel : ClientAsstCommonEditModel
+    public class MapEditModel : ClientAssetEditModel
     {
-        [Required(ErrorMessage = "必填信息")]
-        public string Id { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
@@ -348,17 +300,12 @@ namespace ApiServer.Models
     }
     #endregion
 
-
     #region TextureCreateModel 贴图创建模型
     /// <summary>
     /// 贴图创建模型
     /// </summary>
-    public class TextureCreateModel : ClientAsstCommonEditModel
+    public class TextureCreateModel : ClientAssetCreateModel
     {
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
@@ -369,14 +316,8 @@ namespace ApiServer.Models
     /// <summary>
     /// 贴图编辑模型
     /// </summary>
-    public class TextureEditModel : ClientAsstCommonEditModel
+    public class TextureEditModel : ClientAssetEditModel
     {
-        [Required(ErrorMessage = "必填信息")]
-        public string Id { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
@@ -413,6 +354,10 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region MediaShareResourceCreateModel 媒体分享信息创建模型
+    /// <summary>
+    /// 媒体分享信息创建模型
+    /// </summary>
     public class MediaShareResourceCreateModel : EntityCreateModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -422,7 +367,12 @@ namespace ApiServer.Models
         public long StopShareTimeStamp { get; set; }
         public string Password { get; set; }
     }
+    #endregion
 
+    #region MediaShareResourceEditModel 媒体分享信息编辑模型
+    /// <summary>
+    /// 媒体分享信息编辑模型
+    /// </summary>
     public class MediaShareResourceEditModel : EntityEditModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -430,4 +380,5 @@ namespace ApiServer.Models
         public long StopShareTimeStamp { get; set; }
         public string Password { get; set; }
     }
+    #endregion
 }

@@ -20,15 +20,21 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
+            dto.OrganizationId = OrganizationId;
             dto.ParentId = ParentId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
+            dto.CreatedTime = CreatedTime;
+            dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             return dto;
         }
     }
 
 
-    public class DepartmentDTO : DataBase
+    public class DepartmentDTO :EntityBase
     {
-        public string Description { get; set; }
         public string Icon { get; set; }
         public string ParentId { get; set; }
     }

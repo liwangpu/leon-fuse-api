@@ -44,8 +44,13 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
+            dto.OrganizationId = OrganizationId;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Content = Content;
             if (ContentIns != null)
                 dto.ContentIns = ContentIns;

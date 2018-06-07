@@ -271,7 +271,7 @@ namespace ApiServer.Controllers
         /// <param name="qMapping"></param>
         /// <param name="advanceQuery"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _ExportDataRequest<CSV>(PagingRequestModel model, Func<T, Task<CSV>> transMapping, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+        protected async Task<IActionResult> _ExportDataRequest<CSV>(PagingRequestModel model, Func<DTO, Task<CSV>> transMapping, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
           where CSV : ClassMap, new()
         {
             model.Page = 0;
@@ -288,7 +288,8 @@ namespace ApiServer.Controllers
             }
 
             var list = new List<CSV>();
-            var resource = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
+            var res = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
+            var resource =  StoreBase<T, DTO>.PageQueryDTOTransfer(res);
             if (resource.Data != null && resource.Data.Count > 0)
             {
                 foreach (var item in resource.Data)
@@ -299,7 +300,7 @@ namespace ApiServer.Controllers
             }
             var ms = new MemoryStream();
             using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream,Encoding.UTF8))
+            using (var writer = new StreamWriter(stream, Encoding.UTF8))
             using (var csv = new CsvWriter(writer))
             {
                 csv.WriteHeader<CSV>();
@@ -441,7 +442,7 @@ namespace ApiServer.Controllers
             public string ModifiedTime { get; set; }
             public string Creator { get; set; }
             public string Modifier { get; set; }
-        } 
+        }
         #endregion
 
     }

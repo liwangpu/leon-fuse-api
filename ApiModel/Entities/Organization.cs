@@ -58,8 +58,12 @@ namespace ApiModel.Entities
             dto.Description = Description;
             dto.Mail = Mail;
             dto.Location = Location;
+            dto.Creator = Creator;
+            dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Type = Type;
             if (IconFileAsset != null)
             {

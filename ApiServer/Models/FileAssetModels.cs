@@ -63,30 +63,17 @@ namespace ApiServer.Models
     }
     #endregion
 
-    #region ClientAsstCommonEditModel 客户端通用编辑模型基类
-    /// <summary>
-    /// 客户端通用编辑模型基类
-    /// </summary>
-    public class ClientAsstCommonEditModel
-    {
-        public string PackageName { get; set; }
-    } 
-    #endregion
-
     #region StaticMeshCreateModel 模型文件创建模型
     /// <summary>
     /// 模型文件创建模型
     /// </summary>
-    public class StaticMeshCreateModel: ClientAsstCommonEditModel
+    public class StaticMeshCreateModel: ClientAssetCreateModel
     {
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string FileAssetId { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string SrcFileAssetId { get; set; }
     }
     #endregion
 
@@ -94,18 +81,13 @@ namespace ApiServer.Models
     /// <summary>
     /// 模型文件编辑模型
     /// </summary>
-    public class StaticMeshEditModel: ClientAsstCommonEditModel
+    public class StaticMeshEditModel: ClientAssetEditModel
     {
-        [Required(ErrorMessage = "必填信息")]
-        public string Id { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Name { get; set; }
-        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
-        public string Description { get; set; }
         public string FileAssetId { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string SrcFileAssetId { get; set; }
     }
     #endregion
 

@@ -28,6 +28,8 @@ namespace ApiModel.Entities
             dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.CreatorName = CreatorName;
+            dto.ModifierName = ModifierName;
             dto.Rotation = Rotation;
             dto.Location = Location;
             dto.FileAssetId = FileAssetId;

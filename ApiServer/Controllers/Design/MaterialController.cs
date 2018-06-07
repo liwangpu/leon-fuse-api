@@ -109,6 +109,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.FileAssetId = model.FileAssetId;
                 entity.PackageName = model.PackageName;
+                entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.CategoryId = model.CategoryId;
                 entity.Dependencies = model.Dependencies;
                 entity.Parameters = model.Parameters;
@@ -137,6 +138,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
                 entity.PackageName = model.PackageName;
+                entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.FileAssetId = model.FileAssetId;
                 entity.CategoryId = model.CategoryId;
                 entity.Dependencies = model.Dependencies;
