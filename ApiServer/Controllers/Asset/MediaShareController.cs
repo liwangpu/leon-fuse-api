@@ -47,26 +47,26 @@ namespace ApiServer.Controllers.Asset
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(MediaShareResourceDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            var exist = await _Store.ExistAsync(id);
-            if (!exist)
-                return NotFound();
-            var dto = await _Store.GetByIdAsync(id);
-            var curUtcTime = DateTime.UtcNow;
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            if (curUtcTime >= dtDateTime.AddSeconds(dto.StartShareTimeStamp).ToLocalTime())
-            {
-                if (dto.StopShareTimeStamp > 0)
-                {
-                    if (curUtcTime > dtDateTime.AddSeconds(dto.StopShareTimeStamp).ToLocalTime())
-                        return Forbid();
-                }
-            }
-            return Ok(dto);
+            //var exist = await _Store.ExistAsync(id);
+            //if (!exist)
+            //    return NotFound();
+            //var dto = await _Store.GetByIdAsync(id);
+            //var curUtcTime = DateTime.UtcNow;
+            //var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            //if (curUtcTime >= dtDateTime.AddSeconds(dto.StartShareTimeStamp).ToLocalTime())
+            //{
+            //    if (dto.StopShareTimeStamp > 0)
+            //    {
+            //        if (curUtcTime > dtDateTime.AddSeconds(dto.StopShareTimeStamp).ToLocalTime())
+            //            return NotFound();
+            //    }
+            //}
+            //return Ok(dto);
+            return await _GetByIdRequest(id);
         }
         #endregion
 
@@ -122,6 +122,41 @@ namespace ApiServer.Controllers.Asset
         }
         #endregion
 
+        [AllowAnonymous]
+        [Route("ViewShare")]
+        [ValidateModel]
+        [HttpPost]
+        [ProducesResponseType(typeof(MediaShareResourceDTO), 200)]
+        public async Task<IActionResult> ViewShare([FromBody] MediaShareRequestModel model)
+        {
+            var exist = await _Store.ExistAsync(model.Id);
+            if (!exist)
+                return NotFound();
+            var entity = await _Store._GetByIdAsync(model.Id);
+            var curUtcTime = DateTime.UtcNow;
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            if (curUtcTime >= dtDateTime.AddSeconds(entity.StartShareTimeStamp).ToLocalTime())
+            {
+                if (entity.StopShareTimeStamp > 0)
+                {
+                    if (curUtcTime > dtDateTime.AddSeconds(entity.StopShareTimeStamp).ToLocalTime())
+                        return NotFound();
+                }
+
+                if (!string.IsNullOrWhiteSpace(entity.Password))
+                {
+                    if (!string.IsNullOrWhiteSpace(model.Password))
+                    {
+                        if (entity.Password.Trim() != model.Password.Trim())
+                            return Forbid();
+                    }
+                    else
+                        return Forbid();
+                }
+            }
+            var dto = await _Store.GetByIdAsync(model.Id);
+            return Ok(dto);
+        }
 
     }
 }

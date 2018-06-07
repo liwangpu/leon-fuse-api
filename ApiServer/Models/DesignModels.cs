@@ -381,4 +381,16 @@ namespace ApiServer.Models
         public string Password { get; set; }
     }
     #endregion
+
+    #region MediaShareRequestModel 共享资源文件查看请求模型
+    /// <summary>
+    /// 共享资源文件查看请求模型
+    /// </summary>
+    public class MediaShareRequestModel
+    {
+        public string Id { get; set; }
+        public string MediaType { get; set; }
+        public string Password { get; set; }
+    } 
+    #endregion
 }

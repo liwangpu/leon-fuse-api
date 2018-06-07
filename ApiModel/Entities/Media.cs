@@ -17,6 +17,8 @@ namespace ApiModel.Entities
         public FileAsset FileAsset { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
+        [NotMapped]
+        public string FileAssetUrl { get; set; }
 
         public MediaDTO ToDTO()
         {
@@ -36,6 +38,10 @@ namespace ApiModel.Entities
             dto.SolutionId = SolutionId;
             dto.OrganizationId = OrganizationId;
             dto.Type = Type;
+            if (FileAsset != null)
+            {
+                dto.FileAssetUrl = FileAsset.Url;
+            }
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -51,6 +57,7 @@ namespace ApiModel.Entities
                     curItem.Location = Location;
                     curItem.FileAssetId = FileAssetId;
                     curItem.IconFileAsset = IconFileAsset;
+                    curItem.FileAsset = FileAsset;
                     list.Add(curItem.ToDTO());
                 }
                 dto.MediaShares = list.OrderByDescending(x => x.CreatedTime).ToList();
@@ -69,6 +76,8 @@ namespace ApiModel.Entities
         public string MediaId { get; set; }
 
         [NotMapped]
+        public string Type { get; set; }
+        [NotMapped]
         public string Rotation { get; set; }
         [NotMapped]
         public string Location { get; set; }
@@ -76,12 +85,10 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         [NotMapped]
         public string FileAssetId { get; set; }
-
-
-        [NotMapped]
-        public FileAsset FileAsset { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
+        [NotMapped]
+        public FileAsset FileAsset { get; set; }
 
         public MediaShareResourceDTO ToDTO()
         {
@@ -93,15 +100,22 @@ namespace ApiModel.Entities
             dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.Type = Type;
             dto.Rotation = Rotation;
             dto.Location = Location;
             dto.StartShareTimeStamp = StartShareTimeStamp;
             dto.StopShareTimeStamp = StopShareTimeStamp;
             dto.FileAssetId = FileAssetId;
             dto.Password = Password;
+            dto.Icon = Icon;
+            if (FileAsset != null)
+            {
+                dto.FileAssetUrl = FileAsset.Url;
+            }
             if (IconFileAsset != null)
+            {
                 dto.Icon = IconFileAsset.Url;
-
+            }
             return dto;
         }
     }
@@ -115,6 +129,8 @@ namespace ApiModel.Entities
         public long StartShareTimeStamp { get; set; }
         public long StopShareTimeStamp { get; set; }
         public string Password { get; set; }
+        public string Type { get; set; }
+        public string FileAssetUrl { get; set; }
     }
 
     public class MediaDTO : EntityBase
@@ -122,6 +138,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string IconAssetId { get; set; }
+        public string FileAssetUrl { get; set; }
         public string Rotation { get; set; }
         public string Location { get; set; }
         public string Type { get; set; }
