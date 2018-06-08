@@ -9,6 +9,7 @@ using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -139,21 +140,22 @@ namespace ApiServer.Stores
                     otree.OrganizationId = data.Id;
                     otree.NodeType = AppConst.S_NodeType_Organization;
                     otree.ObjId = data.Id;
-                    //if (string.IsNullOrWhiteSpace(data.ParentId))
-                    //{
-                    await _PermissionTreeStore.AddNewNode(otree);
-                    bCreateDefaultResource = true;
-                    //}
-                    //else
-                    //{
-                    //var parentOrganNode = _DbContext.PermissionTrees.Where(x => x.ObjId == data.ParentId).FirstOrDefault();
-                    //if (parentOrganNode != null)
-                    //{
-                    //    otree.ParentId = parentOrganNode.Id;
-                    //    otree.OrganizationId = data.ParentId;
-                    //    await _PermissionTreeStore.AddChildNode(otree);
-                    //}
-                    //}
+                    if (string.IsNullOrWhiteSpace(data.ParentId))
+                    {
+                        await _PermissionTreeStore.AddNewNode(otree);
+                        bCreateDefaultResource = true;
+                    }
+                    else
+                    {
+                        var parentOrganNode = _DbContext.PermissionTrees.Where(x => x.ObjId == data.ParentId).FirstOrDefault();
+                        if (parentOrganNode != null)
+                        {
+                            otree.ParentId = parentOrganNode.Id;
+                            otree.OrganizationId = data.ParentId;
+                            await _PermissionTreeStore.AddChildNode(otree);
+                            bCreateDefaultResource = true;
+                        }
+                    }
                     tx.Commit();
                 }
                 catch (Exception ex)
@@ -199,18 +201,28 @@ namespace ApiServer.Stores
                 account.Creator = account.Id;
                 account.Modifier = account.Id;
                 _DbContext.Accounts.Update(account);
+                data.OwnerId = account.Id;
+                _DbContext.Organizations.Update(data);
                 await _DbContext.SaveChangesAsync();
                 #endregion
             }
         }
         #endregion
 
+        #region _GetPermissionData 获取操作权限数据
+        /// <summary>
+        /// 获取操作权限数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="dataOp"></param>
+        /// <param name="withInActive"></param>
+        /// <returns></returns>
         public override async Task<IQueryable<Organization>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
         {
             var emptyQuery = Enumerable.Empty<Organization>().AsQueryable();
             var query = emptyQuery;
 
-            var currentAcc = await _DbContext.Accounts.Include(x => x.Organization).FirstAsync(x => x.Id == accid);
+            var currentAcc = await _DbContext.Accounts.FirstAsync(x => x.Id == accid);
             if (currentAcc == null)
                 return query;
 
@@ -220,24 +232,45 @@ namespace ApiServer.Stores
             else
                 query = _DbContext.Organizations.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
-            #region 用户角色类型过滤(为高级用户角色定义查询,这些高级用户角色不走资源类型和数据操作类型过滤)
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
             {
-                if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+                //管理员不管理第一子层级以外的组织,自治权交给相关组织
+                #region [U,D]
+                if (dataOp == DataOperateEnum.Update || dataOp == DataOperateEnum.Delete)
                 {
-                    return query.Where(x => x.Type == AppConst.OrganType_Brand);
+                    return query.Where(x => string.IsNullOrEmpty(x.ParentId));
                 }
-                else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
+                #endregion
+
+                #region [R]
+                if (dataOp == DataOperateEnum.Read)
                 {
-                    return query.Where(x => x.Type == AppConst.OrganType_Partner || x.Type == AppConst.OrganType_Supplier);
+                    return query;
                 }
-                else
-                { }
+                #endregion
             }
-            #endregion
+            else
+            {
+                //品牌商,合伙人等组织管理员不能管理自身,但是可以管理第一子层级的组织,自治权还是交给相关组织
+                #region [U,D]
+                if (dataOp == DataOperateEnum.Update || dataOp == DataOperateEnum.Delete)
+                {
+                    return query.Where(x => x.ParentId == currentAcc.OrganizationId);
+                }
+                #endregion
+
+                #region [R]
+                if (dataOp == DataOperateEnum.Read)
+                {
+                    var ownOrganIdsQ = (await _PermissionTreeStore.GetOrganManageNode(currentAcc.OrganizationId, new List<string>() { AppConst.S_NodeType_Organization }, false)).Select(x => x.ObjId);
+                    return query.Where(x => ownOrganIdsQ.Contains(x.Id));
+                }
+                #endregion
+            }
 
             return emptyQuery;
-
-        }
+        } 
+        #endregion
 
         #region override SimplePagedQueryAsync
         /// <summary>
@@ -289,9 +322,13 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task<IData> GetOrganOwner(string organId)
         {
-            var organ = await _DbContext.Organizations.Include(x => x.Owner).Include(x => x.Owner.Department).FirstOrDefaultAsync(x => x.Id == organId);
-            if (organ != null && organ.Owner != null)
-                return organ.Owner.ToDTO();
+            var organ = await _DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == organId);
+            if (organ != null && !string.IsNullOrWhiteSpace(organ.OwnerId))
+            {
+                var owner = await _DbContext.Accounts.FindAsync(organ.OwnerId);
+                if (owner != null)
+                    return owner.ToDTO();
+            }
             return new AccountDTO();
         }
         #endregion

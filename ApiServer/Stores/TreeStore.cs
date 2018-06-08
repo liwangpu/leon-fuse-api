@@ -2,6 +2,7 @@
 using ApiServer.Data;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace ApiServer.Stores
             data.Id = GuidGen.NewGUID();
             data.LValue = 1;
             data.RValue = 2;
+            data.RootOrganizationId = data.OrganizationId;
             _DbContext.Set<T>().Add(data);
             await _DbContext.SaveChangesAsync();
         }
@@ -49,7 +51,8 @@ namespace ApiServer.Stores
                 data.Id = GuidGen.NewGUID();
                 data.LValue = parentNode.RValue;
                 data.RValue = data.LValue + 1;
-                var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
+                data.RootOrganizationId = parentNode.RootOrganizationId;
+                var refNodes = await _DbContext.Set<T>().Where(x => x.RootOrganizationId == data.RootOrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
                 for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                 {
                     var cur = refNodes[idx];
@@ -87,7 +90,8 @@ namespace ApiServer.Stores
                 data.Id = GuidGen.NewGUID();
                 data.LValue = siblingNode.RValue + 1;
                 data.RValue = data.LValue + 1;
-                var refNodes = await _DbContext.Set<T>().Where(x => x.OrganizationId == data.OrganizationId && x.RValue >= siblingNode.RValue).ToListAsync();
+                data.RootOrganizationId = siblingNode.RootOrganizationId;
+                var refNodes = await _DbContext.Set<T>().Where(x => x.RootOrganizationId == data.RootOrganizationId && x.RValue >= siblingNode.RValue).ToListAsync();
                 for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                 {
                     var cur = refNodes[idx];
@@ -99,6 +103,26 @@ namespace ApiServer.Stores
             }
         }
         #endregion
+
+        public IQueryable<T> GetNode(T node, List<string> nodeTypes, bool includeCurrentNode = false)
+        {
+            if (includeCurrentNode)
+            {
+                return from it in _DbContext.Set<T>()
+                       where it.RootOrganizationId == node.RootOrganizationId
+                       && it.LValue >= node.LValue && it.RValue <= node.RValue
+                       && nodeTypes.Contains(it.NodeType)
+                       select it;
+            }
+            else
+            {
+                return from it in _DbContext.Set<T>()
+                       where it.RootOrganizationId == node.RootOrganizationId
+                       && it.LValue > node.LValue && it.RValue < node.RValue
+                       && nodeTypes.Contains(it.NodeType)
+                       select it;
+            }
+        }
 
         public async Task MoveNode(T data, string newParentNodeId)
         {

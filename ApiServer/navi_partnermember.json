@@ -1,0 +1,86 @@
+﻿{
+  "model": [
+    {
+      "id": "applications",
+      "title": "nav.General",
+      "type": "group",
+      "icon": "apps",
+      "children": [
+        {
+          "id": "dashboards",
+          "title": "nav.dashboards",
+          "type": "item",
+          "icon": "today",
+          "url": "/apps/dashboards/project"
+        },
+        {
+          "id": "profile",
+          "title": "nav.profile",
+          "type": "item",
+          "icon": "person",
+          "url": "/pages/profile"
+        },
+        {
+          "id": "my-resources",
+          "title": "nav.MyResources",
+          "type": "collapse",
+          "icon": "dashboard",
+          "children": [
+            {
+              "id": "staticmesh",
+              "title": "nav.StaticMesh",
+              "type": "item",
+              "icon": "domain",
+              "url": "/app/staticmeshs"
+            },
+            {
+              "id": "material",
+              "title": "nav.Material",
+              "type": "item",
+              "icon": "healing",
+              "url": "/app/materials"
+            },
+            {
+              "id": "map",
+              "title": "nav.Map",
+              "type": "item",
+              "icon": "map",
+              "url": "/app/maps"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "interior-design",
+      "title": "nav.InteriorDesign",
+      "type": "group",
+      "icon": "pages",
+      "children": [
+        {
+          "id": "product",
+          "title": "nav.InteriorDesignProducts",
+          "type": "item",
+          "icon": "shopping_basket",
+          "url": "/app/products"
+        },
+        {
+          "id": "order",
+          "title": "nav.Order",
+          "type": "item",
+          "icon": "assignment",
+          "url": "/app/orders",
+          "field": "value"
+        },
+        {
+          "id": "package",
+          "title": "nav.Package",
+          "type": "item",
+          "icon": "extension",
+          "url": "/app/packages",
+          "field": "value"
+        }
+      ]
+    }
+  ]
+}

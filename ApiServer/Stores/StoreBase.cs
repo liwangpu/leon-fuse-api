@@ -162,7 +162,7 @@ namespace ApiServer.Stores
             var emptyQuery = Enumerable.Empty<T>().AsQueryable();
             var query = emptyQuery;
 
-            var currentAcc = await _DbContext.Accounts.Include(x => x.Organization).FirstAsync(x => x.Id == accid);
+            var currentAcc = await _DbContext.Accounts.Include(x => x.Organization).FirstOrDefaultAsync(x => x.Id == accid);
             if (currentAcc == null)
                 return query;
 
@@ -339,6 +339,7 @@ namespace ApiServer.Stores
         public virtual async Task<bool> CanUpdateAsync(string accid, string id)
         {
             var query = await _GetPermissionData(accid, DataOperateEnum.Update, true);
+
             return await query.Where(x => x.Id == id).CountAsync() > 0;
         }
         #endregion
@@ -387,11 +388,10 @@ namespace ApiServer.Stores
                 data.Creator = accid;
             if (string.IsNullOrWhiteSpace(data.Modifier))
                 data.Modifier = accid;
-            if (string.IsNullOrWhiteSpace(data.OrganizationId))
+            if (!string.IsNullOrWhiteSpace(data.OrganizationId))
                 data.OrganizationId = currentAcc.OrganizationId;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = DateTime.Now;
-            data.OrganizationId = currentAcc.OrganizationId;
             _DbContext.Set<T>().Add(data);
             await _DbContext.SaveChangesAsync();
         }
@@ -523,7 +523,7 @@ namespace ApiServer.Stores
                     }
                     #endregion
                 }
-            } 
+            }
             #endregion
             return result;
         }

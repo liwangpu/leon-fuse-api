@@ -20,16 +20,7 @@ namespace ApiModel.Entities
         /// </summary>
         public Organization Parent { get; set; }
 
-        /// <summary>
-        /// 拥有者ID，反向引用
-        /// </summary>
         public string OwnerId { get; set; }
-        /// <summary>
-        /// 拥有者，反向引用
-        /// </summary>
-        [InverseProperty("Organization")]
-        [ForeignKey("OwnerId")]
-        public Account Owner { get; set; }
 
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
@@ -58,6 +49,7 @@ namespace ApiModel.Entities
             dto.Description = Description;
             dto.Mail = Mail;
             dto.Location = Location;
+            dto.ParentId = ParentId;
             dto.Creator = Creator;
             dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;

@@ -1,5 +1,4 @@
 ﻿using BambooCommon;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -32,7 +31,6 @@ namespace ApiModel.Entities
         /// 账号启用时间，如果当前登陆时间小于启用时间，则不能登陆。
         /// </summary>
         public DateTime ActivationTime { get; set; }
-        [InverseProperty("Owner")]
         public Organization Organization { get; set; }
         public Department Department { get; set; }
         public List<ClientAsset> ClientAssets { get; set; }
@@ -79,7 +77,7 @@ namespace ApiModel.Entities
     }
 
 
-    public class AccountDTO :EntityBase
+    public class AccountDTO : EntityBase
     {
         public string Icon { get; set; }
         public string Mail { get; set; }

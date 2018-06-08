@@ -5,6 +5,7 @@ using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -119,7 +120,11 @@ namespace ApiServer.Stores
                     await base.CreateAsync(accid, data);
                     var otree = new PermissionTree();
                     otree.Name = data.Name;
-                    otree.OrganizationId = data.OrganizationId;
+                    //为了确保OrganizationId和Organization只赋一个导致OrganizationId被遗漏
+                    if (!string.IsNullOrWhiteSpace(data.OrganizationId))
+                        otree.OrganizationId = data.OrganizationId;
+                    if (data.Organization != null)
+                        otree.OrganizationId = data.Organization.Id;
                     otree.NodeType = AppConst.S_NodeType_Account;
                     otree.ObjId = data.Id;
                     var refDepartmentNode = await _DbContext.PermissionTrees.Where(x => x.ObjId == data.DepartmentId).FirstOrDefaultAsync();
@@ -136,6 +141,62 @@ namespace ApiServer.Stores
                     throw ex;
                 }
             }
+        }
+        #endregion
+
+        #region _GetPermissionData 获取操作权限数据
+        /// <summary>
+        /// 获取操作权限数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="dataOp"></param>
+        /// <param name="withInActive"></param>
+        /// <returns></returns>
+        public override async Task<IQueryable<Account>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        {
+            var emptyQuery = Enumerable.Empty<Account>().AsQueryable();
+            var query = emptyQuery;
+
+            var currentAcc = await _DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            if (currentAcc == null)
+                return query;
+
+            //数据状态
+            if (withInActive)
+                query = _DbContext.Set<Account>();
+            else
+                query = _DbContext.Set<Account>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+
+
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            {
+                return query;
+            }
+            else
+            {
+                //组织管理员(包括合伙人|供应商)能管理自己组织下普通用户和第一层级管理员信息
+                //组织所属管理员可以管理自己组织管理员
+
+                #region [U,D]
+                if (dataOp == DataOperateEnum.Update || dataOp == DataOperateEnum.Delete)
+                {
+                    var ownOrganUserQ = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    var onLevelDownOrganIdsQ = _DbContext.Organizations.Where(x => x.ParentId == currentAcc.OrganizationId).Select(x => x.Id);
+                    var oneLevelDownOrganAdminQ = query.Where(x => onLevelDownOrganIdsQ.Contains(x.OrganizationId));
+                    return ownOrganUserQ.Union(oneLevelDownOrganAdminQ);
+                }
+                #endregion
+
+                #region [R]
+                if (dataOp == DataOperateEnum.Read)
+                {
+                    var ownOrganIdsQ = (await _PermissionTreeStore.GetOrganManageNode(currentAcc.OrganizationId, new List<string>() { AppConst.S_NodeType_Organization }, true)).Select(x => x.ObjId);
+                    return query.Where(x => ownOrganIdsQ.Contains(x.OrganizationId));
+                }
+                #endregion
+
+            }
+            return emptyQuery;
         }
         #endregion
     }

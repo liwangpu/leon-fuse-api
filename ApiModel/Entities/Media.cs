@@ -53,6 +53,7 @@ namespace ApiModel.Entities
                 for (int idx = MediaShareResources.Count - 1; idx >= 0; idx--)
                 {
                     var curItem = MediaShareResources[idx];
+                    curItem.Type = Type;
                     curItem.Rotation = Rotation;
                     curItem.Location = Location;
                     curItem.FileAssetId = FileAssetId;

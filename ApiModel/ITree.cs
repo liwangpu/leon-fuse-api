@@ -11,5 +11,6 @@
         string NodeType { get; set; }
         string ObjId { get; set; }
         string OrganizationId { get; set; }
+        string RootOrganizationId { get; set; }
     }
 }
