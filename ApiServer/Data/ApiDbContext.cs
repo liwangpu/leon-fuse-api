@@ -133,6 +133,11 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<AreaType> AreaTypes { get; set; }
 
+        /// <summary>
+        /// 产品组
+        /// </summary>
+        public DbSet<ProductGroup> ProductGroups { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

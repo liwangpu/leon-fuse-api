@@ -394,13 +394,44 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region AreaTypeCreateModel 区域类型创建模型
+    /// <summary>
+    /// 区域类型创建模型
+    /// </summary>
     public class AreaTypeCreateModel : EntityCreateModel
     {
         public string IconAssetId { get; set; }
     }
+    #endregion
 
+    #region AreaTypeEditModel 区域类型编辑模型
+    /// <summary>
+    /// 区域类型编辑模型
+    /// </summary>
     public class AreaTypeEditModel : EntityEditModel
     {
         public string IconAssetId { get; set; }
     }
+    #endregion
+
+
+    public class ProductGroupCreateModel : EntityCreateModel
+    {
+        public string IconAssetId { get; set; }
+        public string Items { get; set; }
+        public string PivotLocation { get; set; }
+        public int PivotType { get; set; }
+        public int Orientation { get; set; }
+    }
+
+    public class ProductGroupEditModel : EntityEditModel
+    {
+        public string IconAssetId { get; set; }
+        public string Items { get; set; }
+        public string PivotLocation { get; set; }
+        public int PivotType { get; set; }
+        public int Orientation { get; set; }
+    }
+
+
 }
