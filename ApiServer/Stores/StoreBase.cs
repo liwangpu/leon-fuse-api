@@ -388,7 +388,7 @@ namespace ApiServer.Stores
                 data.Creator = accid;
             if (string.IsNullOrWhiteSpace(data.Modifier))
                 data.Modifier = accid;
-            if (!string.IsNullOrWhiteSpace(data.OrganizationId))
+            if (!string.IsNullOrWhiteSpace(currentAcc.OrganizationId))
                 data.OrganizationId = currentAcc.OrganizationId;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = DateTime.Now;

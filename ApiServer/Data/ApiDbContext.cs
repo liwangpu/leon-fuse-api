@@ -128,6 +128,11 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<MediaShareResource> MediaShareResources { get; set; }
 
+        /// <summary>
+        /// 套餐区域类型
+        /// </summary>
+        public DbSet<AreaType> AreaTypes { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

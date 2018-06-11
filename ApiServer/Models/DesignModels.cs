@@ -391,6 +391,16 @@ namespace ApiServer.Models
         public string Id { get; set; }
         public string MediaType { get; set; }
         public string Password { get; set; }
-    } 
+    }
     #endregion
+
+    public class AreaTypeCreateModel : EntityCreateModel
+    {
+        public string IconAssetId { get; set; }
+    }
+
+    public class AreaTypeEditModel : EntityEditModel
+    {
+        public string IconAssetId { get; set; }
+    }
 }
