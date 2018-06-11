@@ -71,7 +71,7 @@ namespace ApiModel.Entities
     /// </summary>
     public class PackageContent
     {
-        List<PackageArea> Areas; //所有的区域设定
+        public List<PackageArea> Areas { get; set; }
         public List<PackageContentItem> Items { get; set; }
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
@@ -100,8 +100,8 @@ namespace ApiModel.Entities
     /// </summary>
     public class PackageProductSet
     {
-        string DefaultId; //默认的产品ID
-        List<string> Products; //产品ID集合，这一堆产品里面可以互相替换
+        public string DefaultId { get; set; } //默认的产品ID
+        public List<string> Products { get; set; } //产品ID集合，这一堆产品里面可以互相替换
     }
     #endregion
 
@@ -111,14 +111,14 @@ namespace ApiModel.Entities
     /// </summary>
     public class PackageArea
     {
-        string AreaTypeId; //区域类型的ID
-        string AreaAlias;  //别名，如果有两个或以上的同类型区域，可以通过别名来区别。比如三个卧室的情况
+        public string AreaTypeId { get; set; } //区域类型的ID
+        public string AreaAlias { get; set; } //别名，如果有两个或以上的同类型区域，可以通过别名来区别。比如三个卧室的情况
 
-        Dictionary<string, string> GroupsMap; //<GroupName, GroupId>物品组， 每个名字的组位应该用哪一个物品组
-        Dictionary<string, string> ProductCategoryMap; //<ProductCategoryId, ProductId>. 产品的按分类指定数据， 这个区域里面 单人沙发用的哪一款， 茶几用的哪一款。
-        Dictionary<string, string> Materials; //<ActorName, MaterialId> 墙体，地面，天花等模型的材质. ActorName是场景中actor的名称，可以不写精确的名称只写一部分。比如wall, wall-main, wall-south之类的。wall1,wall2就都会匹配上
-        List<PackageProductSet> ReplaceGroups; //替换组，每个组里面是一堆家具， 如果以此套餐来限定方案的话，方案里创建和替换物品时就只能在替换组里面选择。
-    } 
+        public Dictionary<string, string> GroupsMap { get; set; } //<GroupName, GroupId>物品组， 每个名字的组位应该用哪一个物品组
+        public Dictionary<string, string> ProductCategoryMap { get; set; } //<ProductCategoryId, ProductId>. 产品的按分类指定数据， 这个区域里面 单人沙发用的哪一款， 茶几用的哪一款。
+        public Dictionary<string, string> Materials { get; set; } //<ActorName, MaterialId> 墙体，地面，天花等模型的材质. ActorName是场景中actor的名称，可以不写精确的名称只写一部分。比如wall, wall-main, wall-south之类的。wall1,wall2就都会匹配上
+        public List<PackageProductSet> ReplaceGroups { get; set; } //替换组，每个组里面是一堆家具， 如果以此套餐来限定方案的话，方案里创建和替换物品时就只能在替换组里面选择。
+    }
     #endregion
 
 

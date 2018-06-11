@@ -240,6 +240,19 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region PackageAreaTypeEditModel 套餐区域编辑模型
+    /// <summary>
+    /// 套餐区域编辑模型
+    /// </summary>
+    public class PackageAreaTypeEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        public string AreaTypeId { get; set; }
+        public string AreaAlias { get; set; }
+    } 
+    #endregion
+
     #region MapCreateModel 地图创建模型
     /// <summary>
     /// 地图创建模型

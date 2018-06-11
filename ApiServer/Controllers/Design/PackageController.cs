@@ -8,7 +8,9 @@ using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ApiServer.Controllers
 {
@@ -101,6 +103,40 @@ namespace ApiServer.Controllers
             return await _PutRequest(model.Id, mapping);
         }
         #endregion
+
+        [Route("EditAreaType")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> EditAreaType([FromBody]PackageAreaTypeEditModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                var bExist = false;
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.AreaTypeId == model.AreaTypeId && curItem.AreaAlias == model.AreaAlias)
+                    {
+                        bExist = true;
+                        break;
+                    }
+                }
+
+                if (!bExist)
+                {
+                    areas.Add(new PackageArea() { AreaAlias = model.AreaAlias, AreaTypeId = model.AreaTypeId });
+                }
+                entity.ContentIns.Areas = areas;
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
 
         #region ChangeContent 更新套餐详情信息
         /// <summary>
