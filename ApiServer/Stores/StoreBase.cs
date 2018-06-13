@@ -76,7 +76,7 @@ namespace ApiServer.Stores
         protected void _KeyWordSearchFilter(ref IQueryable<T> query, string search)
         {
             if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(d => d.Id.Contains(search) || d.Name.Contains(search) || d.Description.Contains(search));
+                query = query.Where(d => d.Name.Contains(search) || d.Description.Contains(search));
         }
         #endregion
 
