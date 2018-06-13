@@ -37,7 +37,12 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _GetPagingRequest(model, null);
+            var literal = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.Content = null;
+                return await Task.FromResult(entity);
+            });
+            return await _GetPagingRequest(model, null,null, literal);
         }
         #endregion
 
@@ -120,8 +125,10 @@ namespace ApiServer.Controllers
                 for (int idx = areas.Count - 1; idx >= 0; idx--)
                 {
                     var curItem = areas[idx];
-                    if (curItem.AreaTypeId == model.AreaTypeId && curItem.AreaAlias == model.AreaAlias)
+                    if (curItem.Id == model.Id)
                     {
+                        curItem.AreaAlias = model.AreaAlias;
+                        curItem.AreaTypeId = model.AreaTypeId;
                         bExist = true;
                         break;
                     }
@@ -129,7 +136,7 @@ namespace ApiServer.Controllers
 
                 if (!bExist)
                 {
-                    areas.Add(new PackageArea() { AreaAlias = model.AreaAlias, AreaTypeId = model.AreaTypeId });
+                    areas.Add(new PackageArea() { AreaAlias = model.AreaAlias, AreaTypeId = model.AreaTypeId, Id = GuidGen.NewGUID() });
                 }
                 entity.ContentIns.Areas = areas;
                 entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
@@ -137,6 +144,36 @@ namespace ApiServer.Controllers
             });
             return await _PutRequest(model.PackageId, mapping);
         }
+
+        [Route("DeleteAreaType")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteAreaType([FromBody]PackageAreaTypeDeleteModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.Id == model.Id)
+                    {
+                        areas.RemoveAt(idx);
+                        break;
+                    }
+                }
+
+                entity.ContentIns.Areas = areas;
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+
 
         #region ChangeContent 更新套餐详情信息
         /// <summary>

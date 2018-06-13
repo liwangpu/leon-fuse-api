@@ -248,8 +248,22 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string PackageId { get; set; }
+        public string Id { get; set; }
         public string AreaTypeId { get; set; }
         public string AreaAlias { get; set; }
+    }
+    #endregion
+
+    #region PackageAreaTypeDeleteModel 套餐区域删除模型
+    /// <summary>
+    /// 套餐区域删除模型
+    /// </summary>
+    public class PackageAreaTypeDeleteModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
     } 
     #endregion
 

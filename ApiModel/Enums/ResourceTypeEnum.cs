@@ -1,9 +1,36 @@
 ﻿namespace ApiModel.Enums
 {
+
+    /*
+     * 从品牌商的角度:
+     *      
+     *               ---> 个人(1)
+     *              |
+     *      品牌商=>|
+     *              |            --->本组织公共(2)
+     *              |           |
+     *               --->公共 =>|                    --->所有下级组织(3)
+     *                          |                   |
+     *                           --->包含下级组织 =>|
+     *                                              |
+     *                                               --->指定下级组织(4)
+     *      
+     *      
+     */
+
+
+
+
+
+
+
+
+
+
     public enum ResourceTypeEnum
     {
         /// <summary>
-        /// 私人的,除了本人谁也无法访问
+        /// 私人的
         /// </summary>
         Personal = 0,
         /// <summary>
@@ -11,30 +38,15 @@
         /// </summary>
         Departmental = 100,
         /// <summary>
-        /// 组织的资源,该组织人员可以查看
+        /// 组织的资源,仅该组织人员可以查看,下级组织不能查看
         /// </summary>
         Organizational = 200,
         /// <summary>
-        /// 品牌商资源
+        /// 组织资源,该组织以及下级组织可以查看
         /// </summary>
-        Brand = 3000,
+        Organizational_SubShare = 300,
         /// <summary>
-        /// 合伙人资源
-        /// </summary>
-        Partner = 3100,
-        /// <summary>
-        /// 供应商资源
-        /// </summary>
-        Supplier = 3200,
-        /// <summary>
-        /// 组织的资源共享方案之一
-        /// 组织的下级可以看到父组织的资源但是不能修改
-        /// 组织(包括父组织和子组织)资源的编辑权限在自己本身,即父组织的资源由它自己编辑,子组织的资源也由它自己编辑
-        /// 子组织之间无法查看对方的,只能查看父组织的资源,但是不能编辑
-        /// </summary>
-        Organizational_DownView_UpView_OwnEdit = 3300,
-        /// <summary>
-        /// 资源文件不限制,完全开放状态,全平台共享
+        /// 资源文件不限制,完全开放状态,全平台共享,任何人可以看,但是仅自己和管理员能编辑
         /// </summary>
         NoLimit = -1,
     }

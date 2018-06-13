@@ -111,6 +111,7 @@ namespace ApiModel.Entities
     /// </summary>
     public class PackageArea
     {
+        public string Id { get; set; }
         public string AreaTypeId { get; set; } //区域类型的ID
         public string AreaAlias { get; set; } //别名，如果有两个或以上的同类型区域，可以通过别名来区别。比如三个卧室的情况
 

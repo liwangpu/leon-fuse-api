@@ -94,6 +94,14 @@ namespace ApiServer.Stores
             {
                 return true;
             }
+            else if (currentAcc.Type == AppConst.AccountType_PartnerAdmin)
+            {
+                return true;
+            }
+            else if (currentAcc.Type == AppConst.AccountType_SupplierAdmin)
+            {
+                return true;
+            }
             else
             {
 
@@ -183,6 +191,12 @@ namespace ApiServer.Stores
                     var ownOrganUserQ = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
                     var onLevelDownOrganIdsQ = _DbContext.Organizations.Where(x => x.ParentId == currentAcc.OrganizationId).Select(x => x.Id);
                     var oneLevelDownOrganAdminQ = query.Where(x => onLevelDownOrganIdsQ.Contains(x.OrganizationId));
+
+                    var a1 = ownOrganUserQ.ToList();
+                    var a2 = onLevelDownOrganIdsQ.ToList();
+                    var a3 = oneLevelDownOrganAdminQ.ToList();
+                    var a4 = ownOrganUserQ.Union(oneLevelDownOrganAdminQ).ToList();
+
                     return ownOrganUserQ.Union(oneLevelDownOrganAdminQ);
                 }
                 #endregion

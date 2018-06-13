@@ -27,6 +27,7 @@ namespace ApiServer.Stores
     {
 
         protected readonly ApiDbContext _DbContext;
+        protected readonly TreeStore<PermissionTree> _TreeStore;
 
         /// <summary>
         /// 资源访问类型
@@ -43,6 +44,7 @@ namespace ApiServer.Stores
         public StoreBase(ApiDbContext context)
         {
             _DbContext = context;
+            _TreeStore = new TreeStore<PermissionTree>(context);
         }
         #endregion
 
@@ -166,95 +168,143 @@ namespace ApiServer.Stores
             if (currentAcc == null)
                 return query;
 
+            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
+
             //数据状态
             if (withInActive)
                 query = _DbContext.Set<T>();
             else
                 query = _DbContext.Set<T>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
-            #region 用户角色类型过滤(为高级用户角色定义查询,这些高级用户角色不走资源类型和数据操作类型过滤)
-            {
-                if (currentAcc.Type == AppConst.AccountType_SysAdmin)
-                {
-                    return query;
-                }
-                else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
-                {
-                    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
-                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
-                }
-                else
-                {
-                    //剩下走 资源类型过滤-数据操作类型过滤
-                }
-            }
-            #endregion
 
-            #region func getPersonalResource 不单独定义方法了,用一个Func返回query就好了
+
+            #region func getPersonalResource 获取个人资源
             var getPersonalResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
             {
                 return q.Where(x => x.Creator == currentAcc.Id);
             });
             #endregion
-
-            #region 资源类型过滤-数据操作类型过滤
-            for (int i = 0; i < 1; i++)
+            #region func getCurrentOrganResource 获取当前组织资源
+            var getCurrentOrganResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
             {
-                #region NoLimit
-                if (ResourceTypeSetting == ResourceTypeEnum.NoLimit)
-                {
-                    if (dataOp == DataOperateEnum.Read)
-                        return query;
+                return q.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+            });
+            #endregion
+            #region func getSupResource 获取上级组织资源
+            var getSupResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            {
+                var treeQ = _TreeStore.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization });
+                return q.Where(x => x.Creator == currentAcc.Id);
+            });
+            #endregion
+            #region func getSubOrganResource 获取下级组织资源
+            var getSubOrganResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            {
+                var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization });
+                return from it in query
+                       join tq in treeQ on it.OrganizationId equals tq.ObjId
+                       select it;
+            });
+            #endregion
 
-                    break;
-                }
-                #endregion
 
-                #region Organizational
+            #region [SysAdmin]
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            {
+                return query;
+            }
+            #endregion
+            #region [BrandAdmin]
+            else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
+            {
+                var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                return from it in query
+                       join tq in treeQ on it.OrganizationId equals tq.ObjId
+                       select it;
+            }
+            #endregion
+            #region [BrandMember]
+            else if (currentAcc.Type == AppConst.AccountType_BrandMember)
+            {
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                 {
                     if (dataOp == DataOperateEnum.Read)
-                    {
-                        var pass = new List<string>()
-                        {
-                            AppConst.AccountType_PartnerAdmin,
-                            AppConst.AccountType_PartnerMember,
-                            AppConst.AccountType_SupplierAdmin,
-                            AppConst.AccountType_SupplierMember,
-                        };
-
-                        if (pass.Contains(currentAcc.Type))
-                            return query.Where(x => x.OrganizationId == currentAcc.Organization.ParentId);
-
-                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
-                    }
-
-                    break;
+                        return getCurrentOrganResource(query);
                 }
-                #endregion
 
-                #region Organizational_DownView_UpView_OwnEdit
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_DownView_UpView_OwnEdit)
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
                 {
                     if (dataOp == DataOperateEnum.Read)
                     {
-                        if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_BrandMember)
-                        {
-                            var organQ = from it in _DbContext.Organizations
-                                         where it.ParentId == currentAcc.OrganizationId || it.Id == currentAcc.OrganizationId
-                                         select it;
-                            var dataQ = from q in query
-                                        join it in organQ on q.OrganizationId equals it.Id
-                                        select q;
-                            return dataQ;
-                        }
-
-                        return query.Where(x => x.OrganizationId == currentAcc.OrganizationId || x.OrganizationId == currentAcc.Organization.ParentId);
+                        var currentOrganQ = getCurrentOrganResource(query);
+                        var supOrganQ = getSupResource(query);
+                        return currentOrganQ.Union(supOrganQ);
                     }
-
-                    break;
                 }
-                #endregion
+            }
+            #endregion
+            #region [PartnerAdmin]
+            else if (currentAcc.Type == AppConst.AccountType_PartnerAdmin)
+            {
+                var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                return from it in query
+                       join tq in treeQ on it.OrganizationId equals tq.ObjId
+                       select it;
+            }
+            #endregion
+            #region [PartnerMember]
+            else if (currentAcc.Type == AppConst.AccountType_PartnerMember)
+            {
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+                {
+                    if (dataOp == DataOperateEnum.Read)
+                        return getCurrentOrganResource(query);
+                }
+
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+                {
+                    if (dataOp == DataOperateEnum.Read)
+                    {
+                        var currentOrganQ = getCurrentOrganResource(query);
+                        var supOrganQ = getSupResource(query);
+                        return currentOrganQ.Union(supOrganQ);
+                    }
+                }
+            }
+            #endregion
+            #region [SupplierAdmin]
+            else if (currentAcc.Type == AppConst.AccountType_SupplierAdmin)
+            {
+                var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                return from it in query
+                       join tq in treeQ on it.OrganizationId equals tq.ObjId
+                       select it;
+            }
+            #endregion
+            #region [SupplierMember]
+            else if (currentAcc.Type == AppConst.AccountType_SupplierMember)
+            {
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+                {
+                    if (dataOp == DataOperateEnum.Read)
+                        return getCurrentOrganResource(query);
+                }
+
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+                {
+                    if (dataOp == DataOperateEnum.Read)
+                    {
+                        var currentOrganQ = getCurrentOrganResource(query);
+                        var supOrganQ = getSupResource(query);
+                        return currentOrganQ.Union(supOrganQ);
+                    }
+                }
+            }
+            #endregion
+            #region [Default]
+            else
+            {
+                return getPersonalResource(query);
             }
             #endregion
 

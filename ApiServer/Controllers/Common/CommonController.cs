@@ -43,8 +43,9 @@ namespace ApiServer.Controllers
         /// <param name="model"></param>
         /// <param name="qMapping"></param>
         /// <param name="advanceQuery"></param>
+        /// <param name="literal"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null, Func<T, Task<T>> literal = null)
         {
             var accid = AuthMan.GetAccountId(this);
             var qs = new List<string>();
@@ -57,6 +58,15 @@ namespace ApiServer.Controllers
                 model.Q = builder.ToString();
             }
             var result = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
+
+            if (literal != null)
+            {
+                if (result.Data != null && result.Data.Count > 0)
+                {
+                    for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                        await literal(result.Data[idx]);
+                }
+            }
             return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));
         }
         #endregion
@@ -288,7 +298,7 @@ namespace ApiServer.Controllers
 
             var list = new List<CSV>();
             var res = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
-            var resource =  StoreBase<T, DTO>.PageQueryDTOTransfer(res);
+            var resource = StoreBase<T, DTO>.PageQueryDTOTransfer(res);
             if (resource.Data != null && resource.Data.Count > 0)
             {
                 foreach (var item in resource.Data)

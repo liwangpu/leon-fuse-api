@@ -104,7 +104,7 @@ namespace ApiServer.Stores
         }
         #endregion
 
-        public IQueryable<T> GetNode(T node, List<string> nodeTypes, bool includeCurrentNode = false)
+        public IQueryable<T> GetDescendantNode(T node, List<string> nodeTypes, bool includeCurrentNode = false)
         {
             if (includeCurrentNode)
             {
@@ -122,6 +122,47 @@ namespace ApiServer.Stores
                        && nodeTypes.Contains(it.NodeType)
                        select it;
             }
+        }
+
+        public async Task<IQueryable<T>> GetAncestorNode(T node, List<string> nodeTypes, bool includeCurrentNode = false)
+        {
+            var ids = new List<string>();
+            if (includeCurrentNode)
+                ids.Add(node.Id);
+            var lastNode = node;
+            while (true)
+            {
+                if (!string.IsNullOrWhiteSpace(lastNode.ParentId))
+                {
+                    var parentNode = await _DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == lastNode.ParentId);
+                    if (parentNode != null)
+                    {
+                        if (nodeTypes.Contains(parentNode.NodeType))
+                        {
+                            ids.Add(parentNode.Id);
+                            lastNode = parentNode;
+                        }
+                    }
+                    else
+                        break;
+                }
+                else
+                {
+                    if (lastNode.Id != node.Id)
+                    {
+                        if (nodeTypes.Contains(lastNode.NodeType))
+                        {
+                            ids.Add(lastNode.Id);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            return from it in _DbContext.Set<T>()
+                   where ids.Contains(it.Id)
+                   select it;
+
         }
 
         public async Task MoveNode(T data, string newParentNodeId)
