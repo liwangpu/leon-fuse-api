@@ -42,7 +42,7 @@ namespace ApiServer.Controllers
                 entity.Content = null;
                 return await Task.FromResult(entity);
             });
-            return await _GetPagingRequest(model, null,null, literal);
+            return await _GetPagingRequest(model, null, null, literal);
         }
         #endregion
 
@@ -109,6 +109,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region EditAreaType 编辑套餐区域信息
+        /// <summary>
+        /// 编辑套餐区域信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("EditAreaType")]
         [HttpPut]
         [ValidateModel]
@@ -144,7 +150,14 @@ namespace ApiServer.Controllers
             });
             return await _PutRequest(model.PackageId, mapping);
         }
+        #endregion
 
+        #region DeleteAreaType 删除套餐区域信息
+        /// <summary>
+        /// 删除套餐区域信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("DeleteAreaType")]
         [HttpPut]
         [ValidateModel]
@@ -173,7 +186,121 @@ namespace ApiServer.Controllers
             });
             return await _PutRequest(model.PackageId, mapping);
         }
+        #endregion
 
+        #region AddProductGroup 添加套餐区域产品组信息
+        /// <summary>
+        /// 添加套餐区域产品组信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("AddProductGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AddProductGroup([FromBody]PackageProductGroupCreateModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var groupDic = curItem.GroupsMap != null ? curItem.GroupsMap : new Dictionary<string, string>();
+                        var bExist = groupDic.ContainsKey(model.ProductGroupId);
+                        if (!bExist)
+                            groupDic.Add(model.ProductGroupId, "");
+                        //var bExist = groupDic.ContainsValue(model.ProductGroupId);
+                        //if (!bExist)
+                        //    groupDic.Add("", model.ProductGroupId);
+                        curItem.GroupsMap = groupDic;
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
+
+        #region DeleteProductGroup 删除套餐区域产品组信息
+        /// <summary>
+        /// 删除套餐区域产品组信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteProductGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteProductGroup([FromBody]PackageProductGroupCreateModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var groupDic = curItem.GroupsMap != null ? curItem.GroupsMap : new Dictionary<string, string>();
+                        var bExist = groupDic.ContainsKey(model.ProductGroupId);
+                        if (bExist)
+                            groupDic.Remove(model.ProductGroupId);
+                        curItem.GroupsMap = groupDic;
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
+
+        #region AddCategoryProduct 添加套餐区域分类产品信息
+        /// <summary>
+        /// 添加套餐区域分类产品信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("AddCategoryProduct")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AddCategoryProduct([FromBody]PackageCategoryProductCreateModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var cateogoryDic = curItem.ProductCategoryMap != null ? curItem.ProductCategoryMap : new Dictionary<string, string>();
+                        var bExist = cateogoryDic.ContainsKey(model.ProductId);
+                        if (!bExist)
+                            cateogoryDic.Add(model.ProductId, "");
+                        curItem.ProductCategoryMap = cateogoryDic;
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
 
         #region ChangeContent 更新套餐详情信息
         /// <summary>

@@ -264,8 +264,33 @@ namespace ApiServer.Models
         public string PackageId { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
-    } 
+    }
     #endregion
+
+    #region PackageProductGroupCreateModel 套餐产品组创建模型
+    /// <summary>
+    /// 套餐产品组创建模型
+    /// </summary>
+    public class PackageProductGroupCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductGroupId { get; set; }
+    }
+    #endregion
+
+    public class PackageCategoryProductCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductId { get; set; }
+    }
 
     #region MapCreateModel 地图创建模型
     /// <summary>
@@ -444,6 +469,8 @@ namespace ApiServer.Models
 
     public class ProductGroupCreateModel : EntityCreateModel
     {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Serie { get; set; }
         public string IconAssetId { get; set; }
         public string Items { get; set; }
         public string PivotLocation { get; set; }
@@ -453,6 +480,8 @@ namespace ApiServer.Models
 
     public class ProductGroupEditModel : EntityEditModel
     {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Serie { get; set; }
         public string IconAssetId { get; set; }
         public string Items { get; set; }
         public string PivotLocation { get; set; }

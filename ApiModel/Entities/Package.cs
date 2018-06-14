@@ -119,6 +119,9 @@ namespace ApiModel.Entities
         public Dictionary<string, string> ProductCategoryMap { get; set; } //<ProductCategoryId, ProductId>. 产品的按分类指定数据， 这个区域里面 单人沙发用的哪一款， 茶几用的哪一款。
         public Dictionary<string, string> Materials { get; set; } //<ActorName, MaterialId> 墙体，地面，天花等模型的材质. ActorName是场景中actor的名称，可以不写精确的名称只写一部分。比如wall, wall-main, wall-south之类的。wall1,wall2就都会匹配上
         public List<PackageProductSet> ReplaceGroups { get; set; } //替换组，每个组里面是一堆家具， 如果以此套餐来限定方案的话，方案里创建和替换物品时就只能在替换组里面选择。
+
+        public List<ProductGroupDTO> GroupsMapIns { get; set; }
+
     }
     #endregion
 

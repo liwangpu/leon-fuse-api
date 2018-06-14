@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
@@ -8,6 +9,7 @@ using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers.Design
@@ -27,12 +29,24 @@ namespace ApiServer.Controllers.Design
         /// 根据分页查询信息获取区域类型概要信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="serie"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<ProductGroupDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string serie)
         {
-            return await _GetPagingRequest(model, null);
+            var advanceQuery = new Func<IQueryable<ProductGroup>, Task<IQueryable<ProductGroup>>>(async (query) =>
+            {
+                if (!string.IsNullOrWhiteSpace(serie))
+                {
+                    query = query.Where(x => x.Serie.Contains(serie));
+                }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return await Task.FromResult(query);
+            });
+
+
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
@@ -71,6 +85,7 @@ namespace ApiServer.Controllers.Design
                 entity.PivotLocation = model.PivotLocation;
                 entity.PivotType = model.PivotType;
                 entity.Orientation = model.Orientation;
+                entity.Serie = model.Serie;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -99,6 +114,7 @@ namespace ApiServer.Controllers.Design
                 entity.PivotLocation = model.PivotLocation;
                 entity.PivotType = model.PivotType;
                 entity.Orientation = model.Orientation;
+                entity.Serie = model.Serie;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

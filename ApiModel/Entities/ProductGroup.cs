@@ -8,6 +8,7 @@ namespace ApiModel.Entities
     /// </summary>
     public class ProductGroup : EntityBase, IListable, IDTOTransfer<ProductGroupDTO>
     {
+        public string Serie { get; set; }
         public string Icon { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
@@ -38,6 +39,7 @@ namespace ApiModel.Entities
             dto.PivotLocation = PivotLocation;
             dto.PivotType = PivotType;
             dto.Orientation = Orientation;
+            dto.Serie = Serie;
             dto.Items = Items;
             dto.OrganizationId = OrganizationId;
             dto.Creator = Creator;
@@ -80,6 +82,7 @@ namespace ApiModel.Entities
     /// </summary>
     public class ProductGroupDTO : EntityBase
     {
+        public string Serie { get; set; }
         public string IconAssetId { get; set; }
         public string Icon { get; set; }
         public string Items { get; set; }
