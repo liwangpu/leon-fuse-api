@@ -39,16 +39,18 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <param name="categoryId"></param>
+        /// <param name="categoryName"></param>
         /// <param name="classify"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<ProductDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "", string categoryName = "", bool classify = true)
         {
             var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
             {
                 if (classify)
                 {
+                    #region 根据分类Id查询
                     if (!string.IsNullOrWhiteSpace(categoryId))
                     {
                         var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
@@ -64,6 +66,21 @@ namespace ApiServer.Controllers
                                     select it;
                         }
                     }
+                    else
+                    {
+                        query = query.Where(x => !string.IsNullOrWhiteSpace(x.CategoryId));
+                    }
+                    #endregion
+
+                    #region 根据分类名称查询
+                    if (!string.IsNullOrWhiteSpace(categoryName))
+                    {
+                        var accid = AuthMan.GetAccountId(this);
+                        var account = await _context.Accounts.FindAsync(accid);
+                        var categoryIds = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.OrganizationId == account.OrganizationId && x.Name.Contains(categoryName)).Select(x => x.Id);
+                        query = query.Where(x => categoryIds.Contains(x.CategoryId));
+                                            }
+                    #endregion
                 }
                 else
                 {
@@ -304,7 +321,7 @@ namespace ApiServer.Controllers
         }
 
         #endregion
-      
+
         #region  [ CSV Matedata ]
         class ProductAndCategoryImportCSV : ClassMap<ProductAndCategoryImportCSV>, ImportData
         {

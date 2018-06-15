@@ -279,10 +279,34 @@ namespace ApiServer.Models
         public string AreaId { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string ProductGroupId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Serie { get; set; }
     }
     #endregion
 
+    public class PackageProductGroupDeleteModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductGroupId { get; set; }
+    }
+
     public class PackageCategoryProductCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductCategoryId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductId { get; set; }
+    }
+
+    public class PackageCategoryProductDeleteModel
     {
         [Required(ErrorMessage = "必填信息")]
         public string PackageId { get; set; }

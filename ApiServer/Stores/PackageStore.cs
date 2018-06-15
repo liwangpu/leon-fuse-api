@@ -104,10 +104,11 @@ namespace ApiServer.Stores
                             var groups = new List<ProductGroupDTO>();
                             foreach (var item in curArea.GroupsMap)
                             {
-                                var grp = await _DbContext.ProductGroups.FindAsync(item.Key);
-                                if (grp != null && !string.IsNullOrWhiteSpace(grp.Icon))
+                                var grp = await _DbContext.ProductGroups.FindAsync(item.Value);
+                                if (grp != null)
                                 {
-                                    grp.IconFileAsset = await _DbContext.Files.FindAsync(grp.Icon);
+                                    if (!string.IsNullOrWhiteSpace(grp.Icon))
+                                        grp.IconFileAsset = await _DbContext.Files.FindAsync(grp.Icon);
                                     groups.Add(grp.ToDTO());
                                 }
 
@@ -119,7 +120,18 @@ namespace ApiServer.Stores
                         #region 匹配分类产品
                         if (curArea.ProductCategoryMap != null && curArea.ProductCategoryMap.Count > 0)
                         {
-
+                            var products = new List<ProductDTO>();
+                            foreach (var item in curArea.ProductCategoryMap)
+                            {
+                                var prd = await _DbContext.Products.FindAsync(item.Value);
+                                if (prd != null)
+                                {
+                                    if(!string.IsNullOrWhiteSpace(prd.Icon))
+                                        prd.IconFileAsset = await _DbContext.Files.FindAsync(prd.Icon);
+                                    products.Add(prd.ToDTO());
+                                }
+                            }
+                            curArea.ProductCategoryMapIns = products;
                         }
                         #endregion
                     }

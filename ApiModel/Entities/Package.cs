@@ -121,7 +121,7 @@ namespace ApiModel.Entities
         public List<PackageProductSet> ReplaceGroups { get; set; } //替换组，每个组里面是一堆家具， 如果以此套餐来限定方案的话，方案里创建和替换物品时就只能在替换组里面选择。
 
         public List<ProductGroupDTO> GroupsMapIns { get; set; }
-
+        public List<ProductDTO> ProductCategoryMapIns { get; set; }
     }
     #endregion
 
