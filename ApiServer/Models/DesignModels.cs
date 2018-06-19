@@ -316,6 +316,19 @@ namespace ApiServer.Models
         public string ProductId { get; set; }
     }
 
+    public class PackageMaterialCreateModel
+    {
+        public string LastActorName { get; set; }
+        public string ActorName { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string MaterialId { get; set; }
+
+    }
+
     #region MapCreateModel 地图创建模型
     /// <summary>
     /// 地图创建模型

@@ -337,6 +337,36 @@ namespace ApiServer.Controllers
         #endregion
 
 
+        [Route("EditMaterial")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> EditMaterial([FromBody]PackageMaterialCreateModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var materialDic = curItem.Materials != null ? curItem.Materials : new Dictionary<string, string>();
+                        materialDic[!string.IsNullOrWhiteSpace(model.LastActorName) ? model.LastActorName : "待定"] = model.MaterialId;
+                        curItem.Materials = materialDic;
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+
+
+
 
         #region ChangeContent 更新套餐详情信息
         /// <summary>

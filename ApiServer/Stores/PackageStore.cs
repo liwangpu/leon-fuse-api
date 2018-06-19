@@ -126,12 +126,30 @@ namespace ApiServer.Stores
                                 var prd = await _DbContext.Products.FindAsync(item.Value);
                                 if (prd != null)
                                 {
-                                    if(!string.IsNullOrWhiteSpace(prd.Icon))
+                                    if (!string.IsNullOrWhiteSpace(prd.Icon))
                                         prd.IconFileAsset = await _DbContext.Files.FindAsync(prd.Icon);
                                     products.Add(prd.ToDTO());
                                 }
                             }
                             curArea.ProductCategoryMapIns = products;
+                        }
+                        #endregion
+
+                        #region 匹配材质
+                        if (curArea.Materials != null && curArea.Materials.Count > 0)
+                        {
+                            var materials = new List<MaterialDTO>();
+                            foreach (var item in curArea.Materials)
+                            {
+                                var mtl = await _DbContext.Materials.FindAsync(item.Value);
+                                if (mtl != null)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(mtl.Icon))
+                                        mtl.IconFileAsset = await _DbContext.Files.FindAsync(mtl.Icon);
+                                    materials.Add(mtl.ToDTO());
+                                }
+                            }
+                            curArea.MaterialIns = materials;
                         }
                         #endregion
                     }

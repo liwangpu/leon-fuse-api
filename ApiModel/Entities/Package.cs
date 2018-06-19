@@ -122,6 +122,7 @@ namespace ApiModel.Entities
 
         public List<ProductGroupDTO> GroupsMapIns { get; set; }
         public List<ProductDTO> ProductCategoryMapIns { get; set; }
+        public List<MaterialDTO> MaterialIns { get; set; }
     }
     #endregion
 
