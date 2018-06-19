@@ -268,6 +268,12 @@ namespace ApiServer.Controllers
 
             await repo.CreateAsync(accid, res, false); //记录到数据库
 
+            //如果是图片，则为其生成缩略图
+            if(res.FileExt.Equals(".jpg", StringComparison.CurrentCultureIgnoreCase) || res.FileExt.Equals(".png", StringComparison.CurrentCultureIgnoreCase))
+            {
+                ImageThumbnailCreator.SaveImageThumbnails(renamedPath);
+            }
+
             return Ok(res);
         }
         #endregion
