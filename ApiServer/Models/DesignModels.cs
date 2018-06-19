@@ -326,7 +326,28 @@ namespace ApiServer.Models
         public string AreaId { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string MaterialId { get; set; }
+    }
 
+    public class PackageMaterialDeleteModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string LastActorName { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string MaterialId { get; set; }
+    }
+
+    public class PackageReplaceGroupCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductIds { get; set; }
     }
 
     #region MapCreateModel 地图创建模型

@@ -1,5 +1,6 @@
 ﻿using ApiModel;
 using ApiModel.Enums;
+using ApiServer.Data;
 using ApiServer.Models;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,6 +14,7 @@ namespace ApiServer.Stores
              where T : class, IEntity, IDTOTransfer<DTO>, new()
                    where DTO : class, IData, new()
     {
+        ApiDbContext DbContext { get; }
         Task SatisfyCreateAsync(string accid, T data, ModelStateDictionary modelState);
         Task SatisfyUpdateAsync(string accid, T data, ModelStateDictionary modelState);
         Task<bool> CanCreateAsync(string accid);

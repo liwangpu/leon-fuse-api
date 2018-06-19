@@ -22,6 +22,8 @@ namespace ApiModel
         public string CreatorName { get; set; }
         [NotMapped]
         public string ModifierName { get; set; }
+        [NotMapped]
+        public string FolderName { get; set; }
         /// <summary>
         /// 启用状态 1启用 0禁用
         /// </summary>
@@ -51,4 +53,5 @@ namespace ApiModel
         }
     }
     #endregion
+
 }

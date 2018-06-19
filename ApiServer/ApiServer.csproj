@@ -21,6 +21,14 @@
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
+    <Compile Remove="Migrations\20180619061729_LeonAddCollection0619.cs" />
+    <Compile Remove="Migrations\20180619061729_LeonAddCollection0619.Designer.cs" />
+    <Compile Remove="Migrations\20180619063802_LeonAddTargetIdToCollection0619.cs" />
+    <Compile Remove="Migrations\20180619063802_LeonAddTargetIdToCollection0619.Designer.cs" />
+    <Compile Remove="Migrations\20180619083924_LeonAddFolderToCollection10619.cs" />
+    <Compile Remove="Migrations\20180619083924_LeonAddFolderToCollection10619.Designer.cs" />
+    <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.cs" />
+    <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

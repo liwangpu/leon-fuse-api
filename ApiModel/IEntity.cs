@@ -14,5 +14,6 @@ namespace ApiModel
         int ActiveFlag { get; set; }
         int ResourceType { get; set; }
         string OrganizationId { get; set; }
+        string FolderName { get; set; }
     }
 }

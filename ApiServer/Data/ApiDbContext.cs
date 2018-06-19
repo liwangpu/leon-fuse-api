@@ -138,6 +138,10 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<ProductGroup> ProductGroups { get; set; }
 
+        /// <summary>
+        /// 收藏
+        /// </summary>
+        public DbSet<Collection> Collections { get; set; }
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

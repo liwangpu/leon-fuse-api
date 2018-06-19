@@ -105,6 +105,14 @@ namespace ApiModel.Entities
     }
     #endregion
 
+    public class PackageMaterial
+    {
+        public string ActorName { get; set; }
+        public string LastActorName { get; set; }
+        public string Icon { get; set; }
+        public string MaterialId { get; set; }
+    }
+
     #region PackageArea 套餐的区域配置，配置套餐中的一个区域（狭义的区域也可以理解为房间）
     /// <summary>
     /// 套餐的区域配置，配置套餐中的一个区域（狭义的区域也可以理解为房间）
@@ -122,7 +130,8 @@ namespace ApiModel.Entities
 
         public List<ProductGroupDTO> GroupsMapIns { get; set; }
         public List<ProductDTO> ProductCategoryMapIns { get; set; }
-        public List<MaterialDTO> MaterialIns { get; set; }
+        public List<PackageMaterial> MaterialIns { get; set; }
+        public List<List<ProductDTO>> ReplaceGroupIns { get; set; }
     }
     #endregion
 

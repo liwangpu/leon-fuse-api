@@ -82,7 +82,30 @@ namespace ApiServer.Models
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
     }
-    #endregion 
+    #endregion
 
     #endregion
+
+    #region CollectionCreateModel 收藏创建模型
+    /// <summary>
+    /// 收藏创建模型
+    /// </summary>
+    public class CollectionCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string TargetId { get; set; }
+        public string FolderName { get; set; }
+    }
+    #endregion
+
+    /// <summary>
+    /// 收藏查询请求信息
+    /// </summary>
+    public class ColletionRequestModel: PagingRequestModel
+    {
+        public string TargetId { get; set; }
+        public string FolderName { get; set; }
+        public bool IsInFolder { get; set; }
+    }
+
 }

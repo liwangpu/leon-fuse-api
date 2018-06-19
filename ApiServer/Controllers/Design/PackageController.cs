@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
 namespace ApiServer.Controllers
 {
     /// <summary>
@@ -24,7 +26,8 @@ namespace ApiServer.Controllers
         #region 构造函数
         public PackageController(ApiDbContext context)
         : base(new PackageStore(context))
-        { }
+        {
+        }
         #endregion
 
         #region Get 根据分页查询信息获取套餐概要信息
@@ -336,7 +339,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-
+        #region EditMaterial 新增/编辑套餐材质信息
+        /// <summary>
+        /// 新增/编辑套餐材质信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("EditMaterial")]
         [HttpPut]
         [ValidateModel]
@@ -354,7 +362,9 @@ namespace ApiServer.Controllers
                     if (curItem.Id == model.AreaId)
                     {
                         var materialDic = curItem.Materials != null ? curItem.Materials : new Dictionary<string, string>();
-                        materialDic[!string.IsNullOrWhiteSpace(model.LastActorName) ? model.LastActorName : "待定"] = model.MaterialId;
+                        if (!string.IsNullOrWhiteSpace(model.LastActorName) && materialDic[model.LastActorName] != null)
+                            materialDic.Remove(model.LastActorName);
+                        materialDic[!string.IsNullOrWhiteSpace(model.ActorName) ? model.ActorName : "待定"] = model.MaterialId;
                         curItem.Materials = materialDic;
                         break;
                     }
@@ -364,9 +374,115 @@ namespace ApiServer.Controllers
             });
             return await _PutRequest(model.PackageId, mapping);
         }
+        #endregion
 
+        #region DeleteMaterial 删除套餐材质信息
+        /// <summary>
+        /// 删除套餐材质信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteMaterial")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteMaterial([FromBody]PackageMaterialDeleteModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int idx = areas.Count - 1; idx >= 0; idx--)
+                {
+                    var curItem = areas[idx];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var materialDic = curItem.Materials != null ? curItem.Materials : new Dictionary<string, string>();
+                        for (int nxd = 0; nxd >= 0; nxd--)
+                        {
+                            var curKv = materialDic.ElementAt(nxd);
+                            if (curKv.Key == model.LastActorName && curKv.Value == model.MaterialId)
+                            {
+                                materialDic.Remove(curKv.Key);
+                                break;
+                            }
+                        }
+                        curItem.Materials = materialDic;
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
 
+        [Route("AddReplaceGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AddReplaceGroup([FromBody]PackageReplaceGroupCreateModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int k = areas.Count - 1; k >= 0; k--)
+                {
+                    var curItem = areas[k];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var replaceList = curItem.ReplaceGroups != null ? curItem.ReplaceGroups : new List<PackageProductSet>();
+                        var productIdArr = model.ProductIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var inputProductId in productIdArr)
+                        {
+                            var bExistCateogry = false;
 
+                            #region 遍历所有替换组,往已经存在的替换组里面添加产品信息
+                            for (int ndx = 0, len = replaceList.Count - 1; ndx < len; ndx++)
+                            {
+                                var curReplaceGroup = replaceList[ndx];
+                                if (curReplaceGroup.Products == null)
+                                    curReplaceGroup.Products = new List<string>();
+                                var aaa = curReplaceGroup.DefaultId;
+                                //var defaultProduct = await _DbContext.Products.FindAsync(curReplaceGroup.DefaultId);
+                                var defaultProduct = await _Store.DbContext.Products.FirstOrDefaultAsync(x => x.Id == curReplaceGroup.DefaultId);
+                                var curProduct = await _Store.DbContext.Products.FindAsync(inputProductId);
+                                if (defaultProduct != null)
+                                {
+                                    if (defaultProduct.CategoryId == curProduct.CategoryId)
+                                    {
+                                        bExistCateogry = true;
+                                        if (defaultProduct.Id != curProduct.Id && !curReplaceGroup.Products.Exists(x => x == inputProductId))
+                                            curReplaceGroup.Products.Add(inputProductId);
+                                    }
+                                }
+                            }
+                            #endregion
+
+                            #region 替换组不存在,新建一个替换组
+                            if (!bExistCateogry)
+                            {
+                                var nset = new PackageProductSet();
+                                nset.DefaultId = inputProductId;
+                                nset.Products = new List<string>() { inputProductId };
+                                replaceList.Add(nset);
+                            }
+                            #endregion
+
+                            curItem.ReplaceGroups = replaceList;
+                        }
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
 
         #region ChangeContent 更新套餐详情信息
         /// <summary>

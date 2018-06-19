@@ -138,18 +138,55 @@ namespace ApiServer.Stores
                         #region 匹配材质
                         if (curArea.Materials != null && curArea.Materials.Count > 0)
                         {
-                            var materials = new List<MaterialDTO>();
+                            var materials = new List<PackageMaterial>();
                             foreach (var item in curArea.Materials)
                             {
                                 var mtl = await _DbContext.Materials.FindAsync(item.Value);
                                 if (mtl != null)
                                 {
+                                    var model = new PackageMaterial();
                                     if (!string.IsNullOrWhiteSpace(mtl.Icon))
-                                        mtl.IconFileAsset = await _DbContext.Files.FindAsync(mtl.Icon);
-                                    materials.Add(mtl.ToDTO());
+                                    {
+                                        var fs = await _DbContext.Files.FindAsync(mtl.Icon);
+                                        model.Icon = fs != null ? fs.Url : "";
+                                    }
+
+                                    model.MaterialId = mtl.Id;
+                                    model.LastActorName = item.Key;
+                                    model.ActorName = item.Key;
+                                    if (model.ActorName == "待定")
+                                        materials.Insert(0, model);
+                                    else
+                                        materials.Add(model);
                                 }
                             }
                             curArea.MaterialIns = materials;
+                        }
+                        #endregion
+
+                        #region 匹配替换组
+                        if (curArea.ReplaceGroups != null && curArea.ReplaceGroups.Count > 0)
+                        {
+                            var groups = new List<List<ProductDTO>>();
+                            foreach (var item in curArea.ReplaceGroups)
+                            {
+                                var replaceGroupItem = new List<ProductDTO>();
+                                if (item.Products != null && item.Products.Count > 0)
+                                {
+                                    foreach (var productId in item.Products)
+                                    {
+                                        var prd = await DbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
+                                        if (prd != null)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(prd.Icon))
+                                                prd.IconFileAsset = await DbContext.Files.FirstOrDefaultAsync(x => x.Id == prd.Icon);
+                                            replaceGroupItem.Add(prd.ToDTO());
+                                        }
+                                    }
+                                }
+                                groups.Add(replaceGroupItem);
+                            }
+                            curArea.ReplaceGroupIns = groups;
                         }
                         #endregion
                     }

@@ -27,6 +27,8 @@ namespace ApiServer.Stores
     {
 
         protected readonly ApiDbContext _DbContext;
+        public ApiDbContext DbContext { get { return _DbContext; } }
+
         protected readonly TreeStore<PermissionTree> _TreeStore;
 
         /// <summary>
@@ -218,6 +220,9 @@ namespace ApiServer.Stores
             else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
             {
                 var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+
+                var aaa = treeQ.ToList();
+
                 return from it in query
                        join tq in treeQ on it.OrganizationId equals tq.ObjId
                        select it;

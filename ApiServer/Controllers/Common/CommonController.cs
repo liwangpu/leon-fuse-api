@@ -1,4 +1,5 @@
 ﻿using ApiModel;
+using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -28,7 +29,7 @@ namespace ApiServer.Controllers
     {
         protected bool RequestValid;
         protected IStore<T, DTO> _Store;
-
+        //protected readonly ApiDbContext _DbContext;
         #region 构造函数
         public CommonController(IStore<T, DTO> store)
         {
