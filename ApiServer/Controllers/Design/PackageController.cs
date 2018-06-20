@@ -419,6 +419,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region AddReplaceGroup 添加套餐替换组
+        /// <summary>
+        /// 添加套餐替换组
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("AddReplaceGroup")]
         [HttpPut]
         [ValidateModel]
@@ -442,7 +448,7 @@ namespace ApiServer.Controllers
                             var bExistCateogry = false;
 
                             #region 遍历所有替换组,往已经存在的替换组里面添加产品信息
-                            for (int ndx = 0, len = replaceList.Count - 1; ndx < len; ndx++)
+                            for (int ndx = 0, len = replaceList.Count; ndx < len; ndx++)
                             {
                                 var curReplaceGroup = replaceList[ndx];
                                 if (curReplaceGroup.Products == null)
@@ -472,8 +478,49 @@ namespace ApiServer.Controllers
                                 replaceList.Add(nset);
                             }
                             #endregion
+                        }
+                        curItem.ReplaceGroups = replaceList;
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
 
-                            curItem.ReplaceGroups = replaceList;
+        #region DeleteReplaceGroup 删除套餐替换组
+        /// <summary>
+        /// 删除套餐替换组
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteReplaceGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteReplaceGroup([FromBody]PackageReplaceGroupDeleteModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int k = areas.Count - 1; k >= 0; k--)
+                {
+                    var curItem = areas[k];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var replaceList = curItem.ReplaceGroups != null ? curItem.ReplaceGroups : new List<PackageProductSet>();
+                        for (int idx = replaceList.Count - 1; idx >= 0; idx--)
+                        {
+                            var curGroup = replaceList[idx];
+                            if (curGroup.DefaultId == model.ProductId)
+                            {
+                                replaceList.RemoveAt(idx);
+                                break;
+                            }
                         }
                         break;
                     }
@@ -483,6 +530,107 @@ namespace ApiServer.Controllers
             });
             return await _PutRequest(model.PackageId, mapping);
         }
+        #endregion
+
+        #region SetDefaultReplaceGroup 设置替换组默认项
+        /// <summary>
+        /// 设置替换组默认项
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("SetDefaultReplaceGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> SetDefaultReplaceGroup([FromBody] PackageReplaceGroupSetDefaultModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int k = areas.Count - 1; k >= 0; k--)
+                {
+                    var curItem = areas[k];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var replaceList = curItem.ReplaceGroups != null ? curItem.ReplaceGroups : new List<PackageProductSet>();
+                        for (int idx = replaceList.Count - 1; idx >= 0; idx--)
+                        {
+                            var curGroup = replaceList[idx];
+                            if (curGroup.DefaultId == model.DefaultId)
+                            {
+                                curGroup.DefaultId = model.ProductId;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
+
+        #region DeleteReplaceGroupDetailItem 删除替换组产品项
+        /// <summary>
+        /// 删除替换组产品项
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteReplaceGroupDetailItem")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteReplaceGroupDetailItem([FromBody] PackageReplaceGroupSetDefaultModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var areas = entity.ContentIns != null && entity.ContentIns.Areas != null && entity.ContentIns.Areas.Count > 0 ? entity.ContentIns.Areas : new List<PackageArea>();
+                for (int k = areas.Count - 1; k >= 0; k--)
+                {
+                    var curItem = areas[k];
+                    if (curItem.Id == model.AreaId)
+                    {
+                        var replaceList = curItem.ReplaceGroups != null ? curItem.ReplaceGroups : new List<PackageProductSet>();
+                        for (int idx = replaceList.Count - 1; idx >= 0; idx--)
+                        {
+                            var curGroup = replaceList[idx];
+                            if (curGroup.DefaultId == model.DefaultId)
+                            {
+                                //删除的是默认项,找不是默认项的第一个设为默认
+                                if (curGroup.DefaultId == model.ProductId)
+                                {
+                                    //改组只有一个默认项,删除改组
+                                    if (curGroup.Products.Count == 1)
+                                    {
+                                        replaceList.RemoveAt(idx);
+                                        break;
+                                    }
+                                }
+                                //清除组里面要删除的项
+                                for (int dix = curGroup.Products.Count - 1; dix >= 0; dix--)
+                                {
+                                    if (curGroup.Products[dix] == model.ProductId)
+                                        curGroup.Products.RemoveAt(dix);
+                                }
+                                curGroup.DefaultId = curGroup.Products[0];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        } 
+        #endregion
 
         #region ChangeContent 更新套餐详情信息
         /// <summary>

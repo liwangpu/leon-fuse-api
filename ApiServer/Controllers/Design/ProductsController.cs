@@ -66,10 +66,10 @@ namespace ApiServer.Controllers
                                     select it;
                         }
                     }
-                    else
-                    {
-                        query = query.Where(x => !string.IsNullOrWhiteSpace(x.CategoryId));
-                    }
+                    //else
+                    //{
+                    //    query = query.Where(x => !string.IsNullOrWhiteSpace(x.CategoryId));
+                    //}
                     #endregion
 
                     #region 根据分类名称查询

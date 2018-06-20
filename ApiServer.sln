@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BambooCore", "BambooCore\Ba
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BambooCommon", "BambooCommon\BambooCommon.csproj", "{D684E136-3F0B-4F90-8BFA-F6D76BDAA41E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransferHelper", "DataTransferHelper\DataTransferHelper.csproj", "{9F8E5B8B-9733-437C-80B5-56BE12079FF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Cloud-Dev|Any CPU = Cloud-Dev|Any CPU
@@ -50,6 +52,12 @@ Global
 		{D684E136-3F0B-4F90-8BFA-F6D76BDAA41E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D684E136-3F0B-4F90-8BFA-F6D76BDAA41E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D684E136-3F0B-4F90-8BFA-F6D76BDAA41E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F8E5B8B-9733-437C-80B5-56BE12079FF3}.Cloud-Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F8E5B8B-9733-437C-80B5-56BE12079FF3}.Cloud-Dev|Any CPU.Build.0 = Debug|Any CPU
+		{9F8E5B8B-9733-437C-80B5-56BE12079FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F8E5B8B-9733-437C-80B5-56BE12079FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F8E5B8B-9733-437C-80B5-56BE12079FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F8E5B8B-9733-437C-80B5-56BE12079FF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

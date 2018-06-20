@@ -148,6 +148,7 @@ namespace ApiServer.Controllers
             p.Location = acc.Location;
             p.OrganizationId = acc.OrganizationId;
             p.DepartmentId = acc.DepartmentId;
+            p.Role = acc.Type;
             return p;
         }
         #endregion

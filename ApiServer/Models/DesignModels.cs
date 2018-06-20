@@ -284,6 +284,10 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region PackageProductGroupDeleteModel 套餐详情产品组删除模型
+    /// <summary>
+    /// 套餐详情产品组删除模型
+    /// </summary>
     public class PackageProductGroupDeleteModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -293,7 +297,12 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ProductGroupId { get; set; }
     }
+    #endregion
 
+    #region PackageCategoryProductCreateModel 套餐详情分类产品创建模型
+    /// <summary>
+    /// 套餐详情分类产品创建模型
+    /// </summary>
     public class PackageCategoryProductCreateModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -305,7 +314,12 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ProductId { get; set; }
     }
+    #endregion
 
+    #region PackageCategoryProductDeleteModel 套餐详情分类产品删除模型
+    /// <summary>
+    /// 套餐详情分类产品删除模型
+    /// </summary>
     public class PackageCategoryProductDeleteModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -315,7 +329,12 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ProductId { get; set; }
     }
+    #endregion
 
+    #region PackageMaterialCreateModel 套餐详细材质创建模型
+    /// <summary>
+    /// 套餐详细材质创建模型
+    /// </summary>
     public class PackageMaterialCreateModel
     {
         public string LastActorName { get; set; }
@@ -327,7 +346,12 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string MaterialId { get; set; }
     }
+    #endregion
 
+    #region PackageMaterialDeleteModel 套餐详情材质删除模型
+    /// <summary>
+    /// 套餐详情材质删除模型
+    /// </summary>
     public class PackageMaterialDeleteModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -339,7 +363,12 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string MaterialId { get; set; }
     }
+    #endregion
 
+    #region PackageReplaceGroupCreateModel 套餐详情替换组创建模型
+    /// <summary>
+    /// 套餐详情替换组创建模型
+    /// </summary>
     public class PackageReplaceGroupCreateModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -349,6 +378,39 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ProductIds { get; set; }
     }
+    #endregion
+
+    #region PackageReplaceGroupDeleteModel 套餐详情替换组删除模型
+    /// <summary>
+    /// 套餐详情替换组删除模型
+    /// </summary>
+    public class PackageReplaceGroupDeleteModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductId { get; set; }
+    }
+    #endregion
+
+    #region PackageReplaceGroupSetDefaultModel 套餐详情替换组默认项设置模型
+    /// <summary>
+    /// 套餐详情替换组默认项设置模型
+    /// </summary>
+    public class PackageReplaceGroupSetDefaultModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string PackageId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string AreaId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string DefaultId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ProductId { get; set; }
+    } 
+    #endregion
 
     #region MapCreateModel 地图创建模型
     /// <summary>

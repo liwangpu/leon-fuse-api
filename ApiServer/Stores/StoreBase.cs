@@ -221,7 +221,12 @@ namespace ApiServer.Stores
             {
                 var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
 
+                var bb = query.ToList();
                 var aaa = treeQ.ToList();
+
+                var qq=( from it in query
+                       join tq in treeQ on it.OrganizationId equals tq.ObjId
+                       select it).ToList();
 
                 return from it in query
                        join tq in treeQ on it.OrganizationId equals tq.ObjId

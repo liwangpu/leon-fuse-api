@@ -1,5 +1,4 @@
-﻿using ApiModel;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -180,7 +179,11 @@ namespace ApiServer.Stores
                                         {
                                             if (!string.IsNullOrWhiteSpace(prd.Icon))
                                                 prd.IconFileAsset = await DbContext.Files.FirstOrDefaultAsync(x => x.Id == prd.Icon);
-                                            replaceGroupItem.Add(prd.ToDTO());
+
+                                            if (prd.Id == item.DefaultId)
+                                                replaceGroupItem.Insert(0, prd.ToDTO());
+                                            else
+                                                replaceGroupItem.Add(prd.ToDTO());
                                         }
                                     }
                                 }
