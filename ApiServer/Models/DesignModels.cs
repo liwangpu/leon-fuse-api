@@ -409,7 +409,7 @@ namespace ApiServer.Models
         public string DefaultId { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string ProductId { get; set; }
-    } 
+    }
     #endregion
 
     #region MapCreateModel 地图创建模型
@@ -609,5 +609,21 @@ namespace ApiServer.Models
         public int Orientation { get; set; }
     }
 
+
+    public class AssetCategoryCreateModel : EntityCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Type { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ParentId { get; set; }
+        public string OrganizationId { get; set; }
+    }
+
+    public class AssetCategoryEditModel : EntityEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string ParentId { get; set; }
+        public string OrganizationId { get; set; }
+    }
 
 }

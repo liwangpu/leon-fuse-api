@@ -8,6 +8,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,20 @@ namespace ApiServer.Controllers
         public CommonController(IStore<T, DTO> store)
         {
             _Store = store;
+        }
+        #endregion
+
+        #region _GetCurrentUserOrganId 获取当前用户的组织Id
+        /// <summary>
+        /// 获取当前用户的组织Id
+        /// </summary>
+        protected async Task<string> _GetCurrentUserOrganId()
+        {
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            if (account != null)
+                return account.OrganizationId;
+            return string.Empty;
         }
         #endregion
 

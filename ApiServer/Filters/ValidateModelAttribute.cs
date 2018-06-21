@@ -77,6 +77,7 @@ namespace ApiServer.Filters
     public class ErrorRespondModel
     {
         public string Message { get; set; }
-    } 
+    }
     #endregion
+
 }

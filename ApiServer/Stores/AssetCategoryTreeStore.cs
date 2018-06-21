@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

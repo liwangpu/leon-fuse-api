@@ -7,6 +7,7 @@ using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,10 +18,14 @@ namespace ApiServer.Controllers.Asset
     [Route("/[controller]")]
     public class MediaShareController : CommonController<MediaShareResource, MediaShareResourceDTO>
     {
+        private readonly ILogger<MediaShareController> _logger;
+
         #region 构造函数
-        public MediaShareController(ApiDbContext context)
+        public MediaShareController(ApiDbContext context, ILogger<MediaShareController> logger)
         : base(new MediaShareStore(context))
-        { }
+        {
+            _logger = logger;
+        }
         #endregion
 
         #region Get 根据分页查询信息获取媒体文件概要信息

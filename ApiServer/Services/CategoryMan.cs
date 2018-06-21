@@ -181,7 +181,7 @@ namespace ApiServer.Services
             AssetCategory childCategory = await dbset.FirstOrDefaultAsync(d => d.Type == type && d.ParentId == catid);
             if (childCategory != null)
             {
-                return "cannot delete this category, until delete or move all of children category."; //此分类下还有子分类，不可以删除。
+                return "此分类下还有子分类，不可以删除"; //此分类下还有子分类，不可以删除。
             }
             AssetCategory target = await dbset.FirstOrDefaultAsync(d => d.Type == type && d.Id == catid);
             if (target == null)

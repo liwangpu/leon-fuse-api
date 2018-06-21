@@ -629,7 +629,7 @@ namespace ApiServer.Controllers
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.PackageId, mapping);
-        } 
+        }
         #endregion
 
         #region ChangeContent 更新套餐详情信息
@@ -645,7 +645,7 @@ namespace ApiServer.Controllers
         {
             var mapping = new Func<Package, Task<Package>>(async (entity) =>
             {
-                entity.Content = Newtonsoft.Json.JsonConvert.SerializeObject(content);
+                entity.Content = JsonConvert.SerializeObject(content);
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(id, mapping);

@@ -93,6 +93,14 @@
           "EditOp": "true"
         },
         {
+          "id": "productgroup-category",
+          "title": "nav.ProductGroupCategorys",
+          "type": "item",
+          "icon": "chrome_reader_mode",
+          "url": "/app/productgroud-category",
+          "EditOp": "true"
+        },
+        {
           "id": "product",
           "title": "nav.InteriorDesignProducts",
           "type": "item",
