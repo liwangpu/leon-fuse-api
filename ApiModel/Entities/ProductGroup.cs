@@ -10,8 +10,7 @@ namespace ApiModel.Entities
     {
         public string Serie { get; set; }
         public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string CategoryId { get; set; }
         /// <summary>
         /// 轴心的精确位置
         /// </summary>
@@ -30,6 +29,11 @@ namespace ApiModel.Entities
         /// </summary>
         public string Items { get; set; }
 
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
+        [NotMapped]
+        public AssetCategory AssetCategory { get; set; }
+
         public ProductGroupDTO ToDTO()
         {
             var dto = new ProductGroupDTO();
@@ -42,6 +46,7 @@ namespace ApiModel.Entities
             dto.Serie = Serie;
             dto.Items = Items;
             dto.OrganizationId = OrganizationId;
+            dto.CategoryId = CategoryId;
             dto.Creator = Creator;
             dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
@@ -54,6 +59,9 @@ namespace ApiModel.Entities
                 dto.Icon = IconFileAsset.Url;
                 dto.IconAssetId = IconFileAsset.Id;
             }
+
+            if (AssetCategory != null)
+                dto.CategoryName = AssetCategory.Name;
             return dto;
         }
     }
@@ -89,6 +97,8 @@ namespace ApiModel.Entities
         public string PivotLocation { get; set; }
         public int PivotType { get; set; }
         public int Orientation { get; set; }
+        public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
     }
     #endregion
 

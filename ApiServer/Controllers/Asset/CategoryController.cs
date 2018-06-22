@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -26,6 +27,41 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region _getParentCategoryAndSameLevelChildren 根据父节点Id获取父节点下第一级子节点分类
+        /// <summary>
+        /// 根据父节点Id获取父节点下第一级子节点分类
+        /// </summary>
+        /// <param name="parentId"></param>
+        /// <returns></returns>
+        protected async Task<AssetCategoryDTO> _getParentCategoryAndSameLevelChildren(string parentId)
+        {
+            var parentCat = await _Store.DbContext.AssetCategories.FirstAsync(d => d.Id == parentId && d.ActiveFlag == AppConst.I_DataState_Active);
+            if (parentCat != null)
+            {
+                var dto = parentCat.ToDTO();
+                dto.Children = new List<AssetCategoryDTO>();
+                var sameLevelCats = await _Store.DbContext.AssetCategories.Where(d => d.ParentId == parentId && d.ActiveFlag == AppConst.I_DataState_Active).Select(x => x.ToDTO()).OrderBy(x => x.DisplayIndex).ToListAsync();
+                dto.Children.AddRange(sameLevelCats);
+                return dto;
+            }
+            return new AssetCategoryDTO();
+        }
+        #endregion
+
+        #region Get 根据id获取分类信息
+        /// <summary>
+        /// 根据id获取分类信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
+        public async Task<IActionResult> Get(string id)
+        {
+            return await _GetByIdRequest(id);
+        }
+        #endregion
+
         #region Get 获取整个类型(product, material)下的所有分类信息，已经整理成一个树结构
         /// <summary>
         /// 获取整个类型(product, material)下的所有分类信息，已经整理成一个树结构
@@ -34,6 +70,7 @@ namespace ApiServer.Controllers
         /// <param name="organId"></param>
         /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         public async Task<AssetCategoryDTO> Get(string type, string organId)
         {
             if (string.IsNullOrWhiteSpace(organId))
@@ -53,6 +90,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("all")]
         [HttpGet]
+        [ProducesResponseType(typeof(AssetCategoryPack), 200)]
         public async Task<AssetCategoryPack> GetAll(string organId)
         {
             if (string.IsNullOrWhiteSpace(organId))
@@ -78,6 +116,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Flat")]
         [HttpGet]
+        [ProducesResponseType(typeof(List<AssetCategoryDTO>), 200)]
         public async Task<List<AssetCategoryDTO>> GetFlat(string type, string organId)
         {
             if (string.IsNullOrWhiteSpace(organId))
@@ -128,7 +167,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]AssetCategoryEditModel model)
         {
@@ -156,12 +195,75 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Move")]
         [HttpPost]
+        [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         public async Task<IActionResult> Move(string type, string id, string targetId)
         {
             string result = await (_Store as AssetCategoryStore).MoveAsync(type, id, targetId);
             if (result == "")
                 return Ok();
             return BadRequest(result);
+        }
+        #endregion
+
+        #region MoveUp 上移分类
+        /// <summary> 
+        /// 上移分类
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("MoveUp")]
+        [HttpPut]
+        [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
+        public async Task<IActionResult> MoveUp(string id)
+        {
+            var cat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
+            if (cat != null && cat.DisplayIndex >= 1)
+            {
+                var interChangeCat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.ParentId == cat.ParentId && x.DisplayIndex == (cat.DisplayIndex - 1) && x.Type == cat.Type && x.ActiveFlag == AppConst.I_DataState_Active);
+                if (interChangeCat != null)
+                {
+                    cat.DisplayIndex--;
+                    interChangeCat.DisplayIndex++;
+                    _Store.DbContext.AssetCategories.Update(cat);
+                    _Store.DbContext.AssetCategories.Update(interChangeCat);
+                    await _Store.DbContext.SaveChangesAsync();
+                    var dto = await _getParentCategoryAndSameLevelChildren(cat.ParentId);
+                    return Ok(dto);
+                }
+
+            }
+            return BadRequest();
+        }
+        #endregion
+
+        #region MoveDown 下移分类
+        /// <summary>
+        /// 下移分类
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("MoveDown")]
+        [HttpPut]
+        [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
+        public async Task<IActionResult> MoveDown(string id)
+        {
+            var cat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
+            if (cat != null)
+            {
+                var interChangeCat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.ParentId == cat.ParentId && x.DisplayIndex == (cat.DisplayIndex + 1) && x.Type == cat.Type && x.ActiveFlag == AppConst.I_DataState_Active);
+                if (interChangeCat != null)
+                {
+                    cat.DisplayIndex++;
+                    interChangeCat.DisplayIndex--;
+                    _Store.DbContext.AssetCategories.Update(cat);
+                    _Store.DbContext.AssetCategories.Update(interChangeCat);
+                    await _Store.DbContext.SaveChangesAsync();
+                    var dto = await _getParentCategoryAndSameLevelChildren(cat.ParentId);
+                    return Ok(dto);
+                }
+
+            }
+            return BadRequest();
         }
         #endregion
 
@@ -203,9 +305,7 @@ namespace ApiServer.Controllers
                 return BadRequest();
 
             return Ok(result);
-        } 
+        }
         #endregion
-
-
     }
 }

@@ -79,7 +79,7 @@ namespace ApiServer.Controllers
                         var account = await _context.Accounts.FindAsync(accid);
                         var categoryIds = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.OrganizationId == account.OrganizationId && x.Name.Contains(categoryName)).Select(x => x.Id);
                         query = query.Where(x => categoryIds.Contains(x.CategoryId));
-                                            }
+                    }
                     #endregion
                 }
                 else
@@ -125,6 +125,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
+                entity.CategoryId = model.CategoryId;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -150,6 +151,7 @@ namespace ApiServer.Controllers
                 entity.CategoryId = model.CategoryId;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
+                entity.CategoryId = model.CategoryId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

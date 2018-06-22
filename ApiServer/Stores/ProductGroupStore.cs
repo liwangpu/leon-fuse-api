@@ -51,5 +51,24 @@ namespace ApiServer.Stores
             await Task.FromResult(string.Empty);
         }
         #endregion
+
+        #region GetByIdAsync 根据Id返回实体DTO数据信息
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<ProductGroupDTO> GetByIdAsync(string id)
+        {
+            var data = await _GetByIdAsync(id);
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+            {
+                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            }
+            if (!string.IsNullOrWhiteSpace(data.CategoryId))
+                data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
+            return data.ToDTO();
+        } 
+        #endregion
     }
 }

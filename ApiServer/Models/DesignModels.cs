@@ -596,6 +596,7 @@ namespace ApiServer.Models
         public string PivotLocation { get; set; }
         public int PivotType { get; set; }
         public int Orientation { get; set; }
+        public string CategoryId { get; set; }
     }
 
     public class ProductGroupEditModel : EntityEditModel
@@ -607,6 +608,7 @@ namespace ApiServer.Models
         public string PivotLocation { get; set; }
         public int PivotType { get; set; }
         public int Orientation { get; set; }
+        public string CategoryId { get; set; }
     }
 
 

@@ -24,9 +24,9 @@ namespace ApiServer.Controllers.Design
         { }
         #endregion
 
-        #region Get 根据分页查询信息获取区域类型概要信息
+        #region Get 根据分页查询信息获取产品组类型概要信息
         /// <summary>
-        /// 根据分页查询信息获取区域类型概要信息
+        /// 根据分页查询信息获取产品组类型概要信息
         /// </summary>
         /// <param name="model"></param>
         /// <param name="serie"></param>
@@ -50,9 +50,9 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
-        #region Get 根据id获取区域类型信息
+        #region Get 根据id获取产品组类型信息
         /// <summary>
-        /// 根据id获取区域类型信息
+        /// 根据id获取产品组类型信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -64,9 +64,9 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
-        #region Post 新建区域类型信息
+        #region Post 新建产品组类型信息
         /// <summary>
-        /// 新建区域类型信息
+        /// 新建产品组类型信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -86,16 +86,16 @@ namespace ApiServer.Controllers.Design
                 entity.PivotType = model.PivotType;
                 entity.Orientation = model.Orientation;
                 entity.Serie = model.Serie;
-                entity.ResourceType = (int)ResourceTypeEnum.Organizational;
+                entity.CategoryId = model.CategoryId;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
         }
         #endregion
 
-        #region Put 更新区域类型信息
+        #region Put 更新产品组类型信息
         /// <summary>
-        /// 更新区域类型信息
+        /// 更新产品组类型信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -115,6 +115,7 @@ namespace ApiServer.Controllers.Design
                 entity.PivotType = model.PivotType;
                 entity.Orientation = model.Orientation;
                 entity.Serie = model.Serie;
+                entity.CategoryId = model.CategoryId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
