@@ -29,6 +29,7 @@ namespace ApiModel.Entities
             dto.Parameters = Parameters;
             dto.UnCookedAssetId = UnCookedAssetId;
             dto.OrganizationId = OrganizationId;
+            dto.FolderName = FolderName;
             dto.Creator = Creator;
             dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;

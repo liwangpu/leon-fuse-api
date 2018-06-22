@@ -40,11 +40,11 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            var literal = new Func<Package, Task<Package>>(async (entity) =>
-            {
-                entity.Content = null;
-                return await Task.FromResult(entity);
-            });
+            var literal = new Func<Package, IList<Package>, Task<Package>>(async (entity, datas) =>
+             {
+                 entity.Content = null;
+                 return await Task.FromResult(entity);
+             });
             return await _GetPagingRequest(model, null, null, literal);
         }
         #endregion
@@ -213,7 +213,8 @@ namespace ApiServer.Controllers
                     if (curItem.Id == model.AreaId)
                     {
                         var groupDic = curItem.GroupsMap != null ? curItem.GroupsMap : new Dictionary<string, string>();
-                        groupDic[model.Serie] = model.ProductGroupId;
+                        var grp = await _Store.DbContext.ProductGroups.FindAsync(model.ProductGroupId);
+                        groupDic[grp.CategoryId] = model.ProductGroupId;
                         curItem.GroupsMap = groupDic;
                         break;
                     }
@@ -251,7 +252,8 @@ namespace ApiServer.Controllers
                         for (int nxd = 0; nxd >= 0; nxd--)
                         {
                             var curKv = groupDic.ElementAt(nxd);
-                            if (curKv.Value == model.ProductGroupId)
+                            var grp = await _Store.DbContext.ProductGroups.FindAsync(model.ProductGroupId);
+                            if (curKv.Key == grp.CategoryId)
                                 groupDic.Remove(curKv.Key);
                         }
                         curItem.GroupsMap = groupDic;
@@ -288,7 +290,8 @@ namespace ApiServer.Controllers
                     if (curItem.Id == model.AreaId)
                     {
                         var cateogoryDic = curItem.ProductCategoryMap != null ? curItem.ProductCategoryMap : new Dictionary<string, string>();
-                        cateogoryDic[model.ProductCategoryId] = model.ProductId;
+                        var cat = await _Store.DbContext.Products.FindAsync(model.ProductId);
+                        cateogoryDic[cat.CategoryId] = model.ProductId;
                         curItem.ProductCategoryMap = cateogoryDic;
                         break;
                     }

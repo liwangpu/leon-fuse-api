@@ -9,6 +9,7 @@ using BambooCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,7 +68,7 @@ namespace ApiServer.Controllers
             //if (!canCreate)
             //    return Forbid();
             var data = await mapping(metadata);
-            data.Id= GuidGen.NewGUID();
+            data.Id = GuidGen.NewGUID();
             data.CreatedTime = DateTime.UtcNow;
             data.ModifiedTime = DateTime.UtcNow;
             data.Creator = accid;
@@ -141,6 +142,9 @@ namespace ApiServer.Controllers
         {
             var accid = AuthMan.GetAccountId(this);
             var t = new T();
+
+            var referCollections = new List<Collection>();
+
             var advanceQuery = new Func<IQueryable<T>, Task<IQueryable<T>>>(async (query) =>
             {
                 var collQ = _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name);
@@ -159,15 +163,38 @@ namespace ApiServer.Controllers
                 query = from it in query
                         join col in collQ on it.Id equals col.TargetId
                         select it;
+
+                var referIds = await query.Select(x => x.Id).ToListAsync();
+                referCollections = await collQ.Where(x => referIds.Contains(x.TargetId)).ToListAsync();
                 return await Task.FromResult(query);
             });
 
-            var literal = new Func<T, Task<T>>(async (entity) =>
-            {
-                //entity.Content = null;
-                //entity.FolderName =
-                return await Task.FromResult(entity);
-            });
+            var ind = 0;
+            var literal = new Func<T, IList<T>, Task<T>>(async (entity, datas) =>
+             {
+                 //var 
+                 //entity.Content = null;
+                 //entity.FolderName =
+
+                 //查看当前T在Datas中的下标,匹配出该T在referCollections相应下标的收藏信息
+                 //var sameCollections = datas.Where(x => x.Id == entity.Id);
+                 //entity.GetHashCode
+                 //for (int idx = referCollections.Count - 1; idx >= 0; idx--)
+                 //{
+                 //    var curCol = referCollections[idx];
+                 //    if (curCol.TargetId == entity.Id)
+                 //    {
+                 //        entity.FolderName = curCol.Folder;
+                 //        referCollections.RemoveAt(idx);
+                 //        break;
+                 //    }
+                 //}
+
+                 var aaaa = ind++;
+                 entity.FolderName =Guid.NewGuid().ToString();
+
+                 return entity;
+             });
             return await _GetPagingRequest(model, null, advanceQuery, literal);
         }
     }

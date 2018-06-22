@@ -7,6 +7,7 @@ using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -36,11 +37,11 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            var literal = new Func<Solution, Task<Solution>>(async (entity) =>
-            {
-                entity.Data = null;
-                return await Task.FromResult(entity);
-            });
+            var literal = new Func<Solution, IList<Solution>, Task<Solution>>(async (entity, datas) =>
+             {
+                 entity.Data = null;
+                 return await Task.FromResult(entity);
+             });
             return await _GetPagingRequest(model, null, null, literal);
         }
         #endregion

@@ -61,7 +61,7 @@ namespace ApiServer.Controllers
         /// <param name="advanceQuery"></param>
         /// <param name="literal"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null, Func<T, Task<T>> literal = null)
+        protected async Task<IActionResult> _GetPagingRequest(PagingRequestModel model, Action<List<string>> qMapping = null, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null, Func<T, IList<T>, Task<T>> literal = null)
         {
             var accid = AuthMan.GetAccountId(this);
             var qs = new List<string>();
@@ -80,7 +80,7 @@ namespace ApiServer.Controllers
                 if (result.Data != null && result.Data.Count > 0)
                 {
                     for (int idx = result.Data.Count - 1; idx >= 0; idx--)
-                        await literal(result.Data[idx]);
+                        result.Data[idx] = await literal(result.Data[idx], result.Data);
                 }
             }
             return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));

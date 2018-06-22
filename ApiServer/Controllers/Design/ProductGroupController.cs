@@ -8,6 +8,7 @@ using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,13 +34,31 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<ProductGroupDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string serie)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
         {
             var advanceQuery = new Func<IQueryable<ProductGroup>, Task<IQueryable<ProductGroup>>>(async (query) =>
             {
-                if (!string.IsNullOrWhiteSpace(serie))
+                if (classify)
                 {
-                    query = query.Where(x => x.Serie.Contains(serie));
+                    if (!string.IsNullOrWhiteSpace(categoryId))
+                    {
+                        var curCategoryTree = await _Store.DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        //如果是根节点,把所有取出,不做分类过滤
+                        if (curCategoryTree != null && curCategoryTree.LValue > 1)
+                        {
+                            var categoryQ = from it in _Store.DbContext.AssetCategoryTrees
+                                            where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                            && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                            select it;
+                            query = from it in query
+                                    join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                    select it;
+                        }
+                    }
+                }
+                else
+                {
+                    query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
                 }
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return await Task.FromResult(query);
