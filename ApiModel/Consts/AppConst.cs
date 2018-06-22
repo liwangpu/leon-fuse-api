@@ -5,8 +5,8 @@
         //用户角色
         public const string AccountType_SysAdmin = "sysadmin";
         public const string AccountType_SysService = "sysservice";
-        public const string AccountType_BrandAdmin = "organadmin";
-        public const string AccountType_BrandMember = "organmember";
+        public const string AccountType_BrandAdmin = "brandadmin";
+        public const string AccountType_BrandMember = "brandmember";
         public const string AccountType_PartnerAdmin = "partneradmin";
         public const string AccountType_PartnerMember = "partnermember";
         public const string AccountType_SupplierAdmin = "supplieradmin";
