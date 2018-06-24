@@ -1,7 +1,11 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Models;
+using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 namespace ApiServer.Stores
 {
@@ -68,7 +72,35 @@ namespace ApiServer.Stores
             if (!string.IsNullOrWhiteSpace(data.CategoryId))
                 data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
             return data.ToDTO();
-        } 
+        }
+        #endregion
+
+        #region override SimplePagedQueryAsync
+        /// <summary>
+        /// SimplePagedQueryAsync
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="accid"></param>
+        /// <param name="advanceQuery"></param>
+        /// <returns></returns>
+        public override async Task<PagedData<ProductGroup>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<ProductGroup>, Task<IQueryable<ProductGroup>>> advanceQuery = null)
+        {
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
+
+            if (result.Total > 0)
+            {
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var curData = result.Data[idx];
+                    if (!string.IsNullOrWhiteSpace(curData.Icon))
+                        curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
+
+                    if (!string.IsNullOrWhiteSpace(curData.CategoryId))
+                        curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
+                }
+            }
+            return result;
+        }
         #endregion
     }
 }

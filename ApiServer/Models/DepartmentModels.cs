@@ -12,7 +12,6 @@ namespace ApiServer.Models
         public string Id { get; set; }
         //[Required(ErrorMessage = "必填信息")]
         public string ParentId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string OrganizationId { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
@@ -27,14 +26,12 @@ namespace ApiServer.Models
     /// </summary>
     public class DepartmentCreateModel
     {
-        //[Required(ErrorMessage = "必填信息")]
         public string ParentId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string OrganizationId { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-    } 
+    }
     #endregion
 }

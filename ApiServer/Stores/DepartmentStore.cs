@@ -124,6 +124,7 @@ namespace ApiServer.Stores
                         select ps;
             var query = from it in _DbContext.Departments
                         join ps in treeQ on it.Id equals ps.ObjId
+                        where it.ActiveFlag == AppConst.I_DataState_Active
                         select it;
             return await query.Select(x => x.ToDTO()).ToListAsync();
         }

@@ -97,7 +97,7 @@
           "title": "nav.ProductGroupCategorys",
           "type": "item",
           "icon": "chrome_reader_mode",
-          "url": "/app/productgroud-category",
+          "url": "/app/product-group-category",
           "EditOp": "true"
         },
         {
@@ -125,6 +125,15 @@
           "url": "/app/orders",
           "field": "value",
           "EditOp": "true"
+        },
+        {
+          "id": "product-group",
+          "title": "nav.ProductGroup",
+          "type": "item",
+          "icon": "bubble_chart",
+          "url": "/app/product-group",
+          "field": "value",
+          "EditOp": "false"
         },
         {
           "id": "package",

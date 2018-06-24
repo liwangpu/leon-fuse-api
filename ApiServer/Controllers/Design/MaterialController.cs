@@ -165,7 +165,7 @@ namespace ApiServer.Controllers
             var existCategory = await _context.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
             if (!existCategory)
             {
-                ModelState.AddModelError("categoryId", "对应记录不存在");
+                ModelState.AddModelError("CategoryId", "对应记录不存在");
                 return new ValidationFailedResult(ModelState);
             }
             var idArr = model.Ids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);

@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using ApiModel.Consts;
+
 namespace ApiServer.Controllers
 {
     /// <summary>
@@ -55,11 +59,20 @@ namespace ApiServer.Controllers
         {
             var mapping = new Func<Department, Task<Department>>(async (entity) =>
             {
+                if (string.IsNullOrWhiteSpace(model.OrganizationId))
+                    model.OrganizationId = await _GetCurrentUserOrganId();
+                if (string.IsNullOrWhiteSpace(model.ParentId))
+                {
+                    var defaultDepartment = await _Store.DbContext.Departments.FirstOrDefaultAsync(x => x.OrganizationId == model.OrganizationId && string.IsNullOrWhiteSpace(x.ParentId) && x.ActiveFlag == AppConst.I_DataState_Active);
+                    if (defaultDepartment != null)
+                        model.ParentId = defaultDepartment.Id;
+                }
+
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
                 entity.OrganizationId = model.OrganizationId;
-                return await Task.FromResult(entity);
+                return entity;
             });
             return await _PostRequest(mapping);
         }
@@ -99,6 +112,8 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(List<DepartmentDTO>), 200)]
         public async Task<IActionResult> GetByOrgan(string organId)
         {
+            if (string.IsNullOrWhiteSpace(organId))
+                organId = await _GetCurrentUserOrganId();
             var dtos = await _DepartmentStore.GetByOrgan(organId);
             return Ok(dtos);
         }

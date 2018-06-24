@@ -1,6 +1,5 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
-using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -30,7 +29,8 @@ namespace ApiServer.Controllers.Design
         /// 根据分页查询信息获取产品组类型概要信息
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="serie"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="classify"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<ProductGroupDTO>), 200)]
@@ -138,6 +138,59 @@ namespace ApiServer.Controllers.Design
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region BulkChangeCategory 批量修改分类信息
+        /// <summary>
+        /// 批量修改分类信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("BulkChangeCategory")]
+        [ValidateModel]
+        [HttpPut]
+        public async Task<IActionResult> BulkChangeCategory([FromBody]BulkChangeCategoryModel model)
+        {
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
+            var existCategory = await _Store.DbContext.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
+            if (!existCategory)
+            {
+                ModelState.AddModelError("CategoryId", "对应记录不存在");
+                return new ValidationFailedResult(ModelState);
+            }
+            var idArr = model.Ids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+            using (var transaction = _Store.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    for (int idx = idArr.Length - 1; idx >= 0; idx--)
+                    {
+                        var id = idArr[idx];
+                        var refProductGroup = await _Store.DbContext.ProductGroups.FindAsync(id);
+                        if (refProductGroup != null)
+                        {
+                            refProductGroup.CategoryId = model.CategoryId;
+                            _Store.DbContext.ProductGroups.Update(refProductGroup);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("ProductGroupId", "对应记录不存在");
+                            return new ValidationFailedResult(ModelState);
+                        }
+                    }
+                    _Store.DbContext.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+            return Ok();
         }
         #endregion
     }
