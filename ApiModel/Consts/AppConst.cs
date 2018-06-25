@@ -46,5 +46,6 @@
 
         public const string S_Category_Product = "product";
         public const string S_Category_Material = "material";
+        public const string S_Category_ProductGroup = "product-group";
     }
 }

@@ -72,6 +72,10 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            if (Department != null)
+                dto.DepartmentName = Department.Name;
+            if (Type.Contains("admin"))
+                dto.IsAdmin = true;
             return dto;
         }
     }
@@ -83,9 +87,11 @@ namespace ApiModel.Entities
         public string Mail { get; set; }
         public string Location { get; set; }
         public string DepartmentId { get; set; }
+        public string DepartmentName { get; set; }
         public string Phone { get; set; }
         public bool Frozened { get; set; }
         public string Type { get; set; }
+        public bool IsAdmin { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
     }

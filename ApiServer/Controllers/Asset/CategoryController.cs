@@ -99,10 +99,11 @@ namespace ApiServer.Controllers
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
             AssetCategoryDTO cat = null;
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync("product", organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync("material", organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await (_Store as AssetCategoryStore).GetCategoryAsync(AppConst.S_Category_Product, organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await (_Store as AssetCategoryStore).GetCategoryAsync(AppConst.S_Category_Material, organId); if (cat != null) pack.Categories.Add(cat);
+            //cat = await (_Store as AssetCategoryStore).GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
+            //cat = await (_Store as AssetCategoryStore).GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await (_Store as AssetCategoryStore).GetCategoryAsync(AppConst.S_Category_ProductGroup, organId); if (cat != null) pack.Categories.Add(cat);
             return pack;
         }
         #endregion

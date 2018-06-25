@@ -119,12 +119,15 @@ namespace ApiServer.Stores
         /// <returns></returns>
         public async Task<List<DepartmentDTO>> GetByOrgan(string organId)
         {
+            var organ = await DbContext.Organizations.FindAsync(organId);
+            var owner = await DbContext.Accounts.FindAsync(organ.OwnerId);
             var treeQ = from ps in _DbContext.Set<PermissionTree>()
                         where ps.OrganizationId == organId && ps.NodeType == AppConst.S_NodeType_Department
                         select ps;
             var query = from it in _DbContext.Departments
                         join ps in treeQ on it.Id equals ps.ObjId
                         where it.ActiveFlag == AppConst.I_DataState_Active
+                        && it.Id != owner.DepartmentId
                         select it;
             return await query.Select(x => x.ToDTO()).ToListAsync();
         }

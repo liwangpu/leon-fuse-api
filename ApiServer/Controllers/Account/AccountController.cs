@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -8,7 +9,9 @@ using BambooCommon;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 namespace ApiServer.Controllers
 {
@@ -29,18 +32,60 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region _GetAccountType 获取用户类型信息
+        /// <summary>
+        /// 获取用户类型信息
+        /// </summary>
+        /// <param name="isAdmin"></param>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        protected async Task<string> _GetAccountType(bool isAdmin, string accountId = "")
+        {
+            if (string.IsNullOrWhiteSpace(accountId))
+                accountId = AuthMan.GetAccountId(this);
+            var account = await _Store.DbContext.Accounts.Include(x => x.Organization).FirstOrDefaultAsync(x => x.Id == accountId);
+            if (account != null && account.Organization != null)
+            {
+                if (isAdmin)
+                    return $"{account.Organization.Type}admin";
+                else
+                    return $"{account.Organization.Type}member";
+            }
+            return string.Empty;
+        }
+        #endregion
+
         #region Get 根据分页获取用户信息
         /// <summary>
         /// 根据分页获取用户信息
         /// </summary>
         /// <param name="model"></param>
         /// <param name="departmentId"></param>
+        /// <param name="ignoreOwner"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<AccountDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string departmentId)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string departmentId, bool ignoreOwner = false)
         {
-            return await _GetPagingRequest(model);
+            var advanceQuery = new Func<IQueryable<Account>, Task<IQueryable<Account>>>(async (query) =>
+            {
+                if (!string.IsNullOrWhiteSpace(departmentId))
+                {
+                    query = query.Where(x => x.DepartmentId == departmentId);
+                }
+                if (ignoreOwner)
+                {
+                    var organId = await _GetCurrentUserOrganId();
+                    var organ = await _Store.DbContext.Organizations.FindAsync(organId);
+                    if (organ != null)
+                    {
+                        query = query.Where(x => x.Id != organ.OwnerId);
+                    }
+                }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return query;
+            });
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
@@ -72,6 +117,9 @@ namespace ApiServer.Controllers
         {
             var mapping = new Func<Account, Task<Account>>(async (entity) =>
             {
+                if (string.IsNullOrWhiteSpace(model.OrganizationId))
+                    model.OrganizationId = await _GetCurrentUserOrganId();
+
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Password = Md5.CalcString(model.Password);
@@ -81,7 +129,7 @@ namespace ApiServer.Controllers
                 var t2 = DataHelper.ParseDateTime(model.ExpireTime);
                 entity.ActivationTime = t1 != DateTime.MinValue ? t1 : DateTime.Now;
                 entity.ExpireTime = t2 != DateTime.MinValue ? t2 : DateTime.Now.AddYears(10);
-                entity.Type = model.Type;
+                entity.Type = await _GetAccountType(model.IsAdmin);
                 entity.Location = model.Location;
                 entity.Phone = model.Phone;
                 entity.Mail = model.Mail;
@@ -120,6 +168,7 @@ namespace ApiServer.Controllers
                 entity.Phone = model.Phone;
                 entity.Mail = model.Mail;
                 entity.DepartmentId = model.DepartmentId;
+                entity.Type = await _GetAccountType(model.IsAdmin, model.Id);
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

@@ -11,11 +11,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string OrganizationId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string DepartmentId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string Type { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string ExpireTime { get; set; }
         [Required(ErrorMessage = "必填信息")]
@@ -31,7 +27,7 @@ namespace ApiServer.Models
         public string Location { get; set; }
         public string Phone { get; set; }
         public bool Frozened { get; set; }
-
+        public bool IsAdmin { get; set; }
     }
     #endregion
 
@@ -51,12 +47,11 @@ namespace ApiServer.Models
         public string Description { get; set; }
         public string Location { get; set; }
         public string Phone { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string OrganizationId { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string DepartmentId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string Type { get; set; }
+        //[Required(ErrorMessage = "必填信息")]
+        public bool IsAdmin { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string ExpireTime { get; set; }
         [Required(ErrorMessage = "必填信息")]

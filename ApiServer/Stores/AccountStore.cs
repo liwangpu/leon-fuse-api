@@ -2,6 +2,8 @@
 using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Models;
+using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -211,6 +213,34 @@ namespace ApiServer.Stores
 
             }
             return emptyQuery;
+        }
+        #endregion
+
+        #region SimplePagedQueryAsync 获取分页数据信息
+        /// <summary>
+        /// SimplePagedQueryAsync
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="accid"></param>
+        /// <param name="advanceQuery"></param>
+        /// <returns></returns>
+        public override async Task<PagedData<Account>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<Account>, Task<IQueryable<Account>>> advanceQuery = null)
+        {
+            var res = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
+            if (res.Data != null && res.Data.Count > 0)
+            {
+                var account = await DbContext.Accounts.FindAsync(accid);
+                var departments = await DbContext.Departments.Where(x => x.OrganizationId == account.OrganizationId && x.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
+                for (int idx = res.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var curAccount = res.Data[idx];
+                    if (!string.IsNullOrWhiteSpace(curAccount.DepartmentId))
+                    {
+                        curAccount.Department = departments.FirstOrDefault(x => x.Id == curAccount.DepartmentId);
+                    }
+                }
+            }
+            return res;
         }
         #endregion
     }

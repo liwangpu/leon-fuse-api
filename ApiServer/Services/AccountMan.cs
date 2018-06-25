@@ -18,51 +18,51 @@ namespace ApiServer.Services
             this.context = context;
         }
 
-        public async Task<AccountEditModel> Register(RegisterAccountModel param)
-        {
-            var model = new AccountEditModel();
-            if (param == null)
-                return null;
-            if (string.IsNullOrWhiteSpace(param.Mail))
-                return null;
-            string mail = param.Mail.Trim().ToLower();
+        //public async Task<AccountEditModel> Register(RegisterAccountModel param)
+        //{
+        //    var model = new AccountEditModel();
+        //    if (param == null)
+        //        return null;
+        //    if (string.IsNullOrWhiteSpace(param.Mail))
+        //        return null;
+        //    string mail = param.Mail.Trim().ToLower();
 
-            Account acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
-            if (acc == null)
-            {
-                acc = new Account();
-                acc.Id = GuidGen.NewGUID();
-                acc.Name = param.Name;
-                acc.Password = Md5.CalcString(param.Password);
-                acc.Mail = mail;
-                acc.Frozened = false;
-                acc.ActivationTime = DataHelper.ParseDateTime(param.ActivationTime);
-                acc.ExpireTime = DataHelper.ParseDateTime(param.ExpireTime);
-                acc.Type = param.Type;
-                acc.Location = param.Location;
-                acc.Phone = param.Phone;
-                acc.OrganizationId = param.OrganizationId;
-                if (param.Type == AppConst.AccountType_BrandAdmin)
-                    acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
-                acc.DepartmentId = param.DepartmentId;
-                //acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);
+        //    Account acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == mail);
+        //    if (acc == null)
+        //    {
+        //        acc = new Account();
+        //        acc.Id = GuidGen.NewGUID();
+        //        acc.Name = param.Name;
+        //        acc.Password = Md5.CalcString(param.Password);
+        //        acc.Mail = mail;
+        //        acc.Frozened = false;
+        //        acc.ActivationTime = DataHelper.ParseDateTime(param.ActivationTime);
+        //        acc.ExpireTime = DataHelper.ParseDateTime(param.ExpireTime);
+        //        acc.Type = param.Type;
+        //        acc.Location = param.Location;
+        //        acc.Phone = param.Phone;
+        //        acc.OrganizationId = param.OrganizationId;
+        //        if (param.Type == AppConst.AccountType_BrandAdmin)
+        //            acc.Organization = await context.Organizations.FirstOrDefaultAsync(x => x.Id == param.OrganizationId);
+        //        acc.DepartmentId = param.DepartmentId;
+        //        //acc.Department = await context.Departments.FirstOrDefaultAsync(x => x.Id == param.DepartmentId);
 
 
 
-                context.Accounts.Add(acc);
-                await context.SaveChangesAsync();
-            }
-            model.Name = param.Name;
-            model.Id = acc.Id;
-            model.Mail = acc.Mail;
-            //model.Password = acc.Password;
-            model.Phone = acc.Phone;
-            model.Location = acc.Location;
-            model.Type = acc.Type;
-            model.ActivationTime = DataHelper.FormatDateTime(acc.ActivationTime);
-            model.ExpireTime = DataHelper.FormatDateTime(acc.ExpireTime);
-            return model;
-        }
+        //        context.Accounts.Add(acc);
+        //        await context.SaveChangesAsync();
+        //    }
+        //    model.Name = param.Name;
+        //    model.Id = acc.Id;
+        //    model.Mail = acc.Mail;
+        //    //model.Password = acc.Password;
+        //    model.Phone = acc.Phone;
+        //    model.Location = acc.Location;
+        //    model.Type = acc.Type;
+        //    model.ActivationTime = DataHelper.FormatDateTime(acc.ActivationTime);
+        //    model.ExpireTime = DataHelper.FormatDateTime(acc.ExpireTime);
+        //    return model;
+        //}
 
         public async Task<bool> ChangePasswordAsync(string accid, NewPasswordModel param)
         {
