@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Newtonsoft.Json;
 using System;
+using ApiModel.Consts;
 
 namespace ApiServer.Stores
 {
@@ -149,6 +150,10 @@ namespace ApiServer.Stores
 
                     if (!string.IsNullOrWhiteSpace(curData.CategoryId))
                         curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
+
+                    var defaultSpec = await DbContext.ProductSpec.Where(x => x.ProductId == curData.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();
+                    if (defaultSpec != null)
+                        curData.Specifications = new List<ProductSpec>() { defaultSpec };
                 }
             }
             return result;

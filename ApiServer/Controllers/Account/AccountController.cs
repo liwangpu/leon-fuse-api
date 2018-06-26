@@ -175,6 +175,24 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        [Route("ChangePassword")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> ChangePassword([FromBody]NewPasswordModel model)
+        {
+            var accid = AuthMan.GetAccountId(this);
+            Account acc = await _Context.Accounts.FindAsync(accid);
+            if (acc.Password != model.OldPassword)
+                ModelState.AddModelError("Password", "原密码输入有误");
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
+            acc.Password = model.NewPassword;
+            _Context.Update(acc);
+            await _Context.SaveChangesAsync();
+            return Ok();
+        }
+
         #region GetProfile 获取账号信息
         /// <summary>
         /// 获取账号信息

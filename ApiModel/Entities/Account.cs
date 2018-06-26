@@ -76,6 +76,8 @@ namespace ApiModel.Entities
                 dto.DepartmentName = Department.Name;
             if (Type.Contains("admin"))
                 dto.IsAdmin = true;
+            if (IconFileAsset != null)
+                dto.Icon = IconFileAsset.Url;
             return dto;
         }
     }

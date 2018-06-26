@@ -33,7 +33,11 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             if (Specifications != null && Specifications.Count > 0)
+            {
+                var defaultSpec = Specifications.OrderByDescending(x => x.CreatedTime).First();
+                dto.Price = defaultSpec.Price;
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
+            }
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -52,6 +56,7 @@ namespace ApiModel.Entities
         public string IconAssetId { get; set; }
         public string CategoryId { get; set; }
         public string CategoryName { get; set; }
+        public decimal Price { get; set; }
         public List<ProductSpecDTO> Specifications { get; set; }
     }
 

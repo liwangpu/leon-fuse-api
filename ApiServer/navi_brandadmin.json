@@ -18,7 +18,8 @@
           "title": "nav.profile",
           "type": "item",
           "icon": "person",
-          "url": "/pages/profile"
+          "url": "/app/account-profile",
+          "EditOp": "true"
         },
         {
           "id": "my-resources",

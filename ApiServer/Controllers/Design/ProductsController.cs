@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -127,6 +128,25 @@ namespace ApiServer.Controllers
                 entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
+
+
+                #region 自动创建默认的规格
+                {
+                    var accid = AuthMan.GetAccountId(this);
+                    var account = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+                    var defaultSpec = new ProductSpec();
+                    defaultSpec.Id = GuidGen.NewGUID();
+                    defaultSpec.Name = entity.Name;
+                    defaultSpec.Product = entity;
+                    defaultSpec.Price = model.Price;
+                    defaultSpec.OrganizationId = account.OrganizationId;
+                    defaultSpec.Creator = accid;
+                    defaultSpec.Modifier = accid;
+                    defaultSpec.CreatedTime = DateTime.UtcNow;
+                    defaultSpec.ModifiedTime = DateTime.UtcNow;
+                    entity.Specifications = new List<ProductSpec>() { defaultSpec };
+                }
+                #endregion
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -152,6 +172,34 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
+
+                var defaultSpec = await _Store.DbContext.ProductSpec.Where(x => x.ProductId == entity.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();
+
+                var accid = AuthMan.GetAccountId(this);
+                if (defaultSpec != null)
+                {
+                    defaultSpec.Name = entity.Name;
+                    defaultSpec.Price = model.Price;
+                    defaultSpec.Modifier = accid;
+                    defaultSpec.ModifiedTime = DateTime.UtcNow;
+                }
+                else
+                {
+                    var account = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+                    defaultSpec = new ProductSpec();
+                    defaultSpec.Id = GuidGen.NewGUID();
+                    defaultSpec.Name = entity.Name;
+                    defaultSpec.Product = entity;
+                    defaultSpec.Price = model.Price;
+                    defaultSpec.OrganizationId = account.OrganizationId;
+                    defaultSpec.Creator = accid;
+                    defaultSpec.Modifier = accid;
+                    defaultSpec.CreatedTime = DateTime.UtcNow;
+                    defaultSpec.ModifiedTime = DateTime.UtcNow;
+                    entity.Specifications = new List<ProductSpec>() { defaultSpec };
+                }
+
+
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

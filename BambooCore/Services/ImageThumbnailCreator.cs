@@ -20,8 +20,8 @@ namespace BambooCore
         /// <returns></returns>
         public static bool SaveImageThumbnails(string path)
         {
-            bool bOk1 = SaveImageThumbnail(path, 128);
-            bool bOk2 = SaveImageThumbnail(path, 256);
+            bool bOk1 = SaveImageThumbnailCenterCrop(path, 128);
+            bool bOk2 = SaveImageThumbnailCenterCrop(path, 256);
             return bOk1 && bOk2;
         }
 

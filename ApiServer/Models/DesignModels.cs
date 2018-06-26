@@ -16,6 +16,7 @@ namespace ApiServer.Models
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
+        public decimal Price { get; set; }
     }
     #endregion
 
@@ -34,6 +35,7 @@ namespace ApiServer.Models
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
+        public decimal Price { get; set; }
     }
     #endregion
 

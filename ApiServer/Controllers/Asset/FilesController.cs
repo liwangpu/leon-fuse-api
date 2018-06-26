@@ -239,6 +239,16 @@ namespace ApiServer.Controllers
             res.Url = "/upload/" + res.Id + res.FileExt;
             string renamedPath = Path.Combine(uploadPath, res.Id + res.FileExt);
 
+            //图片文件生成缩略图
+            var createThumbnails = new Action(() =>
+            {
+                if (res.FileExt.Equals(".jpg", StringComparison.CurrentCultureIgnoreCase) || res.FileExt.Equals(".png", StringComparison.CurrentCultureIgnoreCase) ||
+                res.FileExt.Equals(".jpeg", StringComparison.CurrentCultureIgnoreCase) || res.FileExt.Equals(".gif", StringComparison.CurrentCultureIgnoreCase)
+                || res.FileExt.Equals(".bmp", StringComparison.CurrentCultureIgnoreCase)
+                )
+                    ImageThumbnailCreator.SaveImageThumbnails(renamedPath);
+            });
+
             // 检查是否已经上传过此文件
             var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
             if (existRecord != null)
@@ -246,7 +256,9 @@ namespace ApiServer.Controllers
                 // 数据库记录还在，但是文件不在了，重新保存下文件。
                 if (System.IO.File.Exists(renamedPath) == false)
                 {
-                    System.IO.File.Move(savePath, renamedPath); //重命名文件
+                    //重命名文件
+                    System.IO.File.Move(savePath, renamedPath);
+                    createThumbnails();
                 }
                 else
                 {
@@ -264,15 +276,10 @@ namespace ApiServer.Controllers
                     System.IO.File.Delete(renamedPath);
                 }
                 System.IO.File.Move(savePath, renamedPath); //重命名文件
+                createThumbnails();
             }
 
             await repo.CreateAsync(accid, res, false); //记录到数据库
-
-            //如果是图片，则为其生成缩略图
-            if(res.FileExt.Equals(".jpg", StringComparison.CurrentCultureIgnoreCase) || res.FileExt.Equals(".png", StringComparison.CurrentCultureIgnoreCase))
-            {
-                ImageThumbnailCreator.SaveImageThumbnails(renamedPath);
-            }
 
             return Ok(res);
         }

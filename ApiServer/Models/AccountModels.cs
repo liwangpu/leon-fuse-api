@@ -61,7 +61,9 @@ namespace ApiServer.Models
 
     public class NewPasswordModel
     {
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
         public string OldPassword { get; set; }
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
         public string NewPassword { get; set; }
     }
 
