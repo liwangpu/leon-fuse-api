@@ -38,6 +38,7 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.Content = Content;
+            dto.CategoryName = CategoryName;
             if (ContentIns != null)
                 dto.ContentIns = ContentIns;
             if (IconFileAsset != null)

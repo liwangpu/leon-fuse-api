@@ -10,7 +10,6 @@ namespace ApiModel.Entities
     /// </summary>
     public class Skirting : EntityBase, IAsset
     {
-        public string CategoryId { get; set; }
         public string Icon { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }

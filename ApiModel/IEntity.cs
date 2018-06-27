@@ -15,5 +15,7 @@ namespace ApiModel
         int ResourceType { get; set; }
         string OrganizationId { get; set; }
         string FolderName { get; set; }
+        string CategoryId { get; set; }
+        string CategoryName { get; set; }
     }
 }

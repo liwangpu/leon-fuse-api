@@ -1,9 +1,13 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
+using ApiModel.Extension;
+using ApiServer.Services;
 
 namespace ApiServer.Stores
 {
@@ -68,8 +72,33 @@ namespace ApiServer.Stores
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
                 data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
+
+            data.Server = AppConfig.Instance.Configuration["MediaShareServer"];
+
             return data.ToDTO();
         }
         #endregion
+
+        public override async Task CreateAsync(string accid, Media data)
+        {
+            await base.CreateAsync(accid, data);
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            #region 创建默认分享
+            var defaultShare = new MediaShareResource();
+            defaultShare.Media = data;
+            defaultShare.MediaId = data.Id;
+            defaultShare.Id = GuidGen.NewGUID();
+            defaultShare.Name = "默认分享";
+            defaultShare.StartShareTimeStamp = DateTime.UtcNow.ReferUnixTimestampFromDateTime();
+            defaultShare.StopShareTimeStamp = DateTime.UtcNow.AddYears(1).ReferUnixTimestampFromDateTime();
+            defaultShare.Creator = accid;
+            defaultShare.Modifier = accid;
+            defaultShare.OrganizationId = currentAcc.OrganizationId;
+            defaultShare.CreatedTime = DateTime.UtcNow;
+            defaultShare.ModifiedTime = DateTime.UtcNow;
+            DbContext.MediaShareResources.Add(defaultShare);
+            await DbContext.SaveChangesAsync();
+            #endregion
+        }
     }
 }

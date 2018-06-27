@@ -10,7 +10,6 @@ namespace ApiModel.Entities
     {
         public string Serie { get; set; }
         public string Icon { get; set; }
-        public string CategoryId { get; set; }
         /// <summary>
         /// 轴心的精确位置
         /// </summary>
@@ -53,7 +52,6 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
-
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -97,8 +95,6 @@ namespace ApiModel.Entities
         public string PivotLocation { get; set; }
         public int PivotType { get; set; }
         public int Orientation { get; set; }
-        public string CategoryId { get; set; }
-        public string CategoryName { get; set; }
     }
     #endregion
 

@@ -32,6 +32,7 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.UnCookedAssetId = UnCookedAssetId;
+            dto.CategoryName = CategoryName;
             if (FileAsset != null)
                 dto.FileAsset = FileAsset.ToDTO();
             if (IconFileAsset != null)

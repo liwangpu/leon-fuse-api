@@ -175,6 +175,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region ChangePassword 修改密码
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("ChangePassword")]
         [HttpPut]
         [ValidateModel]
@@ -191,7 +197,8 @@ namespace ApiServer.Controllers
             _Context.Update(acc);
             await _Context.SaveChangesAsync();
             return Ok();
-        }
+        } 
+        #endregion
 
         #region GetProfile 获取账号信息
         /// <summary>

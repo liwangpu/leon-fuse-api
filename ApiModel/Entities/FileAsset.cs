@@ -28,7 +28,6 @@ namespace ApiModel.Entities
         /// 资源上传时间
         /// </summary>
         public string UploadTime { get; set; }
-        public string CategoryId { get; set; }
         public string Icon { get; set; }
         /// <summary>
         /// 扩展属性1,各实体根据自己需要存储
@@ -71,7 +70,6 @@ namespace ApiModel.Entities
         public string FileExt { get; set; }
         public string LocalPath { get; set; }
         public string UploadTime { get; set; }
-        public string CategoryId { get; set; }
     }
 
 }

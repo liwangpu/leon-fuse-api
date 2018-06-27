@@ -17,6 +17,7 @@ namespace ApiModel
         public string Creator { get; set; }
         public string Modifier { get; set; }
         public string OrganizationId { get; set; }
+        public string CategoryId { get; set; }
 
         [NotMapped]
         public string CreatorName { get; set; }
@@ -24,6 +25,8 @@ namespace ApiModel
         public string ModifierName { get; set; }
         [NotMapped]
         public string FolderName { get; set; }
+        [NotMapped]
+        public string CategoryName { get; set; }
         /// <summary>
         /// 启用状态 1启用 0禁用
         /// </summary>

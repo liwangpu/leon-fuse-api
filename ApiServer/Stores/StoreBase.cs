@@ -450,8 +450,8 @@ namespace ApiServer.Stores
                 data.Modifier = accid;
             if (!string.IsNullOrWhiteSpace(currentAcc.OrganizationId))
                 data.OrganizationId = currentAcc.OrganizationId;
-            data.CreatedTime = DateTime.Now;
-            data.ModifiedTime = DateTime.Now;
+            data.CreatedTime = DateTime.UtcNow;
+            data.ModifiedTime = DateTime.UtcNow;
             _DbContext.Set<T>().Add(data);
             await _DbContext.SaveChangesAsync();
         }

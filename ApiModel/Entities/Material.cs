@@ -8,7 +8,6 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
-        public string CategoryId { get; set; }
 
         [NotMapped]
         public FileAsset FileAsset { get; set; }
@@ -36,6 +35,7 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            dto.CategoryName = CategoryName;
             if (FileAsset != null)
             {
                 dto.FileAsset = FileAsset.ToDTO();
@@ -57,7 +57,6 @@ namespace ApiModel.Entities
 
     public class MaterialDTO : ClientAssetEntity
     {
-        public string CategoryName { get; set; }
         public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
@@ -65,6 +64,5 @@ namespace ApiModel.Entities
         public string Parameters { get; set; }
         public string Url { get; set; }
         public FileAssetDTO FileAsset { get; set; }
-        public string CategoryId { get; set; }
     }
 }

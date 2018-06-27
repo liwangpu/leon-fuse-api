@@ -8,6 +8,6 @@ namespace ApiModel
     /// </summary>
     public interface IAsset : IListable
     {
-        string CategoryId { get; set; }
+
     }
 }

@@ -66,6 +66,7 @@ namespace ApiModel.Entities
             dto.Price = Price;
             dto.TPID = TPID;
             dto.ProductId = ProductId;
+            dto.CategoryName = CategoryName;
             if (IconFileAsset != null)
             {
                 dto.IconAsset = IconFileAsset.ToDTO();

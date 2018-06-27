@@ -94,18 +94,17 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string TargetId { get; set; }
-        public string FolderName { get; set; }
     }
     #endregion
 
     /// <summary>
     /// 收藏查询请求信息
     /// </summary>
-    public class ColletionRequestModel: PagingRequestModel
+    public class ColletionRequestModel : PagingRequestModel
     {
         public string TargetId { get; set; }
-        public string FolderName { get; set; }
-        public bool IsInFolder { get; set; }
+        public string CategoryId { get; set; }
+        //public bool IsInFolder { get; set; }
     }
 
 }

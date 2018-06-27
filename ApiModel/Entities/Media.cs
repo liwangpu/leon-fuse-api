@@ -14,6 +14,8 @@ namespace ApiModel.Entities
         public List<MediaShareResource> MediaShareResources { get; set; }
 
         [NotMapped]
+        public string Server { get; set; }
+        [NotMapped]
         public FileAsset FileAsset { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
@@ -38,6 +40,7 @@ namespace ApiModel.Entities
             dto.SolutionId = SolutionId;
             dto.OrganizationId = OrganizationId;
             dto.Type = Type;
+            dto.CategoryName = CategoryName;
             if (FileAsset != null)
             {
                 dto.FileAssetUrl = FileAsset.Url;
@@ -59,6 +62,7 @@ namespace ApiModel.Entities
                     curItem.FileAssetId = FileAssetId;
                     curItem.IconFileAsset = IconFileAsset;
                     curItem.FileAsset = FileAsset;
+                    curItem.Url = Server;
                     list.Add(curItem.ToDTO());
                 }
                 dto.MediaShares = list.OrderByDescending(x => x.CreatedTime).ToList();
@@ -69,6 +73,7 @@ namespace ApiModel.Entities
 
     public class MediaShareResource : EntityBase, IListable, IDTOTransfer<MediaShareResourceDTO>
     {
+        private string _Url;
         public long StartShareTimeStamp { get; set; }
         public long StopShareTimeStamp { get; set; }
         public string Password { get; set; }
@@ -76,6 +81,18 @@ namespace ApiModel.Entities
         public Media Media { get; set; }
         public string MediaId { get; set; }
 
+        [NotMapped]
+        public string Url
+        {
+            set
+            {
+                _Url = value;
+            }
+            get
+            {
+                return $"{_Url}?t={Type}&id={Id}";
+            }
+        }
         [NotMapped]
         public string Type { get; set; }
         [NotMapped]
@@ -109,6 +126,7 @@ namespace ApiModel.Entities
             dto.FileAssetId = FileAssetId;
             dto.Password = Password;
             dto.Icon = Icon;
+            dto.Url = Url;
             if (FileAsset != null)
             {
                 dto.FileAssetUrl = FileAsset.Url;
@@ -131,6 +149,7 @@ namespace ApiModel.Entities
         public long StopShareTimeStamp { get; set; }
         public string Password { get; set; }
         public string Type { get; set; }
+        public string Url { get; set; }
         public string FileAssetUrl { get; set; }
     }
 

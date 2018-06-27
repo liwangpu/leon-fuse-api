@@ -72,6 +72,7 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            dto.CategoryName = CategoryName;
             if (Department != null)
                 dto.DepartmentName = Department.Name;
             if (Type.Contains("admin"))

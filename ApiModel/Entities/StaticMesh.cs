@@ -42,7 +42,7 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
-
+            dto.CategoryName = CategoryName;
             if (Materials != null && Materials.Count > 0)
                 dto.Materials = Materials.Select(x => x.ToDTO()).ToList();
             if (FileAsset != null)

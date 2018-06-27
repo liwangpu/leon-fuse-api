@@ -21,7 +21,7 @@ namespace ApiServer.Controllers
     /// <typeparam name="T">实体对象</typeparam>
     /// <typeparam name="DTO">DTO实体对象</typeparam>
     public class ListableController<T, DTO> : CommonController<T, DTO>
-               where T : class, IListable, IDTOTransfer<DTO>, new()
+               where T : class, IListable, ApiModel.ICloneable, IDTOTransfer<DTO>, new()
           where DTO : class, IData, new()
     {
         #region 构造函数
@@ -100,11 +100,15 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> CreateCollection([FromBody]CollectionCreateModel model)
         {
+            var accid = AuthMan.GetAccountId(this);
+            var t = new T();
+            var colls = await _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.TargetId == model.TargetId).ToListAsync();
+            if (colls.Count > 0)
+                return Ok();
+
             var mapping = new Func<Collection, Task<Collection>>(async (entity) =>
             {
-                var t = new T();
                 entity.TargetId = model.TargetId;
-                entity.Folder = model.FolderName;
                 entity.Type = t.GetType().Name;
                 return await Task.FromResult(entity);
             });
@@ -112,20 +116,21 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-        #region Delete 删除收藏数据信息
+        #region DeleteCollection 删除收藏数据信息
         /// <summary>
         /// 删除收藏数据信息
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="targetId"></param>
         /// <returns></returns>
         [Route("Collection")]
         [HttpDelete]
-        [ValidateModel]
-        public virtual async Task<IActionResult> DeleteCollection([FromBody]CollectionCreateModel model)
+        public virtual async Task<IActionResult> DeleteCollection(string targetId)
         {
             var accid = AuthMan.GetAccountId(this);
             var t = new T();
-            var colls = _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.Folder == model.FolderName && x.TargetId == model.TargetId);
+            var colls = await _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.TargetId == targetId).ToListAsync();
+            if (colls.Count == 0)
+                return NotFound();
             foreach (var item in colls)
             {
                 _Store.DbContext.Collections.Remove(item);
@@ -135,67 +140,63 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region Collection 查询收藏列表数据信息
+        /// <summary>
+        /// 查询收藏列表数据信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("Collection")]
         [HttpGet]
+        [ValidateModel]
         [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] ColletionRequestModel model)
+        public async Task<IActionResult> Collection([FromQuery] ColletionRequestModel model)
         {
+            var t = typeof(T);
             var accid = AuthMan.GetAccountId(this);
-            var t = new T();
+            var query = _Store.DbContext.Collections.Where(x => x.Creator == accid && x.ActiveFlag == AppConst.I_DataState_Active && x.Type == t.Name);
+            if (!string.IsNullOrWhiteSpace(model.TargetId))
+                query = query.Where(x => x.TargetId == model.TargetId);
 
-            var referCollections = new List<Collection>();
-
-            var advanceQuery = new Func<IQueryable<T>, Task<IQueryable<T>>>(async (query) =>
+            var dataQ = Enumerable.Empty<T>().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(model.CategoryId))
             {
-                var collQ = _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name);
-                if (!string.IsNullOrWhiteSpace(model.FolderName))
-                {
-                    collQ = collQ.Where(x => x.Folder == model.FolderName);
-                }
-                else
-                {
-                    if (model.IsInFolder)
-                        collQ = collQ.Where(x => x.Folder == model.FolderName);
-                }
-                if (!string.IsNullOrWhiteSpace(model.TargetId))
-                    collQ = collQ.Where(x => x.TargetId == model.TargetId);
-
-                query = from it in query
-                        join col in collQ on it.Id equals col.TargetId
+                dataQ = from it in _Store.DbContext.Set<T>()
+                        join cc in query on it.Id equals cc.TargetId
+                        where it.CategoryId == model.CategoryId
                         select it;
+            }
+            else
+            {
+                dataQ = from it in _Store.DbContext.Set<T>()
+                        join cc in query on it.Id equals cc.TargetId
+                        select it;
+            }
 
-                var referIds = await query.Select(x => x.Id).ToListAsync();
-                referCollections = await collQ.Where(x => referIds.Contains(x.TargetId)).ToListAsync();
-                return await Task.FromResult(query);
-            });
+            var res = await dataQ.OrderBy(x => x.Id).SimplePaging(model.Page, model.PageSize);
+            var datas = res.Data;
 
-            var ind = 0;
-            var literal = new Func<T, IList<T>, Task<T>>(async (entity, datas) =>
-             {
-                 //var 
-                 //entity.Content = null;
-                 //entity.FolderName =
+            var pagedData = new PagedData<DTO>() { Data = new List<DTO>(), Page = res.Page, Size = res.Size, Total = res.Total };
 
-                 //查看当前T在Datas中的下标,匹配出该T在referCollections相应下标的收藏信息
-                 //var sameCollections = datas.Where(x => x.Id == entity.Id);
-                 //entity.GetHashCode
-                 //for (int idx = referCollections.Count - 1; idx >= 0; idx--)
-                 //{
-                 //    var curCol = referCollections[idx];
-                 //    if (curCol.TargetId == entity.Id)
-                 //    {
-                 //        entity.FolderName = curCol.Folder;
-                 //        referCollections.RemoveAt(idx);
-                 //        break;
-                 //    }
-                 //}
+            for (int ddx = datas.Count - 1; ddx >= 0; ddx--)
+            {
+                var curData = datas[ddx];
+                if (string.IsNullOrWhiteSpace(curData.Icon))
+                    curData.IconFileAsset = await _Store.DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                var creator = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Creator == curData.Creator);
+                curData.CreatorName = creator != null ? creator.Name : "";
+                var modifier = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Modifier == curData.Modifier);
+                curData.ModifierName = modifier != null ? modifier.Name : "";
+                if (!string.IsNullOrWhiteSpace(curData.CategoryId))
+                {
+                    var cat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == curData.CategoryId);
+                    curData.CategoryName = cat != null ? cat.Name : "";
+                }
+                pagedData.Data.Add(curData.ToDTO());
+            }
 
-                 var aaaa = ind++;
-                 entity.FolderName =Guid.NewGuid().ToString();
-
-                 return entity;
-             });
-            return await _GetPagingRequest(model, null, advanceQuery, literal);
+            return Ok(pagedData);
         }
+        #endregion
     }
 }

@@ -3,7 +3,6 @@ using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
-
 namespace ApiServer.Stores
 {
     public class MediaShareStore : ListableStore<MediaShareResource, MediaShareResourceDTO>, IStore<MediaShareResource, MediaShareResourceDTO>
@@ -70,6 +69,9 @@ namespace ApiServer.Stores
                 data.IconFileAsset = await _DbContext.Files.FindAsync(media.Icon);
             if (!string.IsNullOrWhiteSpace(media.FileAssetId))
                 data.FileAsset = await _DbContext.Files.FindAsync(media.FileAssetId);
+
+
+
             return data.ToDTO();
         }
         #endregion

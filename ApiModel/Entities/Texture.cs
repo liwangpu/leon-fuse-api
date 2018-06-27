@@ -30,6 +30,7 @@ namespace ApiModel.Entities
             dto.ModifierName = ModifierName;
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
+            dto.CategoryName = CategoryName;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
