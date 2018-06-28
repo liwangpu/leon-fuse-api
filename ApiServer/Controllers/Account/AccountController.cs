@@ -197,7 +197,7 @@ namespace ApiServer.Controllers
             _Context.Update(acc);
             await _Context.SaveChangesAsync();
             return Ok();
-        } 
+        }
         #endregion
 
         #region GetProfile 获取账号信息
@@ -217,7 +217,11 @@ namespace ApiServer.Controllers
             AccountProfileModel p = new AccountProfileModel();
             p.Id = acc.Id;
             p.Name = acc.Name;
-            p.Avatar = acc.Icon;
+            if (!string.IsNullOrWhiteSpace(acc.Icon))
+            {
+                var fs = await _Store.DbContext.Files.FirstOrDefaultAsync(x => x.Id == acc.Icon);
+                p.Avatar = fs.Url;
+            }
             p.Brief = acc.Description;
             p.Location = acc.Location;
             p.OrganizationId = acc.OrganizationId;

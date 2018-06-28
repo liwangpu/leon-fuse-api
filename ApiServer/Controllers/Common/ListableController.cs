@@ -161,9 +161,16 @@ namespace ApiServer.Controllers
             var dataQ = Enumerable.Empty<T>().AsQueryable();
             if (!string.IsNullOrWhiteSpace(model.CategoryId))
             {
+                var curCategoryTree = await _Store.DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == model.CategoryId);
+                var categoryQ = from it in _Store.DbContext.AssetCategoryTrees
+                                where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                select it.ObjId;
+                var catIds = await categoryQ.ToListAsync();
+
                 dataQ = from it in _Store.DbContext.Set<T>()
                         join cc in query on it.Id equals cc.TargetId
-                        where it.CategoryId == model.CategoryId
+                        where catIds.Contains(it.CategoryId)
                         select it;
             }
             else

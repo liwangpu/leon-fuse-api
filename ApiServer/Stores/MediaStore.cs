@@ -73,7 +73,7 @@ namespace ApiServer.Stores
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
                 data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
 
-            data.Server = AppConfig.Instance.Configuration["MediaShareServer"];
+            data.Server = AppConfig.Instance.MediaShareServer;
 
             return data.ToDTO();
         }

@@ -23,7 +23,7 @@ namespace ApiServer
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;            
+            Configuration = configuration;
         }
 
 
@@ -32,12 +32,12 @@ namespace ApiServer
         {
             //init config
             SiteConfig.Instance.Init(Configuration);
-
+            AppConfig.Instance.Init(Configuration);
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                                                                 .AllowAnyMethod()
                                                                  .AllowAnyHeader()
                                                                  .AllowCredentials()));
-            
+
             services.AddEntityFrameworkNpgsql();
             services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
             //services.AddEntityFrameworkSqlServer();
@@ -61,7 +61,7 @@ namespace ApiServer
                     //options.Events.OnAuthenticationFailed  OnTokenValidated OnChallenge OnMessageReceived
                 });
 
-     
+
 
             services.AddMvc()
                 .AddJsonOptions(opts =>
@@ -86,7 +86,7 @@ namespace ApiServer
 
         void hostStaticFileServer(IApplicationBuilder app, IHostingEnvironment env)
         {
-            Console.WriteLine("=======",env.EnvironmentName);
+            Console.WriteLine("=======", env.EnvironmentName);
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             Console.WriteLine("content root path: " + env.ContentRootPath);
             Console.WriteLine("web root path: " + env.WebRootPath);
