@@ -1,6 +1,7 @@
 ﻿using ApiModel;
 using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Services;
@@ -204,6 +205,34 @@ namespace ApiServer.Controllers
 
             return Ok(pagedData);
         }
+        #endregion
+
+        #region Share 分享数据信息
+        /// <summary>
+        /// 分享数据信息
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [Route("Share")]
+        [HttpPut]
+        public async Task<IActionResult> Share(string ids)
+        {
+            if (string.IsNullOrWhiteSpace(ids))
+                return BadRequest();
+
+            var idsArr = ids.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            foreach (var id in idsArr)
+            {
+                var entity = await _Store.DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+                if (entity != null)
+                {
+                    entity.ResourceType = (int)ResourceTypeEnum.Organizational_SubShare;
+                    _Store.DbContext.Update<T>(entity);
+                }
+                await _Store.DbContext.SaveChangesAsync();
+            }
+            return Ok();
+        } 
         #endregion
     }
 }

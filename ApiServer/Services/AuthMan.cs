@@ -59,7 +59,7 @@ namespace ApiServer.Services
             account = account.ToLower();
             pwd = pwd.ToLower();
 
-            var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail == account || d.Phone == account);
+            var acc = await context.Accounts.FirstOrDefaultAsync(d => d.Mail.ToLower() == account || d.Phone == account);
             if (acc != null)
             {
                 var model = new AccountEditModel();

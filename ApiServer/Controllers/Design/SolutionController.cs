@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -32,17 +34,28 @@ namespace ApiServer.Controllers.Design
         /// 根据分页查询信息获取解决方案概要信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="onlyShare"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, bool onlyShare = false)
         {
             var literal = new Func<Solution, IList<Solution>, Task<Solution>>(async (entity, datas) =>
              {
                  entity.Data = null;
                  return await Task.FromResult(entity);
              });
-            return await _GetPagingRequest(model, null, null, literal);
+
+            var advanceQuery = new Func<IQueryable<Solution>, Task<IQueryable<Solution>>>(async (query) =>
+            {
+                if (onlyShare)
+                {
+                    query = query.Where(x => x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
+                }
+                return await Task.FromResult(query);
+            });
+
+            return await _GetPagingRequest(model, null, advanceQuery, literal);
         }
         #endregion
 

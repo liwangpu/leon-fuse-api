@@ -34,6 +34,7 @@ namespace ApiModel.Entities
             dto.Data = Data;
             dto.LayoutId = LayoutId;
             dto.CategoryName = CategoryName;
+            dto.ResourceType = ResourceType;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
