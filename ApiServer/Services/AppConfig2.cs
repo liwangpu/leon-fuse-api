@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ApiServer.Services
+﻿namespace ApiServer.Services
 {
-    public class AppConfig2
+    public class AppConfig
     {
-        public string Demo { get; set; }
+        public string MediaShareServer { get; set; }
     }
 }

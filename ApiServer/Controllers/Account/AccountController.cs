@@ -20,7 +20,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class AccountController : Listable2Controller<Account, AccountDTO>
+    public class AccountController : ListableController<Account, AccountDTO>
     {
 
         #region 构造函数

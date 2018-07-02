@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Models;
 using BambooCore;
@@ -13,6 +14,15 @@ namespace ApiServer.Repositories
             : base(context, permissionTreeRep)
         {
         }
+
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
+
         #region override GetByIdAsync 根据Id返回实体DTO数据信息
         /// <summary>
         /// 根据Id返回实体DTO数据信息

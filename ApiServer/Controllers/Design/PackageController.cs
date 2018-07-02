@@ -21,7 +21,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class PackageController : Listable2Controller<Package, PackageDTO>
+    public class PackageController : ListableController<Package, PackageDTO>
     {
         #region 构造函数
         public PackageController(IRepository<Package, PackageDTO> repository)

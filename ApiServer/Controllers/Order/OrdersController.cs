@@ -16,7 +16,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class OrdersController : Listable2Controller<Order, OrderDTO>
+    public class OrdersController : ListableController<Order, OrderDTO>
     {
 
         #region 构造函数

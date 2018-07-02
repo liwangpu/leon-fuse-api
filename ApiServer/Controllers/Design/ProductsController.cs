@@ -2,12 +2,10 @@
 using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
-using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
 using ApiServer.Services;
-
 using BambooCore;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +22,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductsController : Listable2Controller<Product, ProductDTO>
+    public class ProductsController : ListableController<Product, ProductDTO>
     {
 
         #region 构造函数

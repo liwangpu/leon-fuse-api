@@ -1,9 +1,11 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiModel.Extension;
 using ApiServer.Data;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
@@ -11,11 +13,20 @@ namespace ApiServer.Repositories
 {
     public class MediaRepository : ListableRepository<Media, MediaDTO>
     {
-        public MediaRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
+        public AppConfig appConfig { get; }
+        public MediaRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep, IOptions<AppConfig> settingsOptions)
             : base(context, permissionTreeRep)
         {
+            appConfig = settingsOptions.Value;
         }
 
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
 
         #region override GetByIdAsync 根据Id返回实体DTO数据信息
         /// <summary>
@@ -32,7 +43,7 @@ namespace ApiServer.Repositories
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
                 data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
 
-            data.Server = AppConfig.Instance.MediaShareServer;
+            data.Server = appConfig.MediaShareServer;
 
             return data.ToDTO();
         }

@@ -1,12 +1,10 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
-using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
 using ApiServer.Services;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -23,7 +21,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class ProductSpecController : Listable2Controller<ProductSpec, ProductSpecDTO>
+    public class ProductSpecController : ListableController<ProductSpec, ProductSpecDTO>
     {
         public IRepository<Product, ProductDTO> _ProductRep { get; }
 

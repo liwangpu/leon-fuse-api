@@ -1,11 +1,9 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiServer.Controllers.Common;
-using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +17,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class CategoryController : Common2Controller<AssetCategory, AssetCategoryDTO>
+    public class CategoryController : CommonController<AssetCategory, AssetCategoryDTO>
     {
 
         #region 构造函数

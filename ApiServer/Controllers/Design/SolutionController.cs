@@ -2,11 +2,9 @@
 using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
-using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
-
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +21,7 @@ namespace ApiServer.Controllers.Design
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class SolutionController : Listable2Controller<Solution, SolutionDTO>
+    public class SolutionController : ListableController<Solution, SolutionDTO>
     {
 
         #region 构造函数

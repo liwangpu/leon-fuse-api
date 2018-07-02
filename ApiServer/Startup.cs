@@ -34,7 +34,7 @@ namespace ApiServer
         {
             //init config
             SiteConfig.Instance.Init(Configuration);
-            AppConfig.Instance.Init(Configuration);
+            //AppConfig.Instance.Init(Configuration);
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
@@ -42,8 +42,9 @@ namespace ApiServer
 
             services.AddEntityFrameworkNpgsql();
             services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
-            services.Configure<AppConfig2>(Configuration);
+            services.Configure<AppConfig>(Configuration);
             services.AddScoped<ITreeRepository<PermissionTree>, PermissionTreeRepository>();
+            services.AddScoped<ITreeRepository<AssetCategoryTree>, AssetCategoryTreeRepository>();
             services.AddScoped<IRepository<Map, MapDTO>, MapRepository>();
             services.AddScoped<IRepository<Account, AccountDTO>, AccountRepository>();
             services.AddScoped<IRepository<Department, DepartmentDTO>, DepartmentRepository>();

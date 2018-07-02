@@ -1,22 +1,13 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
-using ApiServer.Services;
-using Microsoft.Extensions.Options;
 
 
 namespace ApiServer.Repositories
 {
     public class MapRepository : ListableRepository<Map, MapDTO>
     {
-        //private AppConfig2 appConfig;
 
-        //public MapRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep, IOptions<AppConfig2> settingsOptions)
-        //    : base(context, permissionTreeRep)
-        //{
-        //    appConfig = settingsOptions.Value;
-
-        //}
         /// <summary>
         /// 资源访问类型
         /// </summary>

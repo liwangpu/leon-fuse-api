@@ -1,5 +1,6 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,6 +16,13 @@ namespace ApiServer.Repositories
         {
         }
 
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
+        }
 
         #region CreateAsync 新建部门信息
         /// <summary>

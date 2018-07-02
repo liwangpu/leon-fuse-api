@@ -1,8 +1,6 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Threading.Tasks;
 namespace ApiServer.Repositories
 {
     public class FileRepository : ListableRepository<FileAsset, FileAssetDTO>

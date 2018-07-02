@@ -17,7 +17,7 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class OrganController : Listable2Controller<Organization, OrganizationDTO>
+    public class OrganController : ListableController<Organization, OrganizationDTO>
     {
 
         #region 构造函数

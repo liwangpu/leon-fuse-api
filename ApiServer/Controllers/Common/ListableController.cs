@@ -4,8 +4,8 @@ using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Repositories;
 using ApiServer.Services;
-using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,20 +14,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApiServer.Controllers
+namespace ApiServer.Controllers.Common
 {
-    /// <summary>
-    /// 有很多ICon资源类型的Resource需要替换ICon图标
-    /// </summary>
-    /// <typeparam name="T">实体对象</typeparam>
-    /// <typeparam name="DTO">DTO实体对象</typeparam>
     public class ListableController<T, DTO> : CommonController<T, DTO>
-               where T : class, IListable, ApiModel.ICloneable, IDTOTransfer<DTO>, new()
+         where T : class, IListable, ApiModel.ICloneable, IDTOTransfer<DTO>, new()
           where DTO : class, IData, new()
     {
+
         #region 构造函数
-        public ListableController(IStore<T, DTO> store)
-          : base(store)
+        public ListableController(IRepository<T, DTO> repository)
+          : base(repository)
         {
 
         }
@@ -63,9 +59,9 @@ namespace ApiServer.Controllers
         protected async Task<IActionResult> _PostCollectionRequest(Func<Collection, Task<Collection>> mapping)
         {
             var accid = AuthMan.GetAccountId(this);
-            var account = await _Store.DbContext.Accounts.FindAsync(accid);
+            var account = await _Repository._DbContext.Accounts.FindAsync(accid);
             var metadata = new Collection();
-            //var canCreate = await _Store.CanCreateAsync(accid);
+            //var canCreate = await _Repository.CanCreateAsync(accid);
             //if (!canCreate)
             //    return Forbid();
             var data = await mapping(metadata);
@@ -75,13 +71,13 @@ namespace ApiServer.Controllers
             data.Creator = accid;
             data.Modifier = accid;
             data.OrganizationId = account.OrganizationId;
-            _Store.DbContext.Collections.Add(data);
-            await _Store.DbContext.SaveChangesAsync();
-            //await _Store.SatisfyCreateAsync(accid, data, ModelState);
+            _Repository._DbContext.Collections.Add(data);
+            await _Repository._DbContext.SaveChangesAsync();
+            //await _Repository.SatisfyCreateAsync(accid, data, ModelState);
             //if (!ModelState.IsValid)
             //    return new ValidationFailedResult(ModelState);
-            //await _Store.CreateAsync(accid, data);
-            //var dto = await _Store.GetByIdAsync(metadata.Id);
+            //await _Repository.CreateAsync(accid, data);
+            //var dto = await _Repository.GetByIdAsync(metadata.Id);
             ////如果handle不为空,由handle掌控ActionResult
             //if (handle != null)
             //    return await handle(data);
@@ -103,7 +99,7 @@ namespace ApiServer.Controllers
         {
             var accid = AuthMan.GetAccountId(this);
             var t = new T();
-            var colls = await _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.TargetId == model.TargetId).ToListAsync();
+            var colls = await _Repository._DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.TargetId == model.TargetId).ToListAsync();
             if (colls.Count > 0)
                 return Ok();
 
@@ -129,14 +125,14 @@ namespace ApiServer.Controllers
         {
             var accid = AuthMan.GetAccountId(this);
             var t = new T();
-            var colls = await _Store.DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.TargetId == targetId).ToListAsync();
+            var colls = await _Repository._DbContext.Collections.Where(x => x.Creator == accid && x.Type == t.GetType().Name && x.TargetId == targetId).ToListAsync();
             if (colls.Count == 0)
                 return NotFound();
             foreach (var item in colls)
             {
-                _Store.DbContext.Collections.Remove(item);
+                _Repository._DbContext.Collections.Remove(item);
             }
-            await _Store.DbContext.SaveChangesAsync();
+            await _Repository._DbContext.SaveChangesAsync();
             return Ok();
         }
         #endregion
@@ -155,28 +151,28 @@ namespace ApiServer.Controllers
         {
             var t = typeof(T);
             var accid = AuthMan.GetAccountId(this);
-            var query = _Store.DbContext.Collections.Where(x => x.Creator == accid && x.ActiveFlag == AppConst.I_DataState_Active && x.Type == t.Name);
+            var query = _Repository._DbContext.Collections.Where(x => x.Creator == accid && x.ActiveFlag == AppConst.I_DataState_Active && x.Type == t.Name);
             if (!string.IsNullOrWhiteSpace(model.TargetId))
                 query = query.Where(x => x.TargetId == model.TargetId);
 
             var dataQ = Enumerable.Empty<T>().AsQueryable();
             if (!string.IsNullOrWhiteSpace(model.CategoryId))
             {
-                var curCategoryTree = await _Store.DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == model.CategoryId);
-                var categoryQ = from it in _Store.DbContext.AssetCategoryTrees
+                var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == model.CategoryId);
+                var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
                                 where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
                                 && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
                                 select it.ObjId;
                 var catIds = await categoryQ.ToListAsync();
 
-                dataQ = from it in _Store.DbContext.Set<T>()
+                dataQ = from it in _Repository._DbContext.Set<T>()
                         join cc in query on it.Id equals cc.TargetId
                         where catIds.Contains(it.CategoryId)
                         select it;
             }
             else
             {
-                dataQ = from it in _Store.DbContext.Set<T>()
+                dataQ = from it in _Repository._DbContext.Set<T>()
                         join cc in query on it.Id equals cc.TargetId
                         select it;
             }
@@ -190,14 +186,14 @@ namespace ApiServer.Controllers
             {
                 var curData = datas[ddx];
                 if (string.IsNullOrWhiteSpace(curData.Icon))
-                    curData.IconFileAsset = await _Store.DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
-                var creator = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Creator == curData.Creator);
+                    curData.IconFileAsset = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                var creator = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Creator == curData.Creator);
                 curData.CreatorName = creator != null ? creator.Name : "";
-                var modifier = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Modifier == curData.Modifier);
+                var modifier = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Modifier == curData.Modifier);
                 curData.ModifierName = modifier != null ? modifier.Name : "";
                 if (!string.IsNullOrWhiteSpace(curData.CategoryId))
                 {
-                    var cat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == curData.CategoryId);
+                    var cat = await _Repository._DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == curData.CategoryId);
                     curData.CategoryName = cat != null ? cat.Name : "";
                 }
                 pagedData.Data.Add(curData.ToDTO());
@@ -223,17 +219,17 @@ namespace ApiServer.Controllers
             var idsArr = ids.Split(",", StringSplitOptions.RemoveEmptyEntries);
             foreach (var id in idsArr)
             {
-                var entity = await _Store.DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+                var entity = await _Repository._DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
                 if (entity != null)
                 {
                     entity.ResourceType = (int)ResourceTypeEnum.Organizational_SubShare;
                     entity.ModifiedTime = DateTime.UtcNow;
-                    _Store.DbContext.Update<T>(entity);
+                    _Repository._DbContext.Update<T>(entity);
                 }
-                await _Store.DbContext.SaveChangesAsync();
+                await _Repository._DbContext.SaveChangesAsync();
             }
             return Ok();
-        } 
+        }
         #endregion
     }
 }

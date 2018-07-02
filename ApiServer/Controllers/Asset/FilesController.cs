@@ -20,7 +20,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class FilesController : Listable2Controller<FileAsset, FileAssetDTO>
+    public class FilesController : ListableController<FileAsset, FileAssetDTO>
     {
         private IHostingEnvironment hostEnv;
         private string uploadPath;

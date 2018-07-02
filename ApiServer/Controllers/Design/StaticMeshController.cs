@@ -14,7 +14,7 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class StaticMeshController : Listable2Controller<StaticMesh, StaticMeshDTO>
+    public class StaticMeshController : ListableController<StaticMesh, StaticMeshDTO>
     {
 
         #region 构造函数

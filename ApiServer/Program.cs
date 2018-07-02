@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using NLog.Web;
 using Microsoft.Extensions.Logging;
+using NLog.Web;
 namespace ApiServer
 {
     public class Program

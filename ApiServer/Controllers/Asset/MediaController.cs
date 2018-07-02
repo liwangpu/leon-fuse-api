@@ -15,7 +15,7 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MediaController : Listable2Controller<Media, MediaDTO>
+    public class MediaController : ListableController<Media, MediaDTO>
     {
         #region 构造函数
         public MediaController(IRepository<Media, MediaDTO> repository)

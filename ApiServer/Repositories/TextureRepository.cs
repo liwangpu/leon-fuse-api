@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using System.Threading.Tasks;
 
@@ -8,6 +9,14 @@ namespace ApiServer.Repositories
     {
         public TextureRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep) : base(context, permissionTreeRep)
         {
+        }
+
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
         }
 
         #region override GetByIdAsync 根据Id返回实体DTO数据信息

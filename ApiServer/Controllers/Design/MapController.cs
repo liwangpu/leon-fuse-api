@@ -17,12 +17,12 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MapController : Common2Controller<Map, MapDTO>
+    public class MapController : ListableController<Map, MapDTO>
     {
-        private AppConfig2 appConfig;
+        private AppConfig appConfig;
 
         #region 构造函数
-        public MapController(IRepository<Map, MapDTO> repository, IOptions<AppConfig2> settingsOptions)
+        public MapController(IRepository<Map, MapDTO> repository, IOptions<AppConfig> settingsOptions)
         : base(repository)
         {
             appConfig = settingsOptions.Value;

@@ -1,9 +1,8 @@
 ﻿using ApiModel;
-using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Repositories;
 using ApiServer.Services;
-using ApiServer.Stores;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -15,26 +14,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-
-namespace ApiServer.Controllers
+namespace ApiServer.Controllers.Common
 {
-    /// <summary>
-    /// 通用RestFull CRUD常用请求处理控制器
-    /// </summary>
-    /// <typeparam name="T">实体对象</typeparam>
-    /// <typeparam name="DTO">DTO实体对象</typeparam>
     public class CommonController<T, DTO> : Controller
          where T : class, IEntity, IDTOTransfer<DTO>, new()
            where DTO : class, IData, new()
     {
-        protected bool RequestValid;
-        protected IStore<T, DTO> _Store;
-        //protected readonly ApiDbContext _DbContext;
+        protected IRepository<T, DTO> _Repository;
+
         #region 构造函数
-        public CommonController(IStore<T, DTO> store)
+        public CommonController(IRepository<T, DTO> repository)
         {
-            _Store = store;
+            _Repository = repository;
         }
         #endregion
 
@@ -45,7 +36,7 @@ namespace ApiServer.Controllers
         protected async Task<string> _GetCurrentUserOrganId()
         {
             var accid = AuthMan.GetAccountId(this);
-            var account = await _Store.DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
             if (account != null)
                 return account.OrganizationId;
             return string.Empty;
@@ -73,7 +64,7 @@ namespace ApiServer.Controllers
                     builder.AppendFormat(";{0}", item);
                 model.Q = builder.ToString();
             }
-            var result = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
+            var result = await _Repository.SimplePagedQueryAsync(model, accid, advanceQuery);
 
             if (literal != null)
             {
@@ -83,7 +74,7 @@ namespace ApiServer.Controllers
                         result.Data[idx] = await literal(result.Data[idx], result.Data);
                 }
             }
-            return Ok(StoreBase<T, DTO>.PageQueryDTOTransfer(result));
+            return Ok(RepositoryBase<T, DTO>.PageQueryDTOTransfer(result));
         }
         #endregion
 
@@ -97,14 +88,14 @@ namespace ApiServer.Controllers
         protected async Task<IActionResult> _GetByIdRequest(string id, Func<DTO, Task<IActionResult>> handle = null)
         {
             var accid = AuthMan.GetAccountId(this);
-            var exist = await _Store.ExistAsync(id);
+            var exist = await _Repository.ExistAsync(id);
             if (!exist)
                 return NotFound();
-            var canRead = await _Store.CanReadAsync(accid, id);
+            var canRead = await _Repository.CanReadAsync(accid, id);
             if (!canRead)
                 return Forbid();
 
-            var dto = await _Store.GetByIdAsync(id);
+            var dto = await _Repository.GetByIdAsync(id);
             //如果handle不为空,由handle掌控ActionResult
             if (handle != null)
                 return await handle(dto);
@@ -123,15 +114,15 @@ namespace ApiServer.Controllers
         {
             var accid = AuthMan.GetAccountId(this);
             var metadata = new T();
-            var canCreate = await _Store.CanCreateAsync(accid);
+            var canCreate = await _Repository.CanCreateAsync(accid);
             if (!canCreate)
                 return Forbid();
             var data = await mapping(metadata);
-            await _Store.SatisfyCreateAsync(accid, data, ModelState);
+            await _Repository.SatisfyCreateAsync(accid, data, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            await _Store.CreateAsync(accid, data);
-            var dto = await _Store.GetByIdAsync(metadata.Id);
+            await _Repository.CreateAsync(accid, data);
+            var dto = await _Repository.GetByIdAsync(metadata.Id);
             //如果handle不为空,由handle掌控ActionResult
             if (handle != null)
                 return await handle(data);
@@ -149,21 +140,21 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null)
         {
-            var exist = await _Store.ExistAsync(id);
+            var exist = await _Repository.ExistAsync(id);
             if (!exist)
                 return NotFound();
             var accid = AuthMan.GetAccountId(this);
-            var permission = await _Store.CanUpdateAsync(accid, id);
+            var permission = await _Repository.CanUpdateAsync(accid, id);
             if (!permission)
                 return Forbid();
-            var metadata = await _Store._GetByIdAsync(id);
+            var metadata = await _Repository._GetByIdAsync(id);
             var entity = await mapping(metadata);
             metadata.Id = id;
-            await _Store.SatisfyUpdateAsync(accid, entity, ModelState);
+            await _Repository.SatisfyUpdateAsync(accid, entity, ModelState);
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            await _Store.UpdateAsync(accid, entity);
-            var dto = await _Store.GetByIdAsync(entity.Id);
+            await _Repository.UpdateAsync(accid, entity);
+            var dto = await _Repository.GetByIdAsync(entity.Id);
             //如果handle不为空,由handle掌控ActionResult
             if (handle != null)
                 return await handle(entity);
@@ -180,14 +171,14 @@ namespace ApiServer.Controllers
         protected async Task<IActionResult> _DeleteRequest(string id)
         {
             var accid = AuthMan.GetAccountId(this);
-            var exist = await _Store.ExistAsync(id);
+            var exist = await _Repository.ExistAsync(id);
             if (!exist)
                 return NotFound();
 
-            var canDelete = await _Store.CanDeleteAsync(accid, id);
+            var canDelete = await _Repository.CanDeleteAsync(accid, id);
             if (!canDelete)
                 return Forbid();
-            await _Store.DeleteAsync(accid, id);
+            await _Repository.DeleteAsync(accid, id);
             return Ok();
         }
         #endregion
@@ -313,8 +304,8 @@ namespace ApiServer.Controllers
             }
 
             var list = new List<CSV>();
-            var res = await _Store.SimplePagedQueryAsync(model, accid, advanceQuery);
-            var resource = StoreBase<T, DTO>.PageQueryDTOTransfer(res);
+            var res = await _Repository.SimplePagedQueryAsync(model, accid, advanceQuery);
+            var resource = RepositoryBase<T, DTO>.PageQueryDTOTransfer(res);
             if (resource.Data != null && resource.Data.Count > 0)
             {
                 foreach (var item in resource.Data)
@@ -399,21 +390,21 @@ namespace ApiServer.Controllers
                 for (int idx = arr.Length - 1; idx >= 0; idx--)
                 {
                     var curid = arr[idx];
-                    var exist = await _Store.ExistAsync(curid);
+                    var exist = await _Repository.ExistAsync(curid);
                     if (!exist)
                     {
                         ModelState.AddModelError("id", $"\"{curid}\"对应记录不存在");
                         return new ValidationFailedResult(ModelState);
                     }
 
-                    var canDelete = await _Store.CanDeleteAsync(accid, curid);
+                    var canDelete = await _Repository.CanDeleteAsync(accid, curid);
                     if (!canDelete)
                     {
                         ModelState.AddModelError("id", $"您没有权限删除\"{curid}\"信息");
                         return new ValidationFailedResult(ModelState);
                     }
 
-                    await _Store.DeleteAsync(accid, curid);
+                    await _Repository.DeleteAsync(accid, curid);
                 }
                 return Ok();
             }
@@ -472,6 +463,3 @@ namespace ApiServer.Controllers
 
     }
 }
-
-
-

@@ -15,7 +15,7 @@ namespace ApiServer.Controllers.Asset
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MediaShareController : Common2Controller<MediaShareResource, MediaShareResourceDTO>
+    public class MediaShareController : CommonController<MediaShareResource, MediaShareResourceDTO>
     {
         #region 构造函数
         public MediaShareController(IRepository<MediaShareResource, MediaShareResourceDTO> repository)

@@ -15,7 +15,7 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class AreaTypeController : Listable2Controller<AreaType, AreaTypeDTO>
+    public class AreaTypeController : ListableController<AreaType, AreaTypeDTO>
     {
         #region 构造函数
         public AreaTypeController(IRepository<AreaType, AreaTypeDTO> repository)

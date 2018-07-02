@@ -1,4 +1,5 @@
 ﻿using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -13,6 +14,14 @@ namespace ApiServer.Repositories
         public PackageRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
             : base(context, permissionTreeRep)
         {
+        }
+
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
         }
 
         #region GetByIdAsync 根据Id返回实体DTO数据信息

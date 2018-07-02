@@ -25,8 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Common\CommonController.cs" />
-    <Compile Remove="Controllers\Common\ListableController.cs" />
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
@@ -38,6 +36,7 @@
     <Compile Remove="Migrations\20180619083924_LeonAddFolderToCollection10619.Designer.cs" />
     <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.cs" />
     <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.Designer.cs" />
+    <Compile Remove="Services\AppConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>

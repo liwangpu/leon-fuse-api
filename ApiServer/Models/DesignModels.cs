@@ -178,7 +178,7 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "必填信息")]
+        //[Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
         public string State { get; set; }
         public string IconAssetId { get; set; }
@@ -198,7 +198,7 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "必填信息")]
+        //[Required(ErrorMessage = "必填信息")]
         public string Content { get; set; }
         public string State { get; set; }
         public string IconAssetId { get; set; }

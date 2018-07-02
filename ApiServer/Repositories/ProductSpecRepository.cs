@@ -1,5 +1,6 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,14 @@ namespace ApiServer.Repositories
         public ProductSpecRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
             : base(context, permissionTreeRep)
         {
+        }
+
+        public override ResourceTypeEnum ResourceTypeSetting
+        {
+            get
+            {
+                return ResourceTypeEnum.Organizational;
+            }
         }
 
         #region SatisfyCreateAsync 判断数据是否满足存储规范

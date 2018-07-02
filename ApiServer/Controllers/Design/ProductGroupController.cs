@@ -16,7 +16,7 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductGroupController : Listable2Controller<ProductGroup, ProductGroupDTO>
+    public class ProductGroupController : ListableController<ProductGroup, ProductGroupDTO>
     {
 
         #region 构造函数
