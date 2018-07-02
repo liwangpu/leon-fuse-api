@@ -4,7 +4,9 @@ using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -205,6 +207,30 @@ namespace ApiServer.Stores
             }
 
             return data.ToDTO();
+        }
+        #endregion
+
+        #region PagedSelectExpression
+        /// <summary>
+        /// PagedSelectExpression
+        /// </summary>
+        /// <returns></returns>
+        public override Expression<Func<Package, Package>> PagedSelectExpression()
+        {
+            return x => new Package()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Icon = x.Icon,
+                Description = x.Description,
+                CategoryId = x.CategoryId,
+                OrganizationId = x.OrganizationId,
+                Creator = x.Creator,
+                Modifier = x.Modifier,
+                CreatedTime = x.CreatedTime,
+                ModifiedTime = x.ModifiedTime,
+                ResourceType = x.ResourceType
+            };
         }
         #endregion
     }

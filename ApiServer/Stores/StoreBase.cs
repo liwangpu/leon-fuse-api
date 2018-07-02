@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApiServer.Stores
@@ -220,13 +221,6 @@ namespace ApiServer.Stores
             else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
             {
                 var treeQ = _TreeStore.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
-
-                var bb = query.ToList();
-                var aaa = treeQ.ToList();
-
-                var qq=( from it in query
-                       join tq in treeQ on it.OrganizationId equals tq.ObjId
-                       select it).ToList();
 
                 return from it in query
                        join tq in treeQ on it.OrganizationId equals tq.ObjId
@@ -518,7 +512,7 @@ namespace ApiServer.Stores
             _QSearchFilter(ref query, model.Q);
             _KeyWordSearchFilter(ref query, model.Search);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
-            var result = await query.SimplePaging(model.Page, model.PageSize);
+            var result = await query.SimplePaging(model.Page, model.PageSize, PagedSelectExpression());
             #region 补充CreateName,ModifierName信息
             if (result.Data != null && result.Data.Count > 0)
             {
@@ -587,6 +581,17 @@ namespace ApiServer.Stores
             #endregion
             return result;
         }
+        #endregion
+
+        #region PagedSelectExpression 匹配分页返回字段信息
+        /// <summary>
+        /// 匹配分页返回字段信息
+        /// </summary>
+        /// <returns></returns>
+        public virtual Expression<Func<T, T>> PagedSelectExpression()
+        {
+            return x => x;
+        } 
         #endregion
 
         /**************** public static method ****************/

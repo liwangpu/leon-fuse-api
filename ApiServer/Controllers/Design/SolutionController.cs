@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Filters;
@@ -8,7 +9,6 @@ using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,22 +40,17 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, bool onlyShare = false)
         {
-            var literal = new Func<Solution, IList<Solution>, Task<Solution>>(async (entity, datas) =>
-             {
-                 entity.Data = null;
-                 return await Task.FromResult(entity);
-             });
-
             var advanceQuery = new Func<IQueryable<Solution>, Task<IQueryable<Solution>>>(async (query) =>
             {
                 if (onlyShare)
                 {
                     query = query.Where(x => x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
                 }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return await Task.FromResult(query);
             });
 
-            return await _GetPagingRequest(model, null, advanceQuery, literal);
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 

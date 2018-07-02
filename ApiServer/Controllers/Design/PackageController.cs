@@ -40,12 +40,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            var literal = new Func<Package, IList<Package>, Task<Package>>(async (entity, datas) =>
-             {
-                 entity.Content = null;
-                 return await Task.FromResult(entity);
-             });
-            return await _GetPagingRequest(model, null, null, literal);
+            return await _GetPagingRequest(model);
         }
         #endregion
 

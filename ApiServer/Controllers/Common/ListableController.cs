@@ -227,6 +227,7 @@ namespace ApiServer.Controllers
                 if (entity != null)
                 {
                     entity.ResourceType = (int)ResourceTypeEnum.Organizational_SubShare;
+                    entity.ModifiedTime = DateTime.UtcNow;
                     _Store.DbContext.Update<T>(entity);
                 }
                 await _Store.DbContext.SaveChangesAsync();
