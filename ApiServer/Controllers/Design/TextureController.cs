@@ -1,9 +1,11 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
+using ApiServer.Controllers.Common;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
+
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +19,15 @@ namespace ApiServer.Controllers.Design
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class TextureController : ListableController<Texture, TextureDTO>
+    public class TextureController : Listable2Controller<Texture, TextureDTO>
     {
 
+
         #region 构造函数
-        public TextureController(ApiDbContext context)
-        : base(new TextureStore(context))
-        { }
+        public TextureController(IRepository<Texture, TextureDTO> repository)
+            : base(repository)
+        {
+        }
         #endregion
 
         #region Get 根据分页查询信息获取贴图概要信息

@@ -1,9 +1,11 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
+using ApiServer.Controllers.Common;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +19,12 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class CategoryController : CommonController<AssetCategory, AssetCategoryDTO>
+    public class CategoryController : Common2Controller<AssetCategory, AssetCategoryDTO>
     {
 
         #region 构造函数
-        public CategoryController(ApiDbContext context)
-        : base(new AssetCategoryStore(context))
+        public CategoryController(IRepository<AssetCategory, AssetCategoryDTO> repository)
+        : base(repository)
         {
         }
         #endregion
@@ -35,12 +37,12 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         protected async Task<AssetCategoryDTO> _getParentCategoryAndSameLevelChildren(string parentId)
         {
-            var parentCat = await _Store.DbContext.AssetCategories.FirstAsync(d => d.Id == parentId && d.ActiveFlag == AppConst.I_DataState_Active);
+            var parentCat = await _Repository._DbContext.AssetCategories.FirstAsync(d => d.Id == parentId && d.ActiveFlag == AppConst.I_DataState_Active);
             if (parentCat != null)
             {
                 var dto = parentCat.ToDTO();
                 dto.Children = new List<AssetCategoryDTO>();
-                var sameLevelCats = await _Store.DbContext.AssetCategories.Where(d => d.ParentId == parentId && d.ActiveFlag == AppConst.I_DataState_Active).Select(x => x.ToDTO()).OrderBy(x => x.DisplayIndex).ToListAsync();
+                var sameLevelCats = await _Repository._DbContext.AssetCategories.Where(d => d.ParentId == parentId && d.ActiveFlag == AppConst.I_DataState_Active).Select(x => x.ToDTO()).OrderBy(x => x.DisplayIndex).ToListAsync();
                 dto.Children.AddRange(sameLevelCats);
                 return dto;
             }
@@ -78,7 +80,7 @@ namespace ApiServer.Controllers
 
             if (string.IsNullOrEmpty(type))
                 type = "product";
-            return await (_Store as AssetCategoryStore).GetCategoryAsync(type, organId);
+            return await (_Repository as AssetCategoryRepository).GetCategoryAsync(type, organId);
         }
         #endregion
 
@@ -99,11 +101,11 @@ namespace ApiServer.Controllers
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
             AssetCategoryDTO cat = null;
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync(AppConst.S_Category_Product, organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync(AppConst.S_Category_Material, organId); if (cat != null) pack.Categories.Add(cat);
-            //cat = await (_Store as AssetCategoryStore).GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
-            //cat = await (_Store as AssetCategoryStore).GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Store as AssetCategoryStore).GetCategoryAsync(AppConst.S_Category_ProductGroup, organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(AppConst.S_Category_Product, organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(AppConst.S_Category_Material, organId); if (cat != null) pack.Categories.Add(cat);
+            //cat = await (_Store as AssetCategoryRepository).GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
+            //cat = await (_Store as AssetCategoryRepository).GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
+            cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(AppConst.S_Category_ProductGroup, organId); if (cat != null) pack.Categories.Add(cat);
             return pack;
         }
         #endregion
@@ -123,7 +125,7 @@ namespace ApiServer.Controllers
             if (string.IsNullOrWhiteSpace(organId))
                 organId = await _GetCurrentUserOrganId();
 
-            return await (_Store as AssetCategoryStore).GetFlatCategory(type, organId);
+            return await (_Repository as AssetCategoryRepository).GetFlatCategory(type, organId);
         }
         #endregion
 
@@ -148,11 +150,11 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
                 if (!string.IsNullOrWhiteSpace(model.ParentId))
-                    entity.Type = (await _Store.DbContext.AssetCategories.FirstAsync(d => d.Id == model.ParentId)).Type;
+                    entity.Type = (await _Repository._DbContext.AssetCategories.FirstAsync(d => d.Id == model.ParentId)).Type;
                 else
                     entity.Type = model.Type;
                 entity.OrganizationId = model.OrganizationId;
-                entity.DisplayIndex = await _Store.DbContext.AssetCategories.Where(d => d.ParentId == model.ParentId).CountAsync();
+                entity.DisplayIndex = await _Repository._DbContext.AssetCategories.Where(d => d.ParentId == model.ParentId).CountAsync();
                 return entity;
             });
             return await _PostRequest(mapping);
@@ -199,7 +201,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         public async Task<IActionResult> Move(string type, string id, string targetId)
         {
-            string result = await (_Store as AssetCategoryStore).MoveAsync(type, id, targetId);
+            string result = await (_Repository as AssetCategoryRepository).MoveAsync(type, id, targetId);
             if (result == "")
                 return Ok();
             return BadRequest(result);
@@ -217,17 +219,17 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         public async Task<IActionResult> MoveUp(string id)
         {
-            var cat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
+            var cat = await _Repository._DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
             if (cat != null && cat.DisplayIndex >= 1)
             {
-                var interChangeCat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.ParentId == cat.ParentId && x.DisplayIndex == (cat.DisplayIndex - 1) && x.Type == cat.Type && x.ActiveFlag == AppConst.I_DataState_Active);
+                var interChangeCat = await _Repository._DbContext.AssetCategories.FirstOrDefaultAsync(x => x.ParentId == cat.ParentId && x.DisplayIndex == (cat.DisplayIndex - 1) && x.Type == cat.Type && x.ActiveFlag == AppConst.I_DataState_Active);
                 if (interChangeCat != null)
                 {
                     cat.DisplayIndex--;
                     interChangeCat.DisplayIndex++;
-                    _Store.DbContext.AssetCategories.Update(cat);
-                    _Store.DbContext.AssetCategories.Update(interChangeCat);
-                    await _Store.DbContext.SaveChangesAsync();
+                    _Repository._DbContext.AssetCategories.Update(cat);
+                    _Repository._DbContext.AssetCategories.Update(interChangeCat);
+                    await _Repository._DbContext.SaveChangesAsync();
                     var dto = await _getParentCategoryAndSameLevelChildren(cat.ParentId);
                     return Ok(dto);
                 }
@@ -248,17 +250,17 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         public async Task<IActionResult> MoveDown(string id)
         {
-            var cat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
+            var cat = await _Repository._DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
             if (cat != null)
             {
-                var interChangeCat = await _Store.DbContext.AssetCategories.FirstOrDefaultAsync(x => x.ParentId == cat.ParentId && x.DisplayIndex == (cat.DisplayIndex + 1) && x.Type == cat.Type && x.ActiveFlag == AppConst.I_DataState_Active);
+                var interChangeCat = await _Repository._DbContext.AssetCategories.FirstOrDefaultAsync(x => x.ParentId == cat.ParentId && x.DisplayIndex == (cat.DisplayIndex + 1) && x.Type == cat.Type && x.ActiveFlag == AppConst.I_DataState_Active);
                 if (interChangeCat != null)
                 {
                     cat.DisplayIndex++;
                     interChangeCat.DisplayIndex--;
-                    _Store.DbContext.AssetCategories.Update(cat);
-                    _Store.DbContext.AssetCategories.Update(interChangeCat);
-                    await _Store.DbContext.SaveChangesAsync();
+                    _Repository._DbContext.AssetCategories.Update(cat);
+                    _Repository._DbContext.AssetCategories.Update(interChangeCat);
+                    await _Repository._DbContext.SaveChangesAsync();
                     var dto = await _getParentCategoryAndSameLevelChildren(cat.ParentId);
                     return Ok(dto);
                 }
@@ -280,7 +282,7 @@ namespace ApiServer.Controllers
         [HttpPost]
         public async Task<IActionResult> Transfer(string type, string id, string targetId)
         {
-            string result = await (_Store as AssetCategoryStore).TransferAsync(type, id, targetId);
+            string result = await (_Repository as AssetCategoryRepository).TransferAsync(type, id, targetId);
             if (result == "")
                 return Ok();
             return BadRequest(result);
@@ -301,7 +303,7 @@ namespace ApiServer.Controllers
         [Produces(typeof(AssetCategoryDTO))]
         public async Task<IActionResult> DisplayIndex(string type, string id, int index)
         {
-            var result = await (_Store as AssetCategoryStore).SetDisplayIndex(type, id, index);
+            var result = await (_Repository as AssetCategoryRepository).SetDisplayIndex(type, id, index);
             if (result == null)
                 return BadRequest();
 

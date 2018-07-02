@@ -1,9 +1,11 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
+using ApiServer.Controllers.Common;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
+
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +22,11 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class LayoutController : ListableController<Layout, LayoutDTO>
+    public class LayoutController : Listable2Controller<Layout, LayoutDTO>
     {
         #region 构造函数
-        public LayoutController(ApiDbContext context)
-        : base(new LayoutStore(context))
+        public LayoutController(IRepository<Layout, LayoutDTO> repository)
+        : base(repository)
         { }
         #endregion
 

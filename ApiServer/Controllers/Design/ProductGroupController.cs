@@ -1,9 +1,9 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +16,14 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductGroupController : ListableController<ProductGroup, ProductGroupDTO>
+    public class ProductGroupController : Listable2Controller<ProductGroup, ProductGroupDTO>
     {
+
         #region 构造函数
-        public ProductGroupController(ApiDbContext context)
-        : base(new ProductGroupStore(context))
-        { }
+        public ProductGroupController(IRepository<ProductGroup, ProductGroupDTO> repository)
+            : base(repository)
+        {
+        }
         #endregion
 
         #region Get 根据分页查询信息获取产品组类型概要信息
@@ -42,11 +44,11 @@ namespace ApiServer.Controllers.Design
                 {
                     if (!string.IsNullOrWhiteSpace(categoryId))
                     {
-                        var curCategoryTree = await _Store.DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
                         //如果是根节点,把所有取出,不做分类过滤
                         if (curCategoryTree != null && curCategoryTree.LValue > 1)
                         {
-                            var categoryQ = from it in _Store.DbContext.AssetCategoryTrees
+                            var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
                                             where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
                                             && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
                                             select it;
@@ -154,7 +156,7 @@ namespace ApiServer.Controllers.Design
         {
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            var existCategory = await _Store.DbContext.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
+            var existCategory = await _Repository._DbContext.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
             if (!existCategory)
             {
                 ModelState.AddModelError("CategoryId", "对应记录不存在");
@@ -162,18 +164,18 @@ namespace ApiServer.Controllers.Design
             }
             var idArr = model.Ids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-            using (var transaction = _Store.DbContext.Database.BeginTransaction())
+            using (var transaction = _Repository._DbContext.Database.BeginTransaction())
             {
                 try
                 {
                     for (int idx = idArr.Length - 1; idx >= 0; idx--)
                     {
                         var id = idArr[idx];
-                        var refProductGroup = await _Store.DbContext.ProductGroups.FindAsync(id);
+                        var refProductGroup = await _Repository._DbContext.ProductGroups.FindAsync(id);
                         if (refProductGroup != null)
                         {
                             refProductGroup.CategoryId = model.CategoryId;
-                            _Store.DbContext.ProductGroups.Update(refProductGroup);
+                            _Repository._DbContext.ProductGroups.Update(refProductGroup);
                         }
                         else
                         {
@@ -181,7 +183,7 @@ namespace ApiServer.Controllers.Design
                             return new ValidationFailedResult(ModelState);
                         }
                     }
-                    _Store.DbContext.SaveChanges();
+                    _Repository._DbContext.SaveChanges();
                     transaction.Commit();
                 }
                 catch (Exception ex)

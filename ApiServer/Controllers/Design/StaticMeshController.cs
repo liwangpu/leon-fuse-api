@@ -1,9 +1,9 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +14,14 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class StaticMeshController : ListableController<StaticMesh, StaticMeshDTO>
+    public class StaticMeshController : Listable2Controller<StaticMesh, StaticMeshDTO>
     {
+
         #region 构造函数
-        public StaticMeshController(ApiDbContext context)
-        : base(new StaticMeshStore(context))
-        { }
+        public StaticMeshController(IRepository<StaticMesh, StaticMeshDTO> repository)
+            : base(repository)
+        {
+        }
         #endregion
 
         #region Get 根据分页查询信息获取模型概要信息

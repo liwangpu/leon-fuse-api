@@ -1,18 +1,18 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -21,11 +21,11 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class PackageController : ListableController<Package, PackageDTO>
+    public class PackageController : Listable2Controller<Package, PackageDTO>
     {
         #region 构造函数
-        public PackageController(ApiDbContext context)
-        : base(new PackageStore(context))
+        public PackageController(IRepository<Package, PackageDTO> repository)
+            : base(repository)
         {
         }
         #endregion
@@ -208,7 +208,7 @@ namespace ApiServer.Controllers
                     if (curItem.Id == model.AreaId)
                     {
                         var groupDic = curItem.GroupsMap != null ? curItem.GroupsMap : new Dictionary<string, string>();
-                        var grp = await _Store.DbContext.ProductGroups.FindAsync(model.ProductGroupId);
+                        var grp = await _Repository._DbContext.ProductGroups.FindAsync(model.ProductGroupId);
                         groupDic[grp.CategoryId] = model.ProductGroupId;
                         curItem.GroupsMap = groupDic;
                         break;
@@ -247,7 +247,7 @@ namespace ApiServer.Controllers
                         for (int nxd = 0; nxd >= 0; nxd--)
                         {
                             var curKv = groupDic.ElementAt(nxd);
-                            var grp = await _Store.DbContext.ProductGroups.FindAsync(model.ProductGroupId);
+                            var grp = await _Repository._DbContext.ProductGroups.FindAsync(model.ProductGroupId);
                             if (curKv.Key == grp.CategoryId)
                                 groupDic.Remove(curKv.Key);
                         }
@@ -285,7 +285,7 @@ namespace ApiServer.Controllers
                     if (curItem.Id == model.AreaId)
                     {
                         var cateogoryDic = curItem.ProductCategoryMap != null ? curItem.ProductCategoryMap : new Dictionary<string, string>();
-                        var cat = await _Store.DbContext.Products.FindAsync(model.ProductId);
+                        var cat = await _Repository._DbContext.Products.FindAsync(model.ProductId);
                         cateogoryDic[cat.CategoryId] = model.ProductId;
                         curItem.ProductCategoryMap = cateogoryDic;
                         break;
@@ -453,8 +453,8 @@ namespace ApiServer.Controllers
                                     curReplaceGroup.Products = new List<string>();
                                 var aaa = curReplaceGroup.DefaultId;
                                 //var defaultProduct = await _DbContext.Products.FindAsync(curReplaceGroup.DefaultId);
-                                var defaultProduct = await _Store.DbContext.Products.FirstOrDefaultAsync(x => x.Id == curReplaceGroup.DefaultId);
-                                var curProduct = await _Store.DbContext.Products.FindAsync(inputProductId);
+                                var defaultProduct = await _Repository._DbContext.Products.FirstOrDefaultAsync(x => x.Id == curReplaceGroup.DefaultId);
+                                var curProduct = await _Repository._DbContext.Products.FindAsync(inputProductId);
                                 if (defaultProduct != null)
                                 {
                                     if (defaultProduct.CategoryId == curProduct.CategoryId)

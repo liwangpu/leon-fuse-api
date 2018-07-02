@@ -1,10 +1,10 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Repositories;
 using ApiServer.Services;
-using ApiServer.Stores;
 using BambooCommon;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +20,13 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class AccountController : ListableController<Account, AccountDTO>
+    public class AccountController : Listable2Controller<Account, AccountDTO>
     {
-        private readonly ApiDbContext _Context;
 
         #region 构造函数
-        public AccountController(ApiDbContext context)
-        : base(new AccountStore(context))
+        public AccountController(IRepository<Account, AccountDTO> repository)
+        : base(repository)
         {
-            _Context = context;
         }
         #endregion
 
@@ -43,7 +41,7 @@ namespace ApiServer.Controllers
         {
             if (string.IsNullOrWhiteSpace(accountId))
                 accountId = AuthMan.GetAccountId(this);
-            var account = await _Store.DbContext.Accounts.Include(x => x.Organization).FirstOrDefaultAsync(x => x.Id == accountId);
+            var account = await _Repository._DbContext.Accounts.Include(x => x.Organization).FirstOrDefaultAsync(x => x.Id == accountId);
             if (account != null && account.Organization != null)
             {
                 if (isAdmin)
@@ -76,7 +74,7 @@ namespace ApiServer.Controllers
                 if (ignoreOwner)
                 {
                     var organId = await _GetCurrentUserOrganId();
-                    var organ = await _Store.DbContext.Organizations.FindAsync(organId);
+                    var organ = await _Repository._DbContext.Organizations.FindAsync(organId);
                     if (organ != null)
                     {
                         query = query.Where(x => x.Id != organ.OwnerId);
@@ -188,14 +186,14 @@ namespace ApiServer.Controllers
         public async Task<IActionResult> ChangePassword([FromBody]NewPasswordModel model)
         {
             var accid = AuthMan.GetAccountId(this);
-            Account acc = await _Context.Accounts.FindAsync(accid);
+            Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
             if (acc.Password != model.OldPassword)
                 ModelState.AddModelError("Password", "原密码输入有误");
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
             acc.Password = model.NewPassword;
-            _Context.Update(acc);
-            await _Context.SaveChangesAsync();
+            _Repository._DbContext.Update(acc);
+            await _Repository._DbContext.SaveChangesAsync();
             return Ok();
         }
         #endregion
@@ -211,7 +209,7 @@ namespace ApiServer.Controllers
         public async Task<AccountProfileModel> GetProfile()
         {
             var accid = AuthMan.GetAccountId(this);
-            Account acc = await _Context.Accounts.FindAsync(accid);
+            Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
             if (acc == null)
                 return null;
             AccountProfileModel p = new AccountProfileModel();
@@ -219,7 +217,7 @@ namespace ApiServer.Controllers
             p.Name = acc.Name;
             if (!string.IsNullOrWhiteSpace(acc.Icon))
             {
-                var fs = await _Store.DbContext.Files.FirstOrDefaultAsync(x => x.Id == acc.Icon);
+                var fs = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == acc.Icon);
                 p.Avatar = fs.Url;
             }
             p.Brief = acc.Description;
@@ -242,7 +240,7 @@ namespace ApiServer.Controllers
         public async Task<NavigationModel> GetNavigationData()
         {
             var accid = AuthMan.GetAccountId(this);
-            Account acc = await _Context.Accounts.FindAsync(accid);
+            Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
             if (acc != null)
             {
                 NavigationModel mm;

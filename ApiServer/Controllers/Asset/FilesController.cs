@@ -1,15 +1,14 @@
 ﻿using ApiModel.Entities;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Repositories;
 using ApiServer.Services;
-using ApiServer.Stores;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,23 +20,17 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class FilesController : ListableController<FileAsset, FileAssetDTO>
+    public class FilesController : Listable2Controller<FileAsset, FileAssetDTO>
     {
-        private readonly ApiDbContext _DbContent;
-        private readonly FileAssetStore _FileAssetStore;
-        private readonly Repository<FileAsset> repo;
         private IHostingEnvironment hostEnv;
         private string uploadPath;
 
-        #region 构造函数
-        public FilesController(ApiDbContext context, IHostingEnvironment env)
-            : base(new FileAssetStore(context))
-        {
-            _DbContent = context;
-            _FileAssetStore = new FileAssetStore(context);
-            repo = new Repository<FileAsset>(context);
-            hostEnv = env;
 
+        #region 构造函数
+        public FilesController(IRepository<FileAsset, FileAssetDTO> repository, IHostingEnvironment env)
+        : base(repository)
+        {
+            hostEnv = env;
             uploadPath = Path.Combine(hostEnv.WebRootPath, "upload");
             if (Directory.Exists(uploadPath) == false)
                 Directory.CreateDirectory(uploadPath);
@@ -206,7 +199,7 @@ namespace ApiServer.Controllers
                 fileExt = "." + fileExt;
 
             var accid = AuthMan.GetAccountId(this);
-            var account = await _DbContent.Accounts.FindAsync(accid);
+            var account = await _Repository._DbContext.Accounts.FindAsync(accid);
 
             FileAsset res = new FileAsset();
             res.Id = GuidGen.NewGUID(); //先生成临时ID，用于保存文件
@@ -250,7 +243,7 @@ namespace ApiServer.Controllers
             });
 
             // 检查是否已经上传过此文件
-            var existRecord = await repo.Context.Set<FileAsset>().FindAsync(res.Id);
+            var existRecord = await _Repository._DbContext.Set<FileAsset>().FindAsync(res.Id);
             if (existRecord != null)
             {
                 // 数据库记录还在，但是文件不在了，重新保存下文件。
@@ -279,7 +272,7 @@ namespace ApiServer.Controllers
                 createThumbnails();
             }
 
-            await repo.CreateAsync(accid, res, false); //记录到数据库
+            await _Repository.CreateAsync(accid, res); //记录到数据库
 
             return Ok(res);
         }

@@ -1,9 +1,9 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +15,11 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MediaController : ListableController<Media, MediaDTO>
+    public class MediaController : Listable2Controller<Media, MediaDTO>
     {
         #region 构造函数
-        public MediaController(ApiDbContext context)
-        : base(new MediaStore(context))
+        public MediaController(IRepository<Media, MediaDTO> repository)
+        : base(repository)
         { }
         #endregion
 
@@ -113,25 +113,5 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-
-        //[HttpPost]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(MediaDTO), 200)]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> CreateSharedMedia([FromBody]MediaShareResourceCreateModel model)
-        //{
-        //    var mapping = new Func<Media, Task<Media>>(async (entity) =>
-        //    {
-        //        var resources = entity.MediaShareResources != null ? entity.MediaShareResources : new List<MediaShareResource>();
-        //        var res = new MediaShareResource();
-        //        res.MediaId = model.MediaId;
-        //        res.Media = entity;
-        //        res.StartShareTimeStamp = model.StartShareTimeStamp;
-        //        res.StopShareTimeStamp = model.StopShareTimeStamp;
-        //        res.Password = model.Password;
-        //        return await Task.FromResult(entity);
-        //    });
-        //    return await _PutRequest(model.MediaId, mapping);
-        //}
     }
 }

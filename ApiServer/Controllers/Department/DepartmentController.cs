@@ -1,16 +1,15 @@
-﻿using ApiModel.Entities;
-using ApiServer.Data;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using ApiModel.Consts;
 
 namespace ApiServer.Controllers
 {
@@ -19,15 +18,13 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class DepartmentController : ListableController<Department, DepartmentDTO>
+    public class DepartmentController : Listable2Controller<Department, DepartmentDTO>
     {
-        private readonly DepartmentStore _DepartmentStore;
 
         #region 构造函数
-        public DepartmentController(ApiDbContext context)
-        : base(new DepartmentStore(context))
+        public DepartmentController(IRepository<Department, DepartmentDTO> repository)
+        : base(repository)
         {
-            _DepartmentStore = _Store as DepartmentStore;
         }
         #endregion
 
@@ -63,7 +60,7 @@ namespace ApiServer.Controllers
                     model.OrganizationId = await _GetCurrentUserOrganId();
                 if (string.IsNullOrWhiteSpace(model.ParentId))
                 {
-                    var defaultDepartment = await _Store.DbContext.Departments.FirstOrDefaultAsync(x => x.OrganizationId == model.OrganizationId && string.IsNullOrWhiteSpace(x.ParentId) && x.ActiveFlag == AppConst.I_DataState_Active);
+                    var defaultDepartment = await _Repository._DbContext.Departments.FirstOrDefaultAsync(x => x.OrganizationId == model.OrganizationId && string.IsNullOrWhiteSpace(x.ParentId) && x.ActiveFlag == AppConst.I_DataState_Active);
                     if (defaultDepartment != null)
                         model.ParentId = defaultDepartment.Id;
                 }
@@ -114,7 +111,7 @@ namespace ApiServer.Controllers
         {
             if (string.IsNullOrWhiteSpace(organId))
                 organId = await _GetCurrentUserOrganId();
-            var dtos = await _DepartmentStore.GetByOrgan(organId);
+            var dtos = await (_Repository as DepartmentRepository).GetByOrgan(organId);
             return Ok(dtos);
         }
         #endregion

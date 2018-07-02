@@ -9,16 +9,7 @@ namespace ApiServer.Stores
 {
     public class LayoutStore : ListableStore<Layout, LayoutDTO>, IStore<Layout, LayoutDTO>
     {
-        /// <summary>
-        /// 资源访问类型
-        /// </summary>
-        public override ResourceTypeEnum ResourceTypeSetting
-        {
-            get
-            {
-                return ResourceTypeEnum.Organizational;
-            }
-        }
+
 
         #region 构造函数
         public LayoutStore(ApiDbContext context)

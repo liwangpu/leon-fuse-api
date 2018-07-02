@@ -1,12 +1,14 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
+using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,12 +17,16 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MapController : ListableController<Map, MapDTO>
+    public class MapController : Common2Controller<Map, MapDTO>
     {
+        private AppConfig2 appConfig;
+
         #region 构造函数
-        public MapController(ApiDbContext context)
-        : base(new MapStore(context))
-        { }
+        public MapController(IRepository<Map, MapDTO> repository, IOptions<AppConfig2> settingsOptions)
+        : base(repository)
+        {
+            appConfig = settingsOptions.Value;
+        }
         #endregion
 
         #region Get 根据分页查询信息获取地图概要信息

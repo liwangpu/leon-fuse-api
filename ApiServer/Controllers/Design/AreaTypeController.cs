@@ -1,9 +1,9 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +15,11 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class AreaTypeController : ListableController<AreaType, AreaTypeDTO>
+    public class AreaTypeController : Listable2Controller<AreaType, AreaTypeDTO>
     {
         #region 构造函数
-        public AreaTypeController(ApiDbContext context)
-        : base(new AreaTypeStore(context))
+        public AreaTypeController(IRepository<AreaType, AreaTypeDTO> repository)
+        : base(repository)
         { }
         #endregion
 

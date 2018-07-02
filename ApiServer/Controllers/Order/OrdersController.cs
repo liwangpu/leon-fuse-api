@@ -1,9 +1,8 @@
 ﻿using ApiModel.Entities;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
-using BambooCommon;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +16,14 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class OrdersController : ListableController<Order, OrderDTO>
+    public class OrdersController : Listable2Controller<Order, OrderDTO>
     {
+
         #region 构造函数
-        public OrdersController(ApiDbContext context)
-        : base(new OrderStore(context))
-        { }
+        public OrdersController(IRepository<Order, OrderDTO> repository)
+            : base(repository)
+        {
+        }
         #endregion
 
         #region Get 根据分页查询信息获取订单概要信息

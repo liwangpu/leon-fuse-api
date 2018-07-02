@@ -1,13 +1,12 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,15 +15,13 @@ namespace ApiServer.Controllers.Asset
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MediaShareController : CommonController<MediaShareResource, MediaShareResourceDTO>
+    public class MediaShareController : Common2Controller<MediaShareResource, MediaShareResourceDTO>
     {
-        private readonly ILogger<MediaShareController> _logger;
-
         #region 构造函数
-        public MediaShareController(ApiDbContext context, ILogger<MediaShareController> logger)
-        : base(new MediaShareStore(context))
+        public MediaShareController(IRepository<MediaShareResource, MediaShareResourceDTO> repository)
+        : base(repository)
         {
-            _logger = logger;
+
         }
         #endregion
 
@@ -134,10 +131,10 @@ namespace ApiServer.Controllers.Asset
         [ProducesResponseType(typeof(MediaShareResourceDTO), 200)]
         public async Task<IActionResult> ViewShare([FromBody] MediaShareRequestModel model)
         {
-            var exist = await _Store.ExistAsync(model.Id);
+            var exist = await _Repository.ExistAsync(model.Id);
             if (!exist)
                 return NotFound();
-            var entity = await _Store._GetByIdAsync(model.Id);
+            var entity = await _Repository._GetByIdAsync(model.Id);
             var curUtcTime = DateTime.UtcNow;
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             if (curUtcTime >= dtDateTime.AddSeconds(entity.StartShareTimeStamp).ToLocalTime())
@@ -159,7 +156,7 @@ namespace ApiServer.Controllers.Asset
                         return Forbid();
                 }
             }
-            var dto = await _Store.GetByIdAsync(model.Id);
+            var dto = await _Repository.GetByIdAsync(model.Id);
             return Ok(dto);
         }
 

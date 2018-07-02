@@ -1,5 +1,7 @@
-﻿using ApiServer.Data;
+﻿using ApiModel.Entities;
+using ApiServer.Data;
 using ApiServer.MiddleWares;
+using ApiServer.Repositories;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,12 +36,34 @@ namespace ApiServer
             SiteConfig.Instance.Init(Configuration);
             AppConfig.Instance.Init(Configuration);
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
-                                                                .AllowAnyMethod()
-                                                                 .AllowAnyHeader()
-                                                                 .AllowCredentials()));
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()));
 
             services.AddEntityFrameworkNpgsql();
             services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
+            services.Configure<AppConfig2>(Configuration);
+            services.AddScoped<ITreeRepository<PermissionTree>, PermissionTreeRepository>();
+            services.AddScoped<IRepository<Map, MapDTO>, MapRepository>();
+            services.AddScoped<IRepository<Account, AccountDTO>, AccountRepository>();
+            services.AddScoped<IRepository<Department, DepartmentDTO>, DepartmentRepository>();
+            services.AddScoped<IRepository<Organization, OrganizationDTO>, OrganizationRepository>();
+            services.AddScoped<IRepository<AssetCategory, AssetCategoryDTO>, AssetCategoryRepository>();
+            services.AddScoped<IRepository<FileAsset, FileAssetDTO>, FileRepository>();
+            services.AddScoped<IRepository<Media, MediaDTO>, MediaRepository>();
+            services.AddScoped<IRepository<MediaShareResource, MediaShareResourceDTO>, MediaShareRepository>();
+            services.AddScoped<IRepository<AreaType, AreaTypeDTO>, AreaTypeRepository>();
+            services.AddScoped<IRepository<Layout, LayoutDTO>, LayoutRepository>();
+            services.AddScoped<IRepository<Material, MaterialDTO>, MaterialRepository>();
+            services.AddScoped<IRepository<Package, PackageDTO>, PackageRepository>();
+            services.AddScoped<IRepository<ProductGroup, ProductGroupDTO>, ProductGroupRepository>();
+            services.AddScoped<IRepository<Product, ProductDTO>, ProductRepository>();
+            services.AddScoped<IRepository<ProductSpec, ProductSpecDTO>, ProductSpecRepository>();
+            services.AddScoped<IRepository<Solution, SolutionDTO>, SolutionRepository>();
+            services.AddScoped<IRepository<StaticMesh, StaticMeshDTO>, StaticMeshRepository>();
+            services.AddScoped<IRepository<Texture, TextureDTO>, TextureRepository>();
+            services.AddScoped<IRepository<Order, OrderDTO>, OrderRepository>();
+
             //services.AddEntityFrameworkSqlServer();
             //services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
 

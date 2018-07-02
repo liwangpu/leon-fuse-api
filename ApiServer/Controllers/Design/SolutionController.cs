@@ -1,10 +1,12 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiModel.Enums;
+using ApiServer.Controllers.Common;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
+
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +23,14 @@ namespace ApiServer.Controllers.Design
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class SolutionController : ListableController<Solution, SolutionDTO>
+    public class SolutionController : Listable2Controller<Solution, SolutionDTO>
     {
+
         #region 构造函数
-        public SolutionController(ApiDbContext context)
-        : base(new SolutionStore(context))
-        { }
+        public SolutionController(IRepository<Solution, SolutionDTO> repository)
+            : base(repository)
+        {
+        }
         #endregion
 
         #region Get 根据分页查询信息获取解决方案概要信息

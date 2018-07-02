@@ -1,9 +1,9 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
-using ApiServer.Data;
+using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
-using ApiServer.Stores;
+using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +17,13 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class OrganController : ListableController<Organization, OrganizationDTO>
+    public class OrganController : Listable2Controller<Organization, OrganizationDTO>
     {
-        private readonly OrganizationStore _OrganStore;
 
         #region 构造函数
-        public OrganController(ApiDbContext context)
-        : base(new OrganizationStore(context))
+        public OrganController(IRepository<Organization, OrganizationDTO> repository)
+        : base(repository)
         {
-            _OrganStore = _Store as OrganizationStore;
         }
         #endregion
 
@@ -123,7 +121,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(AccountDTO), 200)]
         public async Task<IActionResult> GetOwner(string organId)
         {
-            var dto = await _OrganStore.GetOrganOwner(organId);
+            var dto = await (_Repository as OrganizationRepository).GetOrganOwner(organId);
             return Ok(dto);
         }
         #endregion

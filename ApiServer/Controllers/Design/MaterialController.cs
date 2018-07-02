@@ -1,11 +1,13 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiModel.Enums;
+using ApiServer.Controllers.Common;
 using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
+using ApiServer.Repositories;
 using ApiServer.Services;
-using ApiServer.Stores;
+
 using BambooCore;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -20,16 +22,12 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class MaterialController : ListableController<Material, MaterialDTO>
+    public class MaterialController : Listable2Controller<Material, MaterialDTO>
     {
-        private readonly ApiDbContext _context;
-
         #region 构造函数
-        public MaterialController(ApiDbContext context)
-        : base(new MaterialStore(context))
-        {
-            _context = context;
-        }
+        public MaterialController(IRepository<Material, MaterialDTO> repository)
+        : base(repository)
+        { }
         #endregion
 
         #region Get 根据分页查询信息获取材质概要信息
@@ -50,11 +48,11 @@ namespace ApiServer.Controllers
                 {
                     if (!string.IsNullOrWhiteSpace(categoryId))
                     {
-                        var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
                         //如果是根节点,把所有取出,不做分类过滤
                         if (curCategoryTree != null && curCategoryTree.LValue > 1)
                         {
-                            var categoryQ = from it in _context.AssetCategoryTrees
+                            var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
                                             where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
                                             && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
                                             select it;
@@ -162,7 +160,7 @@ namespace ApiServer.Controllers
         {
             if (!ModelState.IsValid)
                 return new ValidationFailedResult(ModelState);
-            var existCategory = await _context.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
+            var existCategory = await _Repository._DbContext.AssetCategories.CountAsync(x => x.Id == model.CategoryId) > 0;
             if (!existCategory)
             {
                 ModelState.AddModelError("CategoryId", "对应记录不存在");
@@ -170,18 +168,18 @@ namespace ApiServer.Controllers
             }
             var idArr = model.Ids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-            using (var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _Repository._DbContext.Database.BeginTransaction())
             {
                 try
                 {
                     for (int idx = idArr.Length - 1; idx >= 0; idx--)
                     {
                         var id = idArr[idx];
-                        var refMaterial = await _context.Materials.FindAsync(id);
+                        var refMaterial = await _Repository._DbContext.Materials.FindAsync(id);
                         if (refMaterial != null)
                         {
                             refMaterial.CategoryId = model.CategoryId;
-                            _context.Materials.Update(refMaterial);
+                            _Repository._DbContext.Materials.Update(refMaterial);
                         }
                         else
                         {
@@ -189,7 +187,7 @@ namespace ApiServer.Controllers
                             return new ValidationFailedResult(ModelState);
                         }
                     }
-                    _context.SaveChanges();
+                    _Repository._DbContext.SaveChanges();
                     transaction.Commit();
                 }
                 catch (Exception ex)
@@ -213,9 +211,9 @@ namespace ApiServer.Controllers
         public async Task<IActionResult> ImportMaterialAndCategory(IFormFile file)
         {
             var accid = AuthMan.GetAccountId(this);
-            var currentAcc = await _context.Accounts.FindAsync(accid);
-            var psMaterialQuery = await _Store._GetPermissionData(accid, DataOperateEnum.Update);
-            var psCategoryQuery = _context.AssetCategories.Where(x => x.Type == AppConst.S_Category_Material && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
+            var currentAcc = await _Repository._DbContext.Accounts.FindAsync(accid);
+            var psMaterialQuery = await _Repository._GetPermissionData(accid, DataOperateEnum.Update);
+            var psCategoryQuery = _Repository._DbContext.AssetCategories.Where(x => x.Type == AppConst.S_Category_Material && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
             var importOp = new Func<MaterialAndCategoryImportCSV, Task<string>>(async (data) =>
             {
                 var mapProductCount = await psMaterialQuery.Where(x => x.Name.Trim() == data.MaterialName.Trim()).CountAsync();
@@ -232,13 +230,13 @@ namespace ApiServer.Controllers
                 var refProduct = await psMaterialQuery.Where(x => x.Name.Trim() == data.MaterialName.Trim()).FirstAsync();
                 var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
                 refProduct.CategoryId = refCategory.Id;
-                _context.Materials.Update(refProduct);
+                _Repository._DbContext.Materials.Update(refProduct);
                 return await Task.FromResult(string.Empty);
             });
 
             var doneOp = new Action(async () =>
             {
-                await _context.SaveChangesAsync();
+                await _Repository._DbContext.SaveChangesAsync();
             });
             return await _ImportRequest(file, importOp, doneOp);
         }
@@ -275,11 +273,11 @@ namespace ApiServer.Controllers
                 {
                     if (!string.IsNullOrWhiteSpace(categoryId))
                     {
-                        var curCategoryTree = await _context.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                        var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
                         //如果是根节点,把所有取出,不做分类过滤
                         if (curCategoryTree != null && curCategoryTree.LValue > 1)
                         {
-                            var categoryQ = from it in _context.AssetCategoryTrees
+                            var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
                                             where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
                                             && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
                                             select it;
