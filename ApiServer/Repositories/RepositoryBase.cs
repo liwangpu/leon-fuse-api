@@ -165,7 +165,7 @@ namespace ApiServer.Repositories
             var emptyQuery = Enumerable.Empty<T>().AsQueryable();
             var query = emptyQuery;
 
-            var currentAcc = await _DbContext.Accounts.Include(x => x.Organization).FirstOrDefaultAsync(x => x.Id == accid);
+            var currentAcc = await _DbContext.Accounts.Include(x => x.Organization).Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
             if (currentAcc == null)
                 return query;
 
@@ -376,7 +376,7 @@ namespace ApiServer.Repositories
         public virtual async Task SatisfyUpdateAsync(string accid, T data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
-        } 
+        }
         #endregion
 
         #region virtual CanCreateAsync 判断用户是否有权限创建数据

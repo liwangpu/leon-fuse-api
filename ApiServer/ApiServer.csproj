@@ -36,7 +36,6 @@
     <Compile Remove="Migrations\20180619083924_LeonAddFolderToCollection10619.Designer.cs" />
     <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.cs" />
     <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.Designer.cs" />
-    <Compile Remove="Services\AppConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>
