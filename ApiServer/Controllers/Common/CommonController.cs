@@ -1,4 +1,5 @@
 ﻿using ApiModel;
+using ApiModel.Entities;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
@@ -26,6 +27,43 @@ namespace ApiServer.Controllers.Common
         public CommonController(IRepository<T, DTO> repository)
         {
             _Repository = repository;
+        }
+        #endregion
+
+        #region _GetCurrentUserRootOrgan 获取用的用户根组织
+        /// <summary>
+        /// 获取用的用户根组织
+        /// </summary>
+        /// <returns></returns>
+        protected async Task<Organization> _GetCurrentUserRootOrgan()
+        {
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            if (account != null)
+            {
+                var rootNode = await _Repository._DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);
+                var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == rootNode.RootOrganizationId);
+                return organ;
+            }
+            return null;
+        } 
+        #endregion
+
+        #region _GetCurrentUserOrgan 获取当前用户的组织
+        /// <summary>
+        /// 获取当前用户的组织
+        /// </summary>
+        /// <returns></returns>
+        protected async Task<Organization> _GetCurrentUserOrgan()
+        {
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            if (account != null)
+            {
+                var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == account.OrganizationId);
+                return organ;
+            }
+            return null;
         }
         #endregion
 

@@ -19,7 +19,7 @@ namespace ApiServer.Repositories
         {
             get
             {
-                return ResourceTypeEnum.Organizational;
+                return ResourceTypeEnum.Organizational_SubShare;
             }
         }
 

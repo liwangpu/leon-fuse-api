@@ -248,10 +248,26 @@ namespace ApiServer.Repositories
             #region [PartnerAdmin]
             else if (currentAcc.Type == AppConst.AccountType_PartnerAdmin)
             {
-                var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
-                return from it in query
-                       join tq in treeQ on it.OrganizationId equals tq.ObjId
-                       select it;
+                //var treeQ =await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                //return from it in query
+                //       join tq in treeQ on it.OrganizationId equals tq.ObjId
+                //       select it;
+
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+                {
+                    return getCurrentOrganResource(query);
+                }
+
+                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+                {
+                    if (dataOp == DataOperateEnum.Read)
+                    {
+                        var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                        return from it in query
+                               join tq in treeQ on it.OrganizationId equals tq.ObjId
+                               select it;
+                    }
+                }
             }
             #endregion
             #region [PartnerMember]
@@ -260,16 +276,19 @@ namespace ApiServer.Repositories
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                 {
                     if (dataOp == DataOperateEnum.Read)
+                    {
                         return getCurrentOrganResource(query);
+                    }
                 }
 
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
                 {
                     if (dataOp == DataOperateEnum.Read)
                     {
-                        var currentOrganQ = getCurrentOrganResource(query);
-                        var supOrganQ = getSupResource(query);
-                        return currentOrganQ.Union(supOrganQ);
+                        var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                        return from it in query
+                               join tq in treeQ on it.OrganizationId equals tq.ObjId
+                               select it;
                     }
                 }
             }

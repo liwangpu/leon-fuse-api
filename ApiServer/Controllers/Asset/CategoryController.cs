@@ -73,11 +73,17 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(AssetCategoryDTO), 200)]
         public async Task<AssetCategoryDTO> Get(string type, string organId)
         {
-            if (string.IsNullOrWhiteSpace(organId))
-                organId = await _GetCurrentUserOrganId();
-
-            if (string.IsNullOrEmpty(type))
-                type = "product";
+            if (type == AppConst.S_Category_Product || type == AppConst.S_Category_Material || type == AppConst.S_Category_ProductGroup)
+            {
+                organId = (await _GetCurrentUserRootOrgan()).Id;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(organId))
+                    organId = await _GetCurrentUserOrganId();
+            }
+            //if (string.IsNullOrEmpty(type))
+            //    type = "product";
             return await (_Repository as AssetCategoryRepository).GetCategoryAsync(type, organId);
         }
         #endregion

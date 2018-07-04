@@ -18,7 +18,8 @@
           "title": "nav.profile",
           "type": "item",
           "icon": "person",
-          "url": "/pages/profile"
+          "url": "/app/account-profile",
+          "EditOp": "true"
         },
         {
           "id": "my-resources",
@@ -65,20 +66,35 @@
           "url": "/app/products"
         },
         {
+          "id": "solution",
+          "title": "nav.InteriorDesignSolutions",
+          "type": "item",
+          "icon": "note",
+          "url": "/app/solutions",
+          "field": "value"
+        },
+        {
           "id": "order",
           "title": "nav.Order",
           "type": "item",
           "icon": "assignment",
-          "url": "/app/orders",
-          "field": "value"
+          "url": "/app/orders"
         },
         {
           "id": "package",
           "title": "nav.Package",
           "type": "item",
           "icon": "extension",
-          "url": "/app/packages",
-          "field": "value"
+          "url": "/app/packages"
+        },
+        {
+          "id": "share",
+          "title": "nav.Share",
+          "type": "item",
+          "icon": "share",
+          "url": "/app/shares",
+          "field": "value",
+          "EditOp": "true"
         }
       ]
     }
