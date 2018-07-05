@@ -1,10 +1,12 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 namespace ApiServer.Repositories
@@ -173,6 +175,34 @@ namespace ApiServer.Repositories
             }
 
             return data.ToDTO();
+        }
+        #endregion
+
+        #region _GetPermissionData
+        /// <summary>
+        /// _GetPermissionData
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="dataOp"></param>
+        /// <param name="withInActive"></param>
+        /// <returns></returns>
+        public override async Task<IQueryable<Package>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        {
+            var query = await base._GetPermissionData(accid, dataOp, withInActive);
+
+            #region 获取父组织分享的方案数据
+            if (dataOp == DataOperateEnum.Read)
+            {
+                var account = await _DbContext.Accounts.FindAsync(accid);
+                var curNode = await _DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);
+                var parentOrgQ = await _PermissionTreeRepository.GetAncestorNode(curNode, new List<string>() { AppConst.S_NodeType_Organization });
+                var parentOrgIds = await parentOrgQ.Select(x => x.ObjId).ToListAsync();
+                var shareDataQ = _DbContext.Packages.Where(x => parentOrgIds.Contains(x.OrganizationId) && x.ActiveFlag == AppConst.I_DataState_Active && x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
+                query = query.Union(shareDataQ);
+            }
+            #endregion
+
+            return query;
         }
         #endregion
 

@@ -82,6 +82,15 @@
           "field": "value"
         },
         {
+          "id": "product-group",
+          "title": "nav.ProductGroup",
+          "type": "item",
+          "icon": "bubble_chart",
+          "url": "/app/product-group",
+          "field": "value",
+          "EditOp": "false"
+        },
+        {
           "id": "order",
           "title": "nav.Order",
           "type": "item",

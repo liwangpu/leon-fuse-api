@@ -52,6 +52,7 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            dto.ResourceType = ResourceType;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;

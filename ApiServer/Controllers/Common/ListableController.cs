@@ -231,5 +231,34 @@ namespace ApiServer.Controllers.Common
             return Ok();
         }
         #endregion
+
+        #region CancelShare 取消分享数据
+        /// <summary>
+        /// 取消分享数据
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [Route("CancelShare")]
+        [HttpPut]
+        public async Task<IActionResult> CancelShare(string ids)
+        {
+            if (string.IsNullOrWhiteSpace(ids))
+                return BadRequest();
+
+            var idsArr = ids.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            foreach (var id in idsArr)
+            {
+                var entity = await _Repository._DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+                if (entity != null)
+                {
+                    entity.ResourceType = (int)ResourceTypeEnum.Personal;
+                    entity.ModifiedTime = DateTime.UtcNow;
+                    _Repository._DbContext.Update<T>(entity);
+                }
+                await _Repository._DbContext.SaveChangesAsync();
+            }
+            return Ok();
+        } 
+        #endregion
     }
 }

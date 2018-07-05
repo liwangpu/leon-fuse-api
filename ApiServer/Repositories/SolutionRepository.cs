@@ -5,6 +5,8 @@ using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 namespace ApiServer.Repositories
@@ -63,31 +65,32 @@ namespace ApiServer.Repositories
         #endregion
 
         #region _GetPermissionData
-        ///// <summary>
-        ///// _GetPermissionData
-        ///// </summary>
-        ///// <param name="accid"></param>
-        ///// <param name="dataOp"></param>
-        ///// <param name="withInActive"></param>
-        ///// <returns></returns>
-        //public override async Task<IQueryable<Solution>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
-        //{
-        //    var query = await base._GetPermissionData(accid, dataOp, withInActive);
+        /// <summary>
+        /// _GetPermissionData
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="dataOp"></param>
+        /// <param name="withInActive"></param>
+        /// <returns></returns>
+        public override async Task<IQueryable<Solution>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        {
+            var query = await base._GetPermissionData(accid, dataOp, withInActive);
 
-        //    #region 获取父组织分享的方案数据
-        //    if (dataOp == DataOperateEnum.Read)
-        //    {
-        //        var account = await DbContext.Accounts.FindAsync(accid);
-        //        var curNode = await DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);
-        //        var parentOrgQ = await _permissionTreeStore.GetAncestorNode(curNode, new List<string>() { AppConst.S_NodeType_Organization });
-        //        var parentOrgIds = await parentOrgQ.Select(x => x.ObjId).ToListAsync();
-        //        var shareDataQ = DbContext.Solutions.Where(x => parentOrgIds.Contains(x.OrganizationId) && x.ActiveFlag == AppConst.I_DataState_Active && x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
-        //        query = query.Union(shareDataQ);
-        //    }
-        //    #endregion
+            #region 获取父组织分享的方案数据
+            if (dataOp == DataOperateEnum.Read)
+            {
+                var account = await _DbContext.Accounts.FindAsync(accid);
+                var curNode = await _DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);
+                var parentOrgQ = await _PermissionTreeRepository.GetAncestorNode(curNode, new List<string>() { AppConst.S_NodeType_Organization });
+                var parentOrgIds = await parentOrgQ.Select(x => x.ObjId).ToListAsync();
+                var shareDataQ = _DbContext.Solutions.Where(x => parentOrgIds.Contains(x.OrganizationId) && x.ActiveFlag == AppConst.I_DataState_Active && x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
+                //var shareData = await shareDataQ.ToListAsync();
+                query = query.Union(shareDataQ);
+            }
+            #endregion
 
-        //    return query;
-        //} 
+            return query;
+        }
         #endregion
 
         #region PagedSelectExpression
