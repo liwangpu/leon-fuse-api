@@ -1,5 +1,6 @@
 ﻿using DataTransferHelper.Transfer;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DataTransferHelper
@@ -23,6 +24,10 @@ namespace DataTransferHelper
         static async Task TransferData()
         {
             //await SolutionTransfer.Transfer("MGUZMA909KQEMJ", "PPUJPG33399YP0");
+
+
+
+
         }
     }
 }

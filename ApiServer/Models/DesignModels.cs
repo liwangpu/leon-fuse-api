@@ -624,4 +624,19 @@ namespace ApiServer.Models
         public string OrganizationId { get; set; }
     }
 
+    public class ProductReplaceGroupCreateModel : EntityCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string ItemIds { get; set; }
+        public string DefaultItemId { get; set; }
+    }
+
+    public class ProductReplaceGroupEditModel : EntityEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string ItemIds { get; set; }
+        public string DefaultItemId { get; set; }
+    }
+
+
 }

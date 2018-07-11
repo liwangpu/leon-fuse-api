@@ -142,6 +142,10 @@ namespace ApiServer.Data
         /// 收藏
         /// </summary>
         public DbSet<Collection> Collections { get; set; }
+        /// <summary>
+        /// 产品替换组
+        /// </summary>
+        public DbSet<ProductReplaceGroup> ProductReplaceGroups { get; set; }
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }
