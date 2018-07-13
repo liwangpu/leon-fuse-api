@@ -628,6 +628,8 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string ItemIds { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string CategoryId { get; set; }
         public string DefaultItemId { get; set; }
     }
 
@@ -635,8 +637,17 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string ItemIds { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string CategoryId { get; set; }
         public string DefaultItemId { get; set; }
     }
 
+    public class ProductReplaceGroupSetDefaultModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ItemId { get; set; }
+    }
 
 }

@@ -13,9 +13,11 @@ namespace ApiServer.Repositories
 {
     public class PackageRepository : ListableRepository<Package, PackageDTO>
     {
-        public PackageRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
+        protected IRepository<ProductReplaceGroup, ProductReplaceGroupDTO> _ProductReplaceGroupRep;
+        public PackageRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep, IRepository<ProductReplaceGroup, ProductReplaceGroupDTO> replaceGroupRep)
             : base(context, permissionTreeRep)
         {
+            _ProductReplaceGroupRep = replaceGroupRep;
         }
 
         public override ResourceTypeEnum ResourceTypeSetting
@@ -132,38 +134,22 @@ namespace ApiServer.Repositories
                             curArea.MaterialIns = materials;
                         }
                         #endregion
-
-                        #region 匹配替换组
-                        if (curArea.ReplaceGroups != null && curArea.ReplaceGroups.Count > 0)
-                        {
-                            var groups = new List<List<ProductDTO>>();
-                            foreach (var item in curArea.ReplaceGroups)
-                            {
-                                var replaceGroupItem = new List<ProductDTO>();
-                                if (item.Products != null && item.Products.Count > 0)
-                                {
-                                    foreach (var productId in item.Products)
-                                    {
-                                        var prd = await _DbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
-                                        if (prd != null)
-                                        {
-                                            if (!string.IsNullOrWhiteSpace(prd.Icon))
-                                                prd.IconFileAsset = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == prd.Icon);
-
-                                            if (prd.Id == item.DefaultId)
-                                                replaceGroupItem.Insert(0, prd.ToDTO());
-                                            else
-                                                replaceGroupItem.Add(prd.ToDTO());
-                                        }
-                                    }
-                                }
-                                groups.Add(replaceGroupItem);
-                            }
-                            curArea.ReplaceGroupIns = groups;
-                        }
-                        #endregion
                     }
 
+                }
+                #endregion
+
+                #region 匹配套餐中的产品替换组
+                if (data.ContentIns.ReplaceGroups != null && data.ContentIns.ReplaceGroups.Count > 0)
+                {
+                    var rpGroups = new List<ProductReplaceGroupDTO>();
+                    foreach (var rpId in data.ContentIns.ReplaceGroups)
+                    {
+                        var rpDto = await _ProductReplaceGroupRep.GetByIdAsync(rpId);
+                        if (rpDto != null)
+                            rpGroups.Add(rpDto);
+                    }
+                    data.ContentIns.ReplaceGroupIns = rpGroups;
                 }
                 #endregion
 

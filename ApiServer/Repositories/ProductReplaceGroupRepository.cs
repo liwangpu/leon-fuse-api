@@ -54,10 +54,12 @@ namespace ApiServer.Repositories
                                 }
 
                                 curData.DefaultItem = product;
-
+                                groupItems.Insert(0, product);
                             }
-
-                            groupItems.Add(product);
+                            else
+                            {
+                                groupItems.Add(product);
+                            }
                         }
                     }
                     curData.GroupItems = groupItems;
@@ -74,6 +76,53 @@ namespace ApiServer.Repositories
                 }
             }
             return result;
+        }
+
+
+        public override async Task<ProductReplaceGroupDTO> GetByIdAsync(string id)
+        {
+            var data = await _DbContext.ProductReplaceGroups.FirstOrDefaultAsync(x => x.Id == id);
+            if (data == null)
+                return null;
+
+            #region 产品组组成项
+            var groupItems = new List<Product>();
+            var idsArr = data.GroupItemIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            foreach (var productId in idsArr)
+            {
+                var product = await _DbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
+                if (product != null)
+                {
+                    //默认项,取出icon信息做为展示
+                    if (productId == data.DefaultItemId)
+                    {
+                        if (!string.IsNullOrWhiteSpace(product.Icon))
+                        {
+                            data.IconFileAsset = await _DbContext.Files.FindAsync(product.Icon);
+                            product.IconFileAsset = data.IconFileAsset;
+                        }
+
+                        data.DefaultItem = product;
+                        groupItems.Insert(0, product);
+                    }
+                    else
+                    {
+                        groupItems.Add(product);
+                    }
+                }
+            }
+            data.GroupItems = groupItems;
+            #endregion
+
+            #region 产品组分类信息
+            if (!string.IsNullOrWhiteSpace(data.CategoryId))
+            {
+                var cat = await _DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == data.CategoryId);
+                if (cat != null)
+                    data.CategoryName = cat.Name;
+            }
+            #endregion
+            return data.ToDTO();
         }
     }
 }

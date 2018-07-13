@@ -162,6 +162,15 @@
           "url": "/app/shares",
           "field": "value",
           "EditOp": "true"
+        },
+        {
+          "id": "product-replace-group",
+          "title": "glossary.ProductReplaceGroup",
+          "type": "item",
+          "icon": "linear_scale",
+          "url": "/app/product-replace-group",
+          "field": "value",
+          "EditOp": "true"
         }
       ]
     }

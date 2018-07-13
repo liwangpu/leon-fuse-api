@@ -1,16 +1,18 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
+using ApiServer.Data;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
-using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers.Design
@@ -19,12 +21,34 @@ namespace ApiServer.Controllers.Design
     [Route("/[controller]")]
     public class ProductReplaceGroupController : ListableController<ProductReplaceGroup, ProductReplaceGroupDTO>
     {
+        private ApiDbContext _Context;
         #region 构造函数
-        public ProductReplaceGroupController(IRepository<ProductReplaceGroup, ProductReplaceGroupDTO> repository)
+        public ProductReplaceGroupController(IRepository<ProductReplaceGroup, ProductReplaceGroupDTO> repository, ApiDbContext context)
         : base(repository)
         {
-
+            _Context = context;
         }
+        #endregion
+
+        #region _UpdateGroup 真实修改产品替换组
+        /// <summary>
+        /// 真实修改产品替换组
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> _UpdateGroup([FromBody]ProductReplaceGroupEditModel model)
+        {
+            var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.DefaultItemId = model.DefaultItemId;
+                entity.GroupItemIds = model.ItemIds;
+                entity.CategoryId = model.CategoryId;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
+        } 
         #endregion
 
         #region Get 根据分页查询信息获取产品替换组概要信息
@@ -35,13 +59,31 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<ProductReplaceGroupDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string categoryId = "")
         {
-            var qMapping = new Action<List<string>>((query) =>
+            var advanceQuery = new Func<IQueryable<ProductReplaceGroup>, Task<IQueryable<ProductReplaceGroup>>>(async (query) =>
             {
-
+                #region 根据分类Id查询
+                if (!string.IsNullOrWhiteSpace(categoryId))
+                {
+                    var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+                    //如果是根节点,把所有取出,不做分类过滤
+                    if (curCategoryTree != null && curCategoryTree.LValue > 1)
+                    {
+                        var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
+                                        where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                        && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                        select it;
+                        query = from it in query
+                                join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                select it;
+                    }
+                }
+                #endregion
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return await Task.FromResult(query);
             });
-            return await _GetPagingRequest(model, qMapping);
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
@@ -67,16 +109,37 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(ProductReplaceGroupDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]ProductReplaceGroupCreateModel model)
         {
+            var organId = await _GetCurrentUserOrganId();
+            var referGroup = await _Context.ProductReplaceGroups.FirstOrDefaultAsync(x => x.OrganizationId == organId && x.CategoryId == model.CategoryId);
+            if (referGroup != null)
+            {
+                var tsMode = new ProductReplaceGroupEditModel();
+                tsMode.Id = referGroup.Id;
+                tsMode.ItemIds = model.ItemIds;
+                tsMode.DefaultItemId = model.DefaultItemId;
+                tsMode.CategoryId = model.CategoryId;
+                return await _UpdateGroup(tsMode);
+
+            }
+
+
             var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.DefaultItemId = model.DefaultItemId;
                 entity.GroupItemIds = model.ItemIds;
+                entity.CategoryId = model.CategoryId;
+                if (string.IsNullOrWhiteSpace(model.DefaultItemId))
+                {
+                    var ids = model.ItemIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                    entity.DefaultItemId = ids[0];
+                }
+                else
+                    entity.DefaultItemId = model.DefaultItemId;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -92,16 +155,64 @@ namespace ApiServer.Controllers.Design
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(ProductReplaceGroupDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Put([FromBody]ProductReplaceGroupEditModel model)
         {
+            return await _UpdateGroup(model);
+        }
+        #endregion
+
+        #region SetDefault 设置默认项
+        /// <summary> 
+        /// 设置默认项
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("SetDefault")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ProductReplaceGroupDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> SetDefault([FromBody]ProductReplaceGroupSetDefaultModel model)
+        {
             var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
             {
-                entity.Name = model.Name;
-                entity.Description = model.Description;
-                entity.DefaultItemId = model.DefaultItemId;
-                entity.GroupItemIds = model.ItemIds;
+                entity.DefaultItemId = model.ItemId;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region RemoveItem 删除产品项
+        /// <summary>
+        /// 删除产品项
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("RemoveItem")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ProductReplaceGroupDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> RemoveItem([FromBody]ProductReplaceGroupSetDefaultModel model)
+        {
+            var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
+            {
+                var ids = entity.GroupItemIds.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+                var changeIds = ids.Where(x => x != model.ItemId).ToList();
+                if (model.ItemId == entity.DefaultItemId)
+                {
+                    if (changeIds != null && changeIds.Count > 0)
+                        entity.DefaultItemId = changeIds[0];
+                    else
+                        entity.DefaultItemId = string.Empty;
+                }
+                if (changeIds != null && changeIds.Count > 0)
+                    entity.GroupItemIds = string.Join(",", changeIds);
+                else
+                    entity.GroupItemIds = string.Empty;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
