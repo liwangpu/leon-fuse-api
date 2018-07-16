@@ -7,7 +7,6 @@ using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -410,6 +409,58 @@ namespace ApiServer.Controllers
                         break;
                     }
                 }
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
+
+        #region AddProductReplaceGroup 添加套餐产品替换组信息
+        /// <summary>
+        /// 添加套餐产品替换组信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("AddProductReplaceGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AddProductReplaceGroup([FromBody]PackageProductReplaceGroupCreateModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var replaceGroups = entity.ContentIns != null && entity.ContentIns.ReplaceGroups != null ? entity.ContentIns.ReplaceGroups : new List<string>();
+                var idsArr = model.ReplaceGroupIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                replaceGroups.AddRange(idsArr);
+                entity.ContentIns.ReplaceGroups = replaceGroups.Select(x => x).Distinct().ToList();
+                entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.PackageId, mapping);
+        }
+        #endregion
+
+        #region DeleteMaterial 删除套餐产品替换组信息
+        /// <summary>
+        /// 删除套餐产品替换组信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteProductReplaceGroup")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteProductReplaceGroup([FromBody]PackageProductReplaceGroupDeleteModel model)
+        {
+            var mapping = new Func<Package, Task<Package>>(async (entity) =>
+            {
+                entity.ContentIns = !string.IsNullOrWhiteSpace(entity.Content) ? JsonConvert.DeserializeObject<PackageContent>(entity.Content) : new PackageContent();
+                var replaceGroups = entity.ContentIns != null && entity.ContentIns.ReplaceGroups != null ? entity.ContentIns.ReplaceGroups : new List<string>();
+                entity.ContentIns.ReplaceGroups = replaceGroups.Where(x => x != model.ItemId).ToList();
                 entity.Content = JsonConvert.SerializeObject(entity.ContentIns);
                 return await Task.FromResult(entity);
             });

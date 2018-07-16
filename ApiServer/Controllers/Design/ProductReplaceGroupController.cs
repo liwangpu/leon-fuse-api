@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,6 +21,7 @@ namespace ApiServer.Controllers.Design
     public class ProductReplaceGroupController : ListableController<ProductReplaceGroup, ProductReplaceGroupDTO>
     {
         private ApiDbContext _Context;
+
         #region 构造函数
         public ProductReplaceGroupController(IRepository<ProductReplaceGroup, ProductReplaceGroupDTO> repository, ApiDbContext context)
         : base(repository)
@@ -44,11 +44,11 @@ namespace ApiServer.Controllers.Design
                 entity.Description = model.Description;
                 entity.DefaultItemId = model.DefaultItemId;
                 entity.GroupItemIds = model.ItemIds;
-                entity.CategoryId = model.CategoryId;
+                //entity.CategoryId = model.CategoryId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
-        } 
+        }
         #endregion
 
         #region Get 根据分页查询信息获取产品替换组概要信息
@@ -70,12 +70,15 @@ namespace ApiServer.Controllers.Design
                     //如果是根节点,把所有取出,不做分类过滤
                     if (curCategoryTree != null && curCategoryTree.LValue > 1)
                     {
-                        var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
-                                        where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
-                                        && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
-                                        select it;
+                        var categoryIdsQ = from it in _Repository._DbContext.AssetCategoryTrees
+                                           where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                           && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                           select it.ObjId;
+                        var categoryIds = await categoryIdsQ.ToListAsync();
+
                         query = from it in query
-                                join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                join prod in _Repository._DbContext.Products on it.DefaultItemId equals prod.Id into prq
+                                where categoryIds.Contains(prq.First().CategoryId)
                                 select it;
                     }
                 }
@@ -113,26 +116,12 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> Post([FromBody]ProductReplaceGroupCreateModel model)
         {
-            var organId = await _GetCurrentUserOrganId();
-            var referGroup = await _Context.ProductReplaceGroups.FirstOrDefaultAsync(x => x.OrganizationId == organId && x.CategoryId == model.CategoryId);
-            if (referGroup != null)
-            {
-                var tsMode = new ProductReplaceGroupEditModel();
-                tsMode.Id = referGroup.Id;
-                tsMode.ItemIds = model.ItemIds;
-                tsMode.DefaultItemId = model.DefaultItemId;
-                tsMode.CategoryId = model.CategoryId;
-                return await _UpdateGroup(tsMode);
-
-            }
-
-
             var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.GroupItemIds = model.ItemIds;
-                entity.CategoryId = model.CategoryId;
+
                 if (string.IsNullOrWhiteSpace(model.DefaultItemId))
                 {
                     var ids = model.ItemIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
@@ -198,6 +187,25 @@ namespace ApiServer.Controllers.Design
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> RemoveItem([FromBody]ProductReplaceGroupSetDefaultModel model)
         {
+            //校验删除项是否是最后项,如果是的话软删除该记录
+            var refer = await _Context.ProductReplaceGroups.FirstOrDefaultAsync(x => x.Id == model.Id && x.ActiveFlag == AppConst.I_DataState_Active);
+            if (refer != null)
+            {
+                var itemArr = refer.GroupItemIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                if (itemArr.Length <= 1)
+                {
+                    refer.ActiveFlag = AppConst.I_DataState_InActive;
+                    _Context.ProductReplaceGroups.Update(refer);
+                    await _Context.SaveChangesAsync();
+                    return Ok(new { });
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+
+
             var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
             {
                 var ids = entity.GroupItemIds.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
