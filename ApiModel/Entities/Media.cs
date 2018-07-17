@@ -153,9 +153,8 @@ namespace ApiModel.Entities
         public string FileAssetUrl { get; set; }
     }
 
-    public class MediaDTO : EntityBase
+    public class MediaDTO : EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetUrl { get; set; }
@@ -164,6 +163,8 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string SolutionId { get; set; }
         public List<MediaShareResourceDTO> MediaShares { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
 
     }
 }

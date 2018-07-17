@@ -19,7 +19,7 @@ namespace ApiServer.Controllers.Common
 {
     public class CommonController<T, DTO> : Controller
          where T : class, IEntity, IDTOTransfer<DTO>, new()
-           where DTO : class, IData, new()
+           where DTO : class, IEntity, new()
     {
         protected IRepository<T, DTO> _Repository;
 
@@ -46,7 +46,7 @@ namespace ApiServer.Controllers.Common
                 return organ;
             }
             return null;
-        } 
+        }
         #endregion
 
         #region _GetCurrentUserOrgan 获取当前用户的组织
@@ -176,7 +176,7 @@ namespace ApiServer.Controllers.Common
         /// <param name="mapping"></param>
         /// <param name="handle"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> handle = null)
+        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, DTO, Task<IActionResult>> handle = null)
         {
             var exist = await _Repository.ExistAsync(id);
             if (!exist)
@@ -195,7 +195,7 @@ namespace ApiServer.Controllers.Common
             var dto = await _Repository.GetByIdAsync(entity.Id);
             //如果handle不为空,由handle掌控ActionResult
             if (handle != null)
-                return await handle(entity);
+                return await handle(entity, dto);
             return Ok(dto);
         }
         #endregion

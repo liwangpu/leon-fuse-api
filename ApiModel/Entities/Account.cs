@@ -84,7 +84,7 @@ namespace ApiModel.Entities
     }
 
 
-    public class AccountDTO : EntityBase
+    public class AccountDTO : EntityBase,IListable
     {
         public string Icon { get; set; }
         public string Mail { get; set; }
@@ -97,5 +97,6 @@ namespace ApiModel.Entities
         public bool IsAdmin { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 }

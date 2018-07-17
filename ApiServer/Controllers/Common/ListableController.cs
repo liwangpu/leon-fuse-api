@@ -18,7 +18,7 @@ namespace ApiServer.Controllers.Common
 {
     public class ListableController<T, DTO> : CommonController<T, DTO>
          where T : class, IListable, ApiModel.ICloneable, IDTOTransfer<DTO>, new()
-          where DTO : class, IData, new()
+          where DTO : class, IListable, new()
     {
 
         #region 构造函数
@@ -46,7 +46,16 @@ namespace ApiServer.Controllers.Common
                 spec.Icon = icon.AssetId;
                 return await Task.FromResult(spec);
             });
-            return await _PutRequest(icon.ObjId, mapping);
+
+            var handle = new Func<T, DTO, Task<IActionResult>>(async (entity, dto) =>
+            {
+                var new_dto = new DTO();
+                new_dto.Id = entity.Id;
+                new_dto.Name = entity.Name;
+                new_dto.Icon = dto.Icon;
+                return await Task.FromResult(Ok(new_dto));
+            });
+            return await _PutRequest(icon.ObjId, mapping, handle);
         }
         #endregion
 
@@ -258,7 +267,7 @@ namespace ApiServer.Controllers.Common
                 await _Repository._DbContext.SaveChangesAsync();
             }
             return Ok();
-        } 
+        }
         #endregion
     }
 }

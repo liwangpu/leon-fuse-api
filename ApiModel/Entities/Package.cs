@@ -57,13 +57,14 @@ namespace ApiModel.Entities
     /// <summary>
     /// 套餐DTO
     /// </summary>
-    public class PackageDTO : EntityBase
+    public class PackageDTO : EntityBase,IListable
     {
         public string IconAssetId { get; set; }
-        public string Icon { get; set; }
         public string State { get; set; }
         public string Content { get; set; }
         public PackageContent ContentIns { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
     #endregion
 

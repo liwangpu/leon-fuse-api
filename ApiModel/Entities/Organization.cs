@@ -84,9 +84,8 @@ namespace ApiModel.Entities
 
 
 
-    public class OrganizationDTO : EntityBase
+    public class OrganizationDTO : EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }
@@ -94,5 +93,7 @@ namespace ApiModel.Entities
         public string OwnerId { get; set; }
         public string Type { get; set; }
         public string TypeName { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 }

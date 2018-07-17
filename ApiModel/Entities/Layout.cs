@@ -38,10 +38,11 @@ namespace ApiModel.Entities
         }
     }
 
-    public class LayoutDTO : EntityBase
+    public class LayoutDTO : EntityBase, IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string Data { get; set; }
+        public FileAsset IconFileAsset { get; set; }
+        public string Icon { get; set; }
     }
 }

@@ -61,15 +61,16 @@ namespace ApiModel.Entities
         }
     }
 
-    public class FileAssetDTO : EntityBase
+    public class FileAssetDTO : EntityBase, IListable
     {
-        public string Icon { get; set; }
         public string Url { get; set; }
         public string Md5 { get; set; }
         public long Size { get; set; }
         public string FileExt { get; set; }
         public string LocalPath { get; set; }
         public string UploadTime { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 
 }

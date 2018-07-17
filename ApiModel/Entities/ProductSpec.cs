@@ -84,9 +84,8 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息DTO
     /// </summary>
-    public class ProductSpecDTO :EntityBase
+    public class ProductSpecDTO :EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
         public string TPID { get; set; }
@@ -94,6 +93,8 @@ namespace ApiModel.Entities
         public FileAssetDTO IconAsset { get; set; }
         public List<StaticMeshDTO> StaticMeshes { get; set; }
         public List<FileAssetDTO> Album { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 
     /// <summary>

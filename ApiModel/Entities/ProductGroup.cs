@@ -87,15 +87,16 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品组DTO
     /// </summary>
-    public class ProductGroupDTO : EntityBase
+    public class ProductGroupDTO : EntityBase,IListable
     {
         public string Serie { get; set; }
         public string IconAssetId { get; set; }
-        public string Icon { get; set; }
         public string Items { get; set; }
         public string PivotLocation { get; set; }
         public int PivotType { get; set; }
         public int Orientation { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
     #endregion
 

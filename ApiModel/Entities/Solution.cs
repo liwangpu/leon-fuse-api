@@ -44,11 +44,12 @@ namespace ApiModel.Entities
         }
     }
 
-    public class SolutionDTO : EntityBase
+    public class SolutionDTO : EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string Data { get; set; }
         public string LayoutId { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 }

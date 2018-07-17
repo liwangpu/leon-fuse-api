@@ -51,14 +51,15 @@ namespace ApiModel.Entities
     }
 
 
-    public class ProductReplaceGroupDTO : EntityBase
+    public class ProductReplaceGroupDTO : EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string DefaultItemId { get; set; }
         public string GroupItemIds { get; set; }
         public ProductDTO DefaultItem { get; set; }
         public List<ProductDTO> GroupItems { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 
 }

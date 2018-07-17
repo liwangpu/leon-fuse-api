@@ -69,15 +69,16 @@ namespace ApiModel.Entities
     /// <summary>
     /// 订单DTO
     /// </summary>
-    public class OrderDTO : EntityBase
+    public class OrderDTO : EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string AccountId { get; set; }
         public string State { get; set; }
         public string Content { get; set; }
         public DateTime StateTime { get; set; }
         public OrderContent ContentIns { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
     #endregion
 

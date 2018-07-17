@@ -33,9 +33,10 @@ namespace ApiModel.Entities
     }
 
 
-    public class DepartmentDTO :EntityBase
+    public class DepartmentDTO :EntityBase,IListable
     {
-        public string Icon { get; set; }
         public string ParentId { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 }

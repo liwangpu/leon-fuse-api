@@ -50,12 +50,13 @@ namespace ApiModel.Entities
         }
     }
 
-    public class ProductDTO : EntityBase
+    public class ProductDTO : EntityBase, IListable
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
         public List<ProductSpecDTO> Specifications { get; set; }
+        public string Icon { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 
 }
