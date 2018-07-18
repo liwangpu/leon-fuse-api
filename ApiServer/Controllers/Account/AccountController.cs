@@ -60,11 +60,14 @@ namespace ApiServer.Controllers
         /// <param name="model"></param>
         /// <param name="departmentId"></param>
         /// <param name="ignoreOwner"></param>
+        /// <param name="currentOrganAccount"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<AccountDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string departmentId, bool ignoreOwner = false)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string departmentId, bool ignoreOwner = false, bool currentOrganAccount = true)
         {
+            var organId = await _GetCurrentUserOrganId();
+
             var advanceQuery = new Func<IQueryable<Account>, Task<IQueryable<Account>>>(async (query) =>
             {
                 if (!string.IsNullOrWhiteSpace(departmentId))
@@ -73,12 +76,15 @@ namespace ApiServer.Controllers
                 }
                 if (ignoreOwner)
                 {
-                    var organId = await _GetCurrentUserOrganId();
                     var organ = await _Repository._DbContext.Organizations.FindAsync(organId);
                     if (organ != null)
                     {
                         query = query.Where(x => x.Id != organ.OwnerId);
                     }
+                }
+                if (currentOrganAccount)
+                {
+                    query = query.Where(x => x.OrganizationId == organId);
                 }
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return query;
