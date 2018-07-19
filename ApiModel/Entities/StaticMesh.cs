@@ -5,7 +5,6 @@ namespace ApiModel.Entities
 {
     public class StaticMesh : ClientAssetEntity, IListable, IDTOTransfer<StaticMeshDTO>
     {
-        public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
@@ -15,8 +14,6 @@ namespace ApiModel.Entities
         public FileAsset FileAsset { get; set; }
         [NotMapped]
         public List<Material> Materials { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
         public StaticMesh()
         {
@@ -64,7 +61,6 @@ namespace ApiModel.Entities
 
     public class StaticMeshDTO : ClientAssetEntity
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }

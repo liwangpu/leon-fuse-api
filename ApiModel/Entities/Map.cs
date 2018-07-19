@@ -4,15 +4,12 @@ namespace ApiModel.Entities
 {
     public class Map : ClientAssetEntity, IListable, IDTOTransfer<MapDTO>
     {
-        public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
 
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
 
         public MapDTO ToDTO()
@@ -47,7 +44,6 @@ namespace ApiModel.Entities
 
     public class MapDTO : ClientAssetEntity
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }

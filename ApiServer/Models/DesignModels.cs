@@ -654,8 +654,6 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string ItemIds { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string Name { get; set; }
         public string DefaultItemId { get; set; }
     }
 
@@ -663,8 +661,6 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string ItemIds { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string Name { get; set; }
         public string DefaultItemId { get; set; }
     }
 

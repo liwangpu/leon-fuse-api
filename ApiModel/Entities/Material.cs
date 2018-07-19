@@ -4,15 +4,12 @@ namespace ApiModel.Entities
 {
     public class Material : ClientAssetEntity, IAsset, IListable, IDTOTransfer<MaterialDTO>
     {
-        public string Icon { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
 
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
         [NotMapped]
         public AssetCategory AssetCategory { get; set; }
 
@@ -57,7 +54,6 @@ namespace ApiModel.Entities
 
     public class MaterialDTO : ClientAssetEntity
     {
-        public string Icon { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }

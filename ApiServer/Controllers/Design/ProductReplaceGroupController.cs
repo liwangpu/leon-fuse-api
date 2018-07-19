@@ -56,6 +56,7 @@ namespace ApiServer.Controllers.Design
         /// 根据分页查询信息获取产品替换组概要信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="categoryId"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<ProductReplaceGroupDTO>), 200)]
