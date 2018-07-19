@@ -69,6 +69,14 @@ namespace ApiServer.Repositories
                     for (int kdx = areas.Count - 1; kdx >= 0; kdx--)
                     {
                         var curArea = areas[kdx];
+                        if (string.IsNullOrWhiteSpace(curArea.AreaAlias))
+                        {
+                            var referArea = await _DbContext.AreaTypes.FirstOrDefaultAsync(x => x.Id == curArea.AreaTypeId);
+                            if (referArea != null)
+                                curArea.AreaAlias = referArea.Name;
+                        }
+
+
                         #region 匹配产品组
                         if (curArea.GroupsMap != null && curArea.GroupsMap.Count > 0)
                         {
@@ -135,6 +143,7 @@ namespace ApiServer.Repositories
                         }
                         #endregion
                     }
+                    data.ContentIns.Areas = areas.OrderBy(x => x.AreaAlias).ToList();
 
                 }
                 #endregion
