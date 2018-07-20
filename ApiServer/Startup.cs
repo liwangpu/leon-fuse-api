@@ -59,7 +59,8 @@ namespace ApiServer
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = "damaozhu.com",
                         ValidAudience = "damaozhu.com",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SiteConfig.Instance.Json.TokenKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SiteConfig.Instance.Json.TokenKey)),
+                        ClockSkew = TimeSpan.Zero
                     };
                     //login and logout hook
                     //options.Events = new JwtBearerEvents();

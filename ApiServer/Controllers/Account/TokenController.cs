@@ -74,14 +74,17 @@ namespace ApiServer.Controllers
 
             var claims = new[] { new Claim(ClaimTypes.Name, accid) };
 
+            var expires = DateTime.Now.AddDays(Services.SiteConfig.Instance.Json.TokenValidDays);
+            //var expires = DateTime.Now.AddMinutes(1);
             var token = new JwtSecurityToken(
                 issuer: "damaozhu.com",
                 audience: "damaozhu.com",
                 claims: claims,
-                expires: DateTime.Now.AddDays(Services.SiteConfig.Instance.Json.TokenValidDays),
+                notBefore: DateTime.Now,
+                expires: expires,
                 signingCredentials: creds);
 
-            return Ok(new LoginSuccessModel { Token = new JwtSecurityTokenHandler().WriteToken(token) });
+            return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expires = expires.ToString("yyyy-MM-dd HH:mm:ss") });
         }
 
     }
