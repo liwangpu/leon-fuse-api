@@ -137,6 +137,8 @@ namespace ApiServer.Controllers
                     defaultSpec.Name = entity.Name;
                     defaultSpec.Product = entity;
                     defaultSpec.Price = model.Price;
+                    defaultSpec.PurchasePrice = model.PurchasePrice;
+                    defaultSpec.PartnerPrice = model.PartnerPrice;
                     defaultSpec.OrganizationId = account.OrganizationId;
                     defaultSpec.Creator = accid;
                     defaultSpec.Modifier = accid;
@@ -178,6 +180,8 @@ namespace ApiServer.Controllers
                 {
                     defaultSpec.Name = entity.Name;
                     defaultSpec.Price = model.Price;
+                    defaultSpec.PurchasePrice = model.PurchasePrice;
+                    defaultSpec.PartnerPrice = model.PartnerPrice;
                     defaultSpec.Modifier = accid;
                     defaultSpec.ModifiedTime = DateTime.UtcNow;
                 }
@@ -189,6 +193,8 @@ namespace ApiServer.Controllers
                     defaultSpec.Name = entity.Name;
                     defaultSpec.Product = entity;
                     defaultSpec.Price = model.Price;
+                    defaultSpec.PurchasePrice = model.PurchasePrice;
+                    defaultSpec.PartnerPrice = model.PartnerPrice;
                     defaultSpec.OrganizationId = account.OrganizationId;
                     defaultSpec.Creator = accid;
                     defaultSpec.Modifier = accid;

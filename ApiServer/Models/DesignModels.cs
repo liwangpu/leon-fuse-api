@@ -17,6 +17,8 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
+        public decimal PartnerPrice { get; set; }
+        public decimal PurchasePrice { get; set; }
     }
     #endregion
 
@@ -36,6 +38,8 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
+        public decimal PartnerPrice { get; set; }
+        public decimal PurchasePrice { get; set; }
     }
     #endregion
 

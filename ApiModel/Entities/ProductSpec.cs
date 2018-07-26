@@ -22,9 +22,17 @@ namespace ApiModel.Entities
         /// </summary>
         public string StaticMeshIds { get; set; }
         /// <summary>
-        /// 价格，单位为元
+        /// 零售价，单位为元
         /// </summary>
         public decimal Price { get; set; }
+        /// <summary>
+        /// 合伙人价格|渠道价，单位为元
+        /// </summary>
+        public decimal PartnerPrice { get; set; }
+        /// <summary>
+        /// 进货价，单位为元
+        /// </summary>
+        public decimal PurchasePrice { get; set; }
         /// <summary>
         /// 第三方ID，此产品在供应商自己的系统比如ERP的ID
         /// </summary>
@@ -64,6 +72,8 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.Price = Price;
+            dto.PartnerPrice = PartnerPrice;
+            dto.PurchasePrice = PurchasePrice;
             dto.TPID = TPID;
             dto.ProductId = ProductId;
             dto.CategoryName = CategoryName;
@@ -88,6 +98,8 @@ namespace ApiModel.Entities
     {
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
+        public decimal PartnerPrice { get; set; }
+        public decimal PurchasePrice { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }
         public FileAssetDTO IconAsset { get; set; }

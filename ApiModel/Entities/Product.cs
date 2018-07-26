@@ -36,6 +36,8 @@ namespace ApiModel.Entities
             {
                 var defaultSpec = Specifications.OrderByDescending(x => x.CreatedTime).First();
                 dto.Price = defaultSpec.Price;
+                dto.PartnerPrice = defaultSpec.PartnerPrice;
+                dto.PurchasePrice = defaultSpec.PurchasePrice;
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
             }
             if (IconFileAsset != null)
@@ -54,6 +56,8 @@ namespace ApiModel.Entities
     {
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
+        public decimal PartnerPrice { get; set; }
+        public decimal PurchasePrice { get; set; }
         public List<ProductSpecDTO> Specifications { get; set; }
         public string Icon { get; set; }
         public FileAsset IconFileAsset { get; set; }

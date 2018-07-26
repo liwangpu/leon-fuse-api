@@ -74,10 +74,17 @@ namespace ApiServer.Repositories
         /// </summary>
         /// <param name="query"></param>
         /// <param name="search"></param>
-        protected void _KeyWordSearchFilter(ref IQueryable<T> query, string search)
+        protected async Task<IQueryable<T>> _KeyWordSearchFilter(IQueryable<T> query, string search)
         {
             if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(d => d.Name.Contains(search) || d.Description.Contains(search));
+            {
+                var accids = await _DbContext.Accounts.Where(x => x.Name.Contains(search) || x.Id == search).Select(x => x.Id).ToListAsync();
+                if (accids.Count > 0)
+                    query = query.Where(d => d.Name.Contains(search) || accids.Contains(d.Creator));
+                else
+                    query = query.Where(d => d.Name.Contains(search));
+            }
+            return query;
         }
         #endregion
 
@@ -555,7 +562,7 @@ namespace ApiServer.Repositories
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
             _QSearchFilter(ref query, model.Q);
-            _KeyWordSearchFilter(ref query, model.Search);
+            query = await _KeyWordSearchFilter(query, model.Search);
             _OrderByPipe(ref query, model.OrderBy, model.Desc);
             var result = await query.SimplePaging(model.Page, model.PageSize, PagedSelectExpression());
             #region 补充CreateName,ModifierName信息

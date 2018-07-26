@@ -38,6 +38,8 @@
     <Compile Remove="Migrations\20180619084156_LeonAddCollection0619.Designer.cs" />
     <Compile Remove="Migrations\20180711071724_LeonAddProductReplaceGroup0711.cs" />
     <Compile Remove="Migrations\20180711071724_LeonAddProductReplaceGroup0711.Designer.cs" />
+    <Compile Remove="Migrations\20180726060710_LeonAddOtherTwoPrice0726.cs" />
+    <Compile Remove="Migrations\20180726060710_LeonAddOtherTwoPrice0726.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
