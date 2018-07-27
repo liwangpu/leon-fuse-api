@@ -5,6 +5,7 @@ using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
+using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,10 +38,11 @@ namespace ApiServer.Controllers.Design
         /// </summary>
         /// <param name="model"></param>
         /// <param name="onlyShare"></param>
+        /// <param name="mine"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, bool onlyShare = false)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, bool onlyShare = false, bool mine = false)
         {
             var advanceQuery = new Func<IQueryable<Solution>, Task<IQueryable<Solution>>>(async (query) =>
             {
@@ -48,6 +50,12 @@ namespace ApiServer.Controllers.Design
                 {
                     query = query.Where(x => x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
                 }
+                if (mine)
+                {
+                    var accid = AuthMan.GetAccountId(this);
+                    query = query.Where(x => x.Creator == accid);
+                }
+
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return await Task.FromResult(query);
             });

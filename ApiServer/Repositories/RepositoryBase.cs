@@ -78,6 +78,13 @@ namespace ApiServer.Repositories
         {
             if (!string.IsNullOrWhiteSpace(search))
             {
+                //var accids = new List<string>();
+                //var groupArr= search.Split("|", StringSplitOptions.RemoveEmptyEntries);
+                ////var andArr = search.Split("+", StringSplitOptions.RemoveEmptyEntries);
+                ////var orArr = search.Split(",", StringSplitOptions.RemoveEmptyEntries);
+
+
+
                 var accids = await _DbContext.Accounts.Where(x => x.Name.Contains(search) || x.Id == search).Select(x => x.Id).ToListAsync();
                 if (accids.Count > 0)
                     query = query.Where(d => d.Name.Contains(search) || accids.Contains(d.Creator));
