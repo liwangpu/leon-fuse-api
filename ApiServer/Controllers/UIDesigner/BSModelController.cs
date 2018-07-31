@@ -22,10 +22,31 @@ namespace ApiServer.Controllers.UIDesigner
                 ModelType = "List",
                 Icon = "map",
                 DisplayModel = new List<string>() { "List" },
-                Fields = new List<string>() { "Id", "Name", "Description" }
-
+                Fields = new List<BSModelField>()
+                {
+                    new BSModelField(){ Id="Name",Name="Name",Width=125}
+                    , new BSModelField(){ Id="Description",Name="Description",Width=185}
+                },
+                PageSizeOptions = new List<int>() { 15, 25, 500 }
             };
             return Ok(model);
         }
+    }
+
+
+
+    class BSModelField
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Width { get; set; }
+        public string Expression { get; set; }
+
+        //    id: string;
+        //name: string;
+        //description: string;
+        //width: number;
+        //expression: string;
     }
 }

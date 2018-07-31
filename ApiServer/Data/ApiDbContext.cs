@@ -142,6 +142,12 @@ namespace ApiServer.Data
         /// 收藏
         /// </summary>
         public DbSet<Collection> Collections { get; set; }
+
+        /// <summary>
+        /// 偏好设置
+        /// </summary>
+        public DbSet<Preference> Preferences { get; set; }
+
         /// <summary>
         /// 产品替换组
         /// </summary>

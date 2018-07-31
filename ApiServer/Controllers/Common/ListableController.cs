@@ -59,6 +59,8 @@ namespace ApiServer.Controllers.Common
         }
         #endregion
 
+        /*********************Collection*********************/
+
         #region _PostCollectionRequest 处理添加收藏数据请求
         /// <summary>
         /// 处理添加收藏数据请求
@@ -209,6 +211,61 @@ namespace ApiServer.Controllers.Common
             }
 
             return Ok(pagedData);
+        }
+        #endregion
+
+        /*********************Preference*********************/
+
+        #region GetPreference 获取偏好设置
+        /// <summary>
+        /// 获取偏好设置
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [Route("Preference")]
+        [HttpGet]
+        [ProducesResponseType(typeof(Preference), 200)]
+        public async Task<IActionResult> GetPreference(string key)
+        {
+            var t = new T();
+            var typeName = t.GetType().Name;
+            var preference = await _Repository._DbContext.Preferences.FirstOrDefaultAsync(x => x.Type == typeName && x.Key == key);
+            return Ok(preference != null ? preference : new Preference());
+        } 
+        #endregion
+
+        #region CreatePreference 创建偏好设置
+        /// <summary>
+        /// 创建偏好设置
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("Preference")]
+        [HttpPost]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        [ProducesResponseType(typeof(Preference), 200)]
+        public async Task<IActionResult> CreatePreference([FromBody]PreferenceCreateModel model)
+        {
+            var t = new T();
+            var typeName = t.GetType().Name;
+            var preference = await _Repository._DbContext.Preferences.FirstOrDefaultAsync(x => x.Type == typeName && x.Key == model.Key);
+            if (preference != null)
+            {
+                preference.Value = model.Value;
+                _Repository._DbContext.Update(preference);
+            }
+            else
+            {
+                preference = new Preference();
+                preference.Id = GuidGen.NewGUID();
+                preference.Type = typeName;
+                preference.Key = model.Key;
+                preference.Value = model.Value;
+                _Repository._DbContext.Add(preference);
+            }
+            await _Repository._DbContext.SaveChangesAsync();
+            return Ok(preference);
         }
         #endregion
 

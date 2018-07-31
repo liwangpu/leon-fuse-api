@@ -97,6 +97,7 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region ColletionRequestModel 收藏查询请求信息
     /// <summary>
     /// 收藏查询请求信息
     /// </summary>
@@ -106,5 +107,14 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         //public bool IsInFolder { get; set; }
     }
+    #endregion
 
+
+    public class PreferenceCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Key { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Value { get; set; }
+    }
 }

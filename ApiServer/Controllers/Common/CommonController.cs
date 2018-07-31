@@ -22,6 +22,7 @@ namespace ApiServer.Controllers.Common
            where DTO : class, IEntity, new()
     {
         protected IRepository<T, DTO> _Repository;
+        //protected readonly 
 
         #region 构造函数
         public CommonController(IRepository<T, DTO> repository)
