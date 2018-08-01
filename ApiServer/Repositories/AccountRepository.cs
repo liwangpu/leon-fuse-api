@@ -200,7 +200,7 @@ namespace ApiServer.Repositories
                 #endregion
 
                 #region [R]
-                if (dataOp == DataOperateEnum.Read)
+                if (dataOp == DataOperateEnum.Retrieve)
                 {
                     var ownOrganIdsQ = (await (_PermissionTreeRepository as PermissionTreeRepository).GetOrganManageNode(currentAcc.OrganizationId, new List<string>() { AppConst.S_NodeType_Organization }, true)).Select(x => x.ObjId);
                     return query.Where(x => ownOrganIdsQ.Contains(x.OrganizationId));

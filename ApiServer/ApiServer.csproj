@@ -40,6 +40,18 @@
     <Compile Remove="Migrations\20180711071724_LeonAddProductReplaceGroup0711.Designer.cs" />
     <Compile Remove="Migrations\20180726060710_LeonAddOtherTwoPrice0726.cs" />
     <Compile Remove="Migrations\20180726060710_LeonAddOtherTwoPrice0726.Designer.cs" />
+    <Compile Remove="Migrations\20180801024304_LeonAddResPermission0801.cs" />
+    <Compile Remove="Migrations\20180801024304_LeonAddResPermission0801.Designer.cs" />
+    <Compile Remove="Migrations\20180801025035_LeonAddResPermission0801.cs" />
+    <Compile Remove="Migrations\20180801025035_LeonAddResPermission0801.Designer.cs" />
+    <Compile Remove="Migrations\20180801033255_LeonAddResPermission0801.cs" />
+    <Compile Remove="Migrations\20180801033255_LeonAddResPermission0801.Designer.cs" />
+    <Compile Remove="Migrations\20180801033337_LeonAddResPermission0801.cs" />
+    <Compile Remove="Migrations\20180801033337_LeonAddResPermission0801.Designer.cs" />
+    <Compile Remove="Migrations\20180801033538_LeonAddResPermission0801.cs" />
+    <Compile Remove="Migrations\20180801033538_LeonAddResPermission0801.Designer.cs" />
+    <Compile Remove="Migrations\20180801034350_LeonAddResPermission0801.cs" />
+    <Compile Remove="Migrations\20180801034350_LeonAddResPermission0801.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

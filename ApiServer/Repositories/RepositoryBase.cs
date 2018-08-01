@@ -78,13 +78,6 @@ namespace ApiServer.Repositories
         {
             if (!string.IsNullOrWhiteSpace(search))
             {
-                //var accids = new List<string>();
-                //var groupArr= search.Split("|", StringSplitOptions.RemoveEmptyEntries);
-                ////var andArr = search.Split("+", StringSplitOptions.RemoveEmptyEntries);
-                ////var orArr = search.Split(",", StringSplitOptions.RemoveEmptyEntries);
-
-
-
                 var accids = await _DbContext.Accounts.Where(x => x.Name.Contains(search) || x.Id == search).Select(x => x.Id).ToListAsync();
                 if (accids.Count > 0)
                     query = query.Where(d => d.Name.Contains(search) || accids.Contains(d.Creator));
@@ -141,11 +134,6 @@ namespace ApiServer.Repositories
         }
         #endregion
 
-        protected void _OwnerSupplementPipe(ref IQueryable<T> query)
-        {
-            //var creatorQ=from it in _DbContext.Accounts
-
-        }
         /**************** public method ****************/
 
         #region _GetByIdAsync 根据id信息返回实体数据信息
@@ -244,13 +232,13 @@ namespace ApiServer.Repositories
             {
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                         return getCurrentOrganResource(query);
                 }
 
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                     {
                         var currentOrganQ = getCurrentOrganResource(query);
                         var supOrganQ = getSupResource(query);
@@ -274,7 +262,7 @@ namespace ApiServer.Repositories
 
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                     {
                         var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
                         return from it in query
@@ -289,7 +277,7 @@ namespace ApiServer.Repositories
             {
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                     {
                         return getCurrentOrganResource(query);
                     }
@@ -297,7 +285,7 @@ namespace ApiServer.Repositories
 
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                     {
                         var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
                         return from it in query
@@ -321,13 +309,13 @@ namespace ApiServer.Repositories
             {
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                         return getCurrentOrganResource(query);
                 }
 
                 if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
                 {
-                    if (dataOp == DataOperateEnum.Read)
+                    if (dataOp == DataOperateEnum.Retrieve)
                     {
                         var currentOrganQ = getCurrentOrganResource(query);
                         var supOrganQ = getSupResource(query);
@@ -480,7 +468,7 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public virtual async Task<bool> CanReadAsync(string accid, string id)
         {
-            var query = await _GetPermissionData(accid, DataOperateEnum.Read, true);
+            var query = await _GetPermissionData(accid, DataOperateEnum.Retrieve, true);
             return await query.Where(x => x.Id == id).CountAsync() > 0;
         }
         #endregion
@@ -562,7 +550,7 @@ namespace ApiServer.Repositories
         public virtual async Task<PagedData<T>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
         {
             //读取设置也取非活动状态数据,后面在advanceQuery再修改是否真的需要
-            var query = await _GetPermissionData(accid, DataOperateEnum.Read, true);
+            var query = await _GetPermissionData(accid, DataOperateEnum.Retrieve, true);
             if (advanceQuery != null)
                 query = await advanceQuery(query);
             else

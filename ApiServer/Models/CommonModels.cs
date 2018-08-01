@@ -1,4 +1,5 @@
 ﻿using ApiModel;
+using ApiModel.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 namespace ApiServer.Models
@@ -109,7 +110,9 @@ namespace ApiServer.Models
     }
     #endregion
 
-
+    /// <summary>
+    /// 偏好设置编辑模型
+    /// </summary>
     public class PreferenceCreateModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -117,4 +120,22 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string Value { get; set; }
     }
+
+    /// <summary>
+    /// 资源权限编辑模型
+    /// </summary>
+    public class ResPermissionEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string OrgansPermission { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string ResIds { get; set; }
+    }
+
+    public class ResPermissionDetailModel
+    {
+        public string OrganId { get; set; }
+        public string OperateIds { get; set; }
+    }
+
 }

@@ -22,8 +22,9 @@ namespace ApiServer.Controllers.Design
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class SolutionController : ListableController<Solution, SolutionDTO>
+    public class SolutionController : ResourceController<Solution, SolutionDTO>
     {
+        public override int ResType => ResourceTypeConst.Solution;
 
         #region 构造函数
         public SolutionController(IRepository<Solution, SolutionDTO> repository)

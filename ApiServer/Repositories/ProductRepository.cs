@@ -14,20 +14,15 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Repositories
 {
-    public class ProductRepository : ListableRepository<Product, ProductDTO>
+    public class ProductRepository : ResourceRepositoryBase<Product, ProductDTO>
     {
         public ProductRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
             : base(context, permissionTreeRep)
         {
         }
 
-        public override ResourceTypeEnum ResourceTypeSetting
-        {
-            get
-            {
-                return ResourceTypeEnum.Organizational_SubShare;
-            }
-        }
+        public override ResourceTypeEnum ResourceTypeSetting => ResourceTypeEnum.Organizational_SubShare;
+        public override int ResType => ResourceTypeConst.Product;
 
         #region override GetByIdAsync 根据Id返回实体DTO数据信息
         /// <summary>

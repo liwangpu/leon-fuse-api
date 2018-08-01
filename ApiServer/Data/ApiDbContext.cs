@@ -149,6 +149,11 @@ namespace ApiServer.Data
         public DbSet<Preference> Preferences { get; set; }
 
         /// <summary>
+        /// 资源权限
+        /// </summary>
+        public DbSet<ResourcePermission> ResourcePermissions { get; set; }
+
+        /// <summary>
         /// 产品替换组
         /// </summary>
         public DbSet<ProductReplaceGroup> ProductReplaceGroups { get; set; }
@@ -168,6 +173,7 @@ namespace ApiServer.Data
         protected override void OnModelCreating(ModelBuilder b)
         {
             b.Entity<PermissionItem>().HasIndex(d => new { d.AccountId, d.ResId, d.ResType });
+            b.Entity<ResourcePermission>().HasIndex(d => new { d.OrganizationId, d.ResType });
         }
     }
 }

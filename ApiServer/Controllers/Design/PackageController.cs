@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
@@ -20,8 +21,10 @@ namespace ApiServer.Controllers
     /// </summary>
     [Authorize]
     [Route("/[controller]")]
-    public class PackageController : ListableController<Package, PackageDTO>
+    public class PackageController : ResourceController<Package, PackageDTO>
     {
+        public override int ResType => ResourceTypeConst.Package;
+
         #region 构造函数
         public PackageController(IRepository<Package, PackageDTO> repository)
             : base(repository)

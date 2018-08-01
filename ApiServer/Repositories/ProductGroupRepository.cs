@@ -86,7 +86,7 @@ namespace ApiServer.Repositories
             var query = await base._GetPermissionData(accid, dataOp, withInActive);
 
             #region 获取父组织分享的方案数据
-            if (dataOp == DataOperateEnum.Read)
+            if (dataOp == DataOperateEnum.Retrieve)
             {
                 var account = await _DbContext.Accounts.FindAsync(accid);
                 var curNode = await _DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);

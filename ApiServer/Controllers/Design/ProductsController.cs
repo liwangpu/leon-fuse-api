@@ -22,11 +22,12 @@ namespace ApiServer.Controllers
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductsController : ListableController<Product, ProductDTO>
+    public class ProductsController : ResourceController<Product, ProductDTO>
     {
+        public override int ResType => ResourceTypeConst.Product;
 
         #region 构造函数
-        public ProductsController(IRepository<Product, ProductDTO> repository) 
+        public ProductsController(IRepository<Product, ProductDTO> repository)
             : base(repository)
         {
         }
