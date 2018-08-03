@@ -11,7 +11,7 @@
           "title": "nav.dashboards",
           "type": "item",
           "icon": "today",
-          "url": "/apps/dashboards/project"
+          "url": "/app/dashboards"
         },
         {
           "id": "profile",
@@ -20,35 +20,6 @@
           "icon": "person",
           "url": "/app/account-profile",
           "EditOp": "true"
-        },
-        {
-          "id": "my-resources",
-          "title": "nav.MyResources",
-          "type": "collapse",
-          "icon": "dashboard",
-          "children": [
-            {
-              "id": "staticmesh",
-              "title": "nav.StaticMesh",
-              "type": "item",
-              "icon": "domain",
-              "url": "/app/staticmeshs"
-            },
-            {
-              "id": "material",
-              "title": "nav.Material",
-              "type": "item",
-              "icon": "healing",
-              "url": "/app/materials"
-            },
-            {
-              "id": "map",
-              "title": "nav.Map",
-              "type": "item",
-              "icon": "map",
-              "url": "/app/maps"
-            }
-          ]
         }
       ]
     },
@@ -71,23 +42,15 @@
           "type": "item",
           "icon": "note",
           "url": "/app/solutions",
-          "field": "value"
-        },
-        {
-          "id": "product-group",
-          "title": "nav.ProductGroup",
-          "type": "item",
-          "icon": "bubble_chart",
-          "url": "/app/product-group",
-          "field": "value",
-          "EditOp": "false"
+          "EditOp": "true"
         },
         {
           "id": "order",
           "title": "nav.Order",
           "type": "item",
           "icon": "assignment",
-          "url": "/app/orders"
+          "url": "/app/orders",
+          "EditOp": "true"
         },
         {
           "id": "package",
@@ -102,7 +65,6 @@
           "type": "item",
           "icon": "share",
           "url": "/app/shares",
-          "field": "value",
           "EditOp": "true"
         }
       ]

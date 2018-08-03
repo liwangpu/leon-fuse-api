@@ -3,10 +3,9 @@ using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
-using ApiServer.Models;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +25,15 @@ namespace ApiServer.Repositories
         }
         #endregion
 
-        public async override Task<IQueryable<T>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        #region _GetPermissionData 获取权限数据
+        /// <summary>
+        /// 获取权限数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="dataOp"></param>
+        /// <param name="withInActive"></param>
+        /// <returns></returns>
+        public async override Task<IQueryable<T>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = true)
         {
             IQueryable<T> query;
 
@@ -38,38 +45,94 @@ namespace ApiServer.Repositories
             else
                 query = _DbContext.Set<T>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
-            //超级管理员和品牌组织不走权限判断
-            if (currentAcc.Type == AppConst.AccountType_SysAdmin || currentAcc.Type == AppConst.AccountType_BrandAdmin)
+            //超级管理员系列不走权限判断
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin || currentAcc.Type == AppConst.AccountType_SysService)
                 return await Task.FromResult(query);
-            else if (currentAcc.Type == AppConst.AccountType_BrandMember)
-            {
-                if (dataOp == DataOperateEnum.Update)
-                    return await Task.FromResult(query.Take(0));
-                else if (dataOp == DataOperateEnum.Delete)
-                    return await Task.FromResult(query.Take(0));
-                return await Task.FromResult(query);
-            }
-            else { }
 
 
-            IQueryable<ResourcePermission> permissions;
-            permissions = _DbContext.ResourcePermissions.Where(x => x.OrganizationId == currentAcc.OrganizationId && x.ResType == ResType);
+
             if (dataOp == DataOperateEnum.Retrieve)
-                permissions = permissions.Where(x => x.OpRetrieve == 1);
-            else if (dataOp == DataOperateEnum.Update)
-                permissions = permissions.Where(x => x.OpUpdate == 1);
-            else if (dataOp == DataOperateEnum.Delete)
-                permissions = permissions.Where(x => x.OpDelete == 1);
+            {
+                /*
+                 * 读取操作
+                 *      管理员:获取包括自己组织以及下级组织的有读取权限的数据
+                 *      普通用户:获取自己创建的
+                 */
+                if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_PartnerAdmin || currentAcc.Type == AppConst.AccountType_SupplierAdmin)
+                {
+                    var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
+                    var organNodeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+                    var organIds = organNodeQ.Select(x => x.ObjId).ToList();
+
+                    var permissionIdQ = _DbContext.ResourcePermissions.Where(x => organIds.Contains(x.OrganizationId) && x.ResType == ResType && x.OpRetrieve == 1);
+
+                    query = from it in query
+                            join ps in permissionIdQ on it.Id equals ps.ResId
+                            select it;
+                    return query;
+                }
+
+            }
             else
-            { }
+            {
+                /*
+                 * 改,删操作
+                 *      管理员:只获取自己组织创建的
+                 *      普通用户:获取自己创建的
+                 */
 
-            query = from it in query
-                    join ps in permissions on it.Id equals ps.ResId
-                    select it;
+                if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_PartnerAdmin || currentAcc.Type == AppConst.AccountType_SupplierAdmin)
+                {
+                    var permissionIdQ = _DbContext.ResourcePermissions.Where(x => x.OrganizationId == currentAcc.OrganizationId && x.ResType == ResType && x.OpRetrieve == 1);
 
+                    query = from it in query
+                            join ps in permissionIdQ on it.Id equals ps.ResId
+                            select it;
+                    return query;
+                }
+            }
 
-
-            return await Task.FromResult(query);
+            //普通用户
+            return await Task.FromResult(query.Where(x => x.Creator == currentAcc.Id));
         }
+        #endregion
+
+        #region CreateAsync 创建实体数据
+        /// <summary>
+        /// 创建实体数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async override Task CreateAsync(string accid, T data)
+        {
+            await base.CreateAsync(accid, data);
+            await GrantFullPermission(accid, data);
+        }
+        #endregion
+
+        #region GrantFullPermission 授予读取,更改,删除权限
+        /// <summary>
+        /// 授予读取,更改,删除权限
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected async virtual Task GrantFullPermission(string accid, T data)
+        {
+            var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId }).FirstOrDefaultAsync(x => x.Id == accid);
+            var permission = new ResourcePermission();
+            permission.Id = GuidGen.NewGUID();
+            permission.OpRetrieve = 1;
+            permission.OpUpdate = 1;
+            permission.OpDelete = 1;
+            permission.ResId = data.Id;
+            permission.OrganizationId = currentAcc.OrganizationId;
+            permission.ResType = ResType;
+            _DbContext.ResourcePermissions.Add(permission);
+            await _DbContext.SaveChangesAsync();
+        }
+        #endregion
+
     }
 }

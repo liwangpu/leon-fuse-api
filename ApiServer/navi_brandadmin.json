@@ -11,7 +11,7 @@
           "title": "nav.dashboards",
           "type": "item",
           "icon": "today",
-          "url": "/apps/dashboards/project"
+          "url": "/app/dashboards"
         },
         {
           "id": "profile",

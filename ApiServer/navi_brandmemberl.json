@@ -4,7 +4,53 @@
       "id": "applications",
       "title": "nav.General",
       "type": "group",
-      "icon": "apps"
+      "icon": "apps",
+      "children": [
+        {
+          "id": "dashboards",
+          "title": "nav.dashboards",
+          "type": "item",
+          "icon": "today",
+          "url": "/app/dashboards"
+        },
+        {
+          "id": "profile",
+          "title": "nav.profile",
+          "type": "item",
+          "icon": "person",
+          "url": "/app/account-profile",
+          "EditOp": "true"
+        },
+        {
+          "id": "my-resources",
+          "title": "nav.MyResources",
+          "type": "collapse",
+          "icon": "dashboard",
+          "children": [
+            {
+              "id": "staticmesh",
+              "title": "nav.StaticMesh",
+              "type": "item",
+              "icon": "domain",
+              "url": "/app/staticmeshs"
+            },
+            {
+              "id": "material",
+              "title": "nav.Material",
+              "type": "item",
+              "icon": "healing",
+              "url": "/app/materials"
+            },
+            {
+              "id": "map",
+              "title": "nav.Map",
+              "type": "item",
+              "icon": "map",
+              "url": "/app/maps"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "interior-design",

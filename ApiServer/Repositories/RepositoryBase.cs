@@ -171,167 +171,180 @@ namespace ApiServer.Repositories
             if (currentAcc == null)
                 return query;
 
-            var organNode = await _DbContext.PermissionTrees.FirstOrDefaultAsync(x => x.ObjId == currentAcc.OrganizationId);
-
             //数据状态
             if (withInActive)
                 query = _DbContext.Set<T>();
             else
                 query = _DbContext.Set<T>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
+            /*
+             * 读取,修改,删除操作
+             *      管理员:操作自己组织的创建的
+             *      用户:操作自己创建的数据
+             */
 
 
-            #region func getPersonalResource 获取个人资源
-            var getPersonalResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_PartnerAdmin || currentAcc.Type == AppConst.AccountType_SupplierAdmin)
             {
-                return q.Where(x => x.Creator == currentAcc.Id);
-            });
-            #endregion
-            #region func getCurrentOrganResource 获取当前组织资源
-            var getCurrentOrganResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
-            {
-                return q.Where(x => x.OrganizationId == currentAcc.OrganizationId);
-            });
-            #endregion
-            #region func getSupResource 获取上级组织资源
-            var getSupResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
-            {
-                var treeQ = _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization });
-                return q.Where(x => x.Creator == currentAcc.Id);
-            });
-            #endregion
-            #region func getSubOrganResource 获取下级组织资源
-            var getSubOrganResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
-            {
-                var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization });
-                return from it in query
-                       join tq in treeQ on it.OrganizationId equals tq.ObjId
-                       select it;
-            });
-            #endregion
-
-
-            #region [SysAdmin]
-            if (currentAcc.Type == AppConst.AccountType_SysAdmin)
-            {
-                return query;
+                return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
             }
-            #endregion
-            #region [BrandAdmin]
-            else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
-            {
-                var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
 
-                return from it in query
-                       join tq in treeQ on it.OrganizationId equals tq.ObjId
-                       select it;
-            }
-            #endregion
-            #region [BrandMember]
-            else if (currentAcc.Type == AppConst.AccountType_BrandMember)
-            {
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                        return getCurrentOrganResource(query);
-                }
 
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                    {
-                        var currentOrganQ = getCurrentOrganResource(query);
-                        var supOrganQ = getSupResource(query);
-                        return currentOrganQ.Union(supOrganQ);
-                    }
-                }
-            }
-            #endregion
-            #region [PartnerAdmin]
-            else if (currentAcc.Type == AppConst.AccountType_PartnerAdmin)
-            {
-                //var treeQ =await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
-                //return from it in query
-                //       join tq in treeQ on it.OrganizationId equals tq.ObjId
-                //       select it;
+            return query.Where(x => x.Creator == accid);
 
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
-                {
-                    return getCurrentOrganResource(query);
-                }
+            #region 待移除
+            //#region func getPersonalResource 获取个人资源
+            //var getPersonalResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            //{
+            //    return q.Where(x => x.Creator == currentAcc.Id);
+            //});
+            //#endregion
+            //#region func getCurrentOrganResource 获取当前组织资源
+            //var getCurrentOrganResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            //{
+            //    return q.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+            //});
+            //#endregion
+            //#region func getSupResource 获取上级组织资源
+            //var getSupResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            //{
+            //    var treeQ = _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization });
+            //    return q.Where(x => x.Creator == currentAcc.Id);
+            //});
+            //#endregion
+            //#region func getSubOrganResource 获取下级组织资源
+            //var getSubOrganResource = new Func<IQueryable<T>, IQueryable<T>>((q) =>
+            //{
+            //    var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization });
+            //    return from it in query
+            //           join tq in treeQ on it.OrganizationId equals tq.ObjId
+            //           select it;
+            //});
+            //#endregion
 
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                    {
-                        var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
-                        return from it in query
-                               join tq in treeQ on it.OrganizationId equals tq.ObjId
-                               select it;
-                    }
-                }
-            }
-            #endregion
-            #region [PartnerMember]
-            else if (currentAcc.Type == AppConst.AccountType_PartnerMember)
-            {
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                    {
-                        return getCurrentOrganResource(query);
-                    }
-                }
 
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                    {
-                        var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
-                        return from it in query
-                               join tq in treeQ on it.OrganizationId equals tq.ObjId
-                               select it;
-                    }
-                }
-            }
-            #endregion
-            #region [SupplierAdmin]
-            else if (currentAcc.Type == AppConst.AccountType_SupplierAdmin)
-            {
-                var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
-                return from it in query
-                       join tq in treeQ on it.OrganizationId equals tq.ObjId
-                       select it;
-            }
-            #endregion
-            #region [SupplierMember]
-            else if (currentAcc.Type == AppConst.AccountType_SupplierMember)
-            {
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                        return getCurrentOrganResource(query);
-                }
+            //#region [SysAdmin]
+            //if (currentAcc.Type == AppConst.AccountType_SysAdmin)
+            //{
+            //    return query;
+            //}
+            //#endregion
+            //#region [BrandAdmin]
+            //else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
+            //{
+            //    var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
 
-                if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
-                {
-                    if (dataOp == DataOperateEnum.Retrieve)
-                    {
-                        var currentOrganQ = getCurrentOrganResource(query);
-                        var supOrganQ = getSupResource(query);
-                        return currentOrganQ.Union(supOrganQ);
-                    }
-                }
-            }
-            #endregion
-            #region [Default]
-            else
-            {
-                return getPersonalResource(query);
-            }
-            #endregion
+            //    return from it in query
+            //           join tq in treeQ on it.OrganizationId equals tq.ObjId
+            //           select it;
+            //}
+            //#endregion
+            //#region [BrandMember]
+            //else if (currentAcc.Type == AppConst.AccountType_BrandMember)
+            //{
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //            return getCurrentOrganResource(query);
+            //    }
 
-            return getPersonalResource(query);
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //        {
+            //            var currentOrganQ = getCurrentOrganResource(query);
+            //            var supOrganQ = getSupResource(query);
+            //            return currentOrganQ.Union(supOrganQ);
+            //        }
+            //    }
+            //}
+            //#endregion
+            //#region [PartnerAdmin]
+            //else if (currentAcc.Type == AppConst.AccountType_PartnerAdmin)
+            //{
+            //    //var treeQ =await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+            //    //return from it in query
+            //    //       join tq in treeQ on it.OrganizationId equals tq.ObjId
+            //    //       select it;
+
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+            //    {
+            //        return getCurrentOrganResource(query);
+            //    }
+
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //        {
+            //            var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+            //            return from it in query
+            //                   join tq in treeQ on it.OrganizationId equals tq.ObjId
+            //                   select it;
+            //        }
+            //    }
+            //}
+            //#endregion
+            //#region [PartnerMember]
+            //else if (currentAcc.Type == AppConst.AccountType_PartnerMember)
+            //{
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //        {
+            //            return getCurrentOrganResource(query);
+            //        }
+            //    }
+
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //        {
+            //            var treeQ = await _PermissionTreeRepository.GetAncestorNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+            //            return from it in query
+            //                   join tq in treeQ on it.OrganizationId equals tq.ObjId
+            //                   select it;
+            //        }
+            //    }
+            //}
+            //#endregion
+            //#region [SupplierAdmin]
+            //else if (currentAcc.Type == AppConst.AccountType_SupplierAdmin)
+            //{
+            //    var treeQ = _PermissionTreeRepository.GetDescendantNode(organNode, new List<string>() { AppConst.S_NodeType_Organization }, true);
+            //    return from it in query
+            //           join tq in treeQ on it.OrganizationId equals tq.ObjId
+            //           select it;
+            //}
+            //#endregion
+            //#region [SupplierMember]
+            //else if (currentAcc.Type == AppConst.AccountType_SupplierMember)
+            //{
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //            return getCurrentOrganResource(query);
+            //    }
+
+            //    if (ResourceTypeSetting == ResourceTypeEnum.Organizational_SubShare)
+            //    {
+            //        if (dataOp == DataOperateEnum.Retrieve)
+            //        {
+            //            var currentOrganQ = getCurrentOrganResource(query);
+            //            var supOrganQ = getSupResource(query);
+            //            return currentOrganQ.Union(supOrganQ);
+            //        }
+            //    }
+            //}
+            //#endregion
+            //#region [Default]
+            //else
+            //{
+            //    return getPersonalResource(query);
+            //}
+            //#endregion
+
+            //return getPersonalResource(query); 
+            #endregion
         }
         #endregion
 
@@ -556,10 +569,11 @@ namespace ApiServer.Repositories
             else
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
-            _QSearchFilter(ref query, model.Q);
-            query = await _KeyWordSearchFilter(query, model.Search);
-            _OrderByPipe(ref query, model.OrderBy, model.Desc);
+            //_QSearchFilter(ref query, model.Q);
+            //query = await _KeyWordSearchFilter(query, model.Search);
+            //_OrderByPipe(ref query, model.OrderBy, model.Desc);
             var result = await query.SimplePaging(model.Page, model.PageSize, PagedSelectExpression());
+
             #region 补充CreateName,ModifierName信息
             if (result.Data != null && result.Data.Count > 0)
             {
