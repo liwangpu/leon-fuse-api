@@ -81,6 +81,7 @@ namespace ApiServer.Models
         public string Location { get; set; }
         public string Brief { get; set; }
         public string OrganizationId { get; set; }
+        public string Organization { get; set; }
         public string DepartmentId { get; set; }
         public string Role { get; set; }
     }

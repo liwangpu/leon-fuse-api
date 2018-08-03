@@ -229,6 +229,7 @@ namespace ApiServer.Controllers
             p.Brief = acc.Description;
             p.Location = acc.Location;
             p.OrganizationId = acc.OrganizationId;
+            p.Organization = (await _Repository._DbContext.Organizations.FirstAsync(x => x.Id == acc.OrganizationId)).Name;
             p.DepartmentId = acc.DepartmentId;
             p.Role = acc.Type;
             return p;
