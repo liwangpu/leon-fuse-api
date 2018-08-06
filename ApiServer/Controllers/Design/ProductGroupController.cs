@@ -16,8 +16,9 @@ namespace ApiServer.Controllers.Design
 {
     [Authorize]
     [Route("/[controller]")]
-    public class ProductGroupController : ListableController<ProductGroup, ProductGroupDTO>
+    public class ProductGroupController : ResourceController<ProductGroup, ProductGroupDTO>
     {
+        public override int ResType => ResourceTypeConst.ProductGroup;
 
         #region 构造函数
         public ProductGroupController(IRepository<ProductGroup, ProductGroupDTO> repository)

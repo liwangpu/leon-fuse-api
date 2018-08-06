@@ -133,8 +133,7 @@
           "type": "item",
           "icon": "bubble_chart",
           "url": "/app/product-group",
-          "field": "value",
-          "EditOp": "false"
+          "EditOp": "true"
         },
         {
           "id": "package",
@@ -142,7 +141,6 @@
           "type": "item",
           "icon": "extension",
           "url": "/app/packages",
-          "field": "value",
           "EditOp": "true"
         },
         {

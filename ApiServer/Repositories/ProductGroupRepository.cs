@@ -11,12 +11,14 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace ApiServer.Repositories
 {
-    public class ProductGroupRepository : ListableRepository<ProductGroup, ProductGroupDTO>
+    public class ProductGroupRepository : ResourceRepositoryBase<ProductGroup, ProductGroupDTO>
     {
         public ProductGroupRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
             : base(context, permissionTreeRep)
         {
         }
+
+        public override int ResType => ResourceTypeConst.ProductGroup;
 
         public override ResourceTypeEnum ResourceTypeSetting
         {
@@ -73,32 +75,68 @@ namespace ApiServer.Repositories
         }
         #endregion
 
-        #region _GetPermissionData
-        ///// <summary>
-        ///// _GetPermissionData
-        ///// </summary>
-        ///// <param name="accid"></param>
-        ///// <param name="dataOp"></param>
-        ///// <param name="withInActive"></param>
-        ///// <returns></returns>
-        //public override async Task<IQueryable<ProductGroup>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
-        //{
-        //    var query = await base._GetPermissionData(accid, dataOp, withInActive);
+        #region _GetPermissionData 获取权限数据
+        /// <summary>
+        /// 获取权限数据
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="dataOp"></param>
+        /// <param name="withInActive"></param>
+        /// <returns></returns>
+        public async override Task<IQueryable<ProductGroup>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = true)
+        {
+            IQueryable<ProductGroup> query;
 
-        //    #region 获取父组织分享的方案数据
-        //    if (dataOp == DataOperateEnum.Retrieve)
-        //    {
-        //        var account = await _DbContext.Accounts.FindAsync(accid);
-        //        var curNode = await _DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);
-        //        var parentOrgQ = await _PermissionTreeRepository.GetAncestorNode(curNode, new List<string>() { AppConst.S_NodeType_Organization });
-        //        var parentOrgIds = await parentOrgQ.Select(x => x.ObjId).ToListAsync();
-        //        var shareDataQ = _DbContext.ProductGroups.Where(x => parentOrgIds.Contains(x.OrganizationId) && x.ActiveFlag == AppConst.I_DataState_Active && x.ResourceType == (int)ResourceTypeEnum.Organizational_SubShare);
-        //        query = query.Union(shareDataQ);
-        //    }
-        //    #endregion
+            var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
 
-        //    return query;
-        //}
+            //数据状态
+            if (withInActive)
+                query = _DbContext.Set<ProductGroup>();
+            else
+                query = _DbContext.Set<ProductGroup>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+
+            //超级管理员系列不走权限判断
+            if (currentAcc.Type == AppConst.AccountType_SysAdmin || currentAcc.Type == AppConst.AccountType_SysService)
+                return await Task.FromResult(query);
+
+
+            if (dataOp == DataOperateEnum.Retrieve)
+            {
+                /*
+                 * 读取操作
+                 *      管理员
+                 *              品牌管理员/用户:获取自己组织的创建的产品
+                 *       合伙人/供应商
+                 *              管理员/用户:获取自己组织有读取权限的
+                 */
+
+
+                if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_BrandMember)
+                {
+                    return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                }
+                else
+                {
+                    var permissionIdQ = _DbContext.ResourcePermissions.Where(x => x.OrganizationId == currentAcc.OrganizationId && x.ResType == ResType && x.OpRetrieve == 1);
+
+                    query = from it in query
+                            join ps in permissionIdQ on it.Id equals ps.ResId
+                            select it;
+                    return query;
+                }
+            }
+            else
+            {
+                if (currentAcc.Type == AppConst.AccountType_BrandAdmin || currentAcc.Type == AppConst.AccountType_BrandMember)
+                {
+                    return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                }
+            }
+
+            //普通用户
+            return await Task.FromResult(query.Take(0));
+        }
+
         #endregion
     }
 }

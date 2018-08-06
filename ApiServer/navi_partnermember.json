@@ -37,6 +37,14 @@
           "url": "/app/products"
         },
         {
+          "id": "product-group",
+          "title": "nav.ProductGroup",
+          "type": "item",
+          "icon": "bubble_chart",
+          "url": "/app/product-group",
+          "EditOp": "false"
+        },
+        {
           "id": "solution",
           "title": "nav.InteriorDesignSolutions",
           "type": "item",
