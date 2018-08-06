@@ -37,6 +37,7 @@ namespace ApiServer.Repositories
         {
             IQueryable<T> query;
 
+
             var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
 
             //数据状态
@@ -70,7 +71,7 @@ namespace ApiServer.Repositories
                             join ps in permissionIdQ on it.Id equals ps.ResId
                             select it;
                     return query;
-                }
+                } 
 
             }
             else

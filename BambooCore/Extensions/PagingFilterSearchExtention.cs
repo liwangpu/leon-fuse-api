@@ -126,7 +126,7 @@ namespace BambooCore
             }
             else
             {
-                data = data.OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize);
+                data = data.Skip((page - 1) * pageSize).Take(pageSize);
                 res.Data = await data.ToListAsync();
                 res.Size = res.Data.Count;
             }
@@ -162,7 +162,7 @@ namespace BambooCore
             }
             else
             {
-                data = data.OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(expression);
+                data = data.Skip((page - 1) * pageSize).Take(pageSize).Select(expression);
                 res.Data = await data.ToListAsync();
                 res.Size = res.Data.Count;
             }

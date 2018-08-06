@@ -41,14 +41,6 @@ namespace ApiServer.Repositories
             }
         }
 
-        //#region 构造函数
-        //public StoreBase(Api_DbContext context)
-        //{
-        //    _DbContext = context;
-        //    _PermissionTreeRepository = new TreeStore<PermissionTree>(context);
-        //}
-        //#endregion
-
         /**************** protected method ****************/
 
         #region _QSearchFilter 查询参数过滤
@@ -569,9 +561,9 @@ namespace ApiServer.Repositories
             else
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
 
-            //_QSearchFilter(ref query, model.Q);
-            //query = await _KeyWordSearchFilter(query, model.Search);
-            //_OrderByPipe(ref query, model.OrderBy, model.Desc);
+            _QSearchFilter(ref query, model.Q);
+            query = await _KeyWordSearchFilter(query, model.Search);
+            _OrderByPipe(ref query, model.OrderBy, model.Desc);
             var result = await query.SimplePaging(model.Page, model.PageSize, PagedSelectExpression());
 
             #region 补充CreateName,ModifierName信息

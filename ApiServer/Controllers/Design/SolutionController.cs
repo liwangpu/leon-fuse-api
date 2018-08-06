@@ -79,6 +79,23 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
+        //[Route("Sample")]
+        //[HttpGet]
+        //[ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
+        //public async Task<IActionResult> Sample([FromQuery] PagingRequestModel model)
+        //{
+        //    var accid = AuthMan.GetAccountId(this);
+        //    var advanceQuery = new Func<IQueryable<Solution>, Task<IQueryable<Solution>>>(async (query) =>
+        //    {
+        //        query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+        //        return await Task.FromResult(query);
+        //    });
+
+
+        //    var result = await (_Repository as SolutionRepository).SampleDataQueryAsync(model, accid, advanceQuery);
+        //    return Ok(RepositoryBase<Solution, SolutionDTO>.PageQueryDTOTransfer(result));
+        //}
+
         #region Post 新建解决方案信息
         /// <summary>
         /// 新建解决方案信息
