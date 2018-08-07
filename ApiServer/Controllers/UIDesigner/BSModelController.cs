@@ -24,7 +24,8 @@ namespace ApiServer.Controllers.UIDesigner
                 DisplayModel = new List<string>() { "List" },
                 Fields = new List<BSModelField>()
                 {
-                    new BSModelField(){ Id="Name",Name="Name",Width=125}
+                    new BSModelField(){ Id="Icon",Name="Icon",Width=85}
+                    ,new BSModelField(){ Id="Name",Name="Name",Width=125}
                     , new BSModelField(){ Id="Description",Name="Description",Width=185}
                 },
                 PageSizeOptions = new List<int>() { 15, 25, 500 }

@@ -31,6 +31,10 @@ namespace ApiServer.Repositories
             }
         }
 
+        public override async Task<bool> CanReadAsync(string accid, string id)
+        {
+            return await Task.FromResult(true);
+        }
 
 
         /// <summary>
@@ -90,7 +94,7 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public async Task<List<AssetCategoryDTO>> GetFlatCategory(string type, string organId)
         {
-            return await  (_AssetCategoryTreeRepository as AssetCategoryTreeRepository).GetFlatCategory(type, organId);
+            return await (_AssetCategoryTreeRepository as AssetCategoryTreeRepository).GetFlatCategory(type, organId);
         }
 
         /// <summary>

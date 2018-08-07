@@ -100,7 +100,7 @@ namespace ApiServer.Controllers
         public async Task<AssetCategoryPack> GetAll(string organId)
         {
             if (string.IsNullOrWhiteSpace(organId))
-                organId = await _GetCurrentUserOrganId();
+                organId = (await _GetCurrentUserRootOrgan()).Id;
 
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
@@ -127,7 +127,7 @@ namespace ApiServer.Controllers
         public async Task<List<AssetCategoryDTO>> GetFlat(string type, string organId)
         {
             if (string.IsNullOrWhiteSpace(organId))
-                organId = await _GetCurrentUserOrganId();
+                organId = (await _GetCurrentUserRootOrgan()).Id;
 
             return await (_Repository as AssetCategoryRepository).GetFlatCategory(type, organId);
         }
