@@ -390,7 +390,7 @@ namespace ApiServer.Models
         public string PackageId { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string ItemId { get; set; }
-    } 
+    }
     #endregion
 
     #region PackageReplaceGroupCreateModel 套餐详情替换组创建模型
@@ -465,6 +465,28 @@ namespace ApiServer.Models
         public string FileAssetId { get; set; }
     }
     #endregion
+
+    #region MapTransLayoutModel 地图生成户型模型
+    /// <summary>
+    /// 地图生成户型模型
+    /// </summary>
+    public class MapTransLayoutModel
+    {
+        public string MapId { get; set; }
+    }
+    #endregion
+
+    #region MapTransLayoutDataModel 地图生成户型模型Data
+    /// <summary>
+    /// 地图生成户型模型Data
+    /// </summary>
+    public class MapTransLayoutDataModel
+    {
+        public string Map { get; set; }  //指向客户端使用的地图的名称, Map对象的PackageName的值的最后一个斜杠后面的部分。比如 /Game/Maps/tls-all. 那么Map的值就为tls-all  
+        public string MapId { get; set; }  //引用的map的对象ID  
+    }
+    #endregion
+
 
     #region LayoutCreateModel 户型创建模型
     /// <summary>

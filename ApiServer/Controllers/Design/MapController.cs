@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json;
 namespace ApiServer.Controllers
 {
     [Authorize]
@@ -118,5 +119,37 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region TransToLayout 地图生成户型
+        /// <summary>
+        /// 地图生成户型
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("TransferToLayout")]
+        public async Task<IActionResult> TransToLayout([FromBody] MapTransLayoutModel model)
+        {
+            var map = await _Repository._GetByIdAsync(model.MapId);
+            var accid = AuthMan.GetAccountId(this);
+            var layout = new Layout();
+            layout.Id = GuidGen.NewGUID();
+            layout.Name = map.Name;
+            layout.Description = string.Format("auto generate at {0}", DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
+            layout.OrganizationId = map.OrganizationId;
+            layout.Icon = map.Icon;
+            layout.Creator = accid;
+            layout.Modifier = accid;
+            layout.CreatedTime = DateTime.Now;
+            layout.ModifiedTime = DateTime.Now;
+            layout.ActiveFlag = AppConst.I_DataState_Active;
+            var layoutData = new MapTransLayoutDataModel();
+            layoutData.Map = layout.Name;
+            layoutData.MapId = map.Id;
+            layout.Data = JsonConvert.SerializeObject(layoutData);
+            _Repository._DbContext.Layouts.Add(layout);
+            await _Repository._DbContext.SaveChangesAsync();
+            return Ok();
+        } 
+        #endregion
     }
 }

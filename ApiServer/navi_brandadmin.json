@@ -110,6 +110,15 @@
           "EditOp": "true"
         },
         {
+          "id": "layout",
+          "title": "nav.Layout",
+          "type": "item",
+          "icon": "account_balance",
+          "url": "/app/layout",
+          "field": "value",
+          "EditOp": "true"
+        },
+        {
           "id": "solution",
           "title": "nav.InteriorDesignSolutions",
           "type": "item",
