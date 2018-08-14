@@ -31,7 +31,10 @@ namespace ApiModel.Entities
             dto.UnCookedAssetId = UnCookedAssetId;
             dto.CategoryName = CategoryName;
             if (FileAsset != null)
+            {
+                dto.FileAssetId = FileAsset.Id;
                 dto.FileAsset = FileAsset.ToDTO();
+            }
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -45,6 +48,7 @@ namespace ApiModel.Entities
     public class MapDTO : ClientAssetEntity
     {
         public string IconAssetId { get; set; }
+        public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public FileAssetDTO FileAsset { get; set; }

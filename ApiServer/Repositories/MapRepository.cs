@@ -65,25 +65,25 @@ namespace ApiServer.Repositories
             }
 
             return query.Take(0);
-        } 
+        }
         #endregion
 
         #region override GetByIdAsync 根据Id返回实体DTO数据信息
-        ///// <summary>
-        ///// 根据Id返回实体DTO数据信息
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //public override async Task<MapDTO> GetByIdAsync(string id)
-        //{
-        //    var data = await _GetByIdAsync(id);
+        /// <summary>
+        /// 根据Id返回实体DTO数据信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<MapDTO> GetByIdAsync(string id)
+        {
+            var data = await _GetByIdAsync(id);
 
-        //    if (!string.IsNullOrWhiteSpace(data.Icon))
-        //        data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
-        //    if (!string.IsNullOrWhiteSpace(data.FileAssetId))
-        //        data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
-        //    return data.ToDTO();
-        //}
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            if (!string.IsNullOrWhiteSpace(data.FileAssetId))
+                data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
+            return data.ToDTO();
+        }
         #endregion
 
     }
