@@ -20,6 +20,12 @@ namespace ApiServer.Data
         /// 账号
         /// </summary>
         public DbSet<Account> Accounts { get; set; }
+
+        /// <summary>
+        /// 用户角色
+        /// </summary>
+        public DbSet<UserRole> UserRoles { get; set; }
+
         /// <summary>
         /// 组织
         /// </summary>

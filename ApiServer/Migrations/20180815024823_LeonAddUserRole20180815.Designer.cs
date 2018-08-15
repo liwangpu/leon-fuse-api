@@ -11,8 +11,8 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20180525105806_LeonAddPackageNameToStaticMesh0525")]
-    partial class LeonAddPackageNameToStaticMesh0525
+    [Migration("20180815024823_LeonAddUserRole20180815")]
+    partial class LeonAddUserRole20180815
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,8 @@ namespace ApiServer.Migrations
                     b.Property<DateTime>("ActivationTime");
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 
@@ -72,6 +74,8 @@ namespace ApiServer.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("OrganizationId");
+
                     b.ToTable("Accounts");
                 });
 
@@ -93,12 +97,46 @@ namespace ApiServer.Migrations
                     b.ToTable("AccountOpenId");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.AreaType", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("ResourceType");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AreaTypes");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.AssetCategory", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 
@@ -147,6 +185,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("ParentId");
 
                     b.Property<int>("RValue");
+
+                    b.Property<string>("RootOrganizationId");
 
                     b.HasKey("Id");
 
@@ -197,6 +237,8 @@ namespace ApiServer.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 
@@ -259,12 +301,50 @@ namespace ApiServer.Migrations
                     b.ToTable("ClientAssets");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.Collection", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Folder");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("ResourceType");
+
+                    b.Property<string>("TargetId");
+
+                    b.Property<string>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Collections");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.Department", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 
@@ -394,6 +474,8 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("CategoryId");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
@@ -420,7 +502,11 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ResourceType");
 
+                    b.Property<string>("UnCookedAssetId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FileAssetId");
 
                     b.ToTable("Maps");
                 });
@@ -460,9 +546,95 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ResourceType");
 
+                    b.Property<string>("UnCookedAssetId");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("FileAssetId");
+
                     b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.Media", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("FileAssetId");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<string>("Location");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("ResourceType");
+
+                    b.Property<string>("Rotation");
+
+                    b.Property<string>("SolutionId");
+
+                    b.Property<string>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medias");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.MediaShareResource", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("MediaId");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<string>("Password");
+
+                    b.Property<int>("ResourceType");
+
+                    b.Property<long>("StartShareTimeStamp");
+
+                    b.Property<long>("StopShareTimeStamp");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("MediaShareResources");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.Order", b =>
@@ -473,6 +645,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("AccountId");
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<string>("ChildOrders");
 
@@ -548,6 +722,8 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("CategoryId");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
@@ -578,9 +754,6 @@ namespace ApiServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId")
-                        .IsUnique();
-
                     b.HasIndex("ParentId");
 
                     b.ToTable("Organizations");
@@ -594,6 +767,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("AccountId");
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 
@@ -636,6 +811,8 @@ namespace ApiServer.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<string>("Content");
 
@@ -681,9 +858,27 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("RValue");
 
+                    b.Property<string>("RootOrganizationId");
+
                     b.HasKey("Id");
 
                     b.ToTable("PermissionTrees");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.Preference", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Key");
+
+                    b.Property<string>("Type");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Preferences");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.Product", b =>
@@ -724,6 +919,84 @@ namespace ApiServer.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.ProductGroup", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<string>("Items");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("Orientation");
+
+                    b.Property<string>("PivotLocation");
+
+                    b.Property<int>("PivotType");
+
+                    b.Property<int>("ResourceType");
+
+                    b.Property<string>("Serie");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductGroups");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.ProductReplaceGroup", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("DefaultItemId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("GroupItemIds");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("ResourceType");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductReplaceGroups");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.ProductSpec", b =>
                 {
                     b.Property<string>("Id")
@@ -732,6 +1005,8 @@ namespace ApiServer.Migrations
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("Album");
+
+                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 
@@ -749,9 +1024,13 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("OrganizationId");
 
+                    b.Property<decimal>("PartnerPrice");
+
                     b.Property<decimal>("Price");
 
                     b.Property<string>("ProductId");
+
+                    b.Property<decimal>("PurchasePrice");
 
                     b.Property<int>("ResourceType");
 
@@ -764,6 +1043,30 @@ namespace ApiServer.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductSpec");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.ResourcePermission", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("OpDelete");
+
+                    b.Property<int>("OpRetrieve");
+
+                    b.Property<int>("OpUpdate");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<string>("ResId");
+
+                    b.Property<int>("ResType");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId", "ResType");
+
+                    b.ToTable("ResourcePermissions");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.SettingsItem", b =>
@@ -861,6 +1164,8 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("CategoryId");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
@@ -887,7 +1192,13 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ResourceType");
 
+                    b.Property<string>("SrcFileAssetId");
+
+                    b.Property<string>("UnCookedAssetId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FileAssetId");
 
                     b.ToTable("StaticMeshs");
                 });
@@ -899,6 +1210,8 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("CategoryId");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
@@ -925,9 +1238,27 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ResourceType");
 
+                    b.Property<string>("UnCookedAssetId");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("FileAssetId");
+
                     b.ToTable("Textures");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.UserRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Organization");
+
+                    b.Property<string>("Role");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>
@@ -955,6 +1286,10 @@ namespace ApiServer.Migrations
                     b.HasOne("ApiModel.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId");
+
+                    b.HasOne("ApiModel.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.AccountOpenId", b =>
@@ -1019,6 +1354,27 @@ namespace ApiServer.Migrations
                         .HasForeignKey("OrganizationId");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.Map", b =>
+                {
+                    b.HasOne("ApiModel.Entities.FileAsset", "IconFileAsset")
+                        .WithMany()
+                        .HasForeignKey("FileAssetId");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.Material", b =>
+                {
+                    b.HasOne("ApiModel.Entities.FileAsset", "IconFileAsset")
+                        .WithMany()
+                        .HasForeignKey("FileAssetId");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.MediaShareResource", b =>
+                {
+                    b.HasOne("ApiModel.Entities.Media", "Media")
+                        .WithMany("MediaShareResources")
+                        .HasForeignKey("MediaId");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.Order", b =>
                 {
                     b.HasOne("ApiModel.Entities.Account")
@@ -1043,10 +1399,6 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Organization", b =>
                 {
-                    b.HasOne("ApiModel.Entities.Account", "Owner")
-                        .WithOne("Organization")
-                        .HasForeignKey("ApiModel.Entities.Organization", "OwnerId");
-
                     b.HasOne("ApiModel.Entities.Organization", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId");
@@ -1098,6 +1450,20 @@ namespace ApiServer.Migrations
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Solutions")
                         .HasForeignKey("OrganizationId");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.StaticMesh", b =>
+                {
+                    b.HasOne("ApiModel.Entities.FileAsset", "IconFileAsset")
+                        .WithMany()
+                        .HasForeignKey("FileAssetId");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.Texture", b =>
+                {
+                    b.HasOne("ApiModel.Entities.FileAsset", "IconFileAsset")
+                        .WithMany()
+                        .HasForeignKey("FileAssetId");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>

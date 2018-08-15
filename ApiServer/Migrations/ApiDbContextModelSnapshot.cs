@@ -1246,6 +1246,20 @@ namespace ApiServer.Migrations
                     b.ToTable("Textures");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.UserRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Organization");
+
+                    b.Property<string>("Role");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>
                 {
                     b.Property<string>("Id")

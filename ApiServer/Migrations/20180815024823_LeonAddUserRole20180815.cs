@@ -4,29 +4,28 @@ using System.Collections.Generic;
 
 namespace ApiServer.Migrations
 {
-    public partial class LeonAddPreferences0731 : Migration
+    public partial class LeonAddUserRole20180815 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Preferences",
+                name: "UserRoles",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Key = table.Column<string>(nullable: true),
-                    Type = table.Column<string>(nullable: true),
-                    Value = table.Column<string>(nullable: true)
+                    Organization = table.Column<string>(nullable: true),
+                    Role = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Preferences", x => x.Id);
+                    table.PrimaryKey("PK_UserRoles", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Preferences");
+                name: "UserRoles");
         }
     }
 }
