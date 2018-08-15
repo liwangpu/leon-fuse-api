@@ -195,7 +195,7 @@ namespace ApiServer
             });
 
             //初始化站点服务
-            InitSiteServices(serviceProvider);
+            //InitSiteServices(serviceProvider);
         }
 
         /// <summary>
