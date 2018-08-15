@@ -81,7 +81,7 @@ namespace ApiServer.Services
                     result.loginResult = LoginResult.Frozen;
 
                 var now = DateTime.UtcNow;
-                if (now < DataHelper.ParseDateTime(result.acc.ActivationTime))
+                if (now < DataHelper.ParseDateTime(result.acc.ActivationTime).AddDays(-1))
                     result.loginResult = LoginResult.NotActivation;
 
                 if (now > DataHelper.ParseDateTime(result.acc.ExpireTime))
