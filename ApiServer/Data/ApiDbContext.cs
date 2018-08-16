@@ -163,6 +163,11 @@ namespace ApiServer.Data
         /// 产品替换组
         /// </summary>
         public DbSet<ProductReplaceGroup> ProductReplaceGroups { get; set; }
+
+        /// <summary>
+        /// 导航栏菜单
+        /// </summary>
+        public DbSet<Navigation> Navigations { get; set; }
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

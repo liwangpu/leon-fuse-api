@@ -138,4 +138,12 @@ namespace ApiServer.Models
         public string OperateIds { get; set; }
     }
 
+    public class NavigationEditModel
+    {
+        public string Role { get; set; }
+        public string Navs { get; set; }
+    }
+
+    //public class Navigation
+
 }
