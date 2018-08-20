@@ -28,6 +28,7 @@
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
+    <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 
   <ItemGroup>

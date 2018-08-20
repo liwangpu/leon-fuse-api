@@ -1,7 +1,10 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Data;
 using ApiServer.Filters;
-using Microsoft.AspNetCore.Authorization;
+using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,66 +22,55 @@ namespace ApiServer.Controllers
     [Route("/token")]
     public class TokenController : Controller
     {
-        Services.AuthMan authman;
-        public TokenController(Data.ApiDbContext context)
-        {
-            authman = new Services.AuthMan(this, context);
-        }
+        protected readonly AppConfig _AppConfig;
+        protected readonly ApiDbContext _Context;
 
+        #region 构造函数
+        public TokenController(ApiDbContext context, IOptions<AppConfig> settingsOptions)
+        {
+            _Context = context;
+            _AppConfig = settingsOptions.Value;
+        }
+        #endregion
+
+        #region RequestToken Token请求
         /// <summary>
-        /// 获取Token
+        /// Token请求
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [ValidateModel]
         [HttpPost]
-        public async Task<IActionResult> RequestToken([FromBody] TokenRequestModel request)
+        public async Task<IActionResult> RequestToken([FromBody]TokenRequestModel model)
         {
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+            var account = await _Context.Accounts.FirstOrDefaultAsync(x => x.Mail.ToLower() == model.Account || x.Phone == model.Account);
+            if (account == null)
+                return BadRequest(new ErrorRespondModel() { Message = "用户名或者密码有误" });
 
-            var result = await authman.LoginRequest(request.Account, request.Password);
+            if (account.Password != model.Password)
+                return BadRequest(new ErrorRespondModel() { Message = "用户名或者密码有误" });
 
-            if (result.loginResult == Services.AuthMan.LoginResult.Ok)
-                return MakeToken(result.acc.Id);
-            else
-                return LoginFailed(result.loginResult);
-        }
+            if (account.Frozened)
+                return BadRequest(new ErrorRespondModel() { Message = "账户已被冻结" });
 
-        class LoginSuccessModel
-        {
-            public string Token { get; set; }
-        }
-        class LoginFailedModel
-        {
-            public string Error { get; set; }
-        }
+            var now = DateTime.UtcNow;
+            if (now < account.ActivationTime.AddDays(-1))
+                return BadRequest(new ErrorRespondModel() { Message = "账户未启用" });
 
-        IActionResult LoginFailed(Services.AuthMan.LoginResult result)
-        {
-            string err = "";
-            switch (result)
-            {
-                case Services.AuthMan.LoginResult.AccOrPasswordWrong: err = "account or password wrong"; break;
-                case Services.AuthMan.LoginResult.Expired: err = "account expired"; break;
-                case Services.AuthMan.LoginResult.Frozen: err = "account is forzen by admin"; break;
-                case Services.AuthMan.LoginResult.NotActivation: err = "account not activate yet"; break;
-            }
-            return BadRequest(new ErrorRespondModel() { Message = err });
-        }
+            if (now > account.ExpireTime)
+                return BadRequest(new ErrorRespondModel() { Message = "账户已失效" });
 
-        IActionResult MakeToken(string accid)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Services.SiteConfig.Instance.Json.TokenKey));
+
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_AppConfig.JwtSettings.SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[] { new Claim(ClaimTypes.Name, accid) };
+            var claims = new[] { new Claim(ClaimTypes.Name, account.Id) };
 
-            var expires = DateTime.Now.AddDays(Services.SiteConfig.Instance.Json.TokenValidDays);
-            //var expires = DateTime.Now.AddMinutes(1);
+            var expires = DateTime.Now.AddDays(_AppConfig.JwtSettings.ExpiresDay);
             var token = new JwtSecurityToken(
-                issuer: "damaozhu.com",
-                audience: "damaozhu.com",
+                issuer: _AppConfig.JwtSettings.Issuer,
+                audience: _AppConfig.JwtSettings.Audience,
                 claims: claims,
                 notBefore: DateTime.Now,
                 expires: expires,
@@ -86,7 +78,7 @@ namespace ApiServer.Controllers
 
             return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expires = expires.ToString("yyyy-MM-dd HH:mm:ss") });
         }
-
+        #endregion
     }
 
 }
