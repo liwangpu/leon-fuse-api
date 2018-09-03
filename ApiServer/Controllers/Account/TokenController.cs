@@ -43,7 +43,7 @@ namespace ApiServer.Controllers
         [HttpPost]
         public async Task<IActionResult> RequestToken([FromBody]TokenRequestModel model)
         {
-            var account = await _Context.Accounts.FirstOrDefaultAsync(x => x.Mail.ToLower() == model.Account || x.Phone == model.Account);
+            var account = await _Context.Accounts.FirstOrDefaultAsync(x => x.Mail.ToLower() == model.Account.ToLower() || x.Phone == model.Account);
             if (account == null)
                 return BadRequest(new ErrorRespondModel() { Message = "用户名或者密码有误" });
 

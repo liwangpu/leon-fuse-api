@@ -68,6 +68,15 @@
           "url": "/app/packages"
         },
         {
+          "id": "layout",
+          "title": "nav.Layout",
+          "type": "item",
+          "icon": "account_balance",
+          "url": "/app/layout",
+          "field": "value",
+          "EditOp": "true"
+        },
+        {
           "id": "share",
           "title": "nav.Share",
           "type": "item",

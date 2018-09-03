@@ -147,6 +147,10 @@ namespace ApiServer.Repositories
                 {
                     return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
                 }
+                if (currentAcc.Type == AppConst.AccountType_BrandMember)
+                {
+                    return query.Where(x => x.Creator == currentAcc.Id);
+                }
             }
 
             return query.Take(0);

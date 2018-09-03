@@ -63,7 +63,8 @@
           "title": "nav.InteriorDesignProducts",
           "type": "item",
           "icon": "shopping_basket",
-          "url": "/app/products"
+          "url": "/app/products",
+          "EditOp": "true"
         },
         {
           "id": "solution",
@@ -71,7 +72,7 @@
           "type": "item",
           "icon": "note",
           "url": "/app/solutions",
-          "field": "value"
+          "EditOp": "true"
         },
         {
           "id": "order",
@@ -89,6 +90,30 @@
           "icon": "extension",
           "url": "/app/packages",
           "field": "value"
+        },
+        {
+          "id": "product-group",
+          "title": "nav.ProductGroup",
+          "type": "item",
+          "icon": "bubble_chart",
+          "url": "/app/product-group",
+          "EditOp": "true"
+        },
+        {
+          "id": "productgroup-category",
+          "title": "nav.ProductGroupCategorys",
+          "type": "item",
+          "icon": "chrome_reader_mode",
+          "url": "/app/product-group-category"
+        },
+        {
+          "id": "layout",
+          "title": "nav.Layout",
+          "type": "item",
+          "icon": "account_balance",
+          "url": "/app/layout",
+          "field": "value",
+          "EditOp": "true"
         },
         {
           "id": "share",
