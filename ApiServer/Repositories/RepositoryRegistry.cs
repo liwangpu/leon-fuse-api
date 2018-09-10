@@ -7,6 +7,7 @@ namespace ApiServer.Repositories
     {
         public static void Registry(IServiceCollection services)
         {
+            services.AddScoped<ITreeRepository<Navigation>, NavigationRepository>();
             services.AddScoped<ITreeRepository<PermissionTree>, PermissionTreeRepository>();
             services.AddScoped<ITreeRepository<AssetCategoryTree>, AssetCategoryTreeRepository>();
             services.AddScoped<IRepository<Map, MapDTO>, MapRepository>();

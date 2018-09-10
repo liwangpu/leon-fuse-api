@@ -1,13 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ApiModel.Entities
+﻿namespace ApiModel.Entities
 {
-    public class Navigation
+    public class Navigation : TreeBase, IDTOTransfer<NavigationDTO>
     {
-        public string Id { get; set; }
         public string Role { get; set; }
-        public string Navs { get; set; }
+        public string Url { get; set; }
+        public string Icon { get; set; }
+        public string Permission { get; set; }
+
+        public NavigationDTO ToDTO()
+        {
+            var dto = new NavigationDTO();
+            dto.Id = Id;
+            dto.Name = Name;
+            dto.NodeType = NodeType;
+            dto.ParentId = ParentId;
+            dto.Role = Role;
+            dto.Url = Url;
+            dto.Icon = Icon;
+            dto.Permission = Permission;
+
+            return dto;
+        }
+    }
+
+    public class NavigationDTO : TreeBase
+    {
+        public string Role { get; set; }
+        public string Url { get; set; }
+        public string Icon { get; set; }
+        public string Permission { get; set; }
     }
 }

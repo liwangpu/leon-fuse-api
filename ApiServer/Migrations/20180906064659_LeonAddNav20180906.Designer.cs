@@ -11,8 +11,8 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20180816094446_LeonAddNavigation20180816")]
-    partial class LeonAddNavigation20180816
+    [Migration("20180906064659_LeonAddNav20180906")]
+    partial class LeonAddNav20180906
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -642,9 +642,29 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Navs");
+                    b.Property<string>("Icon");
+
+                    b.Property<int>("LValue");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("NodeType");
+
+                    b.Property<string>("ObjId");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<string>("ParentId");
+
+                    b.Property<string>("Permission");
+
+                    b.Property<int>("RValue");
 
                     b.Property<string>("Role");
+
+                    b.Property<string>("RootOrganizationId");
+
+                    b.Property<string>("Url");
 
                     b.HasKey("Id");
 

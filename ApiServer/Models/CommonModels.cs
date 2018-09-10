@@ -138,12 +138,48 @@ namespace ApiServer.Models
         public string OperateIds { get; set; }
     }
 
-    public class NavigationEditModel
+    public class NavigationCreateModel
     {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Role { get; set; }
-        public string Navs { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Url { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Icon { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Permission { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string NodeType { get; set; }
+        public string ParentId { get; set; }
     }
 
-    //public class Navigation
+    public class NavigationEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Role { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Url { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Icon { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Permission { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string NodeType { get; set; }
+        public string ParentId { get; set; }
+    }
+
+    public class LeaveMessageModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Subject { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Content { get; set; }
+    }
 
 }

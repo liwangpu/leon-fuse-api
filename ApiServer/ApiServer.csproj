@@ -28,11 +28,14 @@
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
+    <Compile Remove="Migrations\20180816094446_LeonAddNavigation20180816.cs" />
+    <Compile Remove="Migrations\20180903060926_LeonChangeNav.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="7.1.0" />
+    <PackageReference Include="MailKit" Version="2.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
