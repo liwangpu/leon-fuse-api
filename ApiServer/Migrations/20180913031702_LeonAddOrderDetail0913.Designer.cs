@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180913031702_LeonAddOrderDetail0913")]
+    partial class LeonAddOrderDetail0913
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -753,6 +754,8 @@ namespace ApiServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrderDetailStateId");
+
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetails");
@@ -1445,6 +1448,11 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.OrderDetail", b =>
                 {
+                    b.HasOne("ApiModel.Entities.OrderDetailState", "OrderDetailState")
+                        .WithMany()
+                        .HasForeignKey("OrderDetailStateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("ApiModel.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId");

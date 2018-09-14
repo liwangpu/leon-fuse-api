@@ -36,7 +36,7 @@ namespace ApiServer.Controllers.Design
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task<IActionResult> _UpdateGroup([FromBody]ProductReplaceGroupEditModel model)
+        protected async Task<IActionResult> _UpdateGroup([FromBody]ProductReplaceGroupEditModel model)
         {
             var mapping = new Func<ProductReplaceGroup, Task<ProductReplaceGroup>>(async (entity) =>
             {

@@ -1,18 +1,22 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using BambooCore;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Repositories
 {
     public class OrderRepository : ListableRepository<Order, OrderDTO>
     {
+        #region 构造函数
         public OrderRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
-            : base(context, permissionTreeRep)
+    : base(context, permissionTreeRep)
         {
         }
+        #endregion
 
         public override ResourceTypeEnum ResourceTypeSetting
         {
@@ -30,34 +34,71 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public override async Task<OrderDTO> GetByIdAsync(string id)
         {
-            var data = await _GetByIdAsync(id);
-            if (!string.IsNullOrWhiteSpace(data.Content))
+            //var data = await _GetByIdAsync(id);
+            var data = await _DbContext.Orders.Include(x => x.OrderDetails).Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (data.OrderDetails != null && data.OrderDetails.Count > 0)
             {
-                data.ContentIns = JsonConvert.DeserializeObject<OrderContent>(data.Content);
-                if (data.ContentIns != null && data.ContentIns.Items != null && data.ContentIns.Items.Count > 0)
+                for (int idx = data.OrderDetails.Count - 1; idx >= 0; idx--)
                 {
-                    for (int idx = data.ContentIns.Items.Count - 1; idx >= 0; idx--)
+                    var item = data.OrderDetails[idx];
+                    item.ProductSpec = await _DbContext.ProductSpec.Where(x => x.Id == item.ProductSpecId).Select(x => new ProductSpec() { Name = x.Name, ProductId = x.ProductId, Icon = x.Icon }).FirstOrDefaultAsync();
+                    if (item.ProductSpec != null)
                     {
-                        var cur = data.ContentIns.Items[idx];
-                        if (string.IsNullOrWhiteSpace(cur.ProductSpecId))
-                            continue;
+                        item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Name = x.Name }).FirstOrDefaultAsync();
 
-
-                        var spec = await _DbContext.ProductSpec.Include(x => x.Product).FirstOrDefaultAsync(x => x.Id == cur.ProductSpecId);
-                        if (spec != null)
+                        if (!string.IsNullOrWhiteSpace(item.ProductSpec.Icon))
                         {
-                            cur.ProductSpecName = spec.Name;
-                            cur.ProductName = spec.Product != null ? spec.Product.Name : "";
-                            data.ContentIns.Items[idx] = cur;
+                            item.ProductSpec.IconFileAsset = await _DbContext.Files.FindAsync(item.ProductSpec.Icon);
+                            //以第一个产品作为订单icon
+                            if (idx == 0)
+                                data.IconFileAsset = item.ProductSpec.IconFileAsset;
                         }
                     }
                 }
             }
-            if (!string.IsNullOrWhiteSpace(data.Icon))
-            {
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
-            }
+
+            data.CreatorName = await _DbContext.Accounts.Where(x => x.Id == data.Creator).Select(x => x.Name).FirstOrDefaultAsync();
+            data.ModifierName = await _DbContext.Accounts.Where(x => x.Id == data.Modifier).Select(x => x.Name).FirstOrDefaultAsync();
             return data.ToDTO();
+        }
+        #endregion
+
+        #region CreateAsync 创建订单
+        /// <summary>
+        /// 创建订单
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public override async Task CreateAsync(string accid, Order data)
+        {
+            var currentAcc = await _DbContext.Accounts.FindAsync(accid);
+            data.Id = GuidGen.NewGUID();
+            data.Creator = accid;
+            data.Modifier = accid;
+            data.CreatedTime = DateTime.Now;
+            data.ModifiedTime = data.CreatedTime;
+            data.OrganizationId = currentAcc.OrganizationId;
+            if (data.OrderDetails != null && data.OrderDetails.Count > 0)
+            {
+                for (int idx = data.OrderDetails.Count - 1; idx >= 0; idx--)
+                {
+                    var item = data.OrderDetails[idx];
+                    item.Id = GuidGen.NewGUID();
+                    item.Creator = accid;
+                    item.Modifier = accid;
+                    item.CreatedTime = data.CreatedTime;
+                    item.ModifiedTime = data.CreatedTime;
+                    item.OrganizationId = currentAcc.OrganizationId;
+                    item.OrderDetailStateId = (int)OrderDetailStateEnum.Confirm;
+                    item.ProductSpec = await _DbContext.ProductSpec.Where(x => x.Id == item.ProductSpecId).Select(x => new ProductSpec() { Name = x.Name, ProductId = x.ProductId }).FirstOrDefaultAsync();
+                    if (item.ProductSpec != null)
+                        item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Name = x.Name }).FirstOrDefaultAsync();
+
+                }
+            }
+            _DbContext.Orders.Add(data);
+            await _DbContext.SaveChangesAsync();
         }
         #endregion
     }

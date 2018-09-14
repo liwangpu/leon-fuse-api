@@ -472,23 +472,23 @@ namespace ApiServer.Controllers
         #endregion
 
         #region ChangeContent 更新套餐详情信息
-        /// <summary>
-        /// 更新套餐详情信息
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        [Route("ChangeContent")]
-        [HttpPost]
-        public async Task<IActionResult> ChangeContent(string id, [FromBody]OrderContent content)
-        {
-            var mapping = new Func<Package, Task<Package>>(async (entity) =>
-            {
-                entity.Content = JsonConvert.SerializeObject(content);
-                return await Task.FromResult(entity);
-            });
-            return await _PutRequest(id, mapping);
-        }
+        /////// <summary>
+        ///// 更新套餐详情信息
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <param name="content"></param>
+        ///// <returns></returns>
+        //[Route("ChangeContent")]
+        //[HttpPost]
+        //public async Task<IActionResult> ChangeContent(string id, [FromBody]OrderContent content)
+        //{
+        //    var mapping = new Func<Package, Task<Package>>(async (entity) =>
+        //    {
+        //        entity.Content = JsonConvert.SerializeObject(content);
+        //        return await Task.FromResult(entity);
+        //    });
+        //    return await _PutRequest(id, mapping);
+        //}
         #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
@@ -172,6 +173,16 @@ namespace ApiServer.Models
     }
     #endregion
 
+
+    public class OrderDetailCreateModel
+    {
+        public string ProductSpecId { get; set; }
+        public int Num { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string Remark { get; set; }
+    }
+
     #region OrderCreateModel 订单创建模型
     /// <summary>
     /// 订单创建模型
@@ -182,11 +193,13 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        //[Required(ErrorMessage = "必填信息")]
-        public string Content { get; set; }
-        public string State { get; set; }
-        public string IconAssetId { get; set; }
-        public DateTime StateTime { get; set; }
+
+        public List<OrderDetailCreateModel> Content { get; set; }
+        ////[Required(ErrorMessage = "必填信息")]
+        //public string Content { get; set; }
+        //public string State { get; set; }
+        //public string IconAssetId { get; set; }
+        //public DateTime StateTime { get; set; }
     }
     #endregion
 

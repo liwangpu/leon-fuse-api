@@ -30,6 +30,9 @@
     <Compile Remove="Data\RepositoryDefines.cs" />
     <Compile Remove="Migrations\20180816094446_LeonAddNavigation20180816.cs" />
     <Compile Remove="Migrations\20180903060926_LeonChangeNav.cs" />
+    <Compile Remove="Migrations\20180913030955_LeonAddOrderDetail.cs" />
+    <Compile Remove="Migrations\20180913031045_LeonAddOrderDetail0913.cs" />
+    <Compile Remove="Migrations\20180913031433_LeonAddOrderDetail0913.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 
