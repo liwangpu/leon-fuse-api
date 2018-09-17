@@ -3,6 +3,7 @@ using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Services;
 using BambooCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -65,6 +66,37 @@ namespace ApiServer.Repositories
             data.ModifierName = await _DbContext.Accounts.Where(x => x.Id == data.Modifier).Select(x => x.Name).FirstOrDefaultAsync();
             return data.ToDTO();
         }
+        #endregion
+
+        #region SatisfyCreateAsync 校验数据是否符合创建规范
+        /// <summary>
+        /// 校验数据是否符合创建规范
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <param name="modelState"></param>
+        /// <returns></returns>
+        public override async Task SatisfyCreateAsync(string accid, Order data, ModelStateDictionary modelState)
+        {
+            if (data.OrderDetails == null && data.OrderDetails.Count <= 0)
+            {
+                modelState.AddModelError("OrderDetails", "订单不包含任何产品信息");
+            }
+            else
+            {
+                for (int idx = data.OrderDetails.Count - 1; idx >= 0; idx--)
+                {
+                    var item = data.OrderDetails[idx];
+                    var exist = await _DbContext.ProductSpec.AnyAsync(x => x.Id == item.ProductSpecId);
+                    if (!exist)
+                    {
+                        modelState.AddModelError("ProductSpecId", $"不存在Id为{item.ProductSpecId }的产品规格信息");
+                        return;
+                    }
+                }
+            }
+
+        } 
         #endregion
 
         #region CreateAsync 创建订单
