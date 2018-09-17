@@ -26,6 +26,8 @@ namespace ApiModel.Entities
         public string State { get; set; }
         public DateTime StateTime { get; set; }
         [NotMapped]
+        public string Url { get; set; }
+        [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 
         public OrderDTO ToDTO()
@@ -41,7 +43,7 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
-            //dto.Content = Content;
+            dto.Url = Url;
             dto.CategoryName = CategoryName;
 
             if (IconFileAsset != null)
@@ -66,6 +68,7 @@ namespace ApiModel.Entities
         public string IconAssetId { get; set; }
         public string State { get; set; }
         public string Icon { get; set; }
+        public string Url { get; set; }
         public FileAsset IconFileAsset { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
     }

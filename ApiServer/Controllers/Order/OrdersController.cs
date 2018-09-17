@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
-    [Authorize]
     [Route("/[controller]")]
     public class OrdersController : ListableController<Order, OrderDTO>
     {
@@ -33,6 +32,7 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<OrderDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
@@ -56,7 +56,11 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(OrderDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            var exist = await _Repository.ExistAsync(id);
+            if (!exist)
+                return NotFound();
+            var dto = await _Repository.GetByIdAsync(id);
+            return Ok(dto);
         }
         #endregion
 
@@ -66,6 +70,7 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(typeof(OrderDTO), 200)]

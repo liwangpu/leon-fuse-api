@@ -1,8 +1,10 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Services;
 using BambooCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,10 +13,13 @@ namespace ApiServer.Repositories
 {
     public class OrderRepository : ListableRepository<Order, OrderDTO>
     {
+        public AppConfig appConfig { get; }
+
         #region 构造函数
-        public OrderRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep)
+        public OrderRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep, IOptions<AppConfig> settingsOptions)
     : base(context, permissionTreeRep)
         {
+            appConfig = settingsOptions.Value;
         }
         #endregion
 
@@ -34,7 +39,6 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public override async Task<OrderDTO> GetByIdAsync(string id)
         {
-            //var data = await _GetByIdAsync(id);
             var data = await _DbContext.Orders.Include(x => x.OrderDetails).Where(x => x.Id == id).FirstOrDefaultAsync();
             if (data.OrderDetails != null && data.OrderDetails.Count > 0)
             {
@@ -56,7 +60,7 @@ namespace ApiServer.Repositories
                     }
                 }
             }
-
+            data.Url = appConfig.Plugins.OrderViewer + "?order=" + data.Id;
             data.CreatorName = await _DbContext.Accounts.Where(x => x.Id == data.Creator).Select(x => x.Name).FirstOrDefaultAsync();
             data.ModifierName = await _DbContext.Accounts.Where(x => x.Id == data.Modifier).Select(x => x.Name).FirstOrDefaultAsync();
             return data.ToDTO();
@@ -79,6 +83,7 @@ namespace ApiServer.Repositories
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = data.CreatedTime;
             data.OrganizationId = currentAcc.OrganizationId;
+            data.Url = appConfig.Plugins.OrderViewer + "?order=" + data.Id;
             if (data.OrderDetails != null && data.OrderDetails.Count > 0)
             {
                 for (int idx = data.OrderDetails.Count - 1; idx >= 0; idx--)

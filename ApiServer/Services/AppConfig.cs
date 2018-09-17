@@ -9,6 +9,7 @@
         public string MessageMail { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public SMTPSettings SMTPSettings { get; set; }
+        public Plugins Plugins { get; set; }
     }
 
     /// <summary>
@@ -29,5 +30,10 @@
         public string NickName { get; set; }
         public string Hosts { get; set; }
         public int Port { get; set; }
+    }
+
+    public class Plugins
+    {
+        public string OrderViewer { get; set; }
     }
 }
