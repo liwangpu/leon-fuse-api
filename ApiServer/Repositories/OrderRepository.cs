@@ -49,7 +49,7 @@ namespace ApiServer.Repositories
                     item.ProductSpec = await _DbContext.ProductSpec.Where(x => x.Id == item.ProductSpecId).Select(x => new ProductSpec() { Name = x.Name, ProductId = x.ProductId, Icon = x.Icon }).FirstOrDefaultAsync();
                     if (item.ProductSpec != null)
                     {
-                        item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Name = x.Name }).FirstOrDefaultAsync();
+                        item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Name = x.Name, Description = x.Description }).FirstOrDefaultAsync();
 
                         if (!string.IsNullOrWhiteSpace(item.ProductSpec.Icon))
                         {
@@ -96,7 +96,7 @@ namespace ApiServer.Repositories
                 }
             }
 
-        } 
+        }
         #endregion
 
         #region CreateAsync 创建订单
