@@ -60,7 +60,7 @@ namespace ApiServer.Repositories
             defaultShare.Id = GuidGen.NewGUID();
             defaultShare.Name = "默认分享";
             defaultShare.StartShareTimeStamp = DateTime.UtcNow.ReferUnixTimestampFromDateTime();
-            defaultShare.StopShareTimeStamp = DateTime.UtcNow.AddYears(1).ReferUnixTimestampFromDateTime();
+            defaultShare.StopShareTimeStamp = DateTime.UtcNow.AddDays(2).ReferUnixTimestampFromDateTime();
             defaultShare.Creator = accid;
             defaultShare.Modifier = accid;
             defaultShare.OrganizationId = currentAcc.OrganizationId;

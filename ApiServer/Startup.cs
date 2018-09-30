@@ -85,7 +85,7 @@ namespace ApiServer
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Damaozhu API", Version = "v1" });
                 string dirPath = System.IO.Path.GetDirectoryName(typeof(Startup).Assembly.CodeBase);
-                string xmlPath = dirPath + "/ApiServer.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, "ApiServer.xml");
                 if (System.IO.File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
                 else

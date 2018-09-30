@@ -1,6 +1,7 @@
 ﻿using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Models;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -30,6 +31,21 @@ namespace ApiServer.Repositories
             {
                 return ResourceTypeEnum.Organizational;
             }
+        }
+
+        public override async Task<PagedData<Order>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<Order>, Task<IQueryable<Order>>> advanceQuery = null)
+        {
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
+            if (result.Data != null && result.Data.Count > 0)
+            {
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var item = result.Data[idx];
+
+
+                }
+            }
+            return result;
         }
 
         #region GetByIdAsync 根据Id返回实体DTO数据信息

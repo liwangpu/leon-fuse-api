@@ -17,6 +17,8 @@
             dto.Role = Role;
             dto.Url = Url;
             dto.Icon = Icon;
+            dto.LValue = LValue;
+            dto.RValue = RValue;
             dto.Permission = Permission;
 
             return dto;
