@@ -69,7 +69,7 @@ namespace ApiServer.Controllers.UIDesigner
             {
                 var model = new BSModelDefine()
                 {
-                    Resource = "nav."+modelName,
+                    Resource = "nav." + modelName,
                     Icon = "map",
                     DisplayModel = new List<string>() { "List" },
                     Fields = new List<BSModelField>()

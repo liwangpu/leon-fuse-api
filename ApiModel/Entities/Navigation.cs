@@ -6,6 +6,7 @@
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Permission { get; set; }
+        public string PagedModel { get; set; }
 
         public NavigationDTO ToDTO()
         {
@@ -20,7 +21,7 @@
             dto.LValue = LValue;
             dto.RValue = RValue;
             dto.Permission = Permission;
-
+            dto.PagedModel = PagedModel;
             return dto;
         }
     }
@@ -31,5 +32,6 @@
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Permission { get; set; }
+        public string PagedModel { get; set; }
     }
 }
