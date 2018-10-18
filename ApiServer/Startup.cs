@@ -131,6 +131,7 @@ namespace ApiServer
                 ServeUnknownFileTypes = true,
                 OnPrepareResponse = ctx =>
                 {
+                    ctx.Context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                     if (ctx.Context.Response.Headers.ContainsKey("Content-Type") == false)
                         ctx.Context.Response.Headers.Add("Content-Type", "application/octet-stream");
                 },
@@ -198,7 +199,7 @@ namespace ApiServer
             });
 
             //初始化站点服务
-            InitSiteServices(serviceProvider);
+            //InitSiteServices(serviceProvider);
         }
 
         /// <summary>

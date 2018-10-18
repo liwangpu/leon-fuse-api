@@ -7,12 +7,14 @@
         public string Icon { get; set; }
         public string Permission { get; set; }
         public string PagedModel { get; set; }
+        public string Resource { get; set; }
 
         public NavigationDTO ToDTO()
         {
             var dto = new NavigationDTO();
             dto.Id = Id;
             dto.Name = Name;
+            dto.Resource = Resource;
             dto.NodeType = NodeType;
             dto.ParentId = ParentId;
             dto.Role = Role;
@@ -33,5 +35,6 @@
         public string Icon { get; set; }
         public string Permission { get; set; }
         public string PagedModel { get; set; }
+        public string Resource { get; set; }
     }
 }

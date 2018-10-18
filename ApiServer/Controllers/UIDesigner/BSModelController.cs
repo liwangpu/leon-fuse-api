@@ -69,14 +69,14 @@ namespace ApiServer.Controllers.UIDesigner
             {
                 var model = new BSModelDefine()
                 {
-                    Resource = "nav." + modelName,
+                    Resource = modelName,
                     Icon = "map",
                     DisplayModel = new List<string>() { "List" },
                     Fields = new List<BSModelField>()
                 {
-                    new BSModelField(){ Id="Icon",Name="Icon",Width=85}
-                   , new BSModelField(){ Id="Name",Name="Name",Width=125}
-                    , new BSModelField(){ Id="Description",Name="Description",Width=185}
+                    new BSModelField(){ Id="icon",Name="glossary.Icon",Width=85}
+                   , new BSModelField(){ Id="name",Name="glossary.Name",Width=125}
+                    , new BSModelField(){ Id="description",Name="glossary.Description",Width=185}
                 },
                     PageSizeOptions = new List<int>() { 15, 25, 500 }
                 };
