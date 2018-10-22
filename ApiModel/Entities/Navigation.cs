@@ -8,6 +8,7 @@
         public string Permission { get; set; }
         public string PagedModel { get; set; }
         public string Resource { get; set; }
+        public string Field { get; set; }
 
         public NavigationDTO ToDTO()
         {
@@ -24,6 +25,7 @@
             dto.RValue = RValue;
             dto.Permission = Permission;
             dto.PagedModel = PagedModel;
+            dto.Field = Field;
             return dto;
         }
     }
@@ -36,5 +38,6 @@
         public string Permission { get; set; }
         public string PagedModel { get; set; }
         public string Resource { get; set; }
+        public string Field { get; set; }
     }
 }

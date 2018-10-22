@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApiDbContext.cs" />
+    <Compile Remove="Transfer\SolutionTransfer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.0" />
   </ItemGroup>
 
@@ -13,6 +18,10 @@
     <ProjectReference Include="..\ApiModel\ApiModel.csproj" />
     <ProjectReference Include="..\ApiServer\ApiServer.csproj" />
     <ProjectReference Include="..\BambooCore\BambooCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Transfer\" />
   </ItemGroup>
 
 </Project>

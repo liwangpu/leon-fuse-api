@@ -48,24 +48,24 @@ namespace ApiServer.Controllers.UIDesigner
                 return Ok(refer);
 
 
-            if (modelName == "BSModel")
-            {
-                var model = new BSModelDefine()
-                {
-                    Resource = "BSModel",
-                    Icon = "map",
-                    DisplayModel = new List<string>() { "List" },
-                    Fields = new List<BSModelField>()
-                {
-                    //new BSModelField(){ Id="Icon",Name="Icon",Width=85}
-                    new BSModelField(){ Id="Name",Name="Name",Width=125}
-                    , new BSModelField(){ Id="Description",Name="Description",Width=185}
-                },
-                    PageSizeOptions = new List<int>() { 15, 25, 500 }
-                };
-                return Ok(model);
-            }
-            else
+            //if (modelName == "BSModel")
+            //{
+            //    var model = new BSModelDefine()
+            //    {
+            //        Resource = "BSModel",
+            //        Icon = "map",
+            //        DisplayModel = new List<string>() { "List" },
+            //        Fields = new List<BSModelField>()
+            //    {
+            //        //new BSModelField(){ Id="Icon",Name="Icon",Width=85}
+            //        new BSModelField(){ Id="Name",Name="Name",Width=125}
+            //        , new BSModelField(){ Id="Description",Name="Description",Width=185}
+            //    },
+            //        PageSizeOptions = new List<int>() { 15, 25, 500 }
+            //    };
+            //    return Ok(model);
+            //}
+            //else
             {
                 var model = new BSModelDefine()
                 {
@@ -75,8 +75,8 @@ namespace ApiServer.Controllers.UIDesigner
                     Fields = new List<BSModelField>()
                 {
                     new BSModelField(){ Id="icon",Name="glossary.Icon",Width=85}
-                   , new BSModelField(){ Id="name",Name="glossary.Name",Width=125}
-                    , new BSModelField(){ Id="description",Name="glossary.Description",Width=185}
+                   , new BSModelField(){ Id="name",Name="glossary.Name",Width=125,FormType="text",FormRequire=true,FormIndex=1}
+                    , new BSModelField(){ Id="description",Name="glossary.Description",Width=185,FormType="textarea",FormIndex=2}
                 },
                     PageSizeOptions = new List<int>() { 15, 25, 500 }
                 };
@@ -129,6 +129,12 @@ namespace ApiServer.Controllers.UIDesigner
         public string Description { get; set; }
         public decimal Width { get; set; }
         public string Expression { get; set; }
+        public string FormType { get; set; }
+        public string FormMin { get; set; }
+        public string FormMax { get; set; }
+        public bool FormRequire { get; set; }
+        public int FormIndex { get; set; }
+
 
         //    id: string;
         //name: string;
