@@ -153,6 +153,9 @@ namespace ApiServer.Models
         //[StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string NodeType { get; set; }
         public string ParentId { get; set; }
+        public string PagedModel { get; set; }
+        public string Resource { get; set; }
+        public string Field { get; set; }
     }
 
     public class NavigationEditModel

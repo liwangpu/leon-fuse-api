@@ -79,7 +79,7 @@
         },
         {
           "id": "product-category",
-          "title": "nav.ProductCategorys",
+          "title": "nav.ProductCategory",
           "type": "item",
           "icon": "chrome_reader_mode",
           "url": "/app/product-category",

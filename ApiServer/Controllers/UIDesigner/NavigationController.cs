@@ -61,6 +61,9 @@ namespace ApiServer.Controllers.UIDesigner
             metadata.Icon = model.Icon;
             metadata.NodeType = model.NodeType;
             metadata.Permission = model.Permission;
+            metadata.Field = model.Field;
+            metadata.PagedModel = model.PagedModel;
+            metadata.Resource = model.Resource;
             metadata.ParentId = model.ParentId;
             metadata.OrganizationId = account.OrganizationId;
             metadata.RootOrganizationId = rootNode.RootOrganizationId;
