@@ -228,9 +228,18 @@ namespace ApiServer.Controllers
             }
             p.Brief = acc.Description;
             p.Location = acc.Location;
+            p.Mail = acc.Mail;
+            p.Phone = acc.Phone;
+            p.ActivationTime = acc.ActivationTime;
+            p.ExpireTime = acc.ExpireTime;
             p.OrganizationId = acc.OrganizationId;
             p.Organization = (await _Repository._DbContext.Organizations.FirstAsync(x => x.Id == acc.OrganizationId)).Name;
             p.DepartmentId = acc.DepartmentId;
+            if (!string.IsNullOrWhiteSpace(p.DepartmentId))
+            {
+                var dep = await _Repository._DbContext.Departments.FirstOrDefaultAsync(x => x.Id == p.DepartmentId);
+                p.Department = dep != null ? dep.Name : "";
+            }
             p.Role = acc.Type;
             return p;
         }

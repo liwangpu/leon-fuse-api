@@ -42,17 +42,20 @@ namespace ApiModel.Entities
             dto.CategoryName = CategoryName;
             if (Materials != null && Materials.Count > 0)
                 dto.Materials = Materials.Select(x => x.ToDTO()).ToList();
-            if (FileAsset != null)
-            {
-                dto.FileAsset = FileAsset.ToDTO();
-                dto.Url = FileAsset.Url;
-            }
 
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
                 dto.IconAssetId = IconFileAsset.Id;
             }
+
+            if (FileAsset != null)
+            {
+                dto.FileAsset = FileAsset.ToDTO();
+                dto.Url = FileAsset.Url;
+            }
+
+
 
             return dto;
         }

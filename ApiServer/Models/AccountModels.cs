@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Models
 {
@@ -83,7 +84,10 @@ namespace ApiServer.Models
         public string OrganizationId { get; set; }
         public string Organization { get; set; }
         public string DepartmentId { get; set; }
+        public string Department { get; set; }
         public string Role { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
     }
     #endregion
 
