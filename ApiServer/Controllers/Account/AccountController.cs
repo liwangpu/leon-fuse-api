@@ -159,19 +159,25 @@ namespace ApiServer.Controllers
         {
             var mapping = new Func<Account, Task<Account>>(async (entity) =>
             {
-                entity.Name = model.Name;
-                entity.Description = model.Description;
+                if (!string.IsNullOrWhiteSpace(model.Name))
+                    entity.Name = model.Name;
+                if (!string.IsNullOrWhiteSpace(model.Description))
+                    entity.Description = model.Description;
                 if (!string.IsNullOrWhiteSpace(model.Password))
                     entity.Password = Md5.CalcString(model.Password);
-                entity.Mail = model.Mail;
                 if (!string.IsNullOrWhiteSpace(model.ActivationTime))
                     entity.ActivationTime = DataHelper.ParseDateTime(model.ActivationTime);
                 if (!string.IsNullOrWhiteSpace(model.ExpireTime))
                     entity.ExpireTime = DataHelper.ParseDateTime(model.ExpireTime);
-                entity.Location = model.Location;
-                entity.Phone = model.Phone;
-                entity.Mail = model.Mail;
-                entity.DepartmentId = model.DepartmentId;
+                if (!string.IsNullOrWhiteSpace(model.DepartmentId))
+                    entity.DepartmentId = model.DepartmentId;
+                if (!string.IsNullOrWhiteSpace(model.Mail))
+                    entity.Mail = model.Mail;
+                if (!string.IsNullOrWhiteSpace(model.Location))
+                    entity.Location = model.Location;
+                if (!string.IsNullOrWhiteSpace(model.Phone))
+                    entity.Phone = model.Phone;
+
                 entity.Type = await _GetAccountType(model.IsAdmin, model.Id);
                 return await Task.FromResult(entity);
             });
