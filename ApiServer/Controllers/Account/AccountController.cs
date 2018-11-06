@@ -239,7 +239,8 @@ namespace ApiServer.Controllers
             p.ActivationTime = acc.ActivationTime;
             p.ExpireTime = acc.ExpireTime;
             p.OrganizationId = acc.OrganizationId;
-            p.Organization = (await _Repository._DbContext.Organizations.FirstAsync(x => x.Id == acc.OrganizationId)).Name;
+            var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == acc.OrganizationId);
+            p.Organization = organ != null ? organ.Name : "";
             p.DepartmentId = acc.DepartmentId;
             if (!string.IsNullOrWhiteSpace(p.DepartmentId))
             {
