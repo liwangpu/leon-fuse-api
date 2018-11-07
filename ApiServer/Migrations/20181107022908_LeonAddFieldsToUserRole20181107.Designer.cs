@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181107022908_LeonAddFieldsToUserRole20181107")]
+    partial class LeonAddFieldsToUserRole20181107
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1317,8 +1318,6 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ActiveFlag");
 
-                    b.Property<string>("ApplyOrgans");
-
                     b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
@@ -1337,6 +1336,8 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Organization");
+
                     b.Property<string>("OrganizationId");
 
                     b.Property<int>("ResourceType");
@@ -1346,68 +1347,6 @@ namespace ApiServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.WorkFlow", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<int>("ResourceType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WorkFlows");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.WorkFlowItem", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OperateRoles");
-
-                    b.Property<string>("SubWorkFlowId");
-
-                    b.Property<string>("WorkFlowId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkFlowId");
-
-                    b.ToTable("WorkFlowItems");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>
@@ -1609,13 +1548,6 @@ namespace ApiServer.Migrations
                     b.HasOne("ApiModel.Entities.FileAsset", "IconFileAsset")
                         .WithMany()
                         .HasForeignKey("FileAssetId");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.WorkFlowItem", b =>
-                {
-                    b.HasOne("ApiModel.Entities.WorkFlow", "WorkFlow")
-                        .WithMany("WorkFlowItems")
-                        .HasForeignKey("WorkFlowId");
                 });
 
             modelBuilder.Entity("BambooCommon.PermissionItem", b =>

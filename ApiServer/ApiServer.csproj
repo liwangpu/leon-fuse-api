@@ -33,6 +33,7 @@
     <Compile Remove="Migrations\20180913030955_LeonAddOrderDetail.cs" />
     <Compile Remove="Migrations\20180913031045_LeonAddOrderDetail0913.cs" />
     <Compile Remove="Migrations\20180913031433_LeonAddOrderDetail0913.cs" />
+    <Compile Remove="Migrations\20181107080559_LeonAddWorkFlow20181107.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 

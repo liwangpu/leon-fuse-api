@@ -132,4 +132,31 @@ namespace ApiServer.Models
     }
     #endregion
 
+
+    public class UserRoleCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Role { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string IconAssetId { get; set; }
+        public string ApplyOrgans { get; set; }
+    }
+
+    public class UserRoleEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Role { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string IconAssetId { get; set; }
+        public string ApplyOrgans { get; set; }
+    }
+
 }

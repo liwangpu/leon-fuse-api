@@ -214,6 +214,11 @@ namespace ApiServer.Controllers.Common
             if (!exist)
                 return NotFound();
 
+            var data = await _Repository._GetByIdAsync(id);
+            await _Repository.SatisfyDeleteAsync(accid, data, ModelState);
+            if (!ModelState.IsValid)
+                return new ValidationFailedResult(ModelState);
+
             var canDelete = await _Repository.CanDeleteAsync(accid, id);
             if (!canDelete)
                 return Forbid();
@@ -435,6 +440,11 @@ namespace ApiServer.Controllers.Common
                         ModelState.AddModelError("id", $"\"{curid}\"对应记录不存在");
                         return new ValidationFailedResult(ModelState);
                     }
+
+                    var data = await _Repository._GetByIdAsync(curid);
+                    await _Repository.SatisfyDeleteAsync(accid, data, ModelState);
+                    if (!ModelState.IsValid)
+                        return new ValidationFailedResult(ModelState);
 
                     var canDelete = await _Repository.CanDeleteAsync(accid, curid);
                     if (!canDelete)

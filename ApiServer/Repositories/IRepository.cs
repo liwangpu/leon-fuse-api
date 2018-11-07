@@ -20,6 +20,7 @@ namespace ApiServer.Repositories
         ITreeRepository<PermissionTree> _PermissionTreeRepository { get; }
         Task SatisfyCreateAsync(string accid, T data, ModelStateDictionary modelState);
         Task SatisfyUpdateAsync(string accid, T data, ModelStateDictionary modelState);
+        Task SatisfyDeleteAsync(string accid, T data, ModelStateDictionary modelState);
         Task<bool> CanCreateAsync(string accid);
         Task<bool> CanUpdateAsync(string accid, string id);
         Task<bool> CanDeleteAsync(string accid, string id);

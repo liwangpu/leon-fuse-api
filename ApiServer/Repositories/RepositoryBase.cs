@@ -405,6 +405,11 @@ namespace ApiServer.Repositories
         }
         #endregion
 
+        public virtual async Task SatisfyDeleteAsync(string accid, T data, ModelStateDictionary modelState)
+        {
+            await Task.FromResult(string.Empty);
+        }
+
         #region virtual CanCreateAsync 判断用户是否有权限创建数据
         /// <summary>
         /// 判断用户是否有权限创建数据
