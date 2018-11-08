@@ -8,6 +8,10 @@ namespace ApiModel.Entities
     public class WorkFlow : EntityBase, IListable, IDTOTransfer<WorkFlowDTO>
     {
         public string Icon { get; set; }
+        /// <summary>
+        /// 适用组织类型,逗号分隔
+        /// </summary>
+        public string ApplyOrgans { get; set; }
         public List<WorkFlowItem> WorkFlowItems { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
@@ -18,7 +22,6 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Description = Description;
-            dto.OrganizationId = OrganizationId;
             dto.ActiveFlag = ActiveFlag;
             dto.Creator = Creator;
             dto.Modifier = Modifier;
@@ -26,6 +29,7 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            dto.ApplyOrgans = ApplyOrgans;
             return dto;
         }
     }
@@ -33,6 +37,8 @@ namespace ApiModel.Entities
     public class WorkFlowDTO : EntityBase, IListable
     {
         public string Icon { get; set; }
+        public string ApplyOrgans { get; set; }
         public FileAsset IconFileAsset { get; set; }
+        public List<WorkFlowItem> WorkFlowItems { get; set; }
     }
 }

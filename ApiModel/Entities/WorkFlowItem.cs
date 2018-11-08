@@ -14,5 +14,6 @@ namespace ApiModel.Entities
         public WorkFlow WorkFlow { get; set; }
         public string SubWorkFlowId { get; set; }
         public string OperateRoles { get; set; }
+        public int FlowGrade { get; set; }
     }
 }
