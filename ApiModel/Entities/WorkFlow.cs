@@ -30,6 +30,10 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.ApplyOrgans = ApplyOrgans;
+            if (WorkFlowItems != null && WorkFlowItems.Count > 0)
+                dto.WorkFlowItems = WorkFlowItems;
+            else
+                dto.WorkFlowItems = new List<WorkFlowItem>();
             return dto;
         }
     }

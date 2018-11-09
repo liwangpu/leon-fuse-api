@@ -30,7 +30,7 @@ namespace ApiServer.Models
     {
         public string Id { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string ParentFlowId { get; set; }
+        public string workFlowId { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
         public string Description { get; set; }

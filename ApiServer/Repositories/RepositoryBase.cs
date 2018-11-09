@@ -134,7 +134,7 @@ namespace ApiServer.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<T> _GetByIdAsync(string id)
+        public virtual async Task<T> _GetByIdAsync(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
