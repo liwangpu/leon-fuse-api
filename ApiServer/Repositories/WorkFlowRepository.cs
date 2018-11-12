@@ -32,6 +32,17 @@ namespace ApiServer.Repositories
             if (data.WorkFlowItems != null && data.WorkFlowItems.Count > 0)
             {
                 data.WorkFlowItems = data.WorkFlowItems.OrderBy(x => x.FlowGrade).ToList();
+                for (int idx = 0, len = data.WorkFlowItems.Count; idx < len; idx++)
+                {
+                    var item = data.WorkFlowItems[idx];
+                    item.WorkFlow = null;
+                    if (!string.IsNullOrWhiteSpace(item.SubWorkFlowId))
+                    {
+                        var refSubWorkFlow = await _DbContext.WorkFlows.FirstOrDefaultAsync(x => x.Id == item.SubWorkFlowId);
+                        if (refSubWorkFlow != null)
+                            item.SubWorkFlowName = refSubWorkFlow.Name;
+                    }
+                }
             }
             return data.ToDTO();
         }

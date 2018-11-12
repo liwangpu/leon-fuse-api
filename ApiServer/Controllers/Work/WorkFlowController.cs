@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -10,7 +6,10 @@ using ApiServer.Repositories;
 using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -104,7 +103,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-
+        #region UpdateWorkFlowItem 更新详细工作流程
+        /// <summary>
+        /// 更新详细工作流程
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("UpdateWorkFlowItem")]
         [HttpPut]
         [ValidateModel]
@@ -112,7 +116,6 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
         public async Task<IActionResult> UpdateWorkFlowItem([FromBody]WorkFlowItemEditModel model)
         {
-
             var mapping = new Func<WorkFlow, Task<WorkFlow>>(async (entity) =>
             {
                 var accid = AuthMan.GetAccountId(this);
@@ -156,7 +159,7 @@ namespace ApiServer.Controllers
                             curItem.Name = model.Name;
                             curItem.Description = model.Description;
                             curItem.OperateRoles = model.OperateRoles;
-                            curItem.FlowGrade = workFlowItems.Count;
+                            curItem.FlowGrade = destGradeIndex;
                             curItem.SubWorkFlowId = model.SubWorkFlowId;
                             curItem.Modifier = accid;
                             curItem.ModifiedTime = DateTime.Now;
@@ -185,7 +188,41 @@ namespace ApiServer.Controllers
                 entity.ModifiedTime = DateTime.Now;
                 return await Task.FromResult(entity);
             });
-            return await _PutRequest(model.workFlowId, mapping);
+            return await _PutRequest(model.WorkFlowId, mapping);
         }
+        #endregion
+
+        #region DeleteWorkFlowItem 删除详细工作流程
+        /// <summary>
+        /// 删除详细工作流程
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteWorkFlowItem")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(WorkFlowDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteWorkFlowItem([FromBody]WorkFlowItemDeleteModel model)
+        {
+            var mapping = new Func<WorkFlow, Task<WorkFlow>>(async (entity) =>
+            {
+                var accid = AuthMan.GetAccountId(this);
+                var workFlowItems = entity.WorkFlowItems != null ? entity.WorkFlowItems.Where(x => x.Id != model.Id).OrderBy(x => x.FlowGrade).ToList() : new List<WorkFlowItem>();
+                for (int idx = 0, len = workFlowItems.Count; idx < len; idx++)
+                {
+                    var item = workFlowItems[idx];
+                    item.FlowGrade = idx;
+                }
+
+
+                entity.WorkFlowItems = workFlowItems;
+                entity.Modifier = accid;
+                entity.ModifiedTime = DateTime.Now;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.WorkFlowId, mapping);
+        } 
+        #endregion
     }
 }

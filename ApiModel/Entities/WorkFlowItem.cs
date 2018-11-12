@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -15,5 +16,7 @@ namespace ApiModel.Entities
         public string SubWorkFlowId { get; set; }
         public string OperateRoles { get; set; }
         public int FlowGrade { get; set; }
+        [NotMapped]
+        public string SubWorkFlowName { get; set; }
     }
 }
