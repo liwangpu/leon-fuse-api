@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Repositories
 {
-    public class NavigationRepository : TreeRepository<Navigation>, ITreeRepository<Navigation>
+    public class NavigationRepository : RepositoryBase<Navigation, NavigationDTO>, IRepository<Navigation, NavigationDTO>
     {
-        public NavigationRepository(ApiDbContext context)
-            : base(context)
+        public NavigationRepository(ApiDbContext context, ITreeRepository<PermissionTree> permissionTreeRep) : base(context, permissionTreeRep)
         {
         }
     }

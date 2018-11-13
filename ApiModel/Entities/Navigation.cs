@@ -1,6 +1,8 @@
-﻿namespace ApiModel.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ApiModel.Entities
 {
-    public class Navigation : TreeBase, IDTOTransfer<NavigationDTO>
+    public class Navigation : EntityBase, IListable, IDTOTransfer<NavigationDTO>
     {
         public string Role { get; set; }
         public string Url { get; set; }
@@ -9,6 +11,9 @@
         public string PagedModel { get; set; }
         public string Resource { get; set; }
         public string Field { get; set; }
+        public string NodeType { get; set; }
+        [NotMapped]
+        public FileAsset IconFileAsset { get; set; }
 
         public NavigationDTO ToDTO()
         {
@@ -16,21 +21,18 @@
             dto.Id = Id;
             dto.Name = Name;
             dto.Resource = Resource;
-            dto.NodeType = NodeType;
-            dto.ParentId = ParentId;
             dto.Role = Role;
             dto.Url = Url;
             dto.Icon = Icon;
-            dto.LValue = LValue;
-            dto.RValue = RValue;
             dto.Permission = Permission;
             dto.PagedModel = PagedModel;
+            dto.NodeType = NodeType;
             dto.Field = Field;
             return dto;
         }
     }
 
-    public class NavigationDTO : TreeBase
+    public class NavigationDTO : EntityBase, IListable
     {
         public string Role { get; set; }
         public string Url { get; set; }
@@ -39,5 +41,7 @@
         public string PagedModel { get; set; }
         public string Resource { get; set; }
         public string Field { get; set; }
+        public string NodeType { get; set; }
+        public FileAsset IconFileAsset { get; set; }
     }
 }

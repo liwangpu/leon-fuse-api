@@ -40,13 +40,22 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<UserRoleDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string organType, bool excludeInner = false)
         {
-            var qMapping = new Action<List<string>>((query) =>
+            var advanceQuery = new Func<IQueryable<UserRole>, Task<IQueryable<UserRole>>>(async (query) =>
             {
-
+                if (!string.IsNullOrWhiteSpace(organType))
+                {
+                    query = query.Where(x => x.ApplyOrgans.Contains(organType));
+                }
+                if (excludeInner)
+                {
+                    query = query.Where(x => x.IsInner == false);
+                }
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return query;
             });
-            return await _GetPagingRequest(model, qMapping);
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
