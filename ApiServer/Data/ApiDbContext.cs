@@ -183,6 +183,10 @@ namespace ApiServer.Data
 
         public DbSet<WorkFlowItem> WorkFlowItems { get; set; }
 
+        public DbSet<WorkFlowRule> WorkFlowRules { get; set; }
+
+        public DbSet<WorkFlowRuleDetail> WorkFlowRuleDetails { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

@@ -32,6 +32,7 @@ namespace ApiServer.Repositories
             services.AddScoped<IRepository<ProductReplaceGroup, ProductReplaceGroupDTO>, ProductReplaceGroupRepository>();
             services.AddScoped<IRepository<UserRole, UserRoleDTO>, UserRoleRepository>();
             services.AddScoped<IRepository<WorkFlow, WorkFlowDTO>, WorkFlowRepository>();
+            services.AddScoped<IRepository<WorkFlowRule, WorkFlowRuleDTO>, WorkFlowRuleRepository>();
         }
     }
 }

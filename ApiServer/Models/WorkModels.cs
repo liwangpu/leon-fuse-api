@@ -46,4 +46,30 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string WorkFlowId { get; set; }
     }
+
+    public class WorkFlowRuleCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Keyword { get; set; }
+    }
+
+    public class WorkFlowRuleEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Keyword { get; set; }
+    }
+
+    public class WorkFlowRuleDefineModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Keyword { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string WorkFlowId { get; set; }
+    }
 }
