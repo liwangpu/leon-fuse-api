@@ -42,4 +42,21 @@ namespace ApiServer.Models
         public string Resource { get; set; }
         public string Field { get; set; }
     }
+
+
+    public class UserNavCreateModel
+    {
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class UserNavEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string Description { get; set; }
+    }
 }

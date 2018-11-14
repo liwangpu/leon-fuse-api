@@ -181,6 +181,8 @@ namespace ApiServer.Data
 
         public DbSet<UserNav> UserNavs { get; set; }
 
+        public DbSet<UserNavDetail> UserNavDetails { get; set; }
+
         public DbSet<WorkFlow> WorkFlows { get; set; }
 
         public DbSet<WorkFlowItem> WorkFlowItems { get; set; }
