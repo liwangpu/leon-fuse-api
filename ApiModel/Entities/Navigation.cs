@@ -4,7 +4,7 @@ namespace ApiModel.Entities
 {
     public class Navigation : EntityBase, IListable, IDTOTransfer<NavigationDTO>
     {
-        public string Role { get; set; }
+        public string Title { get; set; }
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Permission { get; set; }
@@ -12,6 +12,7 @@ namespace ApiModel.Entities
         public string Resource { get; set; }
         public string Field { get; set; }
         public string NodeType { get; set; }
+        public bool IsInner { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 
@@ -21,20 +22,22 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Resource = Resource;
-            dto.Role = Role;
             dto.Url = Url;
             dto.Icon = Icon;
             dto.Permission = Permission;
             dto.PagedModel = PagedModel;
             dto.NodeType = NodeType;
             dto.Field = Field;
+            dto.Title = Title;
+            dto.IsInner = IsInner;
             return dto;
         }
     }
 
     public class NavigationDTO : EntityBase, IListable
     {
-        public string Role { get; set; }
+        public bool IsInner { get; set; }
+        public string Title { get; set; }
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Permission { get; set; }

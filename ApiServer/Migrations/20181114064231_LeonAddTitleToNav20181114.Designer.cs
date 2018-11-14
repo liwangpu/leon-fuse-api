@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181114064231_LeonAddTitleToNav20181114")]
+    partial class LeonAddTitleToNav20181114
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -655,8 +656,6 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Icon");
 
-                    b.Property<bool>("IsInner");
-
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Modifier");
@@ -674,6 +673,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Resource");
 
                     b.Property<int>("ResourceType");
+
+                    b.Property<string>("Role");
 
                     b.Property<string>("Title");
 
@@ -1316,46 +1317,6 @@ namespace ApiServer.Migrations
                     b.HasIndex("FileAssetId");
 
                     b.ToTable("Textures");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.UserNav", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Field");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<string>("PagedModel");
-
-                    b.Property<string>("Permission");
-
-                    b.Property<string>("RefNavigationId");
-
-                    b.Property<int>("ResourceType");
-
-                    b.Property<string>("Role");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserNavs");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.UserRole", b =>

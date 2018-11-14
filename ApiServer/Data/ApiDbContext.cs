@@ -179,6 +179,8 @@ namespace ApiServer.Data
         /// </summary>
         public DbSet<Navigation> Navigations { get; set; }
 
+        public DbSet<UserNav> UserNavs { get; set; }
+
         public DbSet<WorkFlow> WorkFlows { get; set; }
 
         public DbSet<WorkFlowItem> WorkFlowItems { get; set; }
