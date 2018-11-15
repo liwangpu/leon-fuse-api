@@ -46,9 +46,9 @@ namespace ApiServer.Repositories
                             item.NodeType = refNav.NodeType;
                             item.Resource = refNav.Resource;
 
-                            if (!string.IsNullOrWhiteSpace(item.Field))
+                            if (!string.IsNullOrWhiteSpace(item.ExcludeFiled))
                             {
-                                var excludeArr = item.Field.Split(",");
+                                var excludeArr = item.ExcludeFiled.Split(",");
                                 var fullArr = refNav.Field.Split(",");
                                 var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
                                 item.Field = string.Join(',', destArr);
@@ -58,9 +58,9 @@ namespace ApiServer.Repositories
                                 item.Field = refNav.Field;
                             }
 
-                            if (!string.IsNullOrWhiteSpace(item.Permission))
+                            if (!string.IsNullOrWhiteSpace(item.ExcludePermission))
                             {
-                                var excludeArr = item.Permission.Split(",");
+                                var excludeArr = item.ExcludePermission.Split(",");
                                 var fullArr = refNav.Permission.Split(",");
                                 var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
                                 item.Permission = string.Join(',', destArr);

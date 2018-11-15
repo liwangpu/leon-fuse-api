@@ -147,8 +147,8 @@ namespace ApiServer.Controllers.UIDesigner
                 refDetail.UserNav = entity;
                 refDetail.ParentId = model.ParentId;
                 refDetail.RefNavigationId = model.RefNavigationId;
-                refDetail.Field = model.Field;
-                refDetail.Permission = model.Permission;
+                refDetail.ExcludeFiled = model.ExcludeFiled;
+                refDetail.ExcludePermission = model.ExcludePermission;
 
                 if (!string.IsNullOrWhiteSpace(model.Id))
                 {

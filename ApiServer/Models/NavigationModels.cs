@@ -68,7 +68,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string RefNavigationId { get; set; }
         public string ParentId { get; set; }
-        public string Field { get; set; }
-        public string Permission { get; set; }
+        public string ExcludeFiled { get; set; }
+        public string ExcludePermission { get; set; }
     }
 }

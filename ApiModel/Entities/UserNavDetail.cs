@@ -5,9 +5,8 @@ namespace ApiModel.Entities
     public class UserNavDetail
     {
         public string Id { get; set; }
-        public string Permission { get; set; }
-        public string PagedModel { get; set; }
-        public string Field { get; set; }
+        public string ExcludeFiled { get; set; }
+        public string ExcludePermission { get; set; }
         public int Grade { get; set; }
         public string ParentId { get; set; }
         public string RefNavigationId { get; set; }
@@ -25,6 +24,12 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         [NotMapped]
         public string Resource { get; set; }
+        [NotMapped]
+        public string Permission { get; set; }
+        [NotMapped]
+        public string PagedModel { get; set; }
+        [NotMapped]
+        public string Field { get; set; }
 
     }
 }
