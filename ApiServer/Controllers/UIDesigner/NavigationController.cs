@@ -29,12 +29,22 @@ namespace ApiServer.Controllers.UIDesigner
         /// 根据分页查询信息获取导航概要信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="nodeTypes">节点类型(逗号分隔)</param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<NavigationDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string nodeTypes)
         {
-            return await _GetPagingRequest(model);
+            var advanceQuery = new Func<IQueryable<Navigation>, Task<IQueryable<Navigation>>>(async (query) =>
+            {
+                if (!string.IsNullOrWhiteSpace(nodeTypes))
+                {
+                    var typeArr = nodeTypes.Split(",").ToList();
+                    query = query.Where(x => typeArr.Contains(x.NodeType));
+                }
+                return await Task.FromResult(query);
+            });
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 

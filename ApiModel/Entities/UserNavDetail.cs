@@ -23,9 +23,8 @@ namespace ApiModel.Entities
         public string NodeType { get; set; }
         [NotMapped]
         public string Icon { get; set; }
-
         [NotMapped]
-        public Navigation RefNavigation { get; set; }
+        public string Resource { get; set; }
 
     }
 }

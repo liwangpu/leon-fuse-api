@@ -59,4 +59,16 @@ namespace ApiServer.Models
         public string Role { get; set; }
         public string Description { get; set; }
     }
+
+    public class UserNavDetailEditModel
+    {
+        public string Id { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string UserNavId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string RefNavigationId { get; set; }
+        public string ParentId { get; set; }
+        public string Field { get; set; }
+        public string Permission { get; set; }
+    }
 }

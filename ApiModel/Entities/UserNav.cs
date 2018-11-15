@@ -11,6 +11,8 @@ namespace ApiModel.Entities
         [NotMapped]
         public string Icon { get; set; }
         [NotMapped]
+        public string RoleName { get; set; }
+        [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 
         public UserNavDTO ToDTO()
@@ -20,6 +22,8 @@ namespace ApiModel.Entities
             dto.Name = Name;
             dto.Description = Description;
             dto.Role = Role;
+            dto.RoleName = RoleName;
+            dto.UserNavDetails = UserNavDetails;
             //if (RefNavigation != null)
             //{
             //    dto.RefNavigationId = RefNavigationId;
@@ -73,7 +77,9 @@ namespace ApiModel.Entities
     public class UserNavDTO : EntityBase, IListable
     {
         public string Role { get; set; }
+        public string RoleName { get; set; }
         public FileAsset IconFileAsset { get; set; }
         public string Icon { get; set; }
+        public List<UserNavDetail> UserNavDetails { get; set; }
     }
 }
