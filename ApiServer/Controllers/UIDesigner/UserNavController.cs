@@ -135,15 +135,19 @@ namespace ApiServer.Controllers.UIDesigner
         {
             var mapping = new Func<UserNav, Task<UserNav>>(async (entity) =>
             {
-                var details = _Repository._DbContext.UserNavDetails.Where(x => x.UserNav.Id == model.UserNavId);
+                var details = await _Repository._DbContext.UserNavDetails.Where(x => x.UserNav.Id == model.UserNavId).ToListAsync();
                 var refDetail = !string.IsNullOrWhiteSpace(model.Id) ? details.Where(x => x.Id == model.Id).FirstOrDefault() : new UserNavDetail();
                 if (refDetail == null)
                     refDetail = new UserNavDetail();
 
-                if (!string.IsNullOrWhiteSpace(model.ParentId))
-                    refDetail.Grade = details.Where(x => x.NodeType == NavNodeTypeConst.Area).Count();
-                else
-                    refDetail.Grade = details.Where(x => x.ParentId == model.ParentId).Count();
+
+                if (string.IsNullOrWhiteSpace(model.Id))
+                {
+                    if (string.IsNullOrWhiteSpace(model.ParentId))
+                        refDetail.Grade = details.Where(x => string.IsNullOrWhiteSpace(x.ParentId)).Count();
+                    else
+                        refDetail.Grade = details.Where(x => x.ParentId == model.ParentId).Count();
+                }
                 refDetail.UserNav = entity;
                 refDetail.ParentId = model.ParentId;
                 refDetail.RefNavigationId = model.RefNavigationId;
@@ -166,6 +170,56 @@ namespace ApiServer.Controllers.UIDesigner
         }
         #endregion
 
+        #region DeleteUserNavDetail 删除角色导航详细项信息
+        /// <summary>
+        /// 删除角色导航详细项信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteUserNavDetail")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(UserNavDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteUserNavDetail([FromBody]UserNavDetailDeleteModel model)
+        {
+            var mapping = new Func<UserNav, Task<UserNav>>(async (entity) =>
+            {
+                var details = await _Repository._DbContext.UserNavDetails.Where(x => x.UserNav.Id == model.UserNavId).ToListAsync();
+                var deleteItem = details.Where(x => x.Id == model.Id).First();
 
+                var deleteQueue = new Queue<UserNavDetail>();
+                deleteQueue.Enqueue(deleteItem);
+
+                do
+                {
+                    var it = deleteQueue.Dequeue();
+                    var subs = details.Where(x => x.ParentId == it.Id).ToList();
+                    subs.ForEach(t =>
+                    {
+                        deleteQueue.Enqueue(t);
+                        details.Remove(t);
+                        _Repository._DbContext.UserNavDetails.Remove(t);
+                    });
+                    details.Remove(it);
+                    _Repository._DbContext.UserNavDetails.Remove(it);
+                }
+                while (deleteQueue.Count > 0);
+
+                //重新排序同等级的导航栏信息
+                var sameRankDetails = details.Where(x => x.ParentId == deleteItem.ParentId).OrderBy(x => x.Grade).ToList();
+                for (int idx = sameRankDetails.Count - 1; idx >= 0; idx--)
+                {
+                    var item = sameRankDetails[idx];
+                    item.Grade = idx;
+                    _Repository._DbContext.UserNavDetails.Update(item);
+                }
+
+                await _Repository._DbContext.SaveChangesAsync();
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.UserNavId, mapping);
+        }
+        #endregion
     }
 }
