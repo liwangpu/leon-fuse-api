@@ -69,8 +69,7 @@ namespace ApiServer.Repositories
 
         public override async Task<IQueryable<UserRole>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
         {
-            var emptyQuery = Enumerable.Empty<UserRole>().AsQueryable();
-            var query = emptyQuery;
+            var query = Enumerable.Empty<UserRole>().AsQueryable();
 
             var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
             if (currentAcc == null)
@@ -84,8 +83,29 @@ namespace ApiServer.Repositories
 
 
 
+            if (dataOp != DataOperateEnum.Retrieve)
+            {
 
-            return query;
+                //超级管理员只管理内置角色
+                if (currentAcc.Type == AppConst.AccountType_SysAdmin || currentAcc.Type == AppConst.AccountType_SysService)
+                {
+                    query = query.Where(x => x.IsInner == true);
+                    return query;
+                }
+
+
+                //品牌商管理员管理自己建立的角色
+                if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
+                {
+                    query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    return query;
+                }
+
+
+                return query.Where(x => x.Creator == currentAcc.Id);
+            }
+
+            return await Task.FromResult(query);
         }
 
     }

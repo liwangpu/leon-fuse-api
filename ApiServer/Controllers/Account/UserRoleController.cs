@@ -40,18 +40,19 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<UserRoleDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string organType, bool excludeInner = false)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string organType, bool excludeInner = false, bool innerOnly = false)
         {
             var advanceQuery = new Func<IQueryable<UserRole>, Task<IQueryable<UserRole>>>(async (query) =>
             {
                 if (!string.IsNullOrWhiteSpace(organType))
-                {
                     query = query.Where(x => x.ApplyOrgans.Contains(organType));
-                }
+
                 if (excludeInner)
-                {
                     query = query.Where(x => x.IsInner == false);
-                }
+
+                if (innerOnly)
+                    query = query.Where(x => x.IsInner == true);
+
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
                 return query;
             });
@@ -140,7 +141,6 @@ namespace ApiServer.Controllers
             return await _PutRequest(model.Id, mapping);
         }
         #endregion
-
 
     }
 }

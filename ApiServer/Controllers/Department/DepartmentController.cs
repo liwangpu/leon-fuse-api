@@ -1,15 +1,18 @@
-﻿using ApiModel.Consts;
-using ApiModel.Entities;
+﻿using ApiModel.Entities;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
+using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using ApiModel.Consts;
+using Microsoft.EntityFrameworkCore;
+using ApiServer.Services;
+using System.Collections.Generic;
 
 namespace ApiServer.Controllers
 {
@@ -25,6 +28,20 @@ namespace ApiServer.Controllers
         public DepartmentController(IRepository<Department, DepartmentDTO> repository)
         : base(repository)
         {
+        }
+        #endregion
+
+        #region Get 根据分页查询信息获取部门导航概要信息
+        /// <summary>
+        /// 根据分页查询信息获取部门导航概要信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedData<DepartmentDTO>), 200)]
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        {
+            return await _GetPagingRequest(model);
         }
         #endregion
 

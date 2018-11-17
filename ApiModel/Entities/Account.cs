@@ -41,6 +41,7 @@ namespace ApiModel.Entities
         public List<AssetFolder> Folders { get; set; }
         public List<FileAsset> Files { get; set; }
         public List<AccountOpenId> OpenIds { get; set; }
+        public List<AccountRole> AdditionRoles { get; set; }
 
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
@@ -84,7 +85,7 @@ namespace ApiModel.Entities
     }
 
 
-    public class AccountDTO : EntityBase,IListable
+    public class AccountDTO : EntityBase, IListable
     {
         public string Icon { get; set; }
         public string Mail { get; set; }

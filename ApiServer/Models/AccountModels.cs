@@ -60,9 +60,17 @@ namespace ApiServer.Models
     }
     #endregion
 
+    public class ResetPasswordModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string UserId { get; set; }
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
+        public string Password { get; set; }
+    }
+
     public class NewPasswordModel
     {
-        [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
+        [Required(ErrorMessage = "必填信息")]
         public string OldPassword { get; set; }
         [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
         public string NewPassword { get; set; }
@@ -158,5 +166,6 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public string ApplyOrgans { get; set; }
     }
+
 
 }
