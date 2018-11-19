@@ -170,14 +170,12 @@ namespace ApiServer.Controllers
                     entity.ActivationTime = DataHelper.ParseDateTime(model.ActivationTime);
                 if (!string.IsNullOrWhiteSpace(model.ExpireTime))
                     entity.ExpireTime = DataHelper.ParseDateTime(model.ExpireTime);
-                if (!string.IsNullOrWhiteSpace(model.DepartmentId))
-                    entity.DepartmentId = model.DepartmentId;
-                if (!string.IsNullOrWhiteSpace(model.Mail))
-                    entity.Mail = model.Mail;
-                if (!string.IsNullOrWhiteSpace(model.Location))
-                    entity.Location = model.Location;
-                if (!string.IsNullOrWhiteSpace(model.Phone))
-                    entity.Phone = model.Phone;
+
+
+                entity.DepartmentId = model.DepartmentId;
+                entity.Mail = model.Mail;
+                entity.Location = model.Location;
+                entity.Phone = model.Phone;
 
                 entity.Type = await _GetAccountType(model.IsAdmin, model.Id);
                 return await Task.FromResult(entity);
