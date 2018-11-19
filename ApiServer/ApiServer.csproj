@@ -36,6 +36,9 @@
     <Compile Remove="Migrations\20181107080559_LeonAddWorkFlow20181107.cs" />
     <Compile Remove="Migrations\20181114065122_LeonAddIsInnerToNav20181114.cs" />
     <Compile Remove="Migrations\20181119021615_LeonAddQueryParamFields20181119.cs" />
+    <Compile Remove="Migrations\20181119080710_LeonAddOrganType20181119.cs" />
+    <Compile Remove="Migrations\20181119084051_LeonAddOrganType20181119.cs" />
+    <Compile Remove="Migrations\20181119084237_LeonAddOrganType20181119.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 

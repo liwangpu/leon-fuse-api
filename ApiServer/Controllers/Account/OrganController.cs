@@ -104,6 +104,8 @@ namespace ApiServer.Controllers
                 entity.Icon = model.IconAssetId;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
+                entity.ActivationTime = model.ActivationTime;
+                entity.ExpireTime = model.ExpireTime;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

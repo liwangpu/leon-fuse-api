@@ -1,4 +1,5 @@
 ﻿using ApiModel.Consts;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,6 +22,8 @@ namespace ApiModel.Entities
         public Organization Parent { get; set; }
 
         public string OwnerId { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
 
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
@@ -57,6 +60,8 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.Type = Type;
+            dto.ExpireTime = ExpireTime;
+            dto.ActivationTime = ActivationTime;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -94,6 +99,8 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string TypeName { get; set; }
         public string Icon { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
         public FileAsset IconFileAsset { get; set; }
     }
 }

@@ -191,6 +191,8 @@ namespace ApiServer.Data
 
         public DbSet<WorkFlowRuleDetail> WorkFlowRuleDetails { get; set; }
 
+        public DbSet<OrganizationType> OrganizationTypes { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

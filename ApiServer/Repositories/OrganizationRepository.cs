@@ -164,11 +164,11 @@ namespace ApiServer.Repositories
             if (bCreateDefaultResource)
             {
                 #region 创建默认部门
-                var department = new Department();
-                department.OrganizationId = data.Id;
-                department.Organization = data;
-                department.Name = data.Name;
-                await _DepartmentRep.CreateAsync(accid, department);
+                //var department = new Department();
+                //department.OrganizationId = data.Id;
+                //department.Organization = data;
+                //department.Name = data.Name;
+                //await _DepartmentRep.CreateAsync(accid, department);
                 #endregion
 
                 #region 创建默认管理员
@@ -188,8 +188,8 @@ namespace ApiServer.Repositories
 
                 account.ExpireTime = DateTime.Now.AddYears(10);
                 account.ActivationTime = DateTime.UtcNow;
-                account.Department = department;
-                account.DepartmentId = department.Id;
+                //account.Department = department;
+                //account.DepartmentId = department.Id;
                 account.Organization = data;
                 account.OrganizationId = data.Id;
                 await _AccountRep.CreateAsync(accid, account);

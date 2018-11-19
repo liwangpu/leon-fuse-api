@@ -62,7 +62,7 @@ namespace ApiServer.Repositories
         {
             if (data.IsInner)
             {
-                modelState.AddModelError("IsInner", "不能删除内置量角色信息");
+                modelState.AddModelError("IsInner", "不能删除内置量信息");
                 await Task.FromResult(string.Empty);
             }
         }

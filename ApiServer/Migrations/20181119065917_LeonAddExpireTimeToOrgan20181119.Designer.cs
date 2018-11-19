@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181119065917_LeonAddExpireTimeToOrgan20181119")]
+    partial class LeonAddExpireTimeToOrgan20181119
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -852,42 +853,6 @@ namespace ApiServer.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.OrganizationType", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<bool>("IsInner");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<int>("ResourceType");
-
-                    b.Property<string>("TypeCode");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrganizationTypes");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.OrganMember", b =>

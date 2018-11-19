@@ -34,6 +34,7 @@ namespace ApiServer.Repositories
             services.AddScoped<IRepository<UserRole, UserRoleDTO>, UserRoleRepository>();
             services.AddScoped<IRepository<WorkFlow, WorkFlowDTO>, WorkFlowRepository>();
             services.AddScoped<IRepository<WorkFlowRule, WorkFlowRuleDTO>, WorkFlowRuleRepository>();
+            services.AddScoped<IRepository<OrganizationType, OrganizationTypeDTO>, OrganizationTypeRepository>();
         }
     }
 }

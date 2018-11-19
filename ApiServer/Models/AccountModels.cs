@@ -110,8 +110,13 @@ namespace ApiServer.Models
         public string Mail { get; set; }
         [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
         public string Location { get; set; }
-        public string ParentId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public DateTime ExpireTime { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public DateTime ActivationTime { get; set; }
+        [Required(ErrorMessage = "必填信息")]
         public string Type { get; set; }
+        public string ParentId { get; set; }
         public string IconAssetId { get; set; }
     }
     #endregion
@@ -132,11 +137,36 @@ namespace ApiServer.Models
         public string Mail { get; set; }
         [StringLength(50, ErrorMessage = "长度必须为0-50个字符")]
         public string Location { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public DateTime ExpireTime { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public DateTime ActivationTime { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Type { get; set; }
         public string ParentId { get; set; }
         public string IconAssetId { get; set; }
     }
     #endregion
 
+    public class OrganizationTypeCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string TypeCode { get; set; }
+    }
+
+    public class OrganizationTypeEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
+        public string Description { get; set; }
+        public string TypeCode { get; set; }
+    }
 
     public class UserRoleCreateModel
     {
