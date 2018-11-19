@@ -54,25 +54,6 @@ namespace ApiServer.Controllers.UIDesigner
         }
         #endregion
 
-        #region Get 获取当前用户导航菜单
-        /// <summary>
-        /// 获取用户导航菜单
-        /// </summary>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        [Route("GetUserNav")]
-        [HttpGet]
-        public async Task<IActionResult> GetUserNav(string role)
-        {
-            var accid = AuthMan.GetAccountId(this);
-            var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
-            var userNav = await _Repository._DbContext.UserNavs.Include(x => x.UserNavDetails).Where(x => x.Role == account.Type).FirstOrDefaultAsync();
-            if (userNav == null) return Ok(new List<UserNavDetail>());
-            var dto = await _Repository.GetByIdAsync(userNav.Id);
-            return Ok(dto.UserNavDetails);
-        }
-        #endregion
-
         #region Post 新建角色导航信息
         /// <summary>
         /// 新建角色导航信息
@@ -116,6 +97,25 @@ namespace ApiServer.Controllers.UIDesigner
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region GetUserNav 获取当前用户导航菜单
+        /// <summary>
+        /// 获取用户导航菜单
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        [Route("GetUserNav")]
+        [HttpGet]
+        public async Task<IActionResult> GetUserNav(string role)
+        {
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            var userNav = await _Repository._DbContext.UserNavs.Include(x => x.UserNavDetails).Where(x => x.Role == account.Type).FirstOrDefaultAsync();
+            if (userNav == null) return Ok(new List<UserNavDetail>());
+            var dto = await _Repository.GetByIdAsync(userNav.Id);
+            return Ok(dto.UserNavDetails);
         }
         #endregion
 

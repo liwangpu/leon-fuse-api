@@ -171,8 +171,16 @@ namespace ApiServer.Controllers
                 if (!string.IsNullOrWhiteSpace(model.ExpireTime))
                     entity.ExpireTime = DataHelper.ParseDateTime(model.ExpireTime);
 
+                if (!string.IsNullOrWhiteSpace(model.DepartmentId))
+                {
+                    entity.DepartmentId = model.DepartmentId;
+                }
+                else
+                {
+                    entity.DepartmentId = null;
+                    entity.Department = null;
+                }
 
-                entity.DepartmentId = model.DepartmentId;
                 entity.Mail = model.Mail;
                 entity.Location = model.Location;
                 entity.Phone = model.Phone;
@@ -258,12 +266,17 @@ namespace ApiServer.Controllers
             p.Phone = acc.Phone;
             p.ActivationTime = acc.ActivationTime;
             p.ExpireTime = acc.ExpireTime;
-            p.OrganizationId = acc.OrganizationId;
-            var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == acc.OrganizationId);
-            p.Organization = organ != null ? organ.Name : "";
-            p.DepartmentId = acc.DepartmentId;
-            if (!string.IsNullOrWhiteSpace(p.DepartmentId))
+
+            if (!string.IsNullOrWhiteSpace(acc.OrganizationId))
             {
+                p.OrganizationId = acc.OrganizationId;
+                var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == acc.OrganizationId);
+                p.Organization = organ != null ? organ.Name : "";
+            }
+
+            if (!string.IsNullOrWhiteSpace(acc.DepartmentId))
+            {
+                p.DepartmentId = acc.DepartmentId;
                 var dep = await _Repository._DbContext.Departments.FirstOrDefaultAsync(x => x.Id == p.DepartmentId);
                 p.Department = dep != null ? dep.Name : "";
             }

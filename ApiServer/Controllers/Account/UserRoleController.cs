@@ -102,11 +102,13 @@ namespace ApiServer.Controllers
         {
             var mapping = new Func<UserRole, Task<UserRole>>(async (entity) =>
             {
+                var organId = await _GetCurrentUserOrganId();
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
                 entity.Role = model.Role;
                 entity.ApplyOrgans = model.ApplyOrgans;
+                entity.OrganizationId = organId;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -127,11 +129,13 @@ namespace ApiServer.Controllers
         {
             var mapping = new Func<UserRole, Task<UserRole>>(async (entity) =>
             {
+                var organId = await _GetCurrentUserOrganId();
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
                 entity.Role = model.Role;
                 entity.ApplyOrgans = model.ApplyOrgans;
+                entity.OrganizationId = organId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
