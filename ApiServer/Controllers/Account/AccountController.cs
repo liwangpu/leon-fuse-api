@@ -185,47 +185,6 @@ namespace ApiServer.Controllers
         }
         #endregion
 
-        //[Route("ResetPassword")]
-        //[HttpPut]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordModel model)
-        //{
-        //    var accid = AuthMan.GetAccountId(this);
-        //    Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
-
-
-
-
-        //    //if (acc.Password != model.OldPassword)
-        //    //    ModelState.AddModelError("Password", "原密码输入有误");
-        //    //if (!ModelState.IsValid)
-        //    //    return new ValidationFailedResult(ModelState);
-        //    //acc.Password = model.NewPassword;
-        //    //_Repository._DbContext.Update(acc);
-        //    //await _Repository._DbContext.SaveChangesAsync();
-        //    return Ok();
-        //}
-
-
-        //[Route("AddAdditionalRole")]
-        //[HttpPut]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> AddAdditionalRole([FromBody]NewPasswordModel model)
-        //{
-        //    var accid = AuthMan.GetAccountId(this);
-        //    Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
-        //    if (acc.Password != model.OldPassword)
-        //        ModelState.AddModelError("Password", "原密码输入有误");
-        //    if (!ModelState.IsValid)
-        //        return new ValidationFailedResult(ModelState);
-        //    acc.Password = model.NewPassword;
-        //    _Repository._DbContext.Update(acc);
-        //    await _Repository._DbContext.SaveChangesAsync();
-        //    return Ok();
-        //}
-
         #region ChangePassword 修改密码
         /// <summary>
         /// 修改密码

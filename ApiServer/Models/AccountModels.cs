@@ -11,12 +11,6 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string DepartmentId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string ExpireTime { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string ActivationTime { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Mail { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
@@ -29,6 +23,9 @@ namespace ApiServer.Models
         public string Phone { get; set; }
         public bool Frozened { get; set; }
         public bool IsAdmin { get; set; }
+        public string ExpireTime { get; set; }
+        public string ActivationTime { get; set; }
+        public string DepartmentId { get; set; }
     }
     #endregion
 

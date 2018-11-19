@@ -104,7 +104,7 @@ namespace ApiServer.Repositories
 
                 return query.Where(x => x.Creator == currentAcc.Id);
             }
-
+            query = query.Where(x => x.IsInner == true || x.OrganizationId == currentAcc.OrganizationId);
             return await Task.FromResult(query);
         }
 

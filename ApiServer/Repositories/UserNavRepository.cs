@@ -45,6 +45,19 @@ namespace ApiServer.Repositories
                             item.PagedModel = refNav.PagedModel;
                             item.NodeType = refNav.NodeType;
                             item.Resource = refNav.Resource;
+                            item.NewTapOpen = refNav.NewTapOpen;
+
+                            if (!string.IsNullOrWhiteSpace(item.ExcludeQueryParams))
+                            {
+                                var excludeArr = item.ExcludeQueryParams.Split(",");
+                                var fullArr = refNav.QueryParams.Split(",");
+                                var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
+                                item.QueryParams = string.Join(',', destArr);
+                            }
+                            else
+                            {
+                                item.QueryParams = refNav.QueryParams;
+                            }
 
                             if (!string.IsNullOrWhiteSpace(item.ExcludeFiled))
                             {

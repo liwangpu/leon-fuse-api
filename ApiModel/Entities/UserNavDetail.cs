@@ -7,6 +7,7 @@ namespace ApiModel.Entities
         public string Id { get; set; }
         public string ExcludeFiled { get; set; }
         public string ExcludePermission { get; set; }
+        public string ExcludeQueryParams { get; set; }
         public int Grade { get; set; }
         public string ParentId { get; set; }
         public string RefNavigationId { get; set; }
@@ -30,6 +31,10 @@ namespace ApiModel.Entities
         public string PagedModel { get; set; }
         [NotMapped]
         public string Field { get; set; }
+        [NotMapped]
+        public string QueryParams { get; set; }
+        [NotMapped]
+        public bool NewTapOpen { get; set; }
 
     }
 }

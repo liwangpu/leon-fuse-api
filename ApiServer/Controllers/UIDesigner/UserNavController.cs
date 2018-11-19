@@ -152,6 +152,7 @@ namespace ApiServer.Controllers.UIDesigner
                 refDetail.RefNavigationId = model.RefNavigationId;
                 refDetail.ExcludeFiled = model.ExcludeFiled;
                 refDetail.ExcludePermission = model.ExcludePermission;
+                refDetail.ExcludeQueryParams = model.ExcludeQueryParams;
 
                 if (!string.IsNullOrWhiteSpace(model.Id))
                 {

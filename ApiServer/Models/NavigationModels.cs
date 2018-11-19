@@ -19,6 +19,7 @@ namespace ApiServer.Models
         public string PagedModel { get; set; }
         public string Resource { get; set; }
         public string Field { get; set; }
+        public string QueryParams { get; set; }
     }
 
     public class NavigationEditModel
@@ -41,6 +42,7 @@ namespace ApiServer.Models
         public string PagedModel { get; set; }
         public string Resource { get; set; }
         public string Field { get; set; }
+        public string QueryParams { get; set; }
     }
 
 
@@ -71,6 +73,7 @@ namespace ApiServer.Models
         public string ParentId { get; set; }
         public string ExcludeFiled { get; set; }
         public string ExcludePermission { get; set; }
+        public string ExcludeQueryParams { get; set; }
     }
 
     public class UserNavDetailDeleteModel

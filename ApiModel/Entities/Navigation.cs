@@ -13,6 +13,8 @@ namespace ApiModel.Entities
         public string Field { get; set; }
         public string NodeType { get; set; }
         public bool IsInner { get; set; }
+        public bool NewTapOpen { get; set; }
+        public string QueryParams { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 
@@ -30,6 +32,7 @@ namespace ApiModel.Entities
             dto.Field = Field;
             dto.Title = Title;
             dto.IsInner = IsInner;
+            dto.QueryParams = QueryParams;
             return dto;
         }
     }
@@ -37,6 +40,7 @@ namespace ApiModel.Entities
     public class NavigationDTO : EntityBase, IListable
     {
         public bool IsInner { get; set; }
+        public bool NewTapOpen { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
         public string Icon { get; set; }
@@ -45,6 +49,7 @@ namespace ApiModel.Entities
         public string Resource { get; set; }
         public string Field { get; set; }
         public string NodeType { get; set; }
+        public string QueryParams { get; set; }
         public FileAsset IconFileAsset { get; set; }
     }
 }
