@@ -27,6 +27,8 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
+        [NotMapped]
+        public string TypeName { get; set; }
 
         /// <summary>
         /// 部门
@@ -60,6 +62,7 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.Type = Type;
+            dto.TypeName = TypeName;
             dto.ExpireTime = ExpireTime;
             dto.ActivationTime = ActivationTime;
             if (IconFileAsset != null)
@@ -67,29 +70,13 @@ namespace ApiModel.Entities
                 dto.Icon = IconFileAsset.Url;
                 dto.IconAssetId = IconFileAsset.Id;
             }
-            switch (Type)
-            {
-                case AppConst.OrganType_Brand:
-                    dto.TypeName = "品牌商";
-                    break;
-                case AppConst.OrganType_Partner:
-                    dto.TypeName = "合伙人";
-                    break;
-                case AppConst.OrganType_Supplier:
-                    dto.TypeName = "供应商";
-                    break;
-                default:
-                    dto.TypeName = "组织";
-                    break;
-            }
-
             return dto;
         }
     }
 
 
 
-    public class OrganizationDTO : EntityBase,IListable
+    public class OrganizationDTO : EntityBase, IListable
     {
         public string IconAssetId { get; set; }
         public string Mail { get; set; }

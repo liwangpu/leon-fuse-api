@@ -211,6 +211,27 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region ResetPassword 重置密码
+        /// <summary>
+        /// 重置密码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("ResetPassword")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordModel model)
+        {
+            var accid = AuthMan.GetAccountId(this);
+            Account acc = await _Repository._DbContext.Accounts.FindAsync(model.UserId);
+            acc.Password = model.Password;
+            _Repository._DbContext.Update(acc);
+            await _Repository._DbContext.SaveChangesAsync();
+            return Ok();
+        }
+        #endregion
+
         #region GetProfile 获取账号信息
         /// <summary>
         /// 获取账号信息

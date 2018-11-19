@@ -287,6 +287,13 @@ namespace ApiServer.Repositories
                     var curData = result.Data[idx];
                     if (!string.IsNullOrWhiteSpace(curData.Icon))
                         curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
+
+                    if (!string.IsNullOrWhiteSpace(curData.Type))
+                    {
+                        var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == curData.Type).FirstOrDefaultAsync();
+                        if (organType != null)
+                            curData.TypeName = organType.Name;
+                    }
                 }
             }
             return result;
@@ -305,6 +312,12 @@ namespace ApiServer.Repositories
             if (!string.IsNullOrWhiteSpace(data.Icon))
             {
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            }
+            if (!string.IsNullOrWhiteSpace(data.Type))
+            {
+                var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == data.Type).FirstOrDefaultAsync();
+                if (organType != null)
+                    data.TypeName = organType.Name;
             }
             return data.ToDTO();
         }
