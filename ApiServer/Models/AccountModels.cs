@@ -57,6 +57,10 @@ namespace ApiServer.Models
     }
     #endregion
 
+    #region ResetPasswordModel 重置密码编辑模型
+    /// <summary>
+    /// 重置密码编辑模型
+    /// </summary>
     public class ResetPasswordModel
     {
         [Required(ErrorMessage = "必填信息")]
@@ -64,6 +68,7 @@ namespace ApiServer.Models
         [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
         public string Password { get; set; }
     }
+    #endregion
 
     public class NewPasswordModel
     {
@@ -71,6 +76,13 @@ namespace ApiServer.Models
         public string OldPassword { get; set; }
         [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
         public string NewPassword { get; set; }
+    }
+
+    public class UserAdditionalRoleEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string UserId { get; set; }
+        public string AdditionalRoleIds { get; set; }
     }
 
     #region AccountProfileModel 用户账户基础信息

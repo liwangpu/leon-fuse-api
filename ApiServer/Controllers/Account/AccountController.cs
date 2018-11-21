@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -283,6 +284,45 @@ namespace ApiServer.Controllers
             p.Role = acc.Type;
             return p;
         }
+        #endregion
+
+        #region UpdateAdditionalRole 更新用户附加角色信息
+        /// <summary>
+        /// 更新用户附加角色信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("UpdateAdditionalRole")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> UpdateAdditionalRole([FromBody]UserAdditionalRoleEditModel model)
+        {
+            var accid = AuthMan.GetAccountId(this);
+            Account acc = await _Repository._DbContext.Accounts.Where(x => x.Id == model.UserId).FirstOrDefaultAsync();
+            //清除之前的角色信息
+            var originRoles = _Repository._DbContext.AccountRoles.Where(x => x.Account == acc);
+            foreach (var originItem in originRoles)
+            {
+                _Repository._DbContext.Remove(originItem);
+            }
+            await _Repository._DbContext.SaveChangesAsync();
+
+            var newRoles = new List<AccountRole>();
+            var roleIdArr = model.AdditionalRoleIds.Split(",", StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+            foreach (var roleId in roleIdArr)
+            {
+                var newRole = new AccountRole();
+                newRole.Id = GuidGen.NewGUID();
+                newRole.Account = acc;
+                newRole.UserRoleId = roleId;
+                newRoles.Add(newRole);
+            }
+            acc.AdditionRoles = newRoles;
+            _Repository._DbContext.Update(acc);
+            await _Repository._DbContext.SaveChangesAsync();
+            return Ok();
+        } 
         #endregion
 
         #region GetNavigationData 获取这个账号的网站后台导航菜单配置

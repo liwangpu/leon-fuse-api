@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -9,5 +7,7 @@ namespace ApiModel.Entities
         public string Id { get; set; }
         public Account Account { get; set; }
         public string UserRoleId { get; set; }
+        [NotMapped]
+        public string UserRoleName { get; set; }
     }
 }

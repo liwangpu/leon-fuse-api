@@ -74,6 +74,7 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.CategoryName = CategoryName;
+            dto.AdditionRoles = AdditionRoles;
             if (Department != null)
                 dto.DepartmentName = Department.Name;
             if (Type.Contains("admin"))
@@ -99,5 +100,6 @@ namespace ApiModel.Entities
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
         public FileAsset IconFileAsset { get; set; }
+        public List<AccountRole> AdditionRoles { get; set; }
     }
 }

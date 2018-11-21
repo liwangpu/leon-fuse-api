@@ -248,12 +248,24 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public override async Task<AccountDTO> GetByIdAsync(string id)
         {
-            var data = await _GetByIdAsync(id);
+            var data = await _DbContext.Accounts.Include(x => x.AdditionRoles).Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (data == null)
+                return new AccountDTO();
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
             if (!string.IsNullOrWhiteSpace(data.DepartmentId))
                 data.Department = await _DbContext.Departments.FindAsync(data.DepartmentId);
+            if (data.AdditionRoles != null && data.AdditionRoles.Count > 0)
+            {
+                for (var idx = data.AdditionRoles.Count - 1; idx >= 0; idx--)
+                {
+                    var roleItem = data.AdditionRoles[idx];
+                    var refRole = await _DbContext.UserRoles.Where(x => x.Id == roleItem.UserRoleId).FirstOrDefaultAsync();
+                    roleItem.UserRoleName = refRole != null ? refRole.Name : "";
+                }
+            }
+
 
             return data.ToDTO();
         }

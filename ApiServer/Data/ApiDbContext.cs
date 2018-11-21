@@ -193,6 +193,8 @@ namespace ApiServer.Data
 
         public DbSet<OrganizationType> OrganizationTypes { get; set; }
 
+        public DbSet<AccountRole> AccountRoles { get; set; }
+
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }
