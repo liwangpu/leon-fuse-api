@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181122064311_LeonAddOrderFlow20181122")]
+    partial class LeonAddOrderFlow20181122
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -733,9 +734,11 @@ namespace ApiServer.Migrations
 
                     b.Property<int>("ResourceType");
 
-                    b.Property<string>("SubOrderIds");
+                    b.Property<string>("State");
 
-                    b.Property<string>("WorkFlowItemId");
+                    b.Property<DateTime>("StateTime");
+
+                    b.Property<string>("WorkFlowId");
 
                     b.HasKey("Id");
 
@@ -790,6 +793,20 @@ namespace ApiServer.Migrations
                     b.ToTable("OrderDetails");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.OrderDetailState", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderDetailStates");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.OrderFlowLog", b =>
                 {
                     b.Property<string>("Id")
@@ -804,8 +821,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("OrderId");
 
                     b.Property<string>("Remark");
-
-                    b.Property<string>("WorkFlowItemId");
 
                     b.HasKey("Id");
 

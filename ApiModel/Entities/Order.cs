@@ -10,21 +10,12 @@ namespace ApiModel.Entities
     /// </summary>
     public class Order : EntityBase, IListable, IDTOTransfer<OrderDTO>
     {
-        public Order()
-        {
-            StateTime = DateTime.Now;
-        }
-
-
-        public List<OrderDetail> OrderDetails { get; set; }
-
-
-        /// <summary>
-        /// 图标Asset Id
-        /// </summary>
         public string Icon { get; set; }
-        public string State { get; set; }
-        public DateTime StateTime { get; set; }
+        public string WorkFlowItemId { get; set; }
+        public string SubOrderIds { get; set; }
+        public List<OrderDetail> OrderDetails { get; set; }
+        public List<OrderFlowLog> OrderFlowLogs { get; set; }
+
         [NotMapped]
         public string Url { get; set; }
         [NotMapped]
@@ -45,7 +36,7 @@ namespace ApiModel.Entities
             dto.ModifierName = ModifierName;
             dto.Url = Url;
             dto.CategoryName = CategoryName;
-
+            dto.WorkFlowItemId = WorkFlowItemId;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -53,7 +44,8 @@ namespace ApiModel.Entities
             }
             if (OrderDetails != null)
                 dto.OrderDetails = OrderDetails.Select(x => x.ToDTO()).ToList();
-
+            if (OrderFlowLogs != null)
+                dto.OrderFlowLogs = OrderFlowLogs;
             return dto;
         }
     }
@@ -66,11 +58,12 @@ namespace ApiModel.Entities
     public class OrderDTO : EntityBase, IListable
     {
         public string IconAssetId { get; set; }
-        public string State { get; set; }
         public string Icon { get; set; }
         public string Url { get; set; }
+        public string WorkFlowItemId { get; set; }
         public FileAsset IconFileAsset { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
+        public List<OrderFlowLog> OrderFlowLogs { get; set; }
     }
     #endregion
 

@@ -1,16 +1,17 @@
 ﻿using ApiModel.Entities;
-using ApiModel.Enums;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
 using ApiServer.Repositories;
+using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiServer.Controllers
@@ -64,6 +65,23 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region GetOrganOrderFlow 获取组织订单流程信息
+        /// <summary> 
+        /// 获取组织订单流程信息
+        /// </summary>
+        /// <returns></returns>
+        [Route("GetOrganOrderFlow")]
+        [HttpGet]
+        [ProducesResponseType(typeof(WorkFlow), 200)]
+        public async Task<IActionResult> GetOrganOrderFlow()
+        {
+            var rootOrgan = await _GetCurrentUserRootOrgan();
+            var ruleDetail = await _Repository._DbContext.WorkFlowRuleDetails.Where(x => x.OrganizationId == rootOrgan.Id).FirstOrDefaultAsync();
+            if (ruleDetail == null) return Ok();
+            return RedirectToAction("Get", "WorkFlow", new { id = ruleDetail.WorkFlowId });
+        }
+        #endregion
+
         #region Post 创建订单
         /// <summary>
         /// 创建订单
@@ -102,6 +120,46 @@ namespace ApiServer.Controllers
             return await _PostRequest(mapping);
         }
         #endregion
+
+
+        [Route("AuditOrder")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(OrderDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AuditOrder([FromBody]OrderWorkFlowAuditEditModel model)
+        {
+            var mapping = new Func<Order, Task<Order>>(async (entity) =>
+            {
+                var accid = AuthMan.GetAccountId(this);
+
+                var logs = await _Repository._DbContext.OrderFlowLogs.Where(x => x.Order == entity).ToListAsync();
+                var operateLog = new OrderFlowLog();
+                operateLog.Id = GuidGen.NewGUID();
+                operateLog.Remark = model.Remark;
+                operateLog.CreatedTime = DateTime.Now;
+                operateLog.Creator = accid;
+                operateLog.Approve = model.Approve;
+                operateLog.WorkFlowItemId = model.WorkFlowItemId;
+                operateLog.Order = entity;
+                _Repository._DbContext.OrderFlowLogs.Add(operateLog);
+                await _Repository._DbContext.SaveChangesAsync();
+                if (model.Approve)
+                {
+                    var workFlowItem = await _Repository._DbContext.WorkFlowItems.Include(x => x.WorkFlow).Where(x => x.Id == model.WorkFlowItemId).FirstOrDefaultAsync();
+                    if (workFlowItem != null)
+                    {
+                        var workFlow = await _Repository._DbContext.WorkFlows.Include(x => x.WorkFlowItems).Where(x => x == workFlowItem.WorkFlow).FirstOrDefaultAsync();
+                        var nextWorkFlowItem = workFlow.WorkFlowItems.Where(x => x.FlowGrade == workFlowItem.FlowGrade + 1).FirstOrDefault();
+                        if (nextWorkFlowItem != null)
+                            entity.WorkFlowItemId = nextWorkFlowItem.Id;
+                    }
+                }
+
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.OrderId, mapping);
+        }
 
         //#region Put 更新订单信息
         ///// <summary>

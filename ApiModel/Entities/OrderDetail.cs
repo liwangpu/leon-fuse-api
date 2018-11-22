@@ -10,7 +10,7 @@ namespace ApiModel.Entities
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
 
-        public int OrderDetailStateId { get; set; }
+        //public int OrderDetailStateId { get; set; }
         public Order Order { get; set; }
 
         [NotMapped]
@@ -29,7 +29,7 @@ namespace ApiModel.Entities
             dto.Num = Num;
             dto.UnitPrice = UnitPrice;
             dto.TotalPrice = TotalPrice;
-            dto.OrderDetailStateId = OrderDetailStateId;
+            //dto.OrderDetailStateId = OrderDetailStateId;
             dto.Remark = Remark;
             dto.Creator = Creator;
             dto.Modifier = Modifier;
@@ -60,7 +60,7 @@ namespace ApiModel.Entities
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
-        public int OrderDetailStateId { get; set; }
+        //public int OrderDetailStateId { get; set; }
         public string ProductName { get; set; }
         public string ProductUnit { get; set; }
         public string ProductDescription { get; set; }

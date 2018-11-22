@@ -56,7 +56,7 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public override async Task<OrderDTO> GetByIdAsync(string id)
         {
-            var data = await _DbContext.Orders.Include(x => x.OrderDetails).Where(x => x.Id == id).FirstOrDefaultAsync();
+            var data = await _DbContext.Orders.Include(x => x.OrderDetails).Include(x => x.OrderFlowLogs).Where(x => x.Id == id).FirstOrDefaultAsync();
             if (data.OrderDetails != null && data.OrderDetails.Count > 0)
             {
                 for (int idx = data.OrderDetails.Count - 1; idx >= 0; idx--)
@@ -75,6 +75,27 @@ namespace ApiServer.Repositories
                                 data.IconFileAsset = item.ProductSpec.IconFileAsset;
                         }
                     }
+                }
+            }
+
+            if (data.OrderFlowLogs != null && data.OrderFlowLogs.Count > 0)
+            {
+                for (int idx = data.OrderFlowLogs.Count - 1; idx >= 0; idx--)
+                {
+                    var item = data.OrderFlowLogs[idx];
+                    var refFlow = await _DbContext.WorkFlowItems.Where(x => x.Id == item.WorkFlowItemId).Select(x => new WorkFlowItem() { Name = x.Name }).FirstOrDefaultAsync();
+                    if (refFlow != null)
+                    {
+                        item.WorkFlowItemName = refFlow.Name;
+                        var opUser = await _DbContext.Accounts.Where(x => x.Id == item.Creator).Select(x => new Account() { Name = x.Name }).FirstOrDefaultAsync();
+                        if (opUser != null)
+                            item.CreatorName = opUser.Name;
+                    }
+                    else
+                    {
+                        data.OrderFlowLogs.RemoveAt(idx);
+                    }
+                    item.Order = null;//清除子order信息
                 }
             }
             data.Url = appConfig.Plugins.OrderViewer + "?order=" + data.Id;
@@ -143,7 +164,7 @@ namespace ApiServer.Repositories
                     item.CreatedTime = data.CreatedTime;
                     item.ModifiedTime = data.CreatedTime;
                     item.OrganizationId = currentAcc.OrganizationId;
-                    item.OrderDetailStateId = (int)OrderDetailStateEnum.Confirm;
+                    //item.OrderDetailStateId = (int)OrderDetailStateEnum.Confirm;
                     item.ProductSpec = await _DbContext.ProductSpec.Where(x => x.Id == item.ProductSpecId).Select(x => new ProductSpec() { Name = x.Name, ProductId = x.ProductId }).FirstOrDefaultAsync();
                     if (item.ProductSpec != null)
                         item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Name = x.Name }).FirstOrDefaultAsync();

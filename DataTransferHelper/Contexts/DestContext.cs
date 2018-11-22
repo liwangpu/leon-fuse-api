@@ -86,11 +86,6 @@ namespace DataTransferHelper.Contexts
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
         /// <summary>
-        /// 订单详情状态
-        /// </summary>
-        public DbSet<OrderDetailState> OrderDetailStates { get; set; }
-
-        /// <summary>
         /// 权限
         /// </summary>
         public DbSet<PermissionItem> Permissions { get; set; }

@@ -263,6 +263,7 @@ namespace ApiServer.Repositories
                     var roleItem = data.AdditionRoles[idx];
                     var refRole = await _DbContext.UserRoles.Where(x => x.Id == roleItem.UserRoleId).FirstOrDefaultAsync();
                     roleItem.UserRoleName = refRole != null ? refRole.Name : "";
+                    roleItem.Account = null;
                 }
             }
 

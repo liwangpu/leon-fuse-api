@@ -225,6 +225,16 @@ namespace ApiServer.Models
     }
     #endregion
 
+    public class OrderWorkFlowAuditEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string OrderId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string WorkFlowItemId { get; set; }
+        public bool Approve { get; set; }
+        public string Remark { get; set; }
+    }
+
     #region PackageCreateModel 套餐创建模型
     /// <summary>
     /// 套餐创建模型

@@ -85,11 +85,6 @@ namespace ApiServer.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
         /// <summary>
-        /// 订单详情状态
-        /// </summary>
-        public DbSet<OrderDetailState> OrderDetailStates { get; set; }
-
-        /// <summary>
         /// 权限
         /// </summary>
         public DbSet<PermissionItem> Permissions { get; set; }
@@ -194,6 +189,8 @@ namespace ApiServer.Data
         public DbSet<OrganizationType> OrganizationTypes { get; set; }
 
         public DbSet<AccountRole> AccountRoles { get; set; }
+
+        public DbSet<OrderFlowLog> OrderFlowLogs { get; set; }
 
         //------------------------------------------------------------------------
 
