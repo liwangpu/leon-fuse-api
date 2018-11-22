@@ -133,12 +133,16 @@ namespace ApiServer.Repositories
                         otree.OrganizationId = data.Organization.Id;
                     otree.NodeType = AppConst.S_NodeType_Account;
                     otree.ObjId = data.Id;
-                    var refDepartmentNode = await _DbContext.PermissionTrees.Where(x => x.ObjId == data.DepartmentId).FirstOrDefaultAsync();
-                    if (refDepartmentNode != null)
+                    if (!string.IsNullOrWhiteSpace(data.DepartmentId))
                     {
-                        otree.ParentId = refDepartmentNode.Id;
-                        await _PermissionTreeRepository.AddChildNode(otree);
+                        var refDepartmentNode = await _DbContext.PermissionTrees.Where(x => x.ObjId == data.DepartmentId).FirstOrDefaultAsync();
+                        if (refDepartmentNode != null)
+                        {
+                            otree.ParentId = refDepartmentNode.Id;
+                            await _PermissionTreeRepository.AddChildNode(otree);
+                        }
                     }
+
                     tx.Commit();
                 }
                 catch (Exception ex)

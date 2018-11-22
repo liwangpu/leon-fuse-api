@@ -46,7 +46,6 @@ namespace ApiServer.Models
         public string Location { get; set; }
         public string Phone { get; set; }
         public string OrganizationId { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string DepartmentId { get; set; }
         //[Required(ErrorMessage = "必填信息")]
         public bool IsAdmin { get; set; }

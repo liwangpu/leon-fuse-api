@@ -128,7 +128,10 @@ namespace ApiServer.Controllers
 
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.Password = Md5.CalcString(model.Password);
+                if (!string.IsNullOrWhiteSpace(model.Password))
+                    entity.Password = Md5.CalcString(model.Password);
+                if (!string.IsNullOrWhiteSpace(model.DepartmentId))
+                    entity.DepartmentId = model.DepartmentId;
                 entity.Mail = model.Mail;
                 entity.Frozened = false;
                 var t1 = DataHelper.ParseDateTime(model.ActivationTime);
@@ -140,7 +143,7 @@ namespace ApiServer.Controllers
                 entity.Phone = model.Phone;
                 entity.Mail = model.Mail;
                 entity.OrganizationId = model.OrganizationId;
-                entity.DepartmentId = model.DepartmentId;
+
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -176,11 +179,11 @@ namespace ApiServer.Controllers
                 {
                     entity.DepartmentId = model.DepartmentId;
                 }
-                else
-                {
-                    entity.DepartmentId = null;
-                    entity.Department = null;
-                }
+                //else
+                //{
+                //    entity.DepartmentId = null;
+                //    entity.Department = null;
+                //}
 
                 entity.Mail = model.Mail;
                 entity.Location = model.Location;
@@ -322,7 +325,7 @@ namespace ApiServer.Controllers
             _Repository._DbContext.Update(acc);
             await _Repository._DbContext.SaveChangesAsync();
             return Ok();
-        } 
+        }
         #endregion
 
         #region GetNavigationData 获取这个账号的网站后台导航菜单配置
