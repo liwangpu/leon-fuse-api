@@ -40,6 +40,7 @@
     <Compile Remove="Migrations\20181119084051_LeonAddOrganType20181119.cs" />
     <Compile Remove="Migrations\20181119084237_LeonAddOrganType20181119.cs" />
     <Compile Remove="Migrations\20181121071218_LeonAddOrganType20181119.cs" />
+    <Compile Remove="Migrations\20181122054722_LeonAddUnitToProductSpec20181122.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 

@@ -125,6 +125,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
+                entity.Unit = model.Unit;
                 entity.CategoryId = model.CategoryId;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
 
@@ -172,6 +173,7 @@ namespace ApiServer.Controllers
                 entity.CategoryId = model.CategoryId;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
+                entity.Unit = model.Unit;
                 entity.CategoryId = model.CategoryId;
 
                 var defaultSpec = await _Repository._DbContext.ProductSpec.Where(x => x.ProductId == entity.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();

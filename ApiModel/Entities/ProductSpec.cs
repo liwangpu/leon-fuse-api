@@ -94,7 +94,7 @@ namespace ApiModel.Entities
     /// <summary>
     /// 产品规格信息DTO
     /// </summary>
-    public class ProductSpecDTO :EntityBase,IListable
+    public class ProductSpecDTO : EntityBase, IListable
     {
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }

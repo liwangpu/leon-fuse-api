@@ -42,6 +42,7 @@ namespace ApiModel.Entities
                 {
                     dto.ProductName = ProductSpec.Product.Name;
                     dto.ProductDescription = ProductSpec.Product.Description;
+                    dto.ProductUnit = ProductSpec.Product.Unit;
                 }
                 if (ProductSpec.IconFileAsset != null)
                     dto.Icon = ProductSpec.IconFileAsset.Url;
@@ -61,6 +62,7 @@ namespace ApiModel.Entities
         public string Remark { get; set; }
         public int OrderDetailStateId { get; set; }
         public string ProductName { get; set; }
+        public string ProductUnit { get; set; }
         public string ProductDescription { get; set; }
         public string ProductSpecName { get; set; }
     }

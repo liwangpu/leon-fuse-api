@@ -6,7 +6,10 @@ namespace ApiModel.Entities
     public class Product : EntityBase, IAsset, IDTOTransfer<ProductDTO>
     {
         public string Icon { get; set; }
-
+        /// <summary>
+        /// 单位
+        /// </summary>
+        public string Unit { get; set; }
         /// <summary>
         /// 规格
         /// </summary>
@@ -32,6 +35,7 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.CategoryName = CategoryName;
+            dto.Unit = Unit;
             if (Specifications != null && Specifications.Count > 0)
             {
                 var defaultSpec = Specifications.OrderByDescending(x => x.CreatedTime).First();
@@ -60,6 +64,7 @@ namespace ApiModel.Entities
         public decimal PurchasePrice { get; set; }
         public List<ProductSpecDTO> Specifications { get; set; }
         public string Icon { get; set; }
+        public string Unit { get; set; }
         public FileAsset IconFileAsset { get; set; }
     }
 

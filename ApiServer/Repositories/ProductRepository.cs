@@ -190,6 +190,19 @@ namespace ApiServer.Repositories
         }
         #endregion
 
+        public override async Task UpdateAsync(string accid, Product data)
+        {
+            await base.UpdateAsync(accid, data);
+            //更新默认第一个规格的icon
+            var productSpec = await _DbContext.ProductSpec.Where(x => x.Product == data).FirstOrDefaultAsync();
+            if (productSpec != null)
+            {
+                productSpec.Icon = data.Icon;
+                _DbContext.ProductSpec.Update(productSpec);
+                await _DbContext.SaveChangesAsync();
+            }
+        }
+
         #region GetSpecByStaticMesh 根据产品Id和模型id获取该产品中模型为输入模型id的所有产品规格列表
         /// <summary>
         /// 根据产品Id和模型id获取该产品中模型为输入模型id的所有产品规格列表
