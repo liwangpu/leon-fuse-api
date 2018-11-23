@@ -247,6 +247,17 @@ namespace ApiServer.Models
         public string CustomerAddress { get; set; }
     }
 
+    public class OrderDetailEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string OrderId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        public int Num { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string Remark { get; set; }
+    }
+
     #region PackageCreateModel 套餐创建模型
     /// <summary>
     /// 套餐创建模型

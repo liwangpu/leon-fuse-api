@@ -202,6 +202,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region UpdateCustomerMessage 更新订单用户信息
+        /// <summary>
+        /// 更新订单用户信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("UpdateCustomerMessage")]
         [HttpPut]
         [ValidateModel]
@@ -215,6 +221,34 @@ namespace ApiServer.Controllers
                 entity.CustomerName = model.CustomerName;
                 entity.CustomerPhone = model.CustomerPhone;
                 entity.CustomerAddress = model.CustomerAddress;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.OrderId, mapping);
+        }
+        #endregion
+
+        [Route("UpdateOrderDetail")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(OrderDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> UpdateOrderDetail([FromBody]OrderDetailEditModel model)
+        {
+            var mapping = new Func<Order, Task<Order>>(async (entity) =>
+            {
+                var accid = AuthMan.GetAccountId(this);
+                var detail = await _Repository._DbContext.OrderDetails.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                if (detail != null)
+                {
+                    detail.Num = model.Num;
+                    detail.TotalPrice = model.TotalPrice;
+                    detail.Remark = model.Remark;
+                    _Repository._DbContext.OrderDetails.Update(detail);
+                    await _Repository._DbContext.SaveChangesAsync();
+                }
+                //entity.CustomerName = model.CustomerName;
+                //entity.CustomerPhone = model.CustomerPhone;
+                //entity.CustomerAddress = model.CustomerAddress;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.OrderId, mapping);
