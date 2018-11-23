@@ -128,6 +128,25 @@ namespace ApiServer.Repositories
 
         /**************** public method ****************/
 
+        #region GetUserRootOrgan 获取用户的根组织
+        /// <summary>
+        /// 获取用户的根组织
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <returns></returns>
+        public async Task<Organization> GetUserRootOrgan(string accid)
+        {
+            var account = await _DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            if (account != null)
+            {
+                var rootNode = await _DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);
+                var organ = await _DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == rootNode.RootOrganizationId);
+                return organ;
+            }
+            return null;
+        }
+        #endregion
+
         #region _GetByIdAsync 根据id信息返回实体数据信息
         /// <summary>
         /// 根据id信息返回实体数据信息
@@ -405,10 +424,19 @@ namespace ApiServer.Repositories
         }
         #endregion
 
+        #region SatisfyDeleteAsync 判断数据是否满足删除条件
+        /// <summary>
+        /// 判断数据是否满足删除条件
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="data"></param>
+        /// <param name="modelState"></param>
+        /// <returns></returns>
         public virtual async Task SatisfyDeleteAsync(string accid, T data, ModelStateDictionary modelState)
         {
             await Task.FromResult(string.Empty);
         }
+        #endregion
 
         #region virtual CanCreateAsync 判断用户是否有权限创建数据
         /// <summary>

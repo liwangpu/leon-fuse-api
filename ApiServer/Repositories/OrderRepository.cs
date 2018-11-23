@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 using ApiServer.Models;
@@ -36,15 +37,35 @@ namespace ApiServer.Repositories
         public override async Task<PagedData<Order>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<Order>, Task<IQueryable<Order>>> advanceQuery = null)
         {
             var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
-            if (result.Data != null && result.Data.Count > 0)
+            var rootOrgan = await GetUserRootOrgan(accid);
+            var ruleDetail = await _DbContext.WorkFlowRuleDetails.Where(x => x.OrganizationId == rootOrgan.Id).FirstOrDefaultAsync();
+            if (ruleDetail != null)
             {
-                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                var workFlowItems = await _DbContext.WorkFlowItems.Where(x => x.WorkFlow.Id == ruleDetail.WorkFlowId).ToListAsync();
+                if (result.Data != null && result.Data.Count > 0)
                 {
-                    var item = result.Data[idx];
-
-
+                    for (var idx = result.Data.Count - 1; idx >= 0; idx--)
+                    {
+                        var item = result.Data[idx];
+                        if (!string.IsNullOrWhiteSpace(item.WorkFlowItemId))
+                        {
+                            var refFlowItem = workFlowItems.Where(x => x.Id == item.WorkFlowItemId).FirstOrDefault();
+                            if (refFlowItem != null)
+                                item.WorkFlowItemName = refFlowItem.Name;
+                        }
+                        else
+                        {
+                            var defaultFlowItem = workFlowItems.Where(x => x.FlowGrade <= 0).FirstOrDefault();
+                            if (defaultFlowItem != null)
+                            {
+                                item.WorkFlowItemId = defaultFlowItem.Id;
+                                item.WorkFlowItemName = defaultFlowItem.Name;
+                            }
+                        }
+                    }
                 }
             }
+
             return result;
         }
 
@@ -98,6 +119,30 @@ namespace ApiServer.Repositories
                     item.Order = null;//清除子order信息
                 }
             }
+
+            if (string.IsNullOrWhiteSpace(data.WorkFlowItemId))
+            {
+                var refRuleDetail = await _DbContext.WorkFlowRuleDetails.Where(x => x.OrganizationId == data.OrganizationId).FirstOrDefaultAsync();
+                if (refRuleDetail != null)
+                {
+                    var defaultFlowItem = await _DbContext.WorkFlowItems.Where(x => x.WorkFlow.Id == refRuleDetail.WorkFlowId && x.FlowGrade <= 0).FirstOrDefaultAsync();
+                    if (defaultFlowItem != null)
+                    {
+                        data.WorkFlowItemId = defaultFlowItem.Id;
+                        data.WorkFlowItemName = defaultFlowItem.Name;
+                    }
+                }
+            }
+            else
+            {
+                var refFlowItem = await _DbContext.WorkFlowItems.Where(x => x.Id == data.WorkFlowItemId).FirstOrDefaultAsync();
+                if (refFlowItem != null)
+                {
+                    data.WorkFlowItemId = refFlowItem.Id;
+                    data.WorkFlowItemName = refFlowItem.Name;
+                }
+            }
+
             data.Url = appConfig.Plugins.OrderViewer + "?order=" + data.Id;
             data.CreatorName = await _DbContext.Accounts.Where(x => x.Id == data.Creator).Select(x => x.Name).FirstOrDefaultAsync();
             data.ModifierName = await _DbContext.Accounts.Where(x => x.Id == data.Modifier).Select(x => x.Name).FirstOrDefaultAsync();
@@ -171,9 +216,59 @@ namespace ApiServer.Repositories
 
                 }
             }
+            //生成订单编号
+            var beginTime = new DateTime(data.CreatedTime.Year, data.CreatedTime.Month, data.CreatedTime.Day);
+            var endTime = beginTime.AddDays(1);
+            var orderCount = await _DbContext.Orders.Where(x => x.CreatedTime >= beginTime && x.CreatedTime < endTime).CountAsync();
+            data.OrderNo = beginTime.ToString("yyyyMMdd") + (orderCount + 1).ToString().PadLeft(5, '0');
             _DbContext.Orders.Add(data);
             await _DbContext.SaveChangesAsync();
         }
         #endregion
+
+        public override async Task<IQueryable<Order>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        {
+            var query = Enumerable.Empty<Order>().AsQueryable();
+
+            var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
+            if (currentAcc == null)
+                return query;
+
+            //数据状态
+            if (withInActive)
+                query = _DbContext.Set<Order>();
+            else
+                query = _DbContext.Set<Order>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+
+
+
+
+
+
+
+            //if (dataOp != DataOperateEnum.Retrieve)
+            //{
+
+            //    //超级管理员只管理内置角色
+            //    if (currentAcc.Type == AppConst.AccountType_SysAdmin || currentAcc.Type == AppConst.AccountType_SysService)
+            //    {
+            //        query = query.Where(x => x.IsInner == true);
+            //        return query;
+            //    }
+
+
+            //    //品牌商管理员管理自己建立的角色
+            //    if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
+            //    {
+            //        query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+            //        return query;
+            //    }
+
+
+            //    return query.Where(x => x.Creator == currentAcc.Id);
+            //}
+            //query = query.Where(x => x.IsInner == true || x.OrganizationId == currentAcc.OrganizationId);
+            return await Task.FromResult(query);
+        }
     }
 }

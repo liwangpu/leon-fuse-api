@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 namespace ApiModel.Entities
@@ -10,6 +9,10 @@ namespace ApiModel.Entities
     /// </summary>
     public class Order : EntityBase, IListable, IDTOTransfer<OrderDTO>
     {
+        public string CustomerName { get; set; }
+        public string CustomerAddress { get; set; }
+        public string CustomerPhone { get; set; }
+        public string OrderNo { get; set; }
         public string Icon { get; set; }
         public string WorkFlowItemId { get; set; }
         public string SubOrderIds { get; set; }
@@ -18,6 +21,8 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public string Url { get; set; }
+        [NotMapped]
+        public string WorkFlowItemName { get; set; }
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 
@@ -35,8 +40,13 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.Url = Url;
+            dto.OrderNo = OrderNo;
             dto.CategoryName = CategoryName;
             dto.WorkFlowItemId = WorkFlowItemId;
+            dto.WorkFlowItemName = WorkFlowItemName;
+            dto.CustomerName = CustomerName;
+            dto.CustomerPhone = CustomerPhone;
+            dto.CustomerAddress = CustomerAddress;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -60,7 +70,12 @@ namespace ApiModel.Entities
         public string IconAssetId { get; set; }
         public string Icon { get; set; }
         public string Url { get; set; }
+        public string OrderNo { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerAddress { get; set; }
+        public string CustomerPhone { get; set; }
         public string WorkFlowItemId { get; set; }
+        public string WorkFlowItemName { get; set; }
         public FileAsset IconFileAsset { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
         public List<OrderFlowLog> OrderFlowLogs { get; set; }

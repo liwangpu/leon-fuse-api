@@ -121,7 +121,39 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region Put 更新订单信息
+        /// <summary>
+        /// 更新订单信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(OrderDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Put([FromBody]OrderEditModel model)
+        {
+            var mapping = new Func<Order, Task<Order>>((entity) =>
+            {
+                var accid = AuthMan.GetAccountId(this);
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                //entity.Content = model.Content;
+                //entity.Icon = model.IconAssetId;
+                entity.ModifiedTime = DateTime.Now;
+                entity.Modifier = accid;
+                return Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
 
+        #region AuditOrder 订单审核
+        /// <summary>
+        /// 订单审核
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("AuditOrder")]
         [HttpPut]
         [ValidateModel]
@@ -144,15 +176,23 @@ namespace ApiServer.Controllers
                 operateLog.Order = entity;
                 _Repository._DbContext.OrderFlowLogs.Add(operateLog);
                 await _Repository._DbContext.SaveChangesAsync();
-                if (model.Approve)
+                var workFlowItem = await _Repository._DbContext.WorkFlowItems.Include(x => x.WorkFlow).Where(x => x.Id == model.WorkFlowItemId).FirstOrDefaultAsync();
+
+                if (workFlowItem != null)
                 {
-                    var workFlowItem = await _Repository._DbContext.WorkFlowItems.Include(x => x.WorkFlow).Where(x => x.Id == model.WorkFlowItemId).FirstOrDefaultAsync();
-                    if (workFlowItem != null)
+                    var workFlow = await _Repository._DbContext.WorkFlows.Include(x => x.WorkFlowItems).Where(x => x == workFlowItem.WorkFlow).FirstOrDefaultAsync();
+
+                    if (model.Approve)
                     {
-                        var workFlow = await _Repository._DbContext.WorkFlows.Include(x => x.WorkFlowItems).Where(x => x == workFlowItem.WorkFlow).FirstOrDefaultAsync();
                         var nextWorkFlowItem = workFlow.WorkFlowItems.Where(x => x.FlowGrade == workFlowItem.FlowGrade + 1).FirstOrDefault();
                         if (nextWorkFlowItem != null)
                             entity.WorkFlowItemId = nextWorkFlowItem.Id;
+                    }
+                    else
+                    {
+                        var lastWorkFlowItem = workFlow.WorkFlowItems.Where(x => x.FlowGrade == workFlowItem.FlowGrade - 1).FirstOrDefault();
+                        if (lastWorkFlowItem != null)
+                            entity.WorkFlowItemId = lastWorkFlowItem.Id;
                     }
                 }
 
@@ -160,139 +200,24 @@ namespace ApiServer.Controllers
             });
             return await _PutRequest(model.OrderId, mapping);
         }
+        #endregion
 
-        //#region Put 更新订单信息
-        ///// <summary>
-        ///// 更新订单信息
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //[HttpPut]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(OrderDTO), 200)]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> Put([FromBody]OrderEditModel model)
-        //{
-        //    var mapping = new Func<Order, Task<Order>>((entity) =>
-        //    {
-        //        entity.Name = model.Name;
-        //        entity.Description = model.Description;
-        //        //entity.Content = model.Content;
-        //        //entity.Icon = model.IconAssetId;
-        //        return Task.FromResult(entity);
-        //    });
-        //    return await _PutRequest(model.Id, mapping);
-        //}
-        //#endregion
-
-
-
-
-
-
-
-
-
-
-
-        //#region Post 创建订单
-        ///// <summary>
-        ///// 创建订单
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(OrderDTO), 200)]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> Post([FromBody]OrderCreateModel model)
-        //{
-        //    var mapping = new Func<Order, Task<Order>>((entity) =>
-        //    {
-        //        entity.Name = model.Name;
-        //        entity.Description = model.Description;
-        //        //entity.Content = model.Content;
-        //        entity.Icon = model.IconAssetId;
-        //        return Task.FromResult(entity);
-        //    });
-        //    return await _PostRequest(mapping);
-        //}
-        //#endregion
-
-        //#region Put 更新订单信息
-        ///// <summary>
-        ///// 更新订单信息
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //[HttpPut]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(OrderDTO), 200)]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> Put([FromBody]OrderEditModel model)
-        //{
-        //    var mapping = new Func<Order, Task<Order>>((entity) =>
-        //    {
-        //        entity.Name = model.Name;
-        //        entity.Description = model.Description;
-        //        //entity.Content = model.Content;
-        //        entity.Icon = model.IconAssetId;
-        //        return Task.FromResult(entity);
-        //    });
-        //    return await _PutRequest(model.Id, mapping);
-        //}
-        //#endregion
-
-        //#region ChangeState 修改订单状态
-        ///// <summary>
-        ///// 修改订单状态
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <param name="state"></param>
-        ///// <returns></returns>
-        //[Route("ChangeState")]
-        //[HttpPost]
-        //public async Task<IActionResult> ChangeState(string id, [FromBody]OrderStateItem state)
-        //{
-        //    var mapping = new Func<Order, Task<Order>>((entity) =>
-        //    {
-        //        //entity.StateTime = DateTime.UtcNow;
-        //        //if (entity.OrderStates == null)
-        //        //{
-        //        //    entity.OrderStates = new List<OrderStateItem>();
-        //        //}
-        //        //state.Id = GuidGen.NewGUID();
-        //        //state.Order = entity;
-        //        //state.OrderId = entity.Id;
-        //        //state.OldState = entity.State;
-        //        //state.OperateTime = DateTime.UtcNow;
-        //        //entity.State = state.NewState;
-        //        //entity.OrderStates.Add(state);
-        //        return Task.FromResult(entity);
-        //    });
-        //    return await _PutRequest(id, mapping);
-        //}
-        //#endregion
-
-        //#region ChangeContent 更新订单详情信息
-        /////// <summary>
-        /////// 更新订单详情信息
-        /////// </summary>
-        /////// <param name="id"></param>
-        /////// <param name="content"></param>
-        /////// <returns></returns>
-        ////[Route("ChangeContent")]
-        ////[HttpPost]
-        ////public async Task<IActionResult> ChangeContent(string id, [FromBody]OrderContent content)
-        ////{
-        ////    var mapping = new Func<Order, Task<Order>>((entity) =>
-        ////    {
-        ////        //entity.Content = Newtonsoft.Json.JsonConvert.SerializeObject(content);
-        ////        return Task.FromResult(entity);
-        ////    });
-        ////    return await _PutRequest(id, mapping);
-        ////}
-        //#endregion
-
+        [Route("UpdateCustomerMessage")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(OrderDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> UpdateCustomerMessage([FromBody]OrderCustomerEditModel model)
+        {
+            var mapping = new Func<Order, Task<Order>>(async (entity) =>
+            {
+                var accid = AuthMan.GetAccountId(this);
+                entity.CustomerName = model.CustomerName;
+                entity.CustomerPhone = model.CustomerPhone;
+                entity.CustomerAddress = model.CustomerAddress;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.OrderId, mapping);
+        }
     }
 }
