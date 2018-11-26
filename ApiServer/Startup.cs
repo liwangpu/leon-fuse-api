@@ -217,10 +217,10 @@ namespace ApiServer
 
             //dbContext.Database.Migrate();
 
-            //SiteConfig.Instance.ReloadSettingsFromDb(dbContext);
+            SiteConfig.Instance.ReloadSettingsFromDb(dbContext);
 
             //init db
-            //DbInitializer.InitDbIfItsEmpty(dbContext);
+            DbInitializer.InitDbIfItsEmpty(dbContext);
         }
     }
 }
