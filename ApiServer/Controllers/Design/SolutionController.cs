@@ -57,7 +57,7 @@ namespace ApiServer.Controllers.Design
                     query = query.Where(x => x.Creator == accid);
                 }
 
-                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.Snapshot == false);
                 return await Task.FromResult(query);
             });
 
@@ -116,6 +116,7 @@ namespace ApiServer.Controllers.Design
                     entity.LayoutId = model.LayoutId;
                 entity.CategoryId = model.CategoryId;
                 entity.Data = model.Data;
+                entity.Snapshot = model.Snapshot;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -141,7 +142,7 @@ namespace ApiServer.Controllers.Design
                     entity.LayoutId = model.LayoutId;
                 entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
-
+                entity.Snapshot = model.Snapshot;
                 entity.Data = model.Data;
                 return await Task.FromResult(entity);
             });

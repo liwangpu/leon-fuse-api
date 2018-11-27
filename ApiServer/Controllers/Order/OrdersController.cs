@@ -57,11 +57,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(OrderDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            var exist = await _Repository.ExistAsync(id);
-            if (!exist)
-                return NotFound();
-            var dto = await _Repository.GetByIdAsync(id);
-            return Ok(dto);
+            return await _GetByIdRequest(id);
         }
         #endregion
 
@@ -243,6 +239,7 @@ namespace ApiServer.Controllers
                     detail.Num = model.Num;
                     detail.TotalPrice = model.TotalPrice;
                     detail.Remark = model.Remark;
+                    detail.AttachmentIds = model.AttachIds;
                     _Repository._DbContext.OrderDetails.Update(detail);
                     await _Repository._DbContext.SaveChangesAsync();
                 }

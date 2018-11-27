@@ -6,8 +6,7 @@ namespace ApiModel.Entities
     {
         public string Icon { get; set; }
         public string LayoutId { get; set; }
-
-
+        public bool Snapshot { get; set; }
         public Layout Layout { get; set; }
 
         /// <summary>
@@ -35,6 +34,7 @@ namespace ApiModel.Entities
             dto.LayoutId = LayoutId;
             dto.CategoryName = CategoryName;
             dto.ResourceType = ResourceType;
+            dto.Snapshot = Snapshot;
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
@@ -44,8 +44,9 @@ namespace ApiModel.Entities
         }
     }
 
-    public class SolutionDTO : EntityBase,IListable
+    public class SolutionDTO : EntityBase, IListable
     {
+        public bool Snapshot { get; set; }
         public string IconAssetId { get; set; }
         public string Data { get; set; }
         public string LayoutId { get; set; }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -95,6 +96,25 @@ namespace ApiServer.Repositories
                             if (idx == 0)
                                 data.IconFileAsset = item.ProductSpec.IconFileAsset;
                         }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.AttachmentIds))
+                    {
+                        var idArr = item.AttachmentIds.Split(",",StringSplitOptions.RemoveEmptyEntries);
+                        var attaches = new List<OrderDetailAttachment>();
+                        foreach (var fid in idArr)
+                        {
+                            var refFile = await _DbContext.Files.Where(x => x.Id == fid).FirstOrDefaultAsync();
+                            if (refFile != null)
+                            {
+                                var attch = new OrderDetailAttachment();
+                                attch.Id = refFile.Id;
+                                attch.Name = refFile.Name;
+                                attch.Url = refFile.Url;
+                                attaches.Add(attch);
+                            }
+                        }
+                        item.Attachments = attaches;
                     }
                 }
             }

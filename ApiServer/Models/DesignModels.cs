@@ -61,20 +61,9 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "价格信息有误")]
         public decimal Price { get; set; }
+        public decimal PartnerPrice { get; set; }
+        public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
-    }
-    #endregion
-
-    #region BulkChangeCategoryModel 批量修改分类模型
-    /// <summary>
-    /// 批量修改分类模型
-    /// </summary>
-    public class BulkChangeCategoryModel
-    {
-        [Required(ErrorMessage = "必填信息")]
-        public string Ids { get; set; }
-        [Required(ErrorMessage = "必填信息")]
-        public string CategoryId { get; set; }
     }
     #endregion
 
@@ -94,7 +83,22 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "价格信息有误")]
         public decimal Price { get; set; }
+        public decimal PartnerPrice { get; set; }
+        public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
+    }
+    #endregion
+
+    #region BulkChangeCategoryModel 批量修改分类模型
+    /// <summary>
+    /// 批量修改分类模型
+    /// </summary>
+    public class BulkChangeCategoryModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Ids { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string CategoryId { get; set; }
     }
     #endregion
 
@@ -124,6 +128,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
         public string IconAssetId { get; set; }
+        public bool Snapshot { get; set; }
     }
     #endregion
 
@@ -143,6 +148,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
         public string IconAssetId { get; set; }
+        public bool Snapshot { get; set; }
     }
     #endregion
 
@@ -256,6 +262,7 @@ namespace ApiServer.Models
         public int Num { get; set; }
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
+        public string AttachIds { get; set; }
     }
 
     #region PackageCreateModel 套餐创建模型

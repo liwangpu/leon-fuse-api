@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -10,7 +11,7 @@ namespace ApiModel.Entities
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
 
-        //public int OrderDetailStateId { get; set; }
+        public string AttachmentIds { get; set; }
         public Order Order { get; set; }
 
         [NotMapped]
@@ -19,7 +20,8 @@ namespace ApiModel.Entities
         public FileAsset IconFileAsset { get; set; }
         [NotMapped]
         public ProductSpec ProductSpec { get; set; }
-
+        [NotMapped]
+        public List<OrderDetailAttachment> Attachments { get; set; }
 
         public OrderDetailDTO ToDTO()
         {
@@ -35,6 +37,8 @@ namespace ApiModel.Entities
             dto.Modifier = Modifier;
             dto.CreatedTime = CreatedTime;
             dto.ModifiedTime = ModifiedTime;
+            dto.AttachmentIds = AttachmentIds;
+            dto.Attachments = Attachments;
             if (ProductSpec != null)
             {
                 dto.ProductSpecName = ProductSpec.Name;
@@ -65,7 +69,15 @@ namespace ApiModel.Entities
         public string ProductUnit { get; set; }
         public string ProductDescription { get; set; }
         public string ProductSpecName { get; set; }
+        public string AttachmentIds { get; set; }
+        public List<OrderDetailAttachment> Attachments { get; set; }
     }
 
+    public class OrderDetailAttachment
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
+    }
 
 }
