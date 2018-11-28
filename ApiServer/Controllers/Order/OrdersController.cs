@@ -57,7 +57,12 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(OrderDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            return await _GetByIdRequest(id);
+            //return await _GetByIdRequest(id);
+            var exist = await _Repository.ExistAsync(id);
+            if (!exist)
+                return NotFound();
+            var dto = await _Repository.GetByIdAsync(id);
+            return Ok(dto);
         }
         #endregion
 
@@ -223,6 +228,12 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region UpdateOrderDetail 更新订单详情信息
+        /// <summary>
+        /// 更新订单详情信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("UpdateOrderDetail")]
         [HttpPut]
         [ValidateModel]
@@ -239,16 +250,20 @@ namespace ApiServer.Controllers
                     detail.Num = model.Num;
                     detail.TotalPrice = model.TotalPrice;
                     detail.Remark = model.Remark;
-                    detail.AttachmentIds = model.AttachIds;
+                    if (!string.IsNullOrWhiteSpace(model.AttachIds))
+                    {
+                        var idArr = model.AttachIds.Trim().Split(",", StringSplitOptions.RemoveEmptyEntries);
+                        detail.AttachmentIds = string.Join(",", idArr);
+                    }
+                    else
+                        detail.AttachmentIds = string.Empty;
                     _Repository._DbContext.OrderDetails.Update(detail);
                     await _Repository._DbContext.SaveChangesAsync();
                 }
-                //entity.CustomerName = model.CustomerName;
-                //entity.CustomerPhone = model.CustomerPhone;
-                //entity.CustomerAddress = model.CustomerAddress;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.OrderId, mapping);
-        }
+        } 
+        #endregion
     }
 }

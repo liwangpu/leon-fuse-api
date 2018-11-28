@@ -191,8 +191,14 @@ namespace ApiServer.Controllers
             Request.Headers.TryGetValue("localPath", out headerVar); if (headerVar.Count > 0) localPath = headerVar[0].Trim();
             Request.Headers.TryGetValue("description", out headerVar); if (headerVar.Count > 0) description = headerVar[0].Trim();
 
-            localPath = System.Net.WebUtility.UrlDecode(localPath);
-            description = System.Net.WebUtility.UrlDecode(description);
+
+            //三个头信息decode
+            if (!string.IsNullOrWhiteSpace(fileExt))
+                fileExt = System.Web.HttpUtility.UrlDecode(fileExt);
+            if (!string.IsNullOrWhiteSpace(localPath))
+                localPath = System.Web.HttpUtility.UrlDecode(localPath);
+            if (!string.IsNullOrWhiteSpace(description))
+                description = System.Web.HttpUtility.UrlDecode(description);
 
             //确保扩展名以 .开头，比如.jpg
             if (fileExt.Length > 0 && fileExt[0] != '.')
@@ -200,6 +206,9 @@ namespace ApiServer.Controllers
 
             var accid = AuthMan.GetAccountId(this);
             var account = await _Repository._DbContext.Accounts.FindAsync(accid);
+
+
+
 
             FileAsset res = new FileAsset();
             res.Id = GuidGen.NewGUID(); //先生成临时ID，用于保存文件

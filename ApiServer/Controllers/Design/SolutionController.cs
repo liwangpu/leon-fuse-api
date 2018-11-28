@@ -9,6 +9,7 @@ using ApiServer.Services;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ namespace ApiServer.Controllers.Design
                     query = query.Where(x => x.Creator == accid);
                 }
 
-                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.Snapshot == false);
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.IsSnapshot == false);
                 return await Task.FromResult(query);
             });
 
@@ -79,23 +80,6 @@ namespace ApiServer.Controllers.Design
         }
         #endregion
 
-        //[Route("Sample")]
-        //[HttpGet]
-        //[ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
-        //public async Task<IActionResult> Sample([FromQuery] PagingRequestModel model)
-        //{
-        //    var accid = AuthMan.GetAccountId(this);
-        //    var advanceQuery = new Func<IQueryable<Solution>, Task<IQueryable<Solution>>>(async (query) =>
-        //    {
-        //        query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
-        //        return await Task.FromResult(query);
-        //    });
-
-
-        //    var result = await (_Repository as SolutionRepository).SampleDataQueryAsync(model, accid, advanceQuery);
-        //    return Ok(RepositoryBase<Solution, SolutionDTO>.PageQueryDTOTransfer(result));
-        //}
-
         #region Post 新建解决方案信息
         /// <summary>
         /// 新建解决方案信息
@@ -116,7 +100,8 @@ namespace ApiServer.Controllers.Design
                     entity.LayoutId = model.LayoutId;
                 entity.CategoryId = model.CategoryId;
                 entity.Data = model.Data;
-                entity.Snapshot = model.Snapshot;
+                entity.IsSnapshot = model.IsSnapshot;
+                entity.SnapshotData = model.SnapshotData;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -142,12 +127,34 @@ namespace ApiServer.Controllers.Design
                     entity.LayoutId = model.LayoutId;
                 entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
-                entity.Snapshot = model.Snapshot;
+                entity.IsSnapshot = model.IsSnapshot;
+                entity.SnapshotData = model.SnapshotData;
                 entity.Data = model.Data;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }
+        #endregion
+
+        #region UpdateSnapshotData 更新方案快照信息
+        /// <summary>
+        /// 更新方案快照信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("UpdateSnapshotData")]
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateSnapshotData([FromBody]SolutionSnapshotEditModel model)
+        {
+            var refSolution = await _Repository._DbContext.Solutions.Where(x => x.Id == model.SolutionId).FirstOrDefaultAsync();
+            if (refSolution == null)
+                return NotFound();
+            refSolution.SnapshotData = model.SnapshotData;
+            _Repository._DbContext.Solutions.Update(refSolution);
+            await _Repository._DbContext.SaveChangesAsync();
+            return Ok();
+        } 
         #endregion
     }
 }

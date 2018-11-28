@@ -128,7 +128,8 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
         public string IconAssetId { get; set; }
-        public bool Snapshot { get; set; }
+        public bool IsSnapshot { get; set; }
+        public string SnapshotData { get; set; }
     }
     #endregion
 
@@ -148,9 +149,16 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string LayoutId { get; set; }
         public string IconAssetId { get; set; }
-        public bool Snapshot { get; set; }
+        public bool IsSnapshot { get; set; }
+        public string SnapshotData { get; set; }
     }
     #endregion
+
+    public class SolutionSnapshotEditModel
+    {
+        public string SolutionId { get; set; }
+        public string SnapshotData { get; set; }
+    }
 
     #region MaterialCreateModel 材质创建模型
     /// <summary>
