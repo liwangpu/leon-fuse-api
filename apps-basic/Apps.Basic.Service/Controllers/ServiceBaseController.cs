@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Apps.Basic.Service.Controllers
 {
-    public class ServiceController<T> : AppBaseController
+    public class ServiceBaseController<T> : AppBaseController
         where T : class, new()
     {
         protected readonly IRepository<T> _Repository;
 
         #region 构造函数
-        public ServiceController(IRepository<T> repository)
+        public ServiceBaseController(IRepository<T> repository)
         {
             _Repository = repository;
         }

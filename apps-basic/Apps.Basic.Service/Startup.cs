@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apps.Base.Common;
 using Apps.Base.Common.Interfaces;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Service.Contexts;
@@ -65,14 +66,35 @@ namespace Apps.Basic.Service
 
             #region Service Registry
             services.AddScoped<IRepository<Account>, AccountRepository>();
+            services.AddScoped<IRepository<UserNav>, UserNavRepository>();
             #endregion
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
+            var dbContext = serviceProvider.GetService<AppDbContext>();
+            var appConfig= serviceProvider.GetService<AppConfig>();
             app.UseAuthentication();
             app.UseMvc();
+
+            #region App Init
+            {
+                var serverId = Configuration["GuidSettings:ServerId"];
+                var guidSalt = Configuration["GuidSettings:GuidSalt"];
+                var guidMinLen = Configuration["GuidSettings:GuidMinLen"];
+                GuidGen.Init(serverId, guidSalt, guidMinLen);
+
+            }
+            #endregion
+
+            #region Database Init
+            {
+                DatabaseInitTool.InitDatabase(dbContext);
+            }
+            #endregion
         }
     }
 }

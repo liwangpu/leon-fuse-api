@@ -9,6 +9,7 @@ namespace Apps.Basic.Service
     {
         public string ConnectionString { get; set; }
         public JwtSettings JwtSettings { get; set; }
+        public GuidSettings GuidSettings { get; set; }
     }
 
     /// <summary>
@@ -20,5 +21,12 @@ namespace Apps.Basic.Service
         public string Audience { get; set; }
         public string SecretKey { get; set; }
         public int ExpiresDay { get; set; }
+    }
+
+    public class GuidSettings
+    {
+        public int ServerId { get; set; }
+        public string GuidSalt { get; set; }
+        public int GuidMinLen { get; set; }
     }
 }

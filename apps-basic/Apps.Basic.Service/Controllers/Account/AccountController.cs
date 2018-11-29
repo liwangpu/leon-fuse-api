@@ -14,7 +14,7 @@ namespace Apps.Basic.Service.Controllers
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class AccountController : ServiceController<Account>
+    public class AccountController : ServiceBaseController<Account>
     {
         #region 构造函数
         public AccountController(IRepository<Account> repository)
@@ -77,6 +77,8 @@ namespace Apps.Basic.Service.Controllers
             {
                 entity.Name = mode.Name;
                 entity.Password = mode.Password;
+                entity.Mail = mode.Mail;
+                entity.Phone = mode.Phone;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -98,6 +100,8 @@ namespace Apps.Basic.Service.Controllers
             {
                 entity.Name = mode.Name;
                 entity.Password = mode.Password;
+                entity.Mail = mode.Mail;
+                entity.Phone = mode.Phone;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(mode.Id, mapping);

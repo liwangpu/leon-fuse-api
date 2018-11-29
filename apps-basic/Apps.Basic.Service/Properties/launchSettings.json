@@ -15,7 +15,7 @@
   "profiles": {
     "Apps.Basic.Service": {
       "commandName": "Project",
-      "commandLineArgs": "--ConnectionString=\"Server=localhost;Database=app-basic;User Id=postgres;Password=root\" --JwtSettings:Issuer=123",
+      //"commandLineArgs": "--ConnectionString=\"Server=localhost;Database=app-basic;User Id=postgres;Password=root\" --JwtSettings:Issuer=123",
       "launchUrl": "api/values",
       "environmentVariables": {
         "APP_DATABASE_CONNECTIONSTRING": "kaix",

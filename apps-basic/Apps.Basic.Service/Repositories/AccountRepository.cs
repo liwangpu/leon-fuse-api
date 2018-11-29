@@ -66,7 +66,7 @@ namespace Apps.Basic.Service.Repositories
         public async Task CreateAsync(Account data, string accountId)
         {
 
-
+            data.Id = GuidGen.NewGUID();
             data.Creator = accountId;
             data.Modifier = accountId;
             data.CreatedTime = DateTime.Now;

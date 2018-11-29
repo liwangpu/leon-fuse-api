@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Consts\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Hashids.net" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
   </ItemGroup>
 

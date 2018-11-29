@@ -25,6 +25,9 @@ namespace Apps.Basic.Export.Models
         public string Name { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Mail { get; set; }
+        public string Phone { get; set; }
     }
     #endregion
 
@@ -40,6 +43,8 @@ namespace Apps.Basic.Export.Models
         public string Name { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Password { get; set; }
+        public string Mail { get; set; }
+        public string Phone { get; set; }
     }
     #endregion
 }

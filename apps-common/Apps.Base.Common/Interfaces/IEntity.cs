@@ -12,5 +12,6 @@ namespace Apps.Base.Common.Interfaces
         string Modifier { get; set; }
         DateTime CreatedTime { get; set; }
         DateTime ModifiedTime { get; set; }
+        int ActiveFlag { get; set; }
     }
 }

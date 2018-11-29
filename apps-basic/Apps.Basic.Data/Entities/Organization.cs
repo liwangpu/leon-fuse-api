@@ -1,9 +1,10 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace Apps.Basic.Data.Entities
 {
-    public class UserRole : IEntity
+    public class Organization : IEntity
     {
         /// <summary>
         /// Id
@@ -34,12 +35,8 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
-        /// 角色关键词
+        /// 组织人员
         /// </summary>
-        public string KeyWord { get; set; }
-        /// <summary>
-        /// 是否内置量
-        /// </summary>
-        public bool IsInner { get; set; }
+        public List<Account> Accounts { get; set; }
     }
 }

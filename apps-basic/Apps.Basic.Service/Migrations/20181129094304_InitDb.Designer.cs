@@ -3,15 +3,17 @@ using System;
 using Apps.Basic.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181129094304_InitDb")]
+    partial class InitDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,8 +189,6 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
-
-                    b.Property<bool>("IsInner");
 
                     b.Property<string>("KeyWord");
 
