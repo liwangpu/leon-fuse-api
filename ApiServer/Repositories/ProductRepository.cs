@@ -53,9 +53,10 @@ namespace ApiServer.Repositories
                             var refMesh = await _DbContext.StaticMeshs.FindAsync(map.Items[idx].StaticMeshId);
                             if (refMesh != null)
                             {
-                                var tmp = await _DbContext.Files.FindAsync(refMesh.FileAssetId);
-                                if (tmp != null)
-                                    refMesh.FileAsset = tmp;
+                                var fs = await _DbContext.Files.FindAsync(refMesh.FileAssetId);
+                                refMesh.FileAsset = fs;
+                                var ifs = await _DbContext.Files.FindAsync(refMesh.Icon);
+                                refMesh.IconFileAsset = ifs;
                             }
 
                             if (map.Items[idx].MaterialIds != null && map.Items[idx].MaterialIds.Count > 0)
