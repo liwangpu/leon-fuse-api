@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Apps.Base.Common.Interfaces
 {
-    public interface IEntity
+    public interface IEntity : IData
     {
-        string Id { get; set; }
         string Name { get; set; }
         string Creator { get; set; }
         string Modifier { get; set; }

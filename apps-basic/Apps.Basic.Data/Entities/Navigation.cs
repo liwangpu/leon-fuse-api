@@ -1,10 +1,13 @@
-﻿namespace Apps.Basic.Data.Entities
+﻿using Apps.Base.Common.Interfaces;
+
+namespace Apps.Basic.Data.Entities
 {
-    public class Navigation
+    public class Navigation : IData
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Permission { get; set; }

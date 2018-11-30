@@ -27,5 +27,10 @@ namespace Apps.Basic.Service.Controllers
         {
         }
         #endregion
+
+        public override Task<IActionResult> Get(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

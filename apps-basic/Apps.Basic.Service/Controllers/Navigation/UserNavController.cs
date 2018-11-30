@@ -1,4 +1,5 @@
 ﻿using Apps.Base.Common.Interfaces;
+using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
 using Apps.Basic.Service.Contexts;
@@ -18,7 +19,7 @@ namespace Apps.Basic.Service.Controllers
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class UserNavController : ServiceBaseController<UserNav>
+    public class UserNavController : ListviewController<UserNav>
     {
         protected readonly AppDbContext _Context;
 
@@ -27,6 +28,42 @@ namespace Apps.Basic.Service.Controllers
         : base(repository)
         {
             _Context = context;
+        }
+        #endregion
+
+        #region Get 根据分页获取用户导航栏信息
+        /// <summary>
+        /// 根据分页获取用户导航栏信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedData<UserNavDTO>), 200)]
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        {
+            return await _PagingRequest(model);
+        }
+        #endregion
+
+        #region Get 根据Id获取用户导航栏信息
+        /// <summary>
+        /// 根据Id获取用户导航栏信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(UserNavDTO), 200)]
+        public override async Task<IActionResult> Get(string id)
+        {
+            var toDTO = new Func<UserNav, Task<UserNavDTO>>(async (entity) =>
+            {
+                var dto = new UserNavDTO();
+                dto.Id = entity.Id;
+                dto.Name = entity.Name;
+                dto.Role = entity.Role;
+                return await Task.FromResult(dto);
+            });
+            return await _GetByIdRequest(id, toDTO);
         }
         #endregion
 

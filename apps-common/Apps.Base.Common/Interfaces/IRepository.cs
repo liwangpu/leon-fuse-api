@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Apps.Base.Common.Interfaces
 {
     public interface IRepository<T>
-        where T : class, new()
+        where T : IData
     {
         Task<string> CanGetByIdAsync(string id, string accountId);
         Task<string> CanCreateAsync(T data, string accountId);

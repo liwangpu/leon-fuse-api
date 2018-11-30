@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Apps.Base.Common.Interfaces;
+using System.Collections.Generic;
 
 namespace Apps.Basic.Data.Entities
 {
-    public class UserNav
+    public class UserNav : IData
     {
         public string Id { get; set; }
         public string Name { get; set; }

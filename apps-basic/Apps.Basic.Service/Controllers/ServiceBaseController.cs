@@ -2,15 +2,18 @@
 using Apps.Base.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Apps.Basic.Service.Controllers
 {
-    public class ServiceBaseController<T> : AppBaseController
-        where T : class, new()
+    public abstract class ServiceBaseController<T> : AppBaseController
+        where T : class, IData, new()
     {
         protected readonly IRepository<T> _Repository;
+
+        public abstract Task<IActionResult> Get(string id);
 
         #region 构造函数
         public ServiceBaseController(IRepository<T> repository)
@@ -25,10 +28,21 @@ namespace Apps.Basic.Service.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <param name="advanceQuery"></param>
+        /// <param name="literal"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PagingRequest([FromQuery]PagingRequestModel model, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+        protected async Task<IActionResult> _PagingRequest([FromQuery]PagingRequestModel model, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null, Func<T, Task<T>> literal = null)
         {
             var result = await _Repository.SimplePagedQueryAsync(model, CurrentAccountId, advanceQuery);
+            if (result.Data == null)
+                result.Data = new List<T>();
+            if (literal != null)
+            {
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var item = result.Data[idx];
+                    await literal(item);
+                }
+            }
             return Ok(result);
         }
         #endregion
@@ -77,7 +91,7 @@ namespace Apps.Basic.Service.Controllers
             await _Repository.CreateAsync(data, CurrentAccountId);
             if (afterCreated != null)
                 return await afterCreated(data);
-            return RedirectToAction("Get", data);
+            return await Get(data.Id);
         }
         #endregion
 
@@ -95,6 +109,8 @@ namespace Apps.Basic.Service.Controllers
             if (metadata == null)
                 return NotFound();
             var data = await mapping(metadata);
+            //为了防止Id不小心被改动
+            data.Id = id;
             var updatedMessage = await _Repository.CanUpdateAsync(data, CurrentAccountId);
             if (!string.IsNullOrWhiteSpace(updatedMessage))
             {
@@ -104,7 +120,7 @@ namespace Apps.Basic.Service.Controllers
             await _Repository.UpdateAsync(data, CurrentAccountId);
             if (afterUpdated != null)
                 return await afterUpdated(data);
-            return RedirectToAction("Get", data);
+            return await Get(data.Id);
         }
         #endregion
 
@@ -126,8 +142,10 @@ namespace Apps.Basic.Service.Controllers
             await _Repository.DeleteAsync(id, CurrentAccountId);
             if (afterDeleted != null)
                 return await afterDeleted();
-            return NoContent();
+            return Ok();
         }
         #endregion
+
+
     }
 }

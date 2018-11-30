@@ -1,13 +1,12 @@
-﻿using Apps.Base.Common.Interfaces;
+﻿using Apps.Base.Common;
+using Apps.Base.Common.Interfaces;
+using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Service.Contexts;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Apps.Base.Common.Models;
-using Apps.Base.Common.Enums;
-using Apps.Base.Common;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace Apps.Basic.Service.Repositories
@@ -25,37 +24,48 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task<string> CanCreateAsync(Navigation data, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanDeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var entity = await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null)
+                return "记录不存在";
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanGetByIdAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanUpdateAsync(Navigation data, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task CreateAsync(Navigation data, string accountId)
         {
-            throw new NotImplementedException();
+            data.Id = GuidGen.NewGUID();
+            _Context.Navigations.Add(data);
+            await _Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var data = await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == id);
+            if (data != null)
+            {
+                _Context.Navigations.Remove(data);
+                await _Context.SaveChangesAsync();
+            }
         }
 
         public async Task<Navigation> GetByIdAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var entity = await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == id);
+            return entity;
         }
 
         public async Task<PagedData<Navigation>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<Navigation>, Task<IQueryable<Navigation>>> advanceQuery = null)
@@ -73,7 +83,8 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task UpdateAsync(Navigation data, string accountId)
         {
-            throw new NotImplementedException();
+            _Context.Navigations.Update(data);
+            await _Context.SaveChangesAsync();
         }
     }
 }

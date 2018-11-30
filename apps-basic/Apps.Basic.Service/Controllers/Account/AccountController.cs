@@ -39,6 +39,7 @@ namespace Apps.Basic.Service.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(typeof(PagedData<Account>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             return await _PagingRequest(model);
@@ -53,7 +54,7 @@ namespace Apps.Basic.Service.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(AccountDTO), 200)]
-        public async Task<IActionResult> Get(string id)
+        public override async Task<IActionResult> Get(string id)
         {
             var toDTO = new Func<Account, Task<AccountDTO>>(async (entity) =>
             {
