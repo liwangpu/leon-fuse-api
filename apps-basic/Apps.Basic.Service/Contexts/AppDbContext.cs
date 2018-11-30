@@ -48,7 +48,9 @@ namespace Apps.Basic.Service.Contexts
         /// 用户导航栏详细信息
         /// </summary>
         public DbSet<UserNavDetail> UserNavDetails { get; set; }
-
-
+        /// <summary>
+        /// 资源文件
+        /// </summary>
+        public DbSet<FileAsset> Files { get; set; }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Apps.Basic.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181130031916_AddActToAcount")]
+    partial class AddActToAcount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +37,6 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("DepartmentId");
 
                     b.Property<DateTime>("ExpireTime");
-
-                    b.Property<string>("Icon");
 
                     b.Property<string>("InnerRoleId");
 
@@ -85,40 +85,6 @@ namespace Apps.Basic.Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("Apps.Basic.Data.Entities.FileAsset", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("FileExt");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<string>("LocalPath");
-
-                    b.Property<string>("Md5");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<long>("Size");
-
-                    b.Property<string>("Url");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.Navigation", b =>

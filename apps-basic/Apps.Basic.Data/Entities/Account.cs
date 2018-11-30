@@ -45,6 +45,14 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public string Phone { get; set; }
         /// <summary>
+        /// 账号有效期，登陆时间小于这个有效期则无法登陆
+        /// </summary>
+        public DateTime ExpireTime { get; set; }
+        /// <summary>
+        /// 账号启用时间，如果当前登陆时间小于启用时间，则不能登陆。
+        /// </summary>
+        public DateTime ActivationTime { get; set; }
+        /// <summary>
         /// 部门Id
         /// </summary>
         public string DepartmentId { get; set; }
@@ -68,5 +76,9 @@ namespace Apps.Basic.Data.Entities
         /// 系统内置的基础角色
         /// </summary>
         public UserRole InnerRole { get; set; }
+        /// <summary>
+        /// 图标
+        /// </summary>
+        public string Icon { get; set; }
     }
 }

@@ -1,12 +1,14 @@
-﻿using Apps.Base.Common.Consts;
+﻿using Apps.Base.Common;
+using Apps.Base.Common.Consts;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Service.Contexts;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-
 namespace Apps.Basic.Service
 {
     public class DatabaseInitTool
@@ -15,9 +17,25 @@ namespace Apps.Basic.Service
         /// 竹烛组织Id
         /// </summary>
         public const string BambooOrganId = "bamboo";
+        /// <summary>
+        /// 应用备份文件夹
+        /// </summary>
+        public const string BackupFoler = "AppBackup";
 
-        public static void InitDatabase(AppDbContext context)
+        /// <summary>
+        /// 初始化数据库信息
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="serviceProvider"></param>
+        /// <param name="context"></param>
+        public static void InitDatabase(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, AppDbContext context)
         {
+            var contentRoot = env.ContentRootPath;
+            var backupFolder = Path.Combine(contentRoot, "wwwroot", BackupFoler);
+            if (!Directory.Exists(backupFolder))
+                Directory.CreateDirectory(backupFolder);
+
             #region 创建基础用户角色
             {
                 var innerRoles = context.UserRoles.Where(x => x.IsInner == true).ToList();
@@ -177,8 +195,10 @@ namespace Apps.Basic.Service
                     var admin = new Account();
                     admin.Id = "admin";
                     admin.Mail = "admin";
-                    admin.Password = "1111";
+                    admin.Password = Md5.CalcString("bambooAdmin");
                     admin.InnerRoleId = UserRoleConst.SysAdmin;
+                    admin.ActivationTime = DateTime.Now.AddDays(-1);
+                    admin.ExpireTime = DateTime.Now.AddYears(100);
                     admin.Creator = "admin";
                     admin.Modifier = "admin";
                     admin.CreatedTime = DateTime.Now;
@@ -191,21 +211,92 @@ namespace Apps.Basic.Service
             }
             #endregion
 
-            //#region 创建基础导航栏项
-            //{
-            //    var navs = context.Navigations.ToList();
-            //    if (navs.Where(x => x.Id == "navigation-setting").Count() <= 0)
-            //    {
-            //        var nav = new Navigation();
-            //        nav.Id = "navigation-setting";
-            //        nav.Name = "导航栏项设计器";
-            //        nav.Title = "nav.NavigationItemDesigner";
-            //        nav.Resource = "Nav";
-            //        nav.Icon = "assignment";
-            //        nav.Url = "";
-            //    }
-            //}
-            //#endregion
+            #region 备份或者恢复导航栏项
+            {
+                var navs = context.Navigations.ToList();
+                var filePath = Path.Combine(backupFolder, "navigations.json");
+                if (navs.Count <= 0)
+                {
+                    //从json恢复导航栏项信息
+                    var strNavs = File.ReadAllText(filePath);
+                    var navList = JsonConvert.DeserializeObject<List<Navigation>>(strNavs);
+                    foreach (var item in navList)
+                        context.Navigations.Add(item);
+                    context.SaveChanges();
+                    Console.WriteLine("Auto Recover Navigations From Backup");
+                }
+                else
+                {
+                    //备份导航栏项到json
+                    var strNavs = JsonConvert.SerializeObject(navs);
+                    File.WriteAllText(filePath, strNavs);
+                    Console.WriteLine("Auto Backup Navigations");
+                }
+
+
+            }
+            #endregion
+
+            #region 备份或者恢复基础用户角色导航栏
+            {
+
+                #region 角色导航栏
+                {
+                    var userNavs = context.UserNavs.ToList();
+                    var filePath = Path.Combine(backupFolder, "user-navs.json");
+                    if (userNavs.Count <= 0)
+                    {
+                        //从json恢复角色导航栏信息
+                        var strUserNavs = File.ReadAllText(filePath);
+                        var userNavList = JsonConvert.DeserializeObject<List<UserNav>>(strUserNavs);
+                        foreach (var item in userNavList)
+                            context.UserNavs.Add(item);
+                        context.SaveChanges();
+                        Console.WriteLine("Auto Recover UserNavs From Backup");
+                    }
+                    else
+                    {
+                        //备份角色导航栏信息到json
+                        var strUserNavs = JsonConvert.SerializeObject(userNavs);
+                        File.WriteAllText(filePath, strUserNavs);
+                        Console.WriteLine("Auto Backup UserNavs");
+                    }
+                }
+                #endregion
+
+                #region 角色导航栏详情
+                {
+                    var userNavDetails = context.UserNavDetails.ToList();
+                    var filePath = Path.Combine(backupFolder, "user-nav-details.json");
+                    if (userNavDetails.Count <= 0)
+                    {
+                        //从json恢复角色导航栏详情信息
+                        var strUserNavDetails = File.ReadAllText(filePath);
+                        var userNavDetailList = JsonConvert.DeserializeObject<List<UserNavDetail>>(strUserNavDetails);
+                        foreach (var item in userNavDetailList)
+                            context.UserNavDetails.Add(item);
+                        context.SaveChanges();
+                        Console.WriteLine("Auto Recover UserNavDetails From Backup");
+                    }
+                    else
+                    {
+                        //备份角色导航栏详情信息到json
+                        //清空UserNav不然JsonConvert会报循环应用
+                        for (int idx = userNavDetails.Count - 1; idx >= 0; idx--)
+                        {
+                            var item = userNavDetails[idx];
+                            item.UserNav = null;
+                        }
+                        var strUserNavDetails = JsonConvert.SerializeObject(userNavDetails);
+                        File.WriteAllText(filePath, strUserNavDetails);
+                        Console.WriteLine("Auto Backup UserNavDetails");
+                    }
+                }
+                #endregion
+
+            }
+            #endregion
+
         }
     }
 }

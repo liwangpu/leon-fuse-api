@@ -1,25 +1,35 @@
-﻿using Apps.Base.Common.Interfaces;
+﻿using Apps.Base.Common;
+using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
 using Apps.Basic.Export.Models;
+using Apps.Basic.Service.Contexts;
 using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
 namespace Apps.Basic.Service.Controllers
 {
+    /// <summary>
+    /// 用户控制器
+    /// </summary>
     [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class AccountController : ServiceBaseController<Account>
     {
+        protected readonly AppDbContext _Context;
+
         #region 构造函数
-        public AccountController(IRepository<Account> repository)
+        public AccountController(IRepository<Account> repository, AppDbContext context)
             : base(repository)
-        { }
+        {
+            _Context = context;
+        }
         #endregion
 
         #region Get 根据分页获取用户信息
@@ -71,14 +81,16 @@ namespace Apps.Basic.Service.Controllers
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(typeof(AccountDTO), 200)]
-        public async Task<IActionResult> Post([FromBody]AccountCreateModel mode)
+        public async Task<IActionResult> Post([FromBody]AccountCreateModel model)
         {
             var mapping = new Func<Account, Task<Account>>(async (entity) =>
             {
-                entity.Name = mode.Name;
-                entity.Password = mode.Password;
-                entity.Mail = mode.Mail;
-                entity.Phone = mode.Phone;
+                entity.Name = model.Name;
+                entity.Password = model.Password;
+                entity.Mail = model.Mail;
+                entity.Phone = model.Phone;
+                if (!string.IsNullOrWhiteSpace(model.Password))
+                    entity.Password = Md5.CalcString(model.Password);
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -122,5 +134,44 @@ namespace Apps.Basic.Service.Controllers
         }
         #endregion
 
+        #region GetProfile 获取当前用户信息
+        /// <summary>
+        /// 获取当前用户信息
+        /// </summary>
+        /// <returns></returns>
+        [Route("Profile")]
+        [HttpGet]
+        [ProducesResponseType(typeof(AccountProfileDTO), 200)]
+        public async Task<IActionResult> GetProfile()
+        {
+            var currentUser = await _Context.Accounts.FindAsync(CurrentAccountId);
+            if (currentUser == null)
+                return NotFound();
+            var dto = new AccountProfileDTO();
+            dto.Id = currentUser.Id;
+            dto.Name = currentUser.Name;
+            dto.Mail = currentUser.Mail;
+            dto.Phone = currentUser.Phone;
+            dto.ActivationTime = currentUser.ActivationTime;
+            dto.ExpireTime = currentUser.ExpireTime;
+            var organ = await _Context.Organizations.FirstOrDefaultAsync(x => x.Id == currentUser.OrganizationId);
+            if (organ != null)
+            {
+                dto.Organization = organ.Name;
+                dto.OrganizationId = organ.Id;
+            }
+            var role = await _Context.UserRoles.FirstOrDefaultAsync(x => x.Id == currentUser.InnerRoleId);
+            if (role != null)
+            {
+                dto.Role = role.Name;
+            }
+            if (!string.IsNullOrWhiteSpace(currentUser.Icon))
+            {
+                var fs = await _Context.Files.FirstOrDefaultAsync(x => x.Id == currentUser.Icon);
+                dto.Avatar = fs != null ? fs.Name : string.Empty;
+            }
+            return Ok(dto);
+        }
+        #endregion
     }
 }

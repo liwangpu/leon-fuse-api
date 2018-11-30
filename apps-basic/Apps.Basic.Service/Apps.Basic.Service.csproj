@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Navigation\NavigationController.cs" />
     <Compile Remove="Migrations\20181129094032_InitDb.cs" />
   </ItemGroup>
 

@@ -1,16 +1,16 @@
 ﻿using Apps.Base.Common.Interfaces;
-using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
-using Apps.Basic.Export.Models;
 using Apps.Basic.Service.Contexts;
-using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace Apps.Basic.Service.Controllers.Navigation
+namespace Apps.Basic.Service.Controllers
 {
     /// <summary>
     /// 用户导航信息控制器
@@ -30,18 +30,78 @@ namespace Apps.Basic.Service.Controllers.Navigation
         }
         #endregion
 
+        #region GetUserNav 获取当前用户导航栏信息
+        /// <summary>
+        /// 获取当前用户导航栏信息
+        /// </summary>
+        /// <returns></returns>
+        [Route("GetUserNav")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<UserNavigationDTO>), 200)]
+        public async Task<IActionResult> GetUserNav()
+        {
+            var dtos = new List<UserNavigationDTO>();
+            var userNav = await _Context.UserNavs.Include(x => x.UserNavDetails).Where(x => x.Role == CurrentAccountInnerRoleId).FirstOrDefaultAsync();
+            if (userNav == null || userNav.UserNavDetails == null || userNav.UserNavDetails.Count <= 0)
+                return NoContent();
+            var navigations = await _Context.Navigations.ToListAsync();
+            foreach (var curNavItem in userNav.UserNavDetails)
+            {
+                var refNav = navigations.Where(x => x.Id == curNavItem.RefNavigationId).First();
+                if (refNav == null) continue;
+                var dto = new UserNavigationDTO();
+                dto.Id = curNavItem.Id;
+                dto.Title = refNav.Title;
+                dto.Name = refNav.Name;
+                dto.Url = refNav.Url;
+                dto.Icon = refNav.Icon;
+                dto.PagedModel = refNav.PagedModel;
+                dto.NodeType = refNav.NodeType;
+                dto.Resource = refNav.Resource;
+                dto.NewTapOpen = refNav.NewTapOpen;
+                dto.ParentId = curNavItem.ParentId;
+                dto.Grade = curNavItem.Grade;
+                if (!string.IsNullOrWhiteSpace(curNavItem.ExcludeQueryParams))
+                {
+                    var excludeArr = curNavItem.ExcludeQueryParams.Split(",");
+                    var fullArr = refNav.QueryParams.Split(",");
+                    var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
+                    dto.QueryParams = string.Join(',', destArr);
+                }
+                else
+                {
+                    dto.QueryParams = refNav.QueryParams;
+                }
 
-        //[Route("GetUserNav")]
-        //[HttpGet]
-        //public async Task<IActionResult> GetUserNav()
-        //{
-        //    //var accid = AuthMan.GetAccountId(this);
-        //    //var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
-        //    //var userNav = await _Repository._DbContext.UserNavs.Include(x => x.UserNavDetails).Where(x => x.Role == account.Type).FirstOrDefaultAsync();
-        //    //if (userNav == null) return Ok(new List<UserNavDetail>());
-        //    //var dto = await _Repository.GetByIdAsync(userNav.Id);
-        //    //return Ok(dto.UserNavDetails);
-        //    //_Context.
-        //}
+                if (!string.IsNullOrWhiteSpace(curNavItem.ExcludeFiled))
+                {
+                    var excludeArr = curNavItem.ExcludeFiled.Split(",");
+                    var fullArr = refNav.Field.Split(",");
+                    var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
+                    dto.Field = string.Join(',', destArr);
+                }
+                else
+                {
+                    dto.Field = refNav.Field;
+                }
+
+                if (!string.IsNullOrWhiteSpace(curNavItem.ExcludePermission))
+                {
+                    var excludeArr = curNavItem.ExcludePermission.Split(",");
+                    var fullArr = refNav.Permission.Split(",");
+                    var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
+                    dto.Permission = string.Join(',', destArr);
+                }
+                else
+                {
+                    dto.Permission = refNav.Permission;
+                }
+                dtos.Add(dto);
+            }
+
+
+            return Ok(dtos);
+        }
+        #endregion
     }
 }

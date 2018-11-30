@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 
 namespace Apps.Basic.Service
 {
@@ -33,9 +34,22 @@ namespace Apps.Basic.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(opts =>
+            {
+                // Force Camel Case to JSON
+                opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //ignore Entity framework Navigation property back reference problem. Blog >> Posts. Post >> Blog. Blog.post.blog will been ignored.
+                opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
             services.Configure<AppConfig>(Configuration);
+
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()));
 
             #region PGSQL Setting
             services.AddEntityFrameworkNpgsql();
@@ -67,6 +81,8 @@ namespace Apps.Basic.Service
             #region Service Registry
             services.AddScoped<IRepository<Account>, AccountRepository>();
             services.AddScoped<IRepository<UserNav>, UserNavRepository>();
+            services.AddScoped<IRepository<FileAsset>, FileRepository>();
+            services.AddScoped<IRepository<Navigation>, NavigationRepository>();
             #endregion
 
 
@@ -76,7 +92,9 @@ namespace Apps.Basic.Service
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             var dbContext = serviceProvider.GetService<AppDbContext>();
-            var appConfig= serviceProvider.GetService<AppConfig>();
+            var appConfig = serviceProvider.GetService<AppConfig>();
+
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseMvc();
 
@@ -92,7 +110,7 @@ namespace Apps.Basic.Service
 
             #region Database Init
             {
-                DatabaseInitTool.InitDatabase(dbContext);
+                DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
             }
             #endregion
         }

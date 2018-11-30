@@ -1,13 +1,12 @@
-﻿using Apps.Base.Common.Interfaces;
+﻿using Apps.Base.Common;
+using Apps.Base.Common.Interfaces;
+using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Service.Contexts;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Apps.Base.Common.Models;
-using Apps.Base.Common.Enums;
-using Apps.Base.Common;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Apps.Basic.Service.Repositories
 {

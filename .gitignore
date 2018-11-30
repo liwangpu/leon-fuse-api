@@ -161,4 +161,4 @@ $RECYCLE.BIN/
 
 # VisualStudioCode
 .vscode
-ApiServer/wwwroot/
+wwwroot
