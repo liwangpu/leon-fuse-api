@@ -2,7 +2,9 @@
 using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
+using Apps.Basic.Export.Models;
 using Apps.Basic.Service.Contexts;
+using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -61,9 +63,86 @@ namespace Apps.Basic.Service.Controllers
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Role = entity.Role;
+                dto.Description = entity.Description;
+                var userNavDetailDtos = new List<UserNavigationDTO>();
+                if (entity.UserNavDetails != null)
+                {
+                    foreach (var item in entity.UserNavDetails)
+                    {
+                        var detailDto = new UserNavigationDTO();
+                        detailDto.Id = item.Id;
+                        detailDto.ExcludeFiled = item.ExcludeFiled;
+                        detailDto.ExcludePermission = item.ExcludePermission;
+                        detailDto.ExcludeQueryParams = item.ExcludeQueryParams;
+                        detailDto.Grade = item.Grade;
+                        detailDto.ParentId = item.ParentId;
+                        var refNav =await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == item.Id);
+                        if (refNav != null)
+                        {
+                            detailDto.Name = refNav.Name;
+                            detailDto.Title = refNav.Title;
+                            detailDto.Url = refNav.Url;
+                            detailDto.NodeType = refNav.NodeType;
+                            detailDto.Icon = refNav.Icon;
+                            detailDto.Resource = refNav.Resource;
+                            detailDto.Permission = refNav.PagedModel;
+                            detailDto.Field = refNav.Field;
+                            detailDto.QueryParams = refNav.QueryParams;
+                            detailDto.NewTapOpen = refNav.NewTapOpen;
+                            detailDto.Name = refNav.Name;
+                            detailDto.Name = refNav.Name;
+                        }
+                        userNavDetailDtos.Add(detailDto);
+                    }
+                }
+                dto.UserNavDetails = userNavDetailDtos;
                 return await Task.FromResult(dto);
             });
             return await _GetByIdRequest(id, toDTO);
+        }
+        #endregion
+
+        #region Post 创建导航栏项
+        /// <summary>
+        /// 创建导航栏项
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateModel]
+        [ProducesResponseType(typeof(UserNavDTO), 200)]
+        public async Task<IActionResult> Post([FromBody]UserNavCreateModel model)
+        {
+            var mapping = new Func<UserNav, Task<UserNav>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Role = model.Role;
+                return await Task.FromResult(entity);
+            });
+            return await _PostRequest(mapping);
+        }
+        #endregion
+
+        #region Put 更改导航栏项信息
+        /// <summary>
+        /// 更改导航栏项信息
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(UserNavDTO), 200)]
+        public async Task<IActionResult> Put([FromBody]UserNavEditModel model)
+        {
+            var mapping = new Func<UserNav, Task<UserNav>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Description;
+                entity.Role = model.Role;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
         }
         #endregion
 

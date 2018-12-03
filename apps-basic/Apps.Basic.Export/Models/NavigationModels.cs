@@ -42,5 +42,23 @@ namespace Apps.Basic.Export.Models
         public string QueryParams { get; set; }
     }
 
+    public class UserNavCreateModel
+    {
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Role { get; set; }
+        public string Description { get; set; }
+    }
 
+    public class UserNavEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Role { get; set; }
+        public string Description { get; set; }
+    }
 }

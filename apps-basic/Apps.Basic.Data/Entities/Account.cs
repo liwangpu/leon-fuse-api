@@ -80,5 +80,9 @@ namespace Apps.Basic.Data.Entities
         /// 图标
         /// </summary>
         public string Icon { get; set; }
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
     }
 }

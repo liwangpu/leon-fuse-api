@@ -22,7 +22,7 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task<string> CanCreateAsync(UserNav data, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanDeleteAsync(string id, string accountId)
@@ -37,12 +37,14 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task<string> CanUpdateAsync(UserNav data, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task CreateAsync(UserNav data, string accountId)
         {
-            throw new NotImplementedException();
+            data.Id = GuidGen.NewGUID();
+            _Context.UserNavs.Add(data);
+            await _Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id, string accountId)
@@ -52,7 +54,7 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task<UserNav> GetByIdAsync(string id, string accountId)
         {
-            var entity = await _Context.UserNavs.FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _Context.UserNavs.Include(x=>x.UserNavDetails).FirstOrDefaultAsync(x => x.Id == id);
             return entity;
         }
 
@@ -71,7 +73,8 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task UpdateAsync(UserNav data, string accountId)
         {
-            throw new NotImplementedException();
+            _Context.UserNavs.Update(data);
+            await _Context.SaveChangesAsync();
         }
     }
 }

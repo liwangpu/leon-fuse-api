@@ -33,7 +33,7 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task<string> CanGetByIdAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanUpdateAsync(UserRole data, string accountId)
@@ -53,7 +53,8 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task<UserRole> GetByIdAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var entity = await _Context.UserRoles.FirstOrDefaultAsync(x => x.Id == id);
+            return entity;
         }
 
         public async Task<PagedData<UserRole>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<UserRole>, Task<IQueryable<UserRole>>> advanceQuery = null)

@@ -79,7 +79,7 @@ namespace Apps.Basic.Service.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(AccountDTO), 200)]
+        [ProducesResponseType(typeof(NavigationDTO), 200)]
         public async Task<IActionResult> Post([FromBody]NavigationCreateModel model)
         {
             var mapping = new Func<Navigation, Task<Navigation>>(async (entity) =>
@@ -109,7 +109,7 @@ namespace Apps.Basic.Service.Controllers
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(AccountDTO), 200)]
+        [ProducesResponseType(typeof(NavigationDTO), 200)]
         public async Task<IActionResult> Put([FromBody]NavigationEditModel model)
         {
             var mapping = new Func<Navigation, Task<Navigation>>(async (entity) =>

@@ -42,9 +42,31 @@ namespace Apps.Basic.Service.Controllers
         }
         #endregion
 
-        public override Task<IActionResult> Get(string id)
+        #region Get 根据Id获取用户导航栏信息
+        /// <summary>
+        /// 根据Id获取用户导航栏信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(UserRoleDTO), 200)]
+        public override async Task<IActionResult> Get(string id)
         {
-            throw new NotImplementedException();
+            var toDTO = new Func<UserRole, Task<UserRoleDTO>>(async (entity) =>
+            {
+                var dto = new UserRoleDTO();
+                dto.Id = entity.Id;
+                dto.Name = entity.Name;
+                dto.Creator = entity.Creator;
+                dto.Modifier = entity.Modifier;
+                dto.CreatedTime = entity.CreatedTime;
+                dto.ModifiedTime = entity.ModifiedTime;
+                dto.KeyWord = entity.KeyWord;
+                dto.IsInner = entity.IsInner;
+                return await Task.FromResult(dto);
+            });
+            return await _GetByIdRequest(id, toDTO);
         }
+        #endregion
     }
 }
