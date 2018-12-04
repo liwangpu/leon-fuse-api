@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181204112233_InitDb")]
+    [Migration("20181204114436_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -226,7 +226,7 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Role");
+                    b.Property<string>("RoleId");
 
                     b.HasKey("Id");
 
@@ -271,8 +271,6 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Creator");
 
                     b.Property<bool>("IsInner");
-
-                    b.Property<string>("KeyWord");
 
                     b.Property<DateTime>("ModifiedTime");
 

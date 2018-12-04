@@ -12,7 +12,6 @@ namespace Apps.Basic.Export.DTOs
         public string Modifier { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
-        public string KeyWord { get; set; }
         public bool IsInner { get; set; }
     }
 }

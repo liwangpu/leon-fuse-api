@@ -34,10 +34,6 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
-        /// 角色关键词
-        /// </summary>
-        public string KeyWord { get; set; }
-        /// <summary>
         /// 是否内置量
         /// </summary>
         public bool IsInner { get; set; }

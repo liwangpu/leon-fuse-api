@@ -16,7 +16,7 @@ namespace Apps.Basic.Data.Entities
         /// <summary>
         /// 角色Id
         /// </summary>
-        public string Role { get; set; }
+        public string RoleId { get; set; }
         /// <summary>
         /// 描述
         /// </summary>

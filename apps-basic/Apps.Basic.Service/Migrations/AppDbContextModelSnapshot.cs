@@ -224,7 +224,7 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Role");
+                    b.Property<string>("RoleId");
 
                     b.HasKey("Id");
 
@@ -269,8 +269,6 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Creator");
 
                     b.Property<bool>("IsInner");
-
-                    b.Property<string>("KeyWord");
 
                     b.Property<DateTime>("ModifiedTime");
 

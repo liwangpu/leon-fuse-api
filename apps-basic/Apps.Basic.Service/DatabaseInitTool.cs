@@ -43,11 +43,10 @@ namespace Apps.Basic.Service
                     Console.WriteLine("Auto Create Inner UserRoles");
 
                 //超级管理员
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.SysAdmin).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.SysAdmin).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SysAdmin;
-                    role.KeyWord = UserRoleConst.SysAdmin;
                     role.Name = "系统超级管理员";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -58,11 +57,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //系统客服
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.SysService).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.SysService).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SysService;
-                    role.KeyWord = UserRoleConst.SysService;
                     role.Name = "系统客服";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -73,11 +71,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //品牌商管理员
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.BrandAdmin).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.BrandAdmin).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.BrandAdmin;
-                    role.KeyWord = UserRoleConst.BrandAdmin;
                     role.Name = "品牌商管理员";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -88,11 +85,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //品牌商管用户
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.BrandMember).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.BrandMember).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.BrandMember;
-                    role.KeyWord = UserRoleConst.BrandMember;
                     role.Name = "品牌商用户";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -103,11 +99,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //代理商管理员
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.PartnerAdmin).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.PartnerAdmin).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.PartnerAdmin;
-                    role.KeyWord = UserRoleConst.PartnerAdmin;
                     role.Name = "代理商管理员";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -118,11 +113,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //代理商用户
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.PartnerMember).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.PartnerMember).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.PartnerMember;
-                    role.KeyWord = UserRoleConst.PartnerMember;
                     role.Name = "代理商用户";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -133,11 +127,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //供应商管理员
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.SupplierAdmin).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.SupplierAdmin).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SupplierAdmin;
-                    role.KeyWord = UserRoleConst.SupplierAdmin;
                     role.Name = "供应商管理员";
                     role.Creator = "admin";
                     role.Modifier = "admin";
@@ -148,11 +141,10 @@ namespace Apps.Basic.Service
                     context.UserRoles.Add(role);
                 }
                 //供应商用户
-                if (innerRoles.Where(x => x.KeyWord == UserRoleConst.SupplierMember).Count() <= 0)
+                if (innerRoles.Where(x => x.Id == UserRoleConst.SupplierMember).Count() <= 0)
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SupplierMember;
-                    role.KeyWord = UserRoleConst.SupplierMember;
                     role.Name = "供应商用户";
                     role.Creator = "admin";
                     role.Modifier = "admin";

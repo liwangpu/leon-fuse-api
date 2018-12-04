@@ -95,7 +95,7 @@ namespace Apps.Basic.Service.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Role = table.Column<string>(nullable: true),
+                    RoleId = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -114,7 +114,6 @@ namespace Apps.Basic.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     ActiveFlag = table.Column<int>(nullable: false),
-                    KeyWord = table.Column<string>(nullable: true),
                     IsInner = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>

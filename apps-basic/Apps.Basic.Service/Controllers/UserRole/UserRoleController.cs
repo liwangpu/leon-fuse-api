@@ -47,7 +47,6 @@ namespace Apps.Basic.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.KeyWord = entity.KeyWord;
                 dto.IsInner = entity.IsInner;
                 return await Task.FromResult(dto);
             });
@@ -74,7 +73,6 @@ namespace Apps.Basic.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.KeyWord = entity.KeyWord;
                 dto.IsInner = entity.IsInner;
                 return await Task.FromResult(dto);
             });

@@ -49,7 +49,7 @@ namespace Apps.Basic.Service.Controllers
                 var dto = new UserNavDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
-                dto.Role = entity.Role;
+                dto.Role = entity.RoleId;
                 dto.Description = entity.Description;
                 return await Task.FromResult(dto);
             });
@@ -72,7 +72,7 @@ namespace Apps.Basic.Service.Controllers
                 var dto = new UserNavDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
-                dto.Role = entity.Role;
+                dto.Role = entity.RoleId;
                 dto.Description = entity.Description;
                 var userNavDetailDtos = new List<UserNavigationDTO>();
                 if (entity.UserNavDetails != null)
@@ -127,7 +127,7 @@ namespace Apps.Basic.Service.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.Role = model.Role;
+                entity.RoleId = model.Role;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -149,7 +149,7 @@ namespace Apps.Basic.Service.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.Role = model.Role;
+                entity.RoleId = model.Role;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
@@ -167,7 +167,7 @@ namespace Apps.Basic.Service.Controllers
         public async Task<IActionResult> GetUserNav()
         {
             var dtos = new List<UserNavigationDTO>();
-            var userNav = await _Context.UserNavs.Include(x => x.UserNavDetails).Where(x => x.Role == CurrentAccountInnerRoleId).FirstOrDefaultAsync();
+            var userNav = await _Context.UserNavs.Include(x => x.UserNavDetails).Where(x => x.RoleId == CurrentAccountInnerRoleId).FirstOrDefaultAsync();
             if (userNav == null || userNav.UserNavDetails == null || userNav.UserNavDetails.Count <= 0)
                 return NoContent();
             var navigations = await _Context.Navigations.ToListAsync();
