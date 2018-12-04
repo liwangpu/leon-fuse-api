@@ -16,6 +16,7 @@ namespace ApiModel.Entities
         public string SubWorkFlowId { get; set; }
         public string OperateRoles { get; set; }
         public int FlowGrade { get; set; }
+        public bool AutoWorkFlow { get; set; }
         [NotMapped]
         public string SubWorkFlowName { get; set; }
     }

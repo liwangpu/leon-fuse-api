@@ -54,6 +54,7 @@
     <Compile Remove="Migrations\20181122054722_LeonAddUnitToProductSpec20181122.cs" />
     <Compile Remove="Migrations\20181127023245_LeonAddSnapshootToSolution20181127.cs" />
     <Compile Remove="Migrations\20181127023630_LeonAddSnapshootToSolution20181127.cs" />
+    <Compile Remove="Migrations\20181203053144_LeonAddCompleteToWF20181203.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 

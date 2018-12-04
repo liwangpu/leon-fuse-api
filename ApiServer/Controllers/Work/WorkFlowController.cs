@@ -159,6 +159,7 @@ namespace ApiServer.Controllers
                             curItem.Name = model.Name;
                             curItem.Description = model.Description;
                             curItem.OperateRoles = model.OperateRoles;
+                            curItem.AutoWorkFlow = model.AutoWorkFlow;
                             curItem.FlowGrade = destGradeIndex;
                             curItem.SubWorkFlowId = model.SubWorkFlowId;
                             curItem.Modifier = accid;
@@ -173,6 +174,7 @@ namespace ApiServer.Controllers
                     newFlowItem.Name = model.Name;
                     newFlowItem.Description = model.Description;
                     newFlowItem.OperateRoles = model.OperateRoles;
+                    newFlowItem.AutoWorkFlow = model.AutoWorkFlow;
                     newFlowItem.FlowGrade = workFlowItems.Count;
                     newFlowItem.SubWorkFlowId = model.SubWorkFlowId;
                     newFlowItem.Creator = accid;

@@ -77,6 +77,8 @@ namespace ApiModel.Entities
         public string WorkFlowItemId { get; set; }
         public string WorkFlowItemName { get; set; }
         public FileAsset IconFileAsset { get; set; }
+        public int TotalNum { get; set; }
+        public decimal TotalPrice { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
         public List<OrderFlowLog> OrderFlowLogs { get; set; }
     }

@@ -62,6 +62,11 @@ namespace ApiServer.Controllers
             if (!exist)
                 return NotFound();
             var dto = await _Repository.GetByIdAsync(id);
+            if (dto.OrderDetails != null && dto.OrderDetails.Count > 0)
+            {
+                dto.TotalNum = dto.OrderDetails.Sum(x => x.Num);
+                dto.TotalPrice = dto.OrderDetails.Sum(x => x.TotalPrice);
+            }
             return Ok(dto);
         }
         #endregion
@@ -263,7 +268,7 @@ namespace ApiServer.Controllers
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.OrderId, mapping);
-        } 
+        }
         #endregion
     }
 }

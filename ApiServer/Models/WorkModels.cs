@@ -33,6 +33,7 @@ namespace ApiServer.Models
         public string SubWorkFlowId { get; set; }
         public string OperateRoles { get; set; }
         public int FlowGrade { get; set; }
+        public bool AutoWorkFlow { get; set; }
     }
 
     public class WorkFlowItemDeleteModel
