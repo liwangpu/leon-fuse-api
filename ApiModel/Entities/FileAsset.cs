@@ -29,6 +29,7 @@ namespace ApiModel.Entities
         /// </summary>
         public string UploadTime { get; set; }
         public string Icon { get; set; }
+        public int FileState { get; set; }
         /// <summary>
         /// 扩展属性1,各实体根据自己需要存储
         /// </summary>
@@ -50,6 +51,7 @@ namespace ApiModel.Entities
             dto.LocalPath = LocalPath;
             dto.UploadTime = UploadTime;
             dto.CategoryId = CategoryId;
+            dto.FileState = FileState;
             dto.OrganizationId = OrganizationId;
             dto.Creator = Creator;
             dto.Modifier = Modifier;
@@ -70,6 +72,7 @@ namespace ApiModel.Entities
         public string LocalPath { get; set; }
         public string UploadTime { get; set; }
         public string Icon { get; set; }
+        public int FileState { get; set; }
         public FileAsset IconFileAsset { get; set; }
     }
 

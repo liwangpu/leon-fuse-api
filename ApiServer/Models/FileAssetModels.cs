@@ -22,6 +22,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string AccountId { get; set; }
         public string Icon { get; set; }
+        public int FileState { get; set; }
     }
     #endregion
 
@@ -47,6 +48,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string AccountId { get; set; }
         public string Icon { get; set; }
+        public int FileState { get; set; }
     }
     #endregion
 

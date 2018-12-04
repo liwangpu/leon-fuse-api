@@ -1,4 +1,5 @@
-﻿using ApiModel.Entities;
+﻿using ApiModel.Consts;
+using ApiModel.Entities;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
 using ApiServer.Models;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -39,15 +41,23 @@ namespace ApiServer.Controllers
 
         #region Get 根据分页获取文件信息
         /// <summary>
-        /// 根据分页获取用户信息
+        /// 根据分页获取文件信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="fileState"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<FileAssetDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, int? fileState = null)
         {
-            return await _GetPagingRequest(model);
+            var advanceQuery = new Func<IQueryable<FileAsset>, Task<IQueryable<FileAsset>>>(async (query) =>
+            {
+                if (fileState != null)
+                    query = query.Where(x => x.FileState == fileState);
+                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+                return await Task.FromResult(query);
+            });
+            return await _GetPagingRequest(model, null, advanceQuery);
         }
         #endregion
 
@@ -85,6 +95,7 @@ namespace ApiServer.Controllers
                 entity.Url = model.Url;
                 entity.Md5 = model.Md5;
                 entity.Size = model.Size;
+                entity.FileState = model.FileState;
                 entity.FileExt = model.FileExt;
                 entity.LocalPath = model.LocalPath;
                 entity.UploadTime = model.UploadTime;
@@ -116,6 +127,7 @@ namespace ApiServer.Controllers
                 entity.Url = model.Url;
                 entity.Md5 = model.Md5;
                 entity.Size = model.Size;
+                entity.FileState = model.FileState;
                 entity.FileExt = model.FileExt;
                 entity.LocalPath = model.LocalPath;
                 entity.UploadTime = model.UploadTime;
