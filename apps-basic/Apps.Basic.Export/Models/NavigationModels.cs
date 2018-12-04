@@ -61,4 +61,26 @@ namespace Apps.Basic.Export.Models
         public string Role { get; set; }
         public string Description { get; set; }
     }
+
+    public class UserNavDetailEditModel
+    {
+        public string Id { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string UserNavId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string RefNavigationId { get; set; }
+        public string Grade { get; set; }
+        public string ParentId { get; set; }
+        public string ExcludeFiled { get; set; }
+        public string ExcludePermission { get; set; }
+        public string ExcludeQueryParams { get; set; }
+    }
+
+    public class UserNavDetailDeleteModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string UserNavId { get; set; }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Apps.Base.Common.Interfaces;
+﻿using Apps.Base.Common;
+using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
@@ -43,7 +44,16 @@ namespace Apps.Basic.Service.Controllers
         [ProducesResponseType(typeof(PagedData<UserNavDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _PagingRequest(model);
+            var toDTO = new Func<UserNav, Task<UserNavDTO>>(async (entity) =>
+            {
+                var dto = new UserNavDTO();
+                dto.Id = entity.Id;
+                dto.Name = entity.Name;
+                dto.Role = entity.Role;
+                dto.Description = entity.Description;
+                return await Task.FromResult(dto);
+            });
+            return await _PagingRequest(model, toDTO);
         }
         #endregion
 
@@ -76,7 +86,7 @@ namespace Apps.Basic.Service.Controllers
                         detailDto.ExcludeQueryParams = item.ExcludeQueryParams;
                         detailDto.Grade = item.Grade;
                         detailDto.ParentId = item.ParentId;
-                        var refNav =await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == item.Id);
+                        var refNav = await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == item.RefNavigationId);
                         if (refNav != null)
                         {
                             detailDto.Name = refNav.Name;
@@ -217,6 +227,109 @@ namespace Apps.Basic.Service.Controllers
 
 
             return Ok(dtos);
+        }
+        #endregion
+
+        #region UpdateUserNavDetail 更新角色导航详细项信息
+        /// <summary>
+        /// 更新角色导航详细项信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("UpdateUserNavDetail")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(UserNavDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> UpdateUserNavDetail([FromBody]UserNavDetailEditModel model)
+        {
+            var mapping = new Func<UserNav, Task<UserNav>>(async (entity) =>
+            {
+                var details = await _Context.UserNavDetails.Where(x => x.UserNav.Id == model.UserNavId).ToListAsync();
+                var refDetail = !string.IsNullOrWhiteSpace(model.Id) ? details.Where(x => x.Id == model.Id).FirstOrDefault() : new UserNavDetail();
+                if (refDetail == null)
+                    refDetail = new UserNavDetail();
+
+
+                if (string.IsNullOrWhiteSpace(model.Id))
+                {
+                    if (string.IsNullOrWhiteSpace(model.ParentId))
+                        refDetail.Grade = details.Where(x => string.IsNullOrWhiteSpace(x.ParentId)).Count();
+                    else
+                        refDetail.Grade = details.Where(x => x.ParentId == model.ParentId).Count();
+                }
+                refDetail.UserNav = entity;
+                refDetail.ParentId = model.ParentId;
+                refDetail.RefNavigationId = model.RefNavigationId;
+                refDetail.ExcludeFiled = model.ExcludeFiled;
+                refDetail.ExcludePermission = model.ExcludePermission;
+                refDetail.ExcludeQueryParams = model.ExcludeQueryParams;
+
+                if (!string.IsNullOrWhiteSpace(model.Id))
+                {
+                    _Context.UserNavDetails.Update(refDetail);
+                }
+                else
+                {
+                    refDetail.Id = GuidGen.NewGUID();
+                    _Context.UserNavDetails.Add(refDetail);
+                }
+                await _Context.SaveChangesAsync();
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.UserNavId, mapping);
+        }
+        #endregion
+
+        #region DeleteUserNavDetail 删除角色导航详细项信息
+        /// <summary>
+        /// 删除角色导航详细项信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("DeleteUserNavDetail")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(UserNavDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> DeleteUserNavDetail([FromBody]UserNavDetailDeleteModel model)
+        {
+            var mapping = new Func<UserNav, Task<UserNav>>(async (entity) =>
+            {
+                var details = await _Context.UserNavDetails.Where(x => x.UserNav.Id == model.UserNavId).ToListAsync();
+                var deleteItem = details.Where(x => x.Id == model.Id).First();
+
+                var deleteQueue = new Queue<UserNavDetail>();
+                deleteQueue.Enqueue(deleteItem);
+
+                do
+                {
+                    var it = deleteQueue.Dequeue();
+                    var subs = details.Where(x => x.ParentId == it.Id).ToList();
+                    subs.ForEach(t =>
+                    {
+                        deleteQueue.Enqueue(t);
+                        details.Remove(t);
+                        _Context.UserNavDetails.Remove(t);
+                    });
+                    details.Remove(it);
+                    _Context.UserNavDetails.Remove(it);
+                }
+                while (deleteQueue.Count > 0);
+
+                //重新排序同等级的导航栏信息
+                var sameRankDetails = details.Where(x => x.ParentId == deleteItem.ParentId).OrderBy(x => x.Grade).ToList();
+                for (int idx = sameRankDetails.Count - 1; idx >= 0; idx--)
+                {
+                    var item = sameRankDetails[idx];
+                    item.Grade = idx;
+                    _Context.UserNavDetails.Update(item);
+                }
+
+                await _Context.SaveChangesAsync();
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.UserNavId, mapping);
         }
         #endregion
     }

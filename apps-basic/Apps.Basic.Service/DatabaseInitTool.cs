@@ -166,6 +166,73 @@ namespace Apps.Basic.Service
             }
             #endregion
 
+            #region 创建基础组织类型
+            {
+                var innerOrganTypes = context.OrganizationTypes.Where(x => x.IsInner == true).ToList();
+                if (innerOrganTypes.Count <= 0)
+                    Console.WriteLine("Auto Create Inner Organization Type");
+
+                if (innerOrganTypes.Where(x => x.Id == OrganTyeConst.System_Supplier).Count() <= 0)
+                {
+                    var organType = new OrganizationType();
+                    organType.Id = OrganTyeConst.System_Supplier;
+                    organType.Name = "系统供应商";
+                    organType.Creator = "admin";
+                    organType.Modifier = "admin";
+                    organType.CreatedTime = DateTime.Now;
+                    organType.ModifiedTime = DateTime.Now;
+                    organType.ActiveFlag = 1;
+                    organType.IsInner = true;
+                    context.OrganizationTypes.Add(organType);
+                }
+
+                if (innerOrganTypes.Where(x => x.Id == OrganTyeConst.Brand).Count() <= 0)
+                {
+                    var organType = new OrganizationType();
+                    organType.Id = OrganTyeConst.Brand;
+                    organType.Name = "品牌商";
+                    organType.Creator = "admin";
+                    organType.Modifier = "admin";
+                    organType.CreatedTime = DateTime.Now;
+                    organType.ModifiedTime = DateTime.Now;
+                    organType.ActiveFlag = 1;
+                    organType.IsInner = true;
+                    context.OrganizationTypes.Add(organType);
+                }
+
+                if (innerOrganTypes.Where(x => x.Id == OrganTyeConst.Partner).Count() <= 0)
+                {
+                    var organType = new OrganizationType();
+                    organType.Id = OrganTyeConst.Partner;
+                    organType.Name = "代理商";
+                    organType.Creator = "admin";
+                    organType.Modifier = "admin";
+                    organType.CreatedTime = DateTime.Now;
+                    organType.ModifiedTime = DateTime.Now;
+                    organType.ActiveFlag = 1;
+                    organType.IsInner = true;
+                    context.OrganizationTypes.Add(organType);
+                }
+
+                if (innerOrganTypes.Where(x => x.Id == OrganTyeConst.Supplier).Count() <= 0)
+                {
+                    var organType = new OrganizationType();
+                    organType.Id = OrganTyeConst.Supplier;
+                    organType.Name = "供应商";
+                    organType.Creator = "admin";
+                    organType.Modifier = "admin";
+                    organType.CreatedTime = DateTime.Now;
+                    organType.ModifiedTime = DateTime.Now;
+                    organType.ActiveFlag = 1;
+                    organType.IsInner = true;
+                    context.OrganizationTypes.Add(organType);
+                }
+
+                context.SaveChanges();
+
+            }
+            #endregion
+
             #region 创建基础组织
             {
                 var existBambooOrgan = context.Organizations.Where(x => x.Id == "bamboo").Count() > 0;
@@ -175,6 +242,9 @@ namespace Apps.Basic.Service
                     var organ = new Organization();
                     organ.Id = BambooOrganId;
                     organ.Name = "竹烛信息科技有限公司";
+                    organ.OrganizationTypeId = OrganTyeConst.System_Supplier;
+                    organ.ActivationTime = DateTime.Now.AddDays(-7);
+                    organ.ExpireTime = DateTime.Now.AddYears(100);
                     organ.Creator = "admin";
                     organ.Modifier = "admin";
                     organ.CreatedTime = DateTime.Now;

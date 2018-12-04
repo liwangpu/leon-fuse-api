@@ -13,7 +13,7 @@
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Apps.Basic.Service": {
+    "Development": {
       "commandName": "Project",
       //"commandLineArgs": "--ConnectionString=\"Server=localhost;Database=app-basic;User Id=postgres;Password=root\" --JwtSettings:Issuer=123",
       "launchUrl": "api/values",
@@ -21,7 +21,7 @@
         "APP_DATABASE_CONNECTIONSTRING": "kaix",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://192.168.1.176:1882"
     }
   }
 }

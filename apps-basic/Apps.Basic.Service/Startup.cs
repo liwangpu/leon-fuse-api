@@ -84,6 +84,9 @@ namespace Apps.Basic.Service
             services.AddScoped<IRepository<FileAsset>, FileRepository>();
             services.AddScoped<IRepository<Navigation>, NavigationRepository>();
             services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
+            services.AddScoped<IRepository<Organization>, OrganizationRepository>();
+            services.AddScoped<IRepository<OrganizationType>, OrganizationTypeRepository>();
+            
             #endregion
 
 

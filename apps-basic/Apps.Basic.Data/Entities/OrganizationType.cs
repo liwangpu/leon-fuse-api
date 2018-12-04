@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Apps.Basic.Data.Entities
 {
-    public class Organization : IEntity
+    public class OrganizationType : IEntity
     {
         /// <summary>
         /// Id
@@ -35,28 +35,12 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
-        /// 描述
+        /// 是否内置量
         /// </summary>
-        public string Description { get; set; }
+        public bool IsInner { get; set; }
         /// <summary>
-        /// 失效时间
+        ///对应组织
         /// </summary>
-        public DateTime ExpireTime { get; set; }
-        /// <summary>
-        /// 启用时间
-        /// </summary>
-        public DateTime ActivationTime { get; set; }
-        /// <summary>
-        /// 组织人员
-        /// </summary>
-        public List<Account> Accounts { get; set; }
-        /// <summary>
-        /// 组织类型id
-        /// </summary>
-        public string OrganizationTypeId { get; set; }
-        /// <summary>
-        /// 组织类型
-        /// </summary>
-        public OrganizationType OrganizationType { get; set; }
+        public List<Organization> Organizations { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Apps.Basic.Service.Controllers
@@ -31,12 +32,41 @@ namespace Apps.Basic.Service.Controllers
         /// 根据分页获取导航栏项信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="nodeTypes"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<NavigationDTO>), 200)]
-        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
+        public async Task<IActionResult> Get([FromQuery] PagingRequestModel model, string nodeTypes)
         {
-            return await _PagingRequest(model);
+            var advanceQuery = new Func<IQueryable<Navigation>, Task<IQueryable<Navigation>>>(async (query) =>
+            {
+                if (!string.IsNullOrWhiteSpace(nodeTypes))
+                {
+                    //query = query.Where(x => x.NodeType == nodeTypes);
+                }
+                   
+                return await Task.FromResult(query);
+            });
+
+            var toDTO = new Func<Navigation, Task<NavigationDTO>>(async (entity) =>
+            {
+                var dto = new NavigationDTO();
+                dto.Id = entity.Id;
+                dto.Name = entity.Name;
+                dto.Title = entity.Title;
+                dto.NodeType = entity.NodeType;
+                dto.Icon = entity.Icon;
+                dto.Url = entity.Url;
+                dto.Resource = entity.Resource;
+                dto.Permission = entity.Permission;
+                dto.PagedModel = entity.PagedModel;
+                dto.Field = entity.Field;
+                dto.QueryParams = entity.QueryParams;
+                dto.NewTapOpen = entity.NewTapOpen;
+                return await Task.FromResult(dto);
+            });
+
+            return await _PagingRequest(model, toDTO, advanceQuery);
         }
         #endregion
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Apps.Basic.Data.Entities;
+﻿using Apps.Basic.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apps.Basic.Service.Contexts
@@ -28,6 +24,10 @@ namespace Apps.Basic.Service.Contexts
         /// 组织
         /// </summary>
         public DbSet<Organization> Organizations { get; set; }
+        /// <summary>
+        /// 组织类型
+        /// </summary>
+        public DbSet<OrganizationType> OrganizationTypes { get; set; }
         /// <summary>
         /// 部门
         /// </summary>

@@ -26,23 +26,29 @@ namespace Apps.Basic.Service.Controllers
         /// <summary>
         /// 处理分页请求
         /// </summary>
+        /// <typeparam name="DTO"></typeparam>
         /// <param name="model"></param>
+        /// <param name="toDTO"></param>
         /// <param name="advanceQuery"></param>
-        /// <param name="literal"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PagingRequest([FromQuery]PagingRequestModel model, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null, Func<T, Task<T>> literal = null)
+        protected async Task<IActionResult> _PagingRequest<DTO>([FromQuery]PagingRequestModel model, Func<T, Task<DTO>> toDTO, Func<IQueryable<T>, Task<IQueryable<T>>> advanceQuery = null)
+              where DTO : class, new()
         {
-            var result = await _Repository.SimplePagedQueryAsync(model, CurrentAccountId, advanceQuery);
-            if (result.Data == null)
-                result.Data = new List<T>();
-            if (literal != null)
+            var result = new PagedData<DTO>();
+            var res = await _Repository.SimplePagedQueryAsync(model, CurrentAccountId, advanceQuery);
+            result.Page = res.Page;
+            result.Size = res.Size;
+            result.Total = res.Total;
+            var dtos = new List<DTO>();
+            if (res.Data != null)
             {
-                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                foreach (var item in res.Data)
                 {
-                    var item = result.Data[idx];
-                    await literal(item);
+                    var dto = await toDTO(item);
+                    dtos.Add(dto);
                 }
             }
+            result.Data = dtos;
             return Ok(result);
         }
         #endregion

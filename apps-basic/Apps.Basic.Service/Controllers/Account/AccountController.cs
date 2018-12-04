@@ -42,7 +42,20 @@ namespace Apps.Basic.Service.Controllers
         [ProducesResponseType(typeof(PagedData<Account>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            return await _PagingRequest(model);
+            var toDTO = new Func<Account, Task<AccountDTO>>(async (entity) =>
+            {
+                var dto = new AccountDTO();
+                dto.Id = entity.Id;
+                dto.Name = entity.Name;
+                dto.Phone = entity.Phone;
+                dto.Mail = entity.Mail;
+                dto.Creator = entity.Creator;
+                dto.Modifier = entity.Modifier;
+                dto.CreatedTime = entity.CreatedTime;
+                dto.ModifiedTime = entity.ModifiedTime;
+                return await Task.FromResult(dto);
+            });
+            return await _PagingRequest(model, toDTO);
         }
         #endregion
 

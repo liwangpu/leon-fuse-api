@@ -164,11 +164,45 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("ActivationTime");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("ExpireTime");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationTypeId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationTypeId");
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Apps.Basic.Data.Entities.OrganizationType", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<bool>("IsInner");
 
                     b.Property<DateTime>("ModifiedTime");
 
@@ -178,7 +212,7 @@ namespace Apps.Basic.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organizations");
+                    b.ToTable("OrganizationTypes");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.UserNav", b =>
@@ -262,6 +296,13 @@ namespace Apps.Basic.Service.Migrations
                     b.HasOne("Apps.Basic.Data.Entities.Organization", "Organization")
                         .WithMany("Accounts")
                         .HasForeignKey("OrganizationId");
+                });
+
+            modelBuilder.Entity("Apps.Basic.Data.Entities.Organization", b =>
+                {
+                    b.HasOne("Apps.Basic.Data.Entities.OrganizationType", "OrganizationType")
+                        .WithMany("Organizations")
+                        .HasForeignKey("OrganizationTypeId");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.UserNavDetail", b =>

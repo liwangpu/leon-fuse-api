@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181130060053_AddFiles")]
-    partial class AddFiles
+    [Migration("20181204112233_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,7 +36,11 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("DepartmentId");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("ExpireTime");
+
+                    b.Property<string>("Icon");
 
                     b.Property<string>("InnerRoleId");
 
@@ -126,6 +130,8 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Description");
+
                     b.Property<string>("Field");
 
                     b.Property<string>("Icon");
@@ -160,11 +166,45 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("ActivationTime");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("ExpireTime");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationTypeId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationTypeId");
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Apps.Basic.Data.Entities.OrganizationType", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<bool>("IsInner");
 
                     b.Property<DateTime>("ModifiedTime");
 
@@ -174,13 +214,15 @@ namespace Apps.Basic.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organizations");
+                    b.ToTable("OrganizationTypes");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.UserNav", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("Name");
 
@@ -256,6 +298,13 @@ namespace Apps.Basic.Service.Migrations
                     b.HasOne("Apps.Basic.Data.Entities.Organization", "Organization")
                         .WithMany("Accounts")
                         .HasForeignKey("OrganizationId");
+                });
+
+            modelBuilder.Entity("Apps.Basic.Data.Entities.Organization", b =>
+                {
+                    b.HasOne("Apps.Basic.Data.Entities.OrganizationType", "OrganizationType")
+                        .WithMany("Organizations")
+                        .HasForeignKey("OrganizationTypeId");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.UserNavDetail", b =>

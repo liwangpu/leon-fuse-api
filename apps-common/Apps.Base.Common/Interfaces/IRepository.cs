@@ -1,5 +1,4 @@
-﻿using Apps.Base.Common.Enums;
-using Apps.Base.Common.Models;
+﻿using Apps.Base.Common.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

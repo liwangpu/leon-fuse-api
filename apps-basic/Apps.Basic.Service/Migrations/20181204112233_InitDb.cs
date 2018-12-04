@@ -25,12 +25,36 @@ namespace Apps.Basic.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Creator = table.Column<string>(nullable: true),
+                    Modifier = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    Url = table.Column<string>(nullable: true),
+                    Md5 = table.Column<string>(nullable: true),
+                    Size = table.Column<long>(nullable: false),
+                    FileExt = table.Column<string>(nullable: true),
+                    LocalPath = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Navigations",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     Url = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     Permission = table.Column<string>(nullable: true),
@@ -48,7 +72,7 @@ namespace Apps.Basic.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Organizations",
+                name: "OrganizationTypes",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
@@ -57,11 +81,12 @@ namespace Apps.Basic.Service.Migrations
                     Modifier = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
-                    ActiveFlag = table.Column<int>(nullable: false)
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    IsInner = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Organizations", x => x.Id);
+                    table.PrimaryKey("PK_OrganizationTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,7 +95,8 @@ namespace Apps.Basic.Service.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Role = table.Column<string>(nullable: true)
+                    Role = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,11 +114,39 @@ namespace Apps.Basic.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     ActiveFlag = table.Column<int>(nullable: false),
-                    KeyWord = table.Column<string>(nullable: true)
+                    KeyWord = table.Column<string>(nullable: true),
+                    IsInner = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Organizations",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Creator = table.Column<string>(nullable: true),
+                    Modifier = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    ActiveFlag = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    ExpireTime = table.Column<DateTime>(nullable: false),
+                    ActivationTime = table.Column<DateTime>(nullable: false),
+                    OrganizationTypeId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Organizations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Organizations_OrganizationTypes_OrganizationTypeId",
+                        column: x => x.OrganizationTypeId,
+                        principalTable: "OrganizationTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,9 +187,13 @@ namespace Apps.Basic.Service.Migrations
                     Password = table.Column<string>(nullable: true),
                     Mail = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
+                    ExpireTime = table.Column<DateTime>(nullable: false),
+                    ActivationTime = table.Column<DateTime>(nullable: false),
                     DepartmentId = table.Column<string>(nullable: true),
                     OrganizationId = table.Column<string>(nullable: true),
-                    InnerRoleId = table.Column<string>(nullable: true)
+                    InnerRoleId = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -176,6 +234,11 @@ namespace Apps.Basic.Service.Migrations
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Organizations_OrganizationTypeId",
+                table: "Organizations",
+                column: "OrganizationTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserNavDetails_UserNavId",
                 table: "UserNavDetails",
                 column: "UserNavId");
@@ -185,6 +248,9 @@ namespace Apps.Basic.Service.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Files");
 
             migrationBuilder.DropTable(
                 name: "Navigations");
@@ -203,6 +269,9 @@ namespace Apps.Basic.Service.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserNavs");
+
+            migrationBuilder.DropTable(
+                name: "OrganizationTypes");
         }
     }
 }
