@@ -14,18 +14,20 @@ namespace Apps.Base.Common
     public static class PagingFilterSearchExtention
     {
         /// <summary>
-        /// 简单分页查询
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="src"></param>
         /// <param name="page"></param>
         /// <param name="pageSize"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        public static async Task<PagedData<T>> SimplePaging<T>(this IQueryable<T> src, int page, int pageSize, Expression<Func<T, T>> expression = null) where T : class, new()
+        public static async Task<PagedData<T>> SimplePaging<T>(this IQueryable<T> src, int page, int pageSize, string orderBy, string defaultOrderField, bool? desc, Expression<Func<T, T>> expression = null) where T : class, new()
         {
             var res = new PagedData<T>();
-            IQueryable<T> data = src;
-
+            IQueryable<T> data = src.OrderBy(!string.IsNullOrWhiteSpace(orderBy) ? orderBy : defaultOrderField, desc);
 
             if (page < 1)
                 page = 1;

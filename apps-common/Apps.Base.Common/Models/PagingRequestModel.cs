@@ -13,6 +13,6 @@ namespace Apps.Base.Common.Models
         public int Page { get; set; }
         public int PageSize { get; set; }
         public string OrderBy { get; set; }
-        public bool Desc { get; set; }
+        public bool? Desc { get; set; }
     }
 }

@@ -77,7 +77,7 @@ namespace Apps.Basic.Service.Repositories
             if (!string.IsNullOrWhiteSpace(model.Search))
                 query = query.Where(d => d.Name.Contains(model.Search));
 
-            var result = await query.SimplePaging(model.Page, model.PageSize);
+            var result = await query.SimplePaging(model.Page, model.PageSize, model.OrderBy, "Name", model.Desc);
             return result;
         }
 
