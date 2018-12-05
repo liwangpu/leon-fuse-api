@@ -45,6 +45,10 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public string Phone { get; set; }
         /// <summary>
+        /// 地址
+        /// </summary>
+        public string Location { get; set; }
+        /// <summary>
         /// 账号有效期，登陆时间小于这个有效期则无法登陆
         /// </summary>
         public DateTime ExpireTime { get; set; }

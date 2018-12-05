@@ -47,6 +47,14 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public DateTime ActivationTime { get; set; }
         /// <summary>
+        /// 公司地址
+        /// </summary>
+        public string Location { get; set; }
+        /// <summary>
+        /// 组织超级管理员Id
+        /// </summary>
+        public string OwnerId { get; set; }
+        /// <summary>
         /// 组织人员
         /// </summary>
         public List<Account> Accounts { get; set; }

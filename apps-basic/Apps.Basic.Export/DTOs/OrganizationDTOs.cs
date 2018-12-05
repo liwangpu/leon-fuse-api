@@ -14,9 +14,10 @@ namespace Apps.Basic.Export.DTOs
         public DateTime ModifiedTime { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
+        public string Location { get; set; }
         public string Description { get; set; }
-        public string Type { get; set; }
-        public string TypeName { get; set; }
+        public string OrganizationTypeId { get; set; }
+        public string OrganizationTypeName { get; set; }
     }
 
     public class OrganizationTypeDTO

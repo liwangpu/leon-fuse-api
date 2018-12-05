@@ -14,10 +14,6 @@ namespace Apps.Basic.Service
     public class DatabaseInitTool
     {
         /// <summary>
-        /// 竹烛组织Id
-        /// </summary>
-        public const string BambooOrganId = "bamboo";
-        /// <summary>
         /// 应用备份文件夹
         /// </summary>
         public const string BackupFoler = "AppBackup";
@@ -48,8 +44,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.SysAdmin;
                     role.Name = "系统超级管理员";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -62,8 +58,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.SysService;
                     role.Name = "系统客服";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -76,8 +72,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.BrandAdmin;
                     role.Name = "品牌商管理员";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -90,8 +86,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.BrandMember;
                     role.Name = "品牌商用户";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -104,8 +100,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.PartnerAdmin;
                     role.Name = "代理商管理员";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -118,8 +114,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.PartnerMember;
                     role.Name = "代理商用户";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -132,8 +128,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.SupplierAdmin;
                     role.Name = "供应商管理员";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -146,8 +142,8 @@ namespace Apps.Basic.Service
                     var role = new UserRole();
                     role.Id = UserRoleConst.SupplierMember;
                     role.Name = "供应商用户";
-                    role.Creator = "admin";
-                    role.Modifier = "admin";
+                    role.Creator = AppConst.BambooAdminId;
+                    role.Modifier = AppConst.BambooAdminId;
                     role.CreatedTime = DateTime.Now;
                     role.ModifiedTime = DateTime.Now;
                     role.ActiveFlag = 1;
@@ -169,8 +165,8 @@ namespace Apps.Basic.Service
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.System_Supplier;
                     organType.Name = "系统供应商";
-                    organType.Creator = "admin";
-                    organType.Modifier = "admin";
+                    organType.Creator = AppConst.BambooAdminId;
+                    organType.Modifier = AppConst.BambooAdminId;
                     organType.CreatedTime = DateTime.Now;
                     organType.ModifiedTime = DateTime.Now;
                     organType.ActiveFlag = 1;
@@ -183,8 +179,8 @@ namespace Apps.Basic.Service
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.Brand;
                     organType.Name = "品牌商";
-                    organType.Creator = "admin";
-                    organType.Modifier = "admin";
+                    organType.Creator = AppConst.BambooAdminId;
+                    organType.Modifier = AppConst.BambooAdminId;
                     organType.CreatedTime = DateTime.Now;
                     organType.ModifiedTime = DateTime.Now;
                     organType.ActiveFlag = 1;
@@ -197,8 +193,8 @@ namespace Apps.Basic.Service
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.Partner;
                     organType.Name = "代理商";
-                    organType.Creator = "admin";
-                    organType.Modifier = "admin";
+                    organType.Creator = AppConst.BambooAdminId;
+                    organType.Modifier = AppConst.BambooAdminId;
                     organType.CreatedTime = DateTime.Now;
                     organType.ModifiedTime = DateTime.Now;
                     organType.ActiveFlag = 1;
@@ -211,8 +207,8 @@ namespace Apps.Basic.Service
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.Supplier;
                     organType.Name = "供应商";
-                    organType.Creator = "admin";
-                    organType.Modifier = "admin";
+                    organType.Creator = AppConst.BambooAdminId;
+                    organType.Modifier = AppConst.BambooAdminId;
                     organType.CreatedTime = DateTime.Now;
                     organType.ModifiedTime = DateTime.Now;
                     organType.ActiveFlag = 1;
@@ -232,13 +228,14 @@ namespace Apps.Basic.Service
                 {
                     Console.WriteLine("Auto Create Bamboo Organization");
                     var organ = new Organization();
-                    organ.Id = BambooOrganId;
+                    organ.Id = AppConst.BambooOrganId;
                     organ.Name = "竹烛信息科技有限公司";
                     organ.OrganizationTypeId = OrganTyeConst.System_Supplier;
                     organ.ActivationTime = DateTime.Now.AddDays(-7);
                     organ.ExpireTime = DateTime.Now.AddYears(100);
-                    organ.Creator = "admin";
-                    organ.Modifier = "admin";
+                    organ.OwnerId = AppConst.BambooAdminId;
+                    organ.Creator = AppConst.BambooAdminId;
+                    organ.Modifier = AppConst.BambooAdminId;
                     organ.CreatedTime = DateTime.Now;
                     organ.ModifiedTime = DateTime.Now;
                     organ.ActiveFlag = 1;
@@ -250,23 +247,26 @@ namespace Apps.Basic.Service
 
             #region 创建基础用户
             {
-                var existAdmin = context.Accounts.Where(x => x.Id == "admin").Count() > 0;
+                var existAdmin = context.Accounts.Where(x => x.Id == AppConst.BambooAdminId).Count() > 0;
                 if (!existAdmin)
                 {
                     Console.WriteLine("Auto Create Admin Account");
                     var admin = new Account();
-                    admin.Id = "admin";
-                    admin.Mail = "admin";
+                    admin.Id = AppConst.BambooAdminId;
+                    admin.Name = "系统超级管理员";
+                    admin.Mail = AppConst.BambooAdminId;
+                    admin.Phone = "15721457986";
+                    admin.Location = "上海徐汇区漕宝路航天大厦1405号";
                     admin.Password = Md5.CalcString("bambooAdmin");
                     admin.InnerRoleId = UserRoleConst.SysAdmin;
                     admin.ActivationTime = DateTime.Now.AddDays(-1);
                     admin.ExpireTime = DateTime.Now.AddYears(100);
-                    admin.Creator = "admin";
-                    admin.Modifier = "admin";
+                    admin.Creator = AppConst.BambooAdminId;
+                    admin.Modifier = AppConst.BambooAdminId;
                     admin.CreatedTime = DateTime.Now;
                     admin.ModifiedTime = DateTime.Now;
                     admin.ActiveFlag = 1;
-                    admin.OrganizationId = BambooOrganId;
+                    admin.OrganizationId = AppConst.BambooOrganId;
                     context.Accounts.Add(admin);
                     context.SaveChanges();
                 }

@@ -1,14 +1,21 @@
 ﻿using Apps.Base.Common.Interfaces;
+using Apps.Basic.Export.Models;
+using Apps.Basic.Service.Contexts;
+using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apps.Basic.Service.Controllers
 {
     public abstract class ListviewController<T> : ServiceBaseController<T>
           where T : class, IData, new()
     {
+        protected abstract AppDbContext _Context { get; }
+
         #region 构造函数
         public ListviewController(IRepository<T> repository)
          : base(repository)
@@ -43,7 +50,38 @@ namespace Apps.Basic.Service.Controllers
             if (rejectMessages.Count > 0)
                 return Ok(rejectMessages);
             return Ok();
-        } 
+        }
         #endregion
+
+        /// <summary>
+        /// 更新图标信息
+        /// </summary>
+        /// <param name="icon"></param>
+        /// <returns></returns>
+        //[Route("ChangeICon")]
+        //[HttpPut]
+        //[ValidateModel]
+        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
+        //public async Task<IActionResult> ChangeICon([FromBody]IconEdtiModel model)
+        //{
+        //    var file = await _Context.Files.FirstOrDefaultAsync(x => x.Id == model.AssetId);
+        //    var entity = await _Context.Set<T>().FirstOrDefaultAsync(x => x.Id == model.ObjId) as IListView;
+        //    if (file == null)
+        //    {
+        //        ModelState.AddModelError("message", $"找不到文件Id为{model.AssetId}的记录信息");
+        //        return BadRequest(ModelState);
+        //    }
+        //    if (entity == null)
+        //    {
+        //        ModelState.AddModelError("message", $"找不到对象Id为{model.ObjId}的记录信息");
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    entity.Icon = file.Id;
+        //    _Context.Set<T>().Update(entity);
+
+
+        //}
+
     }
 }

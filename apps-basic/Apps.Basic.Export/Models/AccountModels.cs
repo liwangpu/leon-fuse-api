@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Apps.Basic.Export.Models
 {
@@ -24,10 +25,12 @@ namespace Apps.Basic.Export.Models
         [Required(ErrorMessage = "必填信息")]
         public string Name { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string Password { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string Mail { get; set; }
+        public string Password { get; set; }
         public string Phone { get; set; }
+        public string Location { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
     }
     #endregion
 
@@ -42,9 +45,25 @@ namespace Apps.Basic.Export.Models
         [Required(ErrorMessage = "必填信息")]
         public string Name { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string Password { get; set; }
         public string Mail { get; set; }
+        public string Password { get; set; }
         public string Phone { get; set; }
+        public string Location { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime ActivationTime { get; set; }
+    }
+    #endregion
+
+    #region ResetPasswordModel 重置密码编辑模型
+    /// <summary>
+    /// 重置密码编辑模型
+    /// </summary>
+    public class ResetPasswordModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string UserId { get; set; }
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "长度必须大于6个字符")]
+        public string Password { get; set; }
     }
     #endregion
 }

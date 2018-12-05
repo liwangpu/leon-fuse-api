@@ -135,6 +135,8 @@ namespace Apps.Basic.Service.Migrations
                     Description = table.Column<string>(nullable: true),
                     ExpireTime = table.Column<DateTime>(nullable: false),
                     ActivationTime = table.Column<DateTime>(nullable: false),
+                    Location = table.Column<string>(nullable: true),
+                    OwnerId = table.Column<string>(nullable: true),
                     OrganizationTypeId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -186,6 +188,7 @@ namespace Apps.Basic.Service.Migrations
                     Password = table.Column<string>(nullable: true),
                     Mail = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
+                    Location = table.Column<string>(nullable: true),
                     ExpireTime = table.Column<DateTime>(nullable: false),
                     ActivationTime = table.Column<DateTime>(nullable: false),
                     DepartmentId = table.Column<string>(nullable: true),

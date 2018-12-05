@@ -24,7 +24,7 @@ namespace Apps.Basic.Service.Controllers
     [ApiController]
     public class UserNavController : ListviewController<UserNav>
     {
-        protected readonly AppDbContext _Context;
+        protected override AppDbContext _Context { get; }
 
         #region 构造函数
         public UserNavController(IRepository<UserNav> repository, AppDbContext context)
@@ -49,7 +49,12 @@ namespace Apps.Basic.Service.Controllers
                 var dto = new UserNavDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
-                dto.Role = entity.RoleId;
+                dto.RoleId = entity.RoleId;
+                if (!string.IsNullOrWhiteSpace(dto.RoleId))
+                {
+                    var role = await _Context.UserRoles.FirstOrDefaultAsync(x => x.Id == dto.RoleId);
+                    dto.RoleName = role != null ? role.Name : string.Empty;
+                }
                 dto.Description = entity.Description;
                 return await Task.FromResult(dto);
             });
@@ -72,7 +77,12 @@ namespace Apps.Basic.Service.Controllers
                 var dto = new UserNavDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
-                dto.Role = entity.RoleId;
+                dto.RoleId = entity.RoleId;
+                if (!string.IsNullOrWhiteSpace(dto.RoleId))
+                {
+                    var role = await _Context.UserRoles.FirstOrDefaultAsync(x => x.Id == dto.RoleId);
+                    dto.RoleName = role != null ? role.Name : string.Empty;
+                }
                 dto.Description = entity.Description;
                 var userNavDetailDtos = new List<UserNavigationDTO>();
                 if (entity.UserNavDetails != null)
@@ -127,7 +137,7 @@ namespace Apps.Basic.Service.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.RoleId = model.Role;
+                entity.RoleId = model.RoleId;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -149,7 +159,7 @@ namespace Apps.Basic.Service.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.RoleId = model.Role;
+                entity.RoleId = model.RoleId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
@@ -173,7 +183,7 @@ namespace Apps.Basic.Service.Controllers
             var navigations = await _Context.Navigations.ToListAsync();
             foreach (var curNavItem in userNav.UserNavDetails)
             {
-                var refNav = navigations.Where(x => x.Id == curNavItem.RefNavigationId).First();
+                var refNav = navigations.Where(x => x.Id == curNavItem.RefNavigationId).FirstOrDefault();
                 if (refNav == null) continue;
                 var dto = new UserNavigationDTO();
                 dto.Id = curNavItem.Id;

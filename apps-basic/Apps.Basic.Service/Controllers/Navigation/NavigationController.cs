@@ -3,6 +3,7 @@ using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
 using Apps.Basic.Export.Models;
+using Apps.Basic.Service.Contexts;
 using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,8 @@ namespace Apps.Basic.Service.Controllers
     [ApiController]
     public class NavigationController : ListviewController<Navigation>
     {
+        protected override AppDbContext _Context { get; }
+
         #region 构造函数
         public NavigationController(IRepository<Navigation> repository)
             : base(repository)

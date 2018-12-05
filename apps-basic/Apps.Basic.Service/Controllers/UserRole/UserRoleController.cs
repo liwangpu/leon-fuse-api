@@ -21,6 +21,8 @@ namespace Apps.Basic.Service.Controllers
     [ApiController]
     public class UserRoleController : ListviewController<UserRole>
     {
+        protected override AppDbContext _Context { get; }
+
         #region 构造函数
         public UserRoleController(IRepository<UserRole> repository)
          : base(repository)

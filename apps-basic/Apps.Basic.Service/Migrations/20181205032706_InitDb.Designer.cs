@@ -3,15 +3,17 @@ using System;
 using Apps.Basic.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181205032706_InitDb")]
+    partial class InitDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,26 +197,6 @@ namespace Apps.Basic.Service.Migrations
                     b.HasIndex("OrganizationTypeId");
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("Apps.Basic.Data.Entities.OrganizationTree", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("LValue");
-
-                    b.Property<string>("NodeType");
-
-                    b.Property<string>("ObjId");
-
-                    b.Property<string>("ParentId");
-
-                    b.Property<int>("RValue");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrganizationTrees");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.OrganizationType", b =>

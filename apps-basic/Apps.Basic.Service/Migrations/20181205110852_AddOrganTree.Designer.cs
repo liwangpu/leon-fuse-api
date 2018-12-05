@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181204114436_InitDb")]
-    partial class InitDb
+    [Migration("20181205110852_AddOrganTree")]
+    partial class AddOrganTree
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,8 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Icon");
 
                     b.Property<string>("InnerRoleId");
+
+                    b.Property<string>("Location");
 
                     b.Property<string>("Mail");
 
@@ -178,6 +180,8 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<DateTime>("ExpireTime");
 
+                    b.Property<string>("Location");
+
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Modifier");
@@ -186,11 +190,33 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("OrganizationTypeId");
 
+                    b.Property<string>("OwnerId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationTypeId");
 
                     b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Apps.Basic.Data.Entities.OrganizationTree", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LValue");
+
+                    b.Property<string>("NodeType");
+
+                    b.Property<string>("ObjId");
+
+                    b.Property<string>("ParentId");
+
+                    b.Property<int>("RValue");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrganizationTrees");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.OrganizationType", b =>

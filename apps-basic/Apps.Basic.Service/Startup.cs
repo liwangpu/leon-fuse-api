@@ -86,6 +86,7 @@ namespace Apps.Basic.Service
             services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
             services.AddScoped<IRepository<Organization>, OrganizationRepository>();
             services.AddScoped<IRepository<OrganizationType>, OrganizationTypeRepository>();
+            services.AddScoped<ITreeRepository<OrganizationTree>, OrganizationTreeRepository>();
             
             #endregion
 

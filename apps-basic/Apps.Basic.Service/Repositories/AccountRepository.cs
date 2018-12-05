@@ -64,7 +64,6 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task CreateAsync(Account data, string accountId)
         {
-
             data.Id = GuidGen.NewGUID();
             data.Creator = accountId;
             data.Modifier = accountId;
@@ -76,7 +75,6 @@ namespace Apps.Basic.Service.Repositories
 
         public async Task UpdateAsync(Account data, string accountId)
         {
-
             data.Modifier = accountId;
             data.ModifiedTime = data.CreatedTime;
             _Context.Accounts.Update(data);

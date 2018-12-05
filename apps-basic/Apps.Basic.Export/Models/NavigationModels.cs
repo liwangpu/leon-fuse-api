@@ -47,7 +47,7 @@ namespace Apps.Basic.Export.Models
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string Role { get; set; }
+        public string RoleId { get; set; }
         public string Description { get; set; }
     }
 
@@ -58,7 +58,7 @@ namespace Apps.Basic.Export.Models
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string Role { get; set; }
+        public string RoleId { get; set; }
         public string Description { get; set; }
     }
 

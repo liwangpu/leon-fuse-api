@@ -195,16 +195,20 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         private async Task<IActionResult> SaveUpload(Action<string> saveFile)
         {
+            string fileState = "";
             string fileExt = "";
             string localPath = "";
             string description = "";
             Microsoft.Extensions.Primitives.StringValues headerVar;
+            Request.Headers.TryGetValue("fileState", out headerVar); if (headerVar.Count > 0) fileState = headerVar[0].Trim();
             Request.Headers.TryGetValue("fileExt", out headerVar); if (headerVar.Count > 0) fileExt = headerVar[0].Trim();
             Request.Headers.TryGetValue("localPath", out headerVar); if (headerVar.Count > 0) localPath = headerVar[0].Trim();
             Request.Headers.TryGetValue("description", out headerVar); if (headerVar.Count > 0) description = headerVar[0].Trim();
 
 
-            //三个头信息decode
+            //几个头信息decode
+            if (!string.IsNullOrWhiteSpace(fileState))
+                fileState = System.Web.HttpUtility.UrlDecode(fileState);
             if (!string.IsNullOrWhiteSpace(fileExt))
                 fileExt = System.Web.HttpUtility.UrlDecode(fileExt);
             if (!string.IsNullOrWhiteSpace(localPath))
@@ -226,6 +230,8 @@ namespace ApiServer.Controllers
             res.Id = GuidGen.NewGUID(); //先生成临时ID，用于保存文件
             res.Name = localPath.Length > 0 ? Path.GetFileName(localPath) : res.Id;
             res.Url = "/upload/" + res.Id;
+            int fstate = 0;
+            res.FileState = int.TryParse(fileState, out fstate) ? fstate : 0;
             res.FileExt = fileExt;
             res.LocalPath = localPath;
             res.Description = description;

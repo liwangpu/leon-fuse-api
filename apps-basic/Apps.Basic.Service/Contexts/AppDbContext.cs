@@ -29,6 +29,10 @@ namespace Apps.Basic.Service.Contexts
         /// </summary>
         public DbSet<OrganizationType> OrganizationTypes { get; set; }
         /// <summary>
+        /// 组织树
+        /// </summary>
+        public DbSet<OrganizationTree> OrganizationTrees { get; set; }
+        /// <summary>
         /// 部门
         /// </summary>
         public DbSet<Department> Departments { get; set; }
