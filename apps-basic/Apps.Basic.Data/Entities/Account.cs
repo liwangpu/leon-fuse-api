@@ -1,7 +1,12 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
+using System.Collections.Generic;
+
 namespace Apps.Basic.Data.Entities
 {
+    /// <summary>
+    /// 用户
+    /// </summary>
     public class Account : IEntity
     {
         /// <summary>
@@ -80,6 +85,10 @@ namespace Apps.Basic.Data.Entities
         /// 系统内置的基础角色
         /// </summary>
         public UserRole InnerRole { get; set; }
+        /// <summary>
+        /// 用户附属角色
+        /// </summary>
+        public List<AdditionRole> AdditionRoles { get; set; }
         /// <summary>
         /// 图标
         /// </summary>

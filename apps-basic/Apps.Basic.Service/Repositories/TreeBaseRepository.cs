@@ -110,8 +110,9 @@ namespace Apps.Basic.Service.Repositories
         /// <param name="nodeTypes"></param>
         /// <param name="includeCurrentNode"></param>
         /// <returns></returns>
-        public IQueryable<T> GetDescendantNode(T node, List<string> nodeTypes, bool includeCurrentNode = false)
+        public async Task<IQueryable<T>> GetDescendantNode(string objId, List<string> nodeTypes, bool includeCurrentNode = false)
         {
+            var node = await _Context.Set<T>().FirstAsync(x => x.ObjId == objId);
             if (includeCurrentNode)
             {
                 return from it in _Context.Set<T>()
@@ -137,8 +138,10 @@ namespace Apps.Basic.Service.Repositories
         /// <param name="nodeTypes"></param>
         /// <param name="includeCurrentNode"></param>
         /// <returns></returns>
-        public async Task<IQueryable<T>> GetAncestorNode(T node, List<string> nodeTypes, bool includeCurrentNode = false)
+        public async Task<IQueryable<T>> GetAncestorNode(string objId, List<string> nodeTypes, bool includeCurrentNode = false)
         {
+            var node = await _Context.Set<T>().FirstAsync(x => x.ObjId == objId);
+
             var ids = new List<string>();
             if (includeCurrentNode)
                 ids.Add(node.Id);

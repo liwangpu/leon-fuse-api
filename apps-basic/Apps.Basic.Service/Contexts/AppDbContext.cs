@@ -21,6 +21,10 @@ namespace Apps.Basic.Service.Contexts
         /// </summary>
         public DbSet<Account> Accounts { get; set; }
         /// <summary>
+        /// 用户附属角色
+        /// </summary>
+        public DbSet<AdditionRole> AdditionRoles { get; set; }
+        /// <summary>
         /// 组织
         /// </summary>
         public DbSet<Organization> Organizations { get; set; }

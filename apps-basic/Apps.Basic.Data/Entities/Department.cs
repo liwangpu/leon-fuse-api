@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Apps.Basic.Data.Entities
 {
+    /// <summary>
+    /// 部门
+    /// </summary>
     public class Department : IEntity
     {
         /// <summary>

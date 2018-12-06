@@ -51,6 +51,14 @@ namespace Apps.Basic.Service.Repositories
             if (!string.IsNullOrWhiteSpace(model.Search))
                 query = query.Where(d => d.Name.Contains(model.Search));
 
+            #region 组织过滤
+            {
+                var currentOrganId = await _Context.Accounts.Where(x => x.Id == accountId).Select(x => x.OrganizationId).FirstAsync();
+                var currentOrgan = await _Context.Organizations.FirstAsync(x => x.Id == currentOrganId);
+                query = query.Where(x => x.OrganizationId == currentOrganId && x.Id != currentOrgan.OwnerId);
+            }
+            #endregion
+
             var result = await query.SimplePaging(model.Page, model.PageSize, model.OrderBy, "ModifiedTime", model.Desc);
             return result;
         }

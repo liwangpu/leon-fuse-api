@@ -37,5 +37,9 @@ namespace Apps.Basic.Data.Entities
         /// 是否内置量
         /// </summary>
         public bool IsInner { get; set; }
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
     }
 }

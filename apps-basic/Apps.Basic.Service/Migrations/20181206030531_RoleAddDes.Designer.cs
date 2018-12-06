@@ -3,15 +3,17 @@ using System;
 using Apps.Basic.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181206030531_RoleAddDes")]
+    partial class RoleAddDes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,24 +69,6 @@ namespace Apps.Basic.Service.Migrations
                     b.HasIndex("OrganizationId");
 
                     b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("Apps.Basic.Data.Entities.AdditionRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AccountId");
-
-                    b.Property<string>("UserRoleId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("UserRoleId");
-
-                    b.ToTable("AdditionRoles");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.Department", b =>
@@ -340,17 +324,6 @@ namespace Apps.Basic.Service.Migrations
                     b.HasOne("Apps.Basic.Data.Entities.Organization", "Organization")
                         .WithMany("Accounts")
                         .HasForeignKey("OrganizationId");
-                });
-
-            modelBuilder.Entity("Apps.Basic.Data.Entities.AdditionRole", b =>
-                {
-                    b.HasOne("Apps.Basic.Data.Entities.Account", "Account")
-                        .WithMany("AdditionRoles")
-                        .HasForeignKey("AccountId");
-
-                    b.HasOne("Apps.Basic.Data.Entities.UserRole", "UserRole")
-                        .WithMany()
-                        .HasForeignKey("UserRoleId");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.Organization", b =>
