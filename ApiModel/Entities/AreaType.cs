@@ -24,6 +24,7 @@ namespace ApiModel.Entities
             if (IconFileAsset != null)
             {
                 dto.Icon = IconFileAsset.Url;
+                dto.IconAssetId = IconFileAsset.Id;
             }
             return dto;
         }
@@ -31,6 +32,7 @@ namespace ApiModel.Entities
 
     public class AreaTypeDTO : EntityBase, IListable
     {
+        public string IconAssetId { get; set; }
         public string Icon { get; set; }
         public FileAsset IconFileAsset { get; set; }
     }
