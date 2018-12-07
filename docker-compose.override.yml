@@ -3,6 +3,13 @@ version: '3.4'
 services:
   apiserver:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
+    extra_hosts:
+      - "outside:192.168.1.6"
     ports:
-      - "80"
+      - "8991:80"
+    environment:
+      - ConnectionString=Server=192.168.1.6;Port=5433;Database=dmz_ehome;User Id=postgres;Password=omega
+    volumes:
+      - "/var/bamboo/files:/app/wwwroot/upload"
+      - "/var/bamboo/appbackup/ehome:/app/wwwroot/AppBackup"
