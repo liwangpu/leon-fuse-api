@@ -41,9 +41,17 @@ namespace ApiServer
                     .AllowCredentials()));
 
             services.AddEntityFrameworkNpgsql();
-            services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MainDb")));
+
+
+            #region PGSQL Setting
+            //services.AddEntityFrameworkNpgsql();
+            var connStr = Configuration["ConnectionString"];
+            services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(connStr));
             services.Configure<AppConfig>(Configuration);
             RepositoryRegistry.Registry(services);
+            Console.WriteLine("数据库链接参数:{0}", connStr);
+            #endregion
+
 
             //services.AddEntityFrameworkSqlServer();
             //services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MainDb"), b => b.UseRowNumberForPaging()));
@@ -183,6 +191,7 @@ namespace ApiServer
 
             #region Database Init
             {
+                dbContext.Database.Migrate();
                 DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
             }
             #endregion

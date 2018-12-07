@@ -5,6 +5,7 @@
     /// </summary>
     public class AppConfig
     {
+        public string ConnectionString { get; set; }
         public string MediaShareServer { get; set; }
         public string MessageMail { get; set; }
         public JwtSettings JwtSettings { get; set; }
