@@ -11,6 +11,7 @@ namespace ApiModel.Entities
         public int Grade { get; set; }
         public string ParentId { get; set; }
         public string RefNavigationId { get; set; }
+        public string UserNavId { get; set; }
         public UserNav UserNav { get; set; }
 
         [NotMapped]

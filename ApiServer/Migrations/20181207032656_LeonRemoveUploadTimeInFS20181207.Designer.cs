@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181207032656_LeonRemoveUploadTimeInFS20181207")]
+    partial class LeonRemoveUploadTimeInFS20181207
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,6 +77,24 @@ namespace ApiServer.Migrations
                     b.HasIndex("OrganizationId");
 
                     b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("ApiModel.Entities.AccountOpenId", b =>
+                {
+                    b.Property<string>("OpenId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountId");
+
+                    b.Property<DateTime>("CreateTime");
+
+                    b.Property<string>("Platform");
+
+                    b.HasKey("OpenId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("AccountOpenId");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.AccountRole", b =>
@@ -195,6 +214,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountId");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -218,6 +239,8 @@ namespace ApiServer.Migrations
                     b.Property<int>("ResourceType");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("OrganizationId");
 
@@ -261,6 +284,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountId");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -284,6 +309,8 @@ namespace ApiServer.Migrations
                     b.Property<int>("ResourceType");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("OrganizationId");
 
@@ -369,6 +396,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountId");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -407,6 +436,8 @@ namespace ApiServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountId");
+
                     b.HasIndex("OrganizationId");
 
                     b.ToTable("Files");
@@ -416,6 +447,8 @@ namespace ApiServer.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountId");
 
                     b.Property<int>("ActiveFlag");
 
@@ -442,6 +475,8 @@ namespace ApiServer.Migrations
                     b.Property<int>("ResourceType");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("OrganizationId");
 
@@ -618,64 +653,6 @@ namespace ApiServer.Migrations
                     b.ToTable("MediaShareResources");
                 });
 
-            modelBuilder.Entity("ApiModel.Entities.MemberRegistry", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<int>("ResourceType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MemberRegistries");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.MemberTree", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("LValue");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("NodeType");
-
-                    b.Property<string>("ObjId");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<string>("ParentId");
-
-                    b.Property<int>("RValue");
-
-                    b.Property<string>("RootOrganizationId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MemberTrees");
-                });
-
             modelBuilder.Entity("ApiModel.Entities.Navigation", b =>
                 {
                     b.Property<string>("Id")
@@ -733,6 +710,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountId");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -768,6 +747,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("WorkFlowItemId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("OrganizationId");
 
@@ -928,6 +909,52 @@ namespace ApiServer.Migrations
                     b.ToTable("OrganizationTypes");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.OrganMember", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountId");
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("DepartmentId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("JoinDepartmentTime");
+
+                    b.Property<DateTime>("JoinOrganTime");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("ResourceType");
+
+                    b.Property<string>("Role");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("OrganMember");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.Package", b =>
                 {
                     b.Property<string>("Id")
@@ -1009,6 +1036,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountId");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -1034,6 +1063,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Unit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("OrganizationId");
 
@@ -1239,6 +1270,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountId");
+
                     b.Property<int>("ActiveFlag");
 
                     b.Property<string>("CategoryId");
@@ -1270,6 +1303,8 @@ namespace ApiServer.Migrations
                     b.Property<string>("SnapshotData");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("LayoutId");
 
@@ -1615,6 +1650,13 @@ namespace ApiServer.Migrations
                         .HasForeignKey("OrganizationId");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.AccountOpenId", b =>
+                {
+                    b.HasOne("ApiModel.Entities.Account", "Account")
+                        .WithMany("OpenIds")
+                        .HasForeignKey("AccountId");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.AccountRole", b =>
                 {
                     b.HasOne("ApiModel.Entities.Account", "Account")
@@ -1624,6 +1666,10 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.AssetFolder", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("Folders")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Folders")
                         .HasForeignKey("OrganizationId");
@@ -1631,6 +1677,10 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.ClientAsset", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("ClientAssets")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("ClientAssets")
                         .HasForeignKey("OrganizationId");
@@ -1649,6 +1699,10 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.FileAsset", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("Files")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Files")
                         .HasForeignKey("OrganizationId");
@@ -1656,6 +1710,10 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Layout", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("Layouts")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Layouts")
                         .HasForeignKey("OrganizationId");
@@ -1684,6 +1742,10 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Order", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("Orders")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Orders")
                         .HasForeignKey("OrganizationId");
@@ -1710,8 +1772,27 @@ namespace ApiServer.Migrations
                         .HasForeignKey("ParentId");
                 });
 
+            modelBuilder.Entity("ApiModel.Entities.OrganMember", b =>
+                {
+                    b.HasOne("ApiModel.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId");
+
+                    b.HasOne("ApiModel.Entities.Department", "Department")
+                        .WithMany("Members")
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("ApiModel.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId");
+                });
+
             modelBuilder.Entity("ApiModel.Entities.Product", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("Products")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Organization")
                         .WithMany("Products")
                         .HasForeignKey("OrganizationId");
@@ -1726,6 +1807,10 @@ namespace ApiServer.Migrations
 
             modelBuilder.Entity("ApiModel.Entities.Solution", b =>
                 {
+                    b.HasOne("ApiModel.Entities.Account")
+                        .WithMany("Solutions")
+                        .HasForeignKey("AccountId");
+
                     b.HasOne("ApiModel.Entities.Layout", "Layout")
                         .WithMany()
                         .HasForeignKey("LayoutId");

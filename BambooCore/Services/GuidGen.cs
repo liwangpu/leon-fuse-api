@@ -8,6 +8,13 @@ namespace BambooCore
         private static HashidsNet.Hashids hashIds = new HashidsNet.Hashids();
         private static int serverId;
 
+        public static void Init(string inServerId, string inSalt, string inMinLen)
+        {
+            var serverId = Convert.ToInt32(inServerId);
+            var guidMinLen = Convert.ToInt32(inMinLen);
+            Init(serverId, inSalt, guidMinLen);
+        }
+
         public static void Init(int inServerId, string inSalt, int inMinLen)
         {
             serverId = inServerId;

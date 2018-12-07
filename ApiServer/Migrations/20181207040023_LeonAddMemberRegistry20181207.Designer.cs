@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181207040023_LeonAddMemberRegistry20181207")]
+    partial class LeonAddMemberRegistry20181207
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -616,38 +617,6 @@ namespace ApiServer.Migrations
                     b.HasIndex("MediaId");
 
                     b.ToTable("MediaShareResources");
-                });
-
-            modelBuilder.Entity("ApiModel.Entities.MemberRegistry", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<int>("ResourceType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MemberRegistries");
                 });
 
             modelBuilder.Entity("ApiModel.Entities.MemberTree", b =>

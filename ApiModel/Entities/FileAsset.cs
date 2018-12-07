@@ -24,10 +24,6 @@ namespace ApiModel.Entities
         /// 原始文件上传时本地路径
         /// </summary>
         public string LocalPath { get; set; }
-        /// <summary>
-        /// 资源上传时间
-        /// </summary>
-        public string UploadTime { get; set; }
         public string Icon { get; set; }
         public int FileState { get; set; }
         /// <summary>
@@ -49,7 +45,6 @@ namespace ApiModel.Entities
             dto.Size = Size;
             dto.FileExt = FileExt;
             dto.LocalPath = LocalPath;
-            dto.UploadTime = UploadTime;
             dto.CategoryId = CategoryId;
             dto.FileState = FileState;
             dto.OrganizationId = OrganizationId;
@@ -70,7 +65,6 @@ namespace ApiModel.Entities
         public long Size { get; set; }
         public string FileExt { get; set; }
         public string LocalPath { get; set; }
-        public string UploadTime { get; set; }
         public string Icon { get; set; }
         public int FileState { get; set; }
         public FileAsset IconFileAsset { get; set; }

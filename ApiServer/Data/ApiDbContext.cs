@@ -192,6 +192,9 @@ namespace ApiServer.Data
 
         public DbSet<OrderFlowLog> OrderFlowLogs { get; set; }
 
+        public DbSet<MemberTree> MemberTrees { get; set; }
+
+        public DbSet<MemberRegistry> MemberRegistries { get; set; }
         //------------------------------------------------------------------------
 
         public ApiDbContext() { }

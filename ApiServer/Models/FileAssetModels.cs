@@ -17,7 +17,6 @@ namespace ApiServer.Models
         public long Size { get; set; }
         public string FileExt { get; set; }
         public string LocalPath { get; set; }
-        public string UploadTime { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
         public string AccountId { get; set; }
@@ -43,7 +42,6 @@ namespace ApiServer.Models
         public long Size { get; set; }
         public string FileExt { get; set; }
         public string LocalPath { get; set; }
-        public string UploadTime { get; set; }
         public string FolderId { get; set; }
         public string CategoryId { get; set; }
         public string AccountId { get; set; }

@@ -1,4 +1,6 @@
-﻿using ApiModel.Entities;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
 namespace ApiServer.Repositories
@@ -18,5 +20,11 @@ namespace ApiServer.Repositories
                 return ResourceTypeEnum.Organizational;
             }
         }
+
+        //public async override Task<IQueryable<FileAsset>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        //{
+        //    var query = _DbContext.Files;
+        //    return await Task.FromResult(query);
+        //}
     }
 }

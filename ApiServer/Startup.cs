@@ -143,12 +143,11 @@ namespace ApiServer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            app.UseCors("AllowAll");
+            var appConfig = serviceProvider.GetService<AppConfig>();
+            var dbContext = serviceProvider.GetService<ApiDbContext>();
 
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
+            app.UseCors("AllowAll");
+            app.UseAuthentication();
 
             hostStaticFileServer(app, env);
 
@@ -157,70 +156,36 @@ namespace ApiServer
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-
-            //app.UseDirectoryBrowser();//调试用，访问/upload时显示文件夹清单
-
-            //app.UseExceptionHandler(
-            //  builder =>
-            //  {
-            //      builder.Run(
-            //        async context =>
-            //        {
-            //            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            //            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-
-            //            var error = context.Features.Get<IExceptionHandlerFeature>();
-            //            if (error != null)
-            //            {
-            //                context.Response.AddApplicationError(error.Error.Message);
-            //                await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
-            //            }
-            //        });
-            //  });
-
-
-            app.UseAuthentication();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-
-                // Uncomment the following line to add a route for porting Web API 2 controllers.
-                //routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
 
+            #region Swagger
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Damaozhu API V1");
-            });
+            }); 
+            #endregion
 
-            //初始化站点服务
-            InitSiteServices(serviceProvider);
-        }
+            #region App Init
+            {
+                var serverId = Configuration["GuidSettings:ServerId"];
+                var guidSalt = Configuration["GuidSettings:GuidSalt"];
+                var guidMinLen = Configuration["GuidSettings:GuidMinLen"];
+                GuidGen.Init(serverId, guidSalt, guidMinLen);
+            }
+            #endregion
 
-        /// <summary>
-        /// 初始化站点服务
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        void InitSiteServices(IServiceProvider serviceProvider)
-        {
-            var dbContext = serviceProvider.GetService<ApiDbContext>();
-
-            SiteConfig.JsonConfig json = SiteConfig.Instance.Json;
-
-            //init guid generator
-            GuidGen.Init(json.ServerId, json.GuidSalt, json.GuidMinLen);
-
-            //dbContext.Database.Migrate();
-
-            SiteConfig.Instance.ReloadSettingsFromDb(dbContext);
-
-            //init db
-            DbInitializer.InitDbIfItsEmpty(dbContext);
+            #region Database Init
+            {
+                DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
+            }
+            #endregion
         }
     }
 }

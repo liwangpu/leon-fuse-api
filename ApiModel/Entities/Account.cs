@@ -33,14 +33,6 @@ namespace ApiModel.Entities
         public DateTime ActivationTime { get; set; }
         public Organization Organization { get; set; }
         public Department Department { get; set; }
-        public List<ClientAsset> ClientAssets { get; set; }
-        public List<Product> Products { get; set; }
-        public List<Solution> Solutions { get; set; }
-        public List<Layout> Layouts { get; set; }
-        public List<Order> Orders { get; set; }
-        public List<AssetFolder> Folders { get; set; }
-        public List<FileAsset> Files { get; set; }
-        public List<AccountOpenId> OpenIds { get; set; }
         public List<AccountRole> AdditionRoles { get; set; }
 
         [NotMapped]

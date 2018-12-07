@@ -47,5 +47,8 @@
         public const string S_Category_Product = "product";
         public const string S_Category_Material = "material";
         public const string S_Category_ProductGroup = "product-group";
+
+        public const string BambooAdminId = "admin";
+        public const string BambooOrganId = "bamboo";
     }
 }
