@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181209134149_LeonAddMemberRegistryInviter20181209")]
+    partial class LeonAddMemberRegistryInviter20181209
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -642,8 +643,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
-
-                    b.Property<string>("Inviter");
 
                     b.Property<string>("Mail");
 
