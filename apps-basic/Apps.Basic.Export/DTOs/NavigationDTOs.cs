@@ -23,6 +23,7 @@ namespace Apps.Basic.Export.DTOs
         public bool NewTapOpen { get; set; }
         public int Grade { get; set; }
         public string ParentId { get; set; }
+        public string RefNavigationId { get; set; }
     }
 
     public class NavigationDTO

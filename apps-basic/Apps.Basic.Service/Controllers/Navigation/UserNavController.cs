@@ -99,6 +99,7 @@ namespace Apps.Basic.Service.Controllers
                         var refNav = await _Context.Navigations.FirstOrDefaultAsync(x => x.Id == item.RefNavigationId);
                         if (refNav != null)
                         {
+                            detailDto.RefNavigationId = refNav.Id;
                             detailDto.Name = refNav.Name;
                             detailDto.Title = refNav.Title;
                             detailDto.Url = refNav.Url;

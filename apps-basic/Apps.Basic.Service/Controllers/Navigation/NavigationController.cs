@@ -45,9 +45,10 @@ namespace Apps.Basic.Service.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(nodeTypes))
                 {
-                    //query = query.Where(x => x.NodeType == nodeTypes);
+                    var typeArr = nodeTypes.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+                    query = query.Where(x => typeArr.Contains(x.NodeType));
                 }
-                   
+
                 return await Task.FromResult(query);
             });
 

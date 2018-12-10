@@ -142,7 +142,7 @@ namespace Apps.Basic.Service.Controllers
                 entity.ExpireTime = model.ExpireTime;
                 entity.ActiveFlag = AppConst.Active;
                 entity.Description = model.Description;
-                entity.DepartmentId = model.DepartmentId;
+                entity.DepartmentId = string.IsNullOrWhiteSpace(model.DepartmentId) ? null : model.DepartmentId;
                 entity.OrganizationId = CurrentAccountOrganizationId;
                 if (!string.IsNullOrWhiteSpace(model.Password))
                     entity.Password = Md5.CalcString(model.Password);
@@ -182,7 +182,7 @@ namespace Apps.Basic.Service.Controllers
                 entity.ActivationTime = model.ActivationTime;
                 entity.ExpireTime = model.ExpireTime;
                 entity.Description = model.Description;
-                entity.DepartmentId = model.DepartmentId;
+                entity.DepartmentId = string.IsNullOrWhiteSpace(model.DepartmentId) ? null : model.DepartmentId;
                 if (!string.IsNullOrWhiteSpace(model.Password))
                     entity.Password = Md5.CalcString(model.Password);
                 return await Task.FromResult(entity);
