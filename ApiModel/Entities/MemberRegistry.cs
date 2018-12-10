@@ -22,6 +22,7 @@ namespace ApiModel.Entities
             dto.Id = Id;
             dto.Name = Name;
             dto.Phone = Phone;
+            dto.Mail = Mail;
             dto.Company = Company;
             dto.Province = Province;
             dto.City = City;
