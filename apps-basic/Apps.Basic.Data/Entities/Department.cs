@@ -38,6 +38,14 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
+        /// 组织Id
+        /// </summary>
+        public string OrganizationId { get; set; }
+        /// <summary>
         /// 部门人员
         /// </summary>
         public List<Account> Accounts { get; set; }

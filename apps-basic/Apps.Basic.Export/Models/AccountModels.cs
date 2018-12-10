@@ -31,6 +31,8 @@ namespace Apps.Basic.Export.Models
         public string Location { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
+        public string DepartmentId { get; set; }
+        public string Description { get; set; }
     }
     #endregion
 
@@ -51,6 +53,8 @@ namespace Apps.Basic.Export.Models
         public string Location { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
+        public string DepartmentId { get; set; }
+        public string Description { get; set; }
     }
     #endregion
 
@@ -66,4 +70,26 @@ namespace Apps.Basic.Export.Models
         public string Password { get; set; }
     }
     #endregion
+
+    /// <summary>
+    /// 部门创建模型
+    /// </summary>
+    public class DepartmentCreateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+
+    /// <summary>
+    /// 部门编辑模型
+    /// </summary>
+    public class DepartmentUpdateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
 }

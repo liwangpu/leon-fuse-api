@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.Basic.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181205110852_AddOrganTree")]
-    partial class AddOrganTree
+    [Migration("20181210100428_UserRoleAddOrganId")]
+    partial class UserRoleAddOrganId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -71,6 +71,24 @@ namespace Apps.Basic.Service.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("Apps.Basic.Data.Entities.AdditionRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountId");
+
+                    b.Property<string>("UserRoleId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("UserRoleId");
+
+                    b.ToTable("AdditionRoles");
+                });
+
             modelBuilder.Entity("Apps.Basic.Data.Entities.Department", b =>
                 {
                     b.Property<string>("Id")
@@ -82,11 +100,15 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("Creator");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
 
                     b.HasKey("Id");
 
@@ -296,6 +318,8 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("Creator");
 
+                    b.Property<string>("Description");
+
                     b.Property<bool>("IsInner");
 
                     b.Property<DateTime>("ModifiedTime");
@@ -303,6 +327,8 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
 
                     b.HasKey("Id");
 
@@ -322,6 +348,17 @@ namespace Apps.Basic.Service.Migrations
                     b.HasOne("Apps.Basic.Data.Entities.Organization", "Organization")
                         .WithMany("Accounts")
                         .HasForeignKey("OrganizationId");
+                });
+
+            modelBuilder.Entity("Apps.Basic.Data.Entities.AdditionRole", b =>
+                {
+                    b.HasOne("Apps.Basic.Data.Entities.Account", "Account")
+                        .WithMany("AdditionRoles")
+                        .HasForeignKey("AccountId");
+
+                    b.HasOne("Apps.Basic.Data.Entities.UserRole", "UserRole")
+                        .WithMany()
+                        .HasForeignKey("UserRoleId");
                 });
 
             modelBuilder.Entity("Apps.Basic.Data.Entities.Organization", b =>

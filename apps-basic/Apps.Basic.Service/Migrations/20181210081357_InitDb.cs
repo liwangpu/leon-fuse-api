@@ -72,6 +72,22 @@ namespace Apps.Basic.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrganizationTrees",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    LValue = table.Column<int>(nullable: false),
+                    RValue = table.Column<int>(nullable: false),
+                    ParentId = table.Column<string>(nullable: true),
+                    NodeType = table.Column<string>(nullable: true),
+                    ObjId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationTrees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrganizationTypes",
                 columns: table => new
                 {
@@ -114,7 +130,8 @@ namespace Apps.Basic.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     ActiveFlag = table.Column<int>(nullable: false),
-                    IsInner = table.Column<bool>(nullable: false)
+                    IsInner = table.Column<bool>(nullable: false),
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -220,6 +237,31 @@ namespace Apps.Basic.Service.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AdditionRoles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    AccountId = table.Column<string>(nullable: true),
+                    UserRoleId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdditionRoles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdditionRoles_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AdditionRoles_UserRoles_UserRoleId",
+                        column: x => x.UserRoleId,
+                        principalTable: "UserRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_DepartmentId",
                 table: "Accounts",
@@ -236,6 +278,16 @@ namespace Apps.Basic.Service.Migrations
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AdditionRoles_AccountId",
+                table: "AdditionRoles",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdditionRoles_UserRoleId",
+                table: "AdditionRoles",
+                column: "UserRoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Organizations_OrganizationTypeId",
                 table: "Organizations",
                 column: "OrganizationTypeId");
@@ -249,7 +301,7 @@ namespace Apps.Basic.Service.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Accounts");
+                name: "AdditionRoles");
 
             migrationBuilder.DropTable(
                 name: "Files");
@@ -258,7 +310,16 @@ namespace Apps.Basic.Service.Migrations
                 name: "Navigations");
 
             migrationBuilder.DropTable(
+                name: "OrganizationTrees");
+
+            migrationBuilder.DropTable(
                 name: "UserNavDetails");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "UserNavs");
 
             migrationBuilder.DropTable(
                 name: "Departments");
@@ -268,9 +329,6 @@ namespace Apps.Basic.Service.Migrations
 
             migrationBuilder.DropTable(
                 name: "Organizations");
-
-            migrationBuilder.DropTable(
-                name: "UserNavs");
 
             migrationBuilder.DropTable(
                 name: "OrganizationTypes");

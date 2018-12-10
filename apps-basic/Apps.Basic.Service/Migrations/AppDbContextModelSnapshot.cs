@@ -98,11 +98,15 @@ namespace Apps.Basic.Service.Migrations
 
                     b.Property<string>("Creator");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
 
                     b.HasKey("Id");
 
@@ -321,6 +325,8 @@ namespace Apps.Basic.Service.Migrations
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
 
                     b.HasKey("Id");
 

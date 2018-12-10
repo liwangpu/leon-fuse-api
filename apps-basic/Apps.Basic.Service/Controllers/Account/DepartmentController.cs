@@ -13,61 +13,37 @@ using System.Threading.Tasks;
 namespace Apps.Basic.Service.Controllers
 {
     /// <summary>
-    /// 用户角色控制器
+    /// 部门控制器
     /// </summary>
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class UserRoleController : ListviewController<UserRole>
+    public class DepartmentController : ListviewController<Department>
     {
         protected override AppDbContext _Context { get; }
 
         #region 构造函数
-        public UserRoleController(IRepository<UserRole> repository)
-         : base(repository)
+        public DepartmentController(IRepository<Department> repository, AppDbContext context)
+            : base(repository)
         {
+            _Context = context;
         }
+
         #endregion
 
-        #region Get 根据分页获取用户角色信息
+        #region Get 根据分页获取部门信息
         /// <summary>
-        /// 根据分页获取用户角色信息
+        /// 根据分页获取部门信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData<UserRoleDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<DepartmentDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            var toDTO = new Func<UserRole, Task<UserRoleDTO>>(async (entity) =>
+            var toDTO = new Func<Department, Task<DepartmentDTO>>(async (entity) =>
             {
-                var dto = new UserRoleDTO();
-                dto.Id = entity.Id;
-                dto.Name = entity.Name;
-                dto.Creator = entity.Creator;
-                dto.Modifier = entity.Modifier;
-                dto.CreatedTime = entity.CreatedTime;
-                dto.ModifiedTime = entity.ModifiedTime;
-                dto.IsInner = entity.IsInner;
-                return await Task.FromResult(dto);
-            });
-            return await _PagingRequest(model, toDTO);
-        }
-        #endregion
-
-        #region Get 根据Id获取用户角色信息
-        /// <summary>
-        /// 根据Id获取用户角色信息
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(UserRoleDTO), 200)]
-        public override async Task<IActionResult> Get(string id)
-        {
-            var toDTO = new Func<UserRole, Task<UserRoleDTO>>(async (entity) =>
-            {
-                var dto = new UserRoleDTO();
+                var dto = new DepartmentDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
@@ -75,25 +51,52 @@ namespace Apps.Basic.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.IsInner = entity.IsInner;
+                dto.OrganizationId = entity.OrganizationId;
+                return await Task.FromResult(dto);
+            });
+            return await _PagingRequest(model, toDTO);
+        }
+        #endregion
+
+        #region Get 根据Id获取部门信息
+        /// <summary>
+        /// 根据Id获取部门信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        public override async Task<IActionResult> Get(string id)
+        {
+            var toDTO = new Func<Department, Task<DepartmentDTO>>(async (entity) =>
+            {
+                var dto = new DepartmentDTO();
+                dto.Id = entity.Id;
+                dto.Name = entity.Name;
+                dto.Description = entity.Description;
+                dto.Creator = entity.Creator;
+                dto.Modifier = entity.Modifier;
+                dto.CreatedTime = entity.CreatedTime;
+                dto.ModifiedTime = entity.ModifiedTime;
+                dto.OrganizationId = entity.OrganizationId;
                 return await Task.FromResult(dto);
             });
             return await _GetByIdRequest(id, toDTO);
         }
         #endregion
 
-        #region Post 创建用户角色
+        #region Post 创建部门
         /// <summary>
-        /// 创建用户角色
+        /// 创建部门
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(UserRoleDTO), 200)]
-        public async Task<IActionResult> Post([FromBody]UserRoleCreateModel model)
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        public async Task<IActionResult> Post([FromBody]DepartmentCreateModel model)
         {
-            var mapping = new Func<UserRole, Task<UserRole>>(async (entity) =>
+            var mapping = new Func<Department, Task<Department>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
@@ -103,18 +106,18 @@ namespace Apps.Basic.Service.Controllers
         }
         #endregion
 
-        #region Put 更改用户角色信息
+        #region Put 更改部门信息
         /// <summary>
-        /// 更改用户角色信息
+        /// 更改部门信息
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(UserRoleDTO), 200)]
-        public async Task<IActionResult> Put([FromBody]UserRoleEditModel model)
+        [ProducesResponseType(typeof(DepartmentDTO), 200)]
+        public async Task<IActionResult> Put([FromBody]DepartmentUpdateModel model)
         {
-            var mapping = new Func<UserRole, Task<UserRole>>(async (entity) =>
+            var mapping = new Func<Department, Task<Department>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;

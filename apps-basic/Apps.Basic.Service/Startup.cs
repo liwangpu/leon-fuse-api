@@ -87,7 +87,8 @@ namespace Apps.Basic.Service
             services.AddScoped<IRepository<Organization>, OrganizationRepository>();
             services.AddScoped<IRepository<OrganizationType>, OrganizationTypeRepository>();
             services.AddScoped<ITreeRepository<OrganizationTree>, OrganizationTreeRepository>();
-            
+            services.AddScoped<IRepository<Department>, DepartmentRepository>();
+
             #endregion
 
 
@@ -115,6 +116,7 @@ namespace Apps.Basic.Service
 
             #region Database Init
             {
+                dbContext.Database.Migrate();
                 DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
             }
             #endregion

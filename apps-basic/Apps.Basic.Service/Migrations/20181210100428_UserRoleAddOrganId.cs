@@ -2,12 +2,12 @@
 
 namespace Apps.Basic.Service.Migrations
 {
-    public partial class RoleAddDes : Migration
+    public partial class UserRoleAddOrganId : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Description",
+                name: "OrganizationId",
                 table: "UserRoles",
                 nullable: true);
         }
@@ -15,7 +15,7 @@ namespace Apps.Basic.Service.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Description",
+                name: "OrganizationId",
                 table: "UserRoles");
         }
     }

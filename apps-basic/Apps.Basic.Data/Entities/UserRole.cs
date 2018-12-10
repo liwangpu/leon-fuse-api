@@ -38,6 +38,10 @@ namespace Apps.Basic.Data.Entities
         /// </summary>
         public bool IsInner { get; set; }
         /// <summary>
+        /// 组织Id
+        /// </summary>
+        public string OrganizationId { get; set; }
+        /// <summary>
         /// 描述
         /// </summary>
         public string Description { get; set; }

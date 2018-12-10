@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
+using Apps.Base.Common.Consts;
 
 namespace Apps.Basic.Service.Controllers
 {
@@ -56,6 +58,14 @@ namespace Apps.Basic.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
+                dto.Description = entity.Description;
+                dto.DepartmentId = entity.DepartmentId;
+                if (!string.IsNullOrWhiteSpace(entity.DepartmentId))
+                {
+                    var depName = await _Context.Departments.Where(x => x.Id == entity.DepartmentId).Select(x => x.Name).FirstOrDefaultAsync();
+                    dto.DepartmentName = depName != null ? depName : string.Empty;
+                }
+
                 return await Task.FromResult(dto);
             });
             return await _PagingRequest(model, toDTO);
@@ -86,16 +96,23 @@ namespace Apps.Basic.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
+                dto.Description = entity.Description;
                 dto.RoleId = entity.InnerRoleId;
+                dto.DepartmentId = entity.DepartmentId;
                 if (!string.IsNullOrWhiteSpace(entity.InnerRoleId))
                 {
-                    var role = await _Context.UserRoles.FirstOrDefaultAsync(x => x.Id == entity.InnerRoleId);
-                    dto.RoleName = role != null ? role.Name : string.Empty;
+                    var roleName = await _Context.UserRoles.Where(x => x.Id == entity.InnerRoleId).Select(x => x.Name).FirstOrDefaultAsync();
+                    dto.RoleName = roleName != null ? roleName : string.Empty;
+                }
+                if (!string.IsNullOrWhiteSpace(entity.DepartmentId))
+                {
+                    var depName = await _Context.Departments.Where(x => x.Id == entity.DepartmentId).Select(x => x.Name).FirstOrDefaultAsync();
+                    dto.DepartmentName = depName != null ? depName : string.Empty;
                 }
                 if (!string.IsNullOrWhiteSpace(entity.Icon))
                 {
-                    var fs = await _Context.Files.FirstOrDefaultAsync(x => x.Id == entity.Icon);
-                    dto.Icon = fs != null ? fs.Url : string.Empty;
+                    var fsUrl = await _Context.Files.Where(x => x.Id == entity.Icon).Select(x => x.Url).FirstOrDefaultAsync();
+                    dto.Icon = fsUrl != null ? fsUrl : string.Empty;
                 }
                 return await Task.FromResult(dto);
             });
@@ -123,8 +140,22 @@ namespace Apps.Basic.Service.Controllers
                 entity.Phone = model.Phone;
                 entity.ActivationTime = model.ActivationTime;
                 entity.ExpireTime = model.ExpireTime;
+                entity.ActiveFlag = AppConst.Active;
+                entity.Description = model.Description;
+                entity.DepartmentId = model.DepartmentId;
+                entity.OrganizationId = CurrentAccountOrganizationId;
                 if (!string.IsNullOrWhiteSpace(model.Password))
                     entity.Password = Md5.CalcString(model.Password);
+
+                var organTypeId = await _Context.Organizations.Where(x => x.Id == CurrentAccountOrganizationId).Select(x => x.OrganizationTypeId).FirstAsync();
+                if (organTypeId == OrganTyeConst.Brand)
+                    entity.InnerRoleId = UserRoleConst.BrandMember;
+                else if (organTypeId == OrganTyeConst.Partner)
+                    entity.InnerRoleId = UserRoleConst.PartnerMember;
+                else if (organTypeId == OrganTyeConst.Supplier)
+                    entity.InnerRoleId = UserRoleConst.SupplierMember;
+                else { }
+
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -150,6 +181,8 @@ namespace Apps.Basic.Service.Controllers
                 entity.Location = model.Location;
                 entity.ActivationTime = model.ActivationTime;
                 entity.ExpireTime = model.ExpireTime;
+                entity.Description = model.Description;
+                entity.DepartmentId = model.DepartmentId;
                 if (!string.IsNullOrWhiteSpace(model.Password))
                     entity.Password = Md5.CalcString(model.Password);
                 return await Task.FromResult(entity);
