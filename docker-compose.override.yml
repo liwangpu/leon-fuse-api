@@ -1,15 +1,8 @@
 version: '3.4'
 
 services:
-  apiserver:
+  apps.base.apigateway:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    extra_hosts:
-      - "outside:192.168.1.6"
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "8991:80"
-    environment:
-      - ConnectionString=Server=192.168.1.6;Port=5433;Database=dmz_ehome;User Id=postgres;Password=omega
-    volumes:
-      - "/var/bamboo/files:/app/wwwroot/upload"
-      - "/var/bamboo/appbackup/ehome:/app/wwwroot/AppBackup"
+      - "80"

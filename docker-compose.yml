@@ -1,8 +1,10 @@
 version: '3.4'
 
 services:
-  apiserver:
-    image: ${DOCKER_REGISTRY}apiserver
+  apps.base.apigateway:
+    image: ${DOCKER_REGISTRY}appsbaseapigateway
     build:
       context: .
-      dockerfile: ApiServer/Dockerfile
+      dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
+    ports:
+      - "1881:80"
