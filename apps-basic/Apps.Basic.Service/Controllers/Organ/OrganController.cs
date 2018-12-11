@@ -126,6 +126,7 @@ namespace Apps.Basic.Service.Controllers
                 entity.Location = model.Location;
                 entity.ActivationTime = model.ActivationTime;
                 entity.ExpireTime = model.ExpireTime;
+                entity.ActiveFlag = AppConst.Active;
                 return await Task.FromResult(entity);
             });
             var afterCreated = new Func<Organization, Task<IActionResult>>(async (organ) =>
