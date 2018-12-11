@@ -5,9 +5,6 @@ EXPOSE 80
 FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
 COPY apps-basic/Apps.Basic.Service/Apps.Basic.Service.csproj apps-basic/Apps.Basic.Service/
-COPY apps-basic/Apps.Basic.Data/Apps.Basic.Data.csproj apps-basic/Apps.Basic.Data/
-COPY apps-common/Apps.Base.Common/Apps.Base.Common.csproj apps-common/Apps.Base.Common/
-COPY apps-basic/Apps.Basic.Export/Apps.Basic.Export.csproj apps-basic/Apps.Basic.Export/
 RUN dotnet restore apps-basic/Apps.Basic.Service/Apps.Basic.Service.csproj
 COPY . .
 WORKDIR /src/apps-basic/Apps.Basic.Service

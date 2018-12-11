@@ -82,6 +82,7 @@ namespace Apps.Basic.Service.Controllers
         [ProducesResponseType(typeof(AccountDTO), 200)]
         public override async Task<IActionResult> Get(string id)
         {
+            //HttpContext.Request.
             var toDTO = new Func<Account, Task<AccountDTO>>(async (entity) =>
             {
                 var dto = new AccountDTO();

@@ -61,6 +61,7 @@ namespace Apps.Basic.Service
             #region JwtBearer Setting
             //var JwtSettingsIssuer = Configuration["JwtSettings:Issuer"];
             //Console.WriteLine("JwtSettings:Issuer参数:{0}", JwtSettingsIssuer);
+            //var authenticationProviderKey = "IdentityApiKey";
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
                 {
@@ -88,7 +89,7 @@ namespace Apps.Basic.Service
             services.AddScoped<IRepository<OrganizationType>, OrganizationTypeRepository>();
             services.AddScoped<ITreeRepository<OrganizationTree>, OrganizationTreeRepository>();
             services.AddScoped<IRepository<Department>, DepartmentRepository>();
-
+            //services.add
             #endregion
 
 
