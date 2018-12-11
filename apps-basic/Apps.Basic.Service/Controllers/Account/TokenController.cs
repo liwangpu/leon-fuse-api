@@ -1,4 +1,5 @@
-﻿using Apps.Basic.Export.Models;
+﻿using Apps.Basic.Export.DTOs;
+using Apps.Basic.Export.Models;
 using Apps.Basic.Service.Contexts;
 using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -76,7 +77,7 @@ namespace Apps.Basic.Service.Controllers
                 expires: expires,
                 signingCredentials: creds);
 
-            return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token), Expires = expires.ToString("yyyy-MM-dd HH:mm:ss") });
+            return Ok(new TokenDTO() { Token = new JwtSecurityTokenHandler().WriteToken(token), Expires = expires.ToString("yyyy-MM-dd HH:mm:ss") });
         }
         #endregion
     }

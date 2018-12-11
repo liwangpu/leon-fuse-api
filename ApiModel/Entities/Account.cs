@@ -80,6 +80,7 @@ namespace ApiModel.Entities
 
     public class AccountDTO : EntityBase, IListable
     {
+        public string OrganizationName { get; set; }
         public string Icon { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }
@@ -87,6 +88,7 @@ namespace ApiModel.Entities
         public string DepartmentName { get; set; }
         public string Phone { get; set; }
         public bool Frozened { get; set; }
+        public string Role { get; set; }
         public string Type { get; set; }
         public bool IsAdmin { get; set; }
         public DateTime ExpireTime { get; set; }

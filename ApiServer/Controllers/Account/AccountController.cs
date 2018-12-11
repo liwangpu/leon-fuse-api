@@ -249,22 +249,22 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Profile")]
         [HttpGet]
-        [ProducesResponseType(typeof(AccountProfileModel), 200)]
-        public async Task<AccountProfileModel> GetProfile()
+        [ProducesResponseType(typeof(AccountDTO), 200)]
+        public async Task<IActionResult> GetProfile()
         {
             var accid = AuthMan.GetAccountId(this);
             Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
             if (acc == null)
                 return null;
-            AccountProfileModel p = new AccountProfileModel();
+            var p = new AccountDTO();
             p.Id = acc.Id;
             p.Name = acc.Name;
             if (!string.IsNullOrWhiteSpace(acc.Icon))
             {
                 var fs = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == acc.Icon);
-                p.Avatar = fs.Url;
+                p.Icon = fs.Url;
             }
-            p.Brief = acc.Description;
+            p.Description = acc.Description;
             p.Location = acc.Location;
             p.Mail = acc.Mail;
             p.Phone = acc.Phone;
@@ -275,17 +275,17 @@ namespace ApiServer.Controllers
             {
                 p.OrganizationId = acc.OrganizationId;
                 var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == acc.OrganizationId);
-                p.Organization = organ != null ? organ.Name : "";
+                p.OrganizationName = organ != null ? organ.Name : "";
             }
 
             if (!string.IsNullOrWhiteSpace(acc.DepartmentId))
             {
                 p.DepartmentId = acc.DepartmentId;
                 var dep = await _Repository._DbContext.Departments.FirstOrDefaultAsync(x => x.Id == p.DepartmentId);
-                p.Department = dep != null ? dep.Name : "";
+                p.DepartmentId = dep != null ? dep.Name : "";
             }
             p.Role = acc.Type;
-            return p;
+            return Ok(p);
         }
         #endregion
 

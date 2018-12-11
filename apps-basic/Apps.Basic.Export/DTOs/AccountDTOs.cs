@@ -2,6 +2,12 @@
 
 namespace Apps.Basic.Export.DTOs
 {
+    public class TokenDTO
+    {
+        public string Token { get; set; }
+        public string Expires { get; set; }
+    }
+
     public class AccountDTO
     {
         public string Id { get; set; }

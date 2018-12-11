@@ -41,7 +41,7 @@ namespace ApiServer.Controllers.Asset
                 {
                     foreach (var gitem in model.Groups)
                     {
-                        var accExist = _Context.Accounts.FirstOrDefaultAsync(x => x.Id == gitem.TargetAcc) != null;
+                        var accExist = (await _Context.Accounts.FirstOrDefaultAsync(x => x.Id == gitem.TargetAcc)) != null;
                         //校验用户id
                         if (!accExist)
                         {
@@ -51,42 +51,61 @@ namespace ApiServer.Controllers.Asset
 
                         foreach (var dic in gitem.Assets)
                         {
+                            var idsArr = string.IsNullOrWhiteSpace(dic.Value) ? new string[] { } : dic.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+
                             if (dic.Key.ToLower().IndexOf("file") > -1)
                             {
-                                var it = await _Context.Files.FirstOrDefaultAsync(x => x.Id == dic.Value);
-                                if (it == null)
+                                if (!string.IsNullOrWhiteSpace(dic.Value))
                                 {
-                                    ModelState.AddModelError("file", $"{dic.Value}记录不存在");
-                                    throw new Exception();
+                                    foreach (var id in idsArr)
+                                    {
+                                        var it = await _Context.Files.FirstOrDefaultAsync(x => x.Id == id);
+                                        if (it == null)
+                                        {
+                                            ModelState.AddModelError("file", $"{dic.Value}记录不存在");
+                                            throw new Exception();
+                                        }
+                                        it.Creator = gitem.TargetAcc;
+                                        _Context.Files.Update(it);
+                                        await _Context.SaveChangesAsync();
+                                    }
                                 }
-                                it.Creator = gitem.TargetAcc;
-                                _Context.Files.Update(it);
-                                await _Context.SaveChangesAsync();
-
                             }
                             else if (dic.Key.ToLower().IndexOf("product") > -1)
                             {
-                                var it = await _Context.Products.FirstOrDefaultAsync(x => x.Id == dic.Value);
-                                if (it == null)
+                                if (!string.IsNullOrWhiteSpace(dic.Value))
                                 {
-                                    ModelState.AddModelError("product", $"{dic.Value}记录不存在");
-                                    throw new Exception();
+                                    foreach (var id in idsArr)
+                                    {
+                                        var it = await _Context.Products.FirstOrDefaultAsync(x => x.Id == id);
+                                        if (it == null)
+                                        {
+                                            ModelState.AddModelError("product", $"{dic.Value}记录不存在");
+                                            throw new Exception();
+                                        }
+                                        it.Creator = gitem.TargetAcc;
+                                        _Context.Products.Update(it);
+                                        await _Context.SaveChangesAsync();
+                                    }
                                 }
-                                it.Creator = gitem.TargetAcc;
-                                _Context.Products.Update(it);
-                                await _Context.SaveChangesAsync();
                             }
                             else if (dic.Key.ToLower().IndexOf("material") > -1)
                             {
-                                var it = await _Context.Materials.FirstOrDefaultAsync(x => x.Id == dic.Value);
-                                if (it == null)
+                                if (!string.IsNullOrWhiteSpace(dic.Value))
                                 {
-                                    ModelState.AddModelError("material", $"{dic.Value}记录不存在");
-                                    throw new Exception();
+                                    foreach (var id in idsArr)
+                                    {
+                                        var it = await _Context.Materials.FirstOrDefaultAsync(x => x.Id == id);
+                                        if (it == null)
+                                        {
+                                            ModelState.AddModelError("material", $"{dic.Value}记录不存在");
+                                            throw new Exception();
+                                        }
+                                        it.Creator = gitem.TargetAcc;
+                                        _Context.Materials.Update(it);
+                                        await _Context.SaveChangesAsync();
+                                    }
                                 }
-                                it.Creator = gitem.TargetAcc;
-                                _Context.Materials.Update(it);
-                                await _Context.SaveChangesAsync();
                             }
                             else { }
                         }
@@ -100,7 +119,7 @@ namespace ApiServer.Controllers.Asset
                 }
             }
             return Ok();
-        } 
+        }
         #endregion
     }
 }
