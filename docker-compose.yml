@@ -44,4 +44,4 @@ services:
 
 
 networks:
-  - dmz-morejee-net
+  dmz-morejee-net:
