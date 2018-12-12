@@ -8,6 +8,8 @@ services:
       dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
     ports:
       - "1881:80"
+    volumes:
+      - "/var/bamboo/appsbaseapigateway/logs:/app/bin/debug/netcoreapp2.1/logs"
 
   apps.basic.service:
     image: ${DOCKER_REGISTRY}appsbasicservice
@@ -16,12 +18,19 @@ services:
       dockerfile: apps-basic/Apps.Basic.Service/Dockerfile
     ports:
       - "1882:80"
+    volumes:
+      - "/var/bamboo/appsbasicservice/logs:/app/bin/debug/netcoreapp2.1/logs"
+    environment:
+      ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_basic;User Id=postgres;Password=omega'
 
   apps.morejee.service:
     image: ${DOCKER_REGISTRY}appsmorejeeservice
     build:
       context: .
-      dockerfile: Apps.MoreJee.Service/Dockerfile
+      dockerfile: apps-morejee/Apps.MoreJee.Service/Dockerfile
     ports:
       - "1883:80"
-
+    volumes:
+      - "/var/bamboo/appsmorejeeservice/logs:/app/bin/debug/netcoreapp2.1/logs"
+    environment:
+      ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_morejee;User Id=postgres;Password=omega'

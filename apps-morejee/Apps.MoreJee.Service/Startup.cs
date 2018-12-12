@@ -1,8 +1,5 @@
 ﻿using Apps.Base.Common;
-using Apps.Base.Common.Interfaces;
-using Apps.Basic.Data.Entities;
-using Apps.Basic.Service.Contexts;
-using Apps.Basic.Service.Repositories;
+using Apps.MoreJee.Service.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,8 +12,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Text;
 
-
-namespace Apps.Basic.Service
+namespace Apps.MoreJee.Service
 {
     public class Startup
     {
@@ -31,14 +27,14 @@ namespace Apps.Basic.Service
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(opts =>
-            {
-                // Force Camel Case to JSON
-                opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                //ignore Entity framework Navigation property back reference problem. Blog >> Posts. Post >> Blog. Blog.post.blog will been ignored.
-                opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+             .AddJsonOptions(opts =>
+                {
+                    // Force Camel Case to JSON
+                    opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    //ignore Entity framework Navigation property back reference problem. Blog >> Posts. Post >> Blog. Blog.post.blog will been ignored.
+                    opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
 
             services.Configure<AppConfig>(Configuration);
 
@@ -60,35 +56,20 @@ namespace Apps.Basic.Service
             //var authenticationProviderKey = "IdentityApiKey";
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["JwtSettings:Issuer"],
-                        ValidAudience = Configuration["JwtSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"])),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["JwtSettings:Issuer"],
+                    ValidAudience = Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"])),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
             #endregion
-
-            #region Service Registry
-            services.AddScoped<IRepository<Account>, AccountRepository>();
-            services.AddScoped<IRepository<UserNav>, UserNavRepository>();
-            services.AddScoped<IRepository<FileAsset>, FileRepository>();
-            services.AddScoped<IRepository<Navigation>, NavigationRepository>();
-            services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
-            services.AddScoped<IRepository<Organization>, OrganizationRepository>();
-            services.AddScoped<IRepository<OrganizationType>, OrganizationTypeRepository>();
-            services.AddScoped<ITreeRepository<OrganizationTree>, OrganizationTreeRepository>();
-            services.AddScoped<IRepository<Department>, DepartmentRepository>();
-            //services.add
-            #endregion
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
