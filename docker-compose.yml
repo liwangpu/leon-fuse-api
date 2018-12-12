@@ -2,35 +2,45 @@ version: '3.4'
 
 services:
   apps.base.apigateway:
-    image: ${DOCKER_REGISTRY}appsbaseapigateway
+    image: appsbaseapigateway
     build:
       context: .
       dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
     ports:
       - "1881:80"
     volumes:
-      - "/var/bamboo/appsbaseapigateway/logs:/app/bin/debug/netcoreapp2.1/logs"
+      - "/var/bamboo/appsbaseapigateway/logs:/app/logs"
+    networks:
+      - dmz-morejee-net
 
   apps.basic.service:
-    image: ${DOCKER_REGISTRY}appsbasicservice
+    image: appsbasicservice
     build:
       context: .
       dockerfile: apps-basic/Apps.Basic.Service/Dockerfile
     ports:
       - "1882:80"
     volumes:
-      - "/var/bamboo/appsbasicservice/logs:/app/bin/debug/netcoreapp2.1/logs"
+      - "/var/bamboo/appsbasicservice/logs:/app/logs"
     environment:
       ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_basic;User Id=postgres;Password=omega'
+    networks:
+      - dmz-morejee-net
 
   apps.morejee.service:
-    image: ${DOCKER_REGISTRY}appsmorejeeservice
+    image: appsmorejeeservice
     build:
       context: .
       dockerfile: apps-morejee/Apps.MoreJee.Service/Dockerfile
     ports:
       - "1883:80"
     volumes:
-      - "/var/bamboo/appsmorejeeservice/logs:/app/bin/debug/netcoreapp2.1/logs"
+      - "/var/bamboo/appsmorejeeservice/logs:/app/logs"
     environment:
       ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_morejee;User Id=postgres;Password=omega'
+    networks:
+      - dmz-morejee-net
+
+
+networks:
+  - dmz-morejee-net
