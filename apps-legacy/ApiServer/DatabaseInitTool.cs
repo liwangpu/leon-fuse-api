@@ -245,7 +245,7 @@ namespace ApiServer
                     var organ = new Organization();
                     organ.Id = AppConst.BambooOrganId;
                     organ.Name = "竹烛信息科技有限公司";
-                    organ.Type = OrganTyeConst.System_Supplier;
+                    organ.OrganizationTypeId = OrganTyeConst.System_Supplier;
                     organ.ActivationTime = DateTime.Now.AddDays(-7);
                     organ.ExpireTime = DateTime.Now.AddYears(100);
                     organ.OwnerId = AppConst.BambooAdminId;

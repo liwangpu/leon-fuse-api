@@ -70,14 +70,16 @@ namespace ApiServer.Controllers
             var mapping = new Func<Organization, Task<Organization>>(async (entity) =>
             {
                 entity.Name = model.Name;
-                if (string.IsNullOrWhiteSpace(model.Type))
-                    entity.Type = AppConst.OrganType_Brand;
+                if (string.IsNullOrWhiteSpace(model.OrganizationTypeId))
+                    entity.OrganizationTypeId = AppConst.OrganType_Brand;
                 else
-                    entity.Type = model.Type;
+                    entity.OrganizationTypeId = model.OrganizationTypeId;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
+                entity.ActivationTime = model.ActivationTime;
+                entity.ExpireTime = model.ExpireTime;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -102,6 +104,8 @@ namespace ApiServer.Controllers
                 entity.ParentId = model.ParentId;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
+                if (!string.IsNullOrWhiteSpace(model.OrganizationTypeId))
+                    entity.OrganizationTypeId = model.OrganizationTypeId;
                 entity.Mail = !string.IsNullOrWhiteSpace(model.Mail) ? model.Mail.Trim() : string.Empty;
                 entity.Location = model.Location;
                 entity.ActivationTime = model.ActivationTime;

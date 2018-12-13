@@ -255,6 +255,13 @@ namespace ApiServer.Repositories
             var data = await _DbContext.Accounts.Include(x => x.AdditionRoles).Where(x => x.Id == id).FirstOrDefaultAsync();
             if (data == null)
                 return new AccountDTO();
+            if (!string.IsNullOrWhiteSpace(data.OrganizationId))
+            {
+                var organ = await _DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == data.OrganizationId);
+                data.OrganizationName = organ != null ? organ.Name : string.Empty;
+                if (!string.IsNullOrEmpty(organ.Icon))
+                    data.OrganizationIcon = await _DbContext.Files.Where(x => x.Id == organ.Icon).Select(x => x.Url).FirstOrDefaultAsync();
+            }
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);

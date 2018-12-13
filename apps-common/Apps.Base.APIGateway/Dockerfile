@@ -16,4 +16,5 @@ RUN dotnet publish Apps.Base.APIGateway.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
+RUN apt-get update && apt-get install -y iputils-ping
 ENTRYPOINT ["dotnet", "Apps.Base.APIGateway.dll"]

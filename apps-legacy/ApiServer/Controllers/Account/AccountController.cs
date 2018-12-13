@@ -47,9 +47,9 @@ namespace ApiServer.Controllers
             if (account != null && account.Organization != null)
             {
                 if (isAdmin)
-                    return $"{account.Organization.Type}admin";
+                    return $"{account.Organization.OrganizationTypeId}admin";
                 else
-                    return $"{account.Organization.Type}member";
+                    return $"{account.Organization.OrganizationTypeId}member";
             }
             return string.Empty;
         }
@@ -253,39 +253,9 @@ namespace ApiServer.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var accid = AuthMan.GetAccountId(this);
-            Account acc = await _Repository._DbContext.Accounts.FindAsync(accid);
-            if (acc == null)
-                return null;
-            var p = new AccountDTO();
-            p.Id = acc.Id;
-            p.Name = acc.Name;
-            if (!string.IsNullOrWhiteSpace(acc.Icon))
-            {
-                var fs = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == acc.Icon);
-                p.Icon = fs.Url;
-            }
-            p.Description = acc.Description;
-            p.Location = acc.Location;
-            p.Mail = acc.Mail;
-            p.Phone = acc.Phone;
-            p.ActivationTime = acc.ActivationTime;
-            p.ExpireTime = acc.ExpireTime;
-
-            if (!string.IsNullOrWhiteSpace(acc.OrganizationId))
-            {
-                p.OrganizationId = acc.OrganizationId;
-                var organ = await _Repository._DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == acc.OrganizationId);
-                p.OrganizationName = organ != null ? organ.Name : "";
-            }
-
-            if (!string.IsNullOrWhiteSpace(acc.DepartmentId))
-            {
-                p.DepartmentId = acc.DepartmentId;
-                var dep = await _Repository._DbContext.Departments.FirstOrDefaultAsync(x => x.Id == p.DepartmentId);
-                p.DepartmentId = dep != null ? dep.Name : "";
-            }
-            p.Role = acc.Type;
-            return Ok(p);
+            var exist = await _Repository._DbContext.Accounts.AnyAsync(x => x.Id == accid);
+            if (!exist) return NotFound();
+            return await Get(accid);
         }
         #endregion
 

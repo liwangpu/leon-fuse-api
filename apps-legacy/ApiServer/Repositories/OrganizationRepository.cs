@@ -44,16 +44,16 @@ namespace ApiServer.Repositories
                     modelState.AddModelError("Mail", "该邮箱已经使用");
             }
 
-            if (!string.IsNullOrWhiteSpace(data.Type))
+            if (!string.IsNullOrWhiteSpace(data.OrganizationTypeId))
             {
                 if (currentAcc.Type == AppConst.AccountType_SysAdmin)
                 {
-                    if (data.Type != AppConst.OrganType_Brand)
+                    if (data.OrganizationTypeId != AppConst.OrganType_Brand)
                         modelState.AddModelError("Type", "您没有权限创建该组织类型");
                 }
                 else if (currentAcc.Type == AppConst.AccountType_BrandAdmin)
                 {
-                    if (!(data.Type == AppConst.OrganType_Partner || data.Type == AppConst.OrganType_Supplier))
+                    if (!(data.OrganizationTypeId == AppConst.OrganType_Partner || data.OrganizationTypeId == AppConst.OrganType_Supplier))
                         modelState.AddModelError("Type", "您没有权限创建该组织类型");
                 }
                 else
@@ -123,7 +123,7 @@ namespace ApiServer.Repositories
             {
                 try
                 {
-                    if (data.Type == AppConst.OrganType_Partner || data.Type == AppConst.OrganType_Supplier)
+                    if (data.OrganizationTypeId == AppConst.OrganType_Partner || data.OrganizationTypeId == AppConst.OrganType_Supplier)
                     {
                         data.ParentId = currentAcc.OrganizationId;
                     }
@@ -173,11 +173,11 @@ namespace ApiServer.Repositories
 
                 #region 创建默认管理员
                 var account = new Account();
-                if (data.Type == AppConst.OrganType_Brand)
+                if (data.OrganizationTypeId == AppConst.OrganType_Brand)
                     account.Type = AppConst.AccountType_BrandAdmin;
-                else if (data.Type == AppConst.OrganType_Partner)
+                else if (data.OrganizationTypeId == AppConst.OrganType_Partner)
                     account.Type = AppConst.AccountType_PartnerAdmin;
-                else if (data.Type == AppConst.OrganType_Supplier)
+                else if (data.OrganizationTypeId == AppConst.OrganType_Supplier)
                     account.Type = AppConst.AccountType_SupplierAdmin;
                 else
                 { }
@@ -288,11 +288,11 @@ namespace ApiServer.Repositories
                     if (!string.IsNullOrWhiteSpace(curData.Icon))
                         curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
 
-                    if (!string.IsNullOrWhiteSpace(curData.Type))
+                    if (!string.IsNullOrWhiteSpace(curData.OrganizationTypeId))
                     {
-                        var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == curData.Type).FirstOrDefaultAsync();
+                        var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == curData.OrganizationTypeId).FirstOrDefaultAsync();
                         if (organType != null)
-                            curData.TypeName = organType.Name;
+                            curData.OrganizationTypeName = organType.Name;
                     }
                 }
             }
@@ -313,11 +313,11 @@ namespace ApiServer.Repositories
             {
                 data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
             }
-            if (!string.IsNullOrWhiteSpace(data.Type))
+            if (!string.IsNullOrWhiteSpace(data.OrganizationTypeId))
             {
-                var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == data.Type).FirstOrDefaultAsync();
+                var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == data.OrganizationTypeId).FirstOrDefaultAsync();
                 if (organType != null)
-                    data.TypeName = organType.Name;
+                    data.OrganizationTypeName = organType.Name;
             }
             return data.ToDTO();
         }

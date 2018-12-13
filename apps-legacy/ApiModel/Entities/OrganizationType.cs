@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -7,6 +8,7 @@ namespace ApiModel.Entities
         public string TypeCode { get; set; }
         public string Icon { get; set; }
         public bool IsInner { get; set; }
+
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
 

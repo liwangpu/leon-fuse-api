@@ -1,16 +1,16 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/{url}",
+      "DownstreamPathTemplate": "/token",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "testapi.damaozhu.com.cn",
+          "Host": "apps.basic.service",
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/{url}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+      "UpstreamPathTemplate": "/token",
+      "UpstreamHttpMethod": [ "Post", "Options" ]
     }
   ],
   "GlobalConfiguration": {

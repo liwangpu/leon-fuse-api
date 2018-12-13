@@ -37,6 +37,10 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public FileAsset IconFileAsset { get; set; }
+        [NotMapped]
+        public string OrganizationName { get; set; }
+        [NotMapped]
+        public string OrganizationIcon { get; set; }
 
         /// <summary>
         /// 权限记录，记录能访问的所有类型资源的所有权限设置。不在此列出的则无法访问。
@@ -57,6 +61,7 @@ namespace ApiModel.Entities
             dto.Phone = Phone;
             dto.Frozened = Frozened;
             dto.Type = Type;
+            dto.Role = Type;
             dto.ExpireTime = ExpireTime;
             dto.ActivationTime = ActivationTime;
             dto.Creator = Creator;
@@ -65,6 +70,9 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            dto.OrganizationId = OrganizationId;
+            dto.OrganizationName = OrganizationName;
+            dto.OrganizationIcon = OrganizationIcon;
             dto.CategoryName = CategoryName;
             dto.AdditionRoles = AdditionRoles;
             if (Department != null)
@@ -81,6 +89,7 @@ namespace ApiModel.Entities
     public class AccountDTO : EntityBase, IListable
     {
         public string OrganizationName { get; set; }
+        public string OrganizationIcon { get; set; }
         public string Icon { get; set; }
         public string Mail { get; set; }
         public string Location { get; set; }

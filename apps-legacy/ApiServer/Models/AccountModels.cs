@@ -126,7 +126,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public DateTime ActivationTime { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string Type { get; set; }
+        public string OrganizationTypeId { get; set; }
         public string ParentId { get; set; }
         public string IconAssetId { get; set; }
     }
@@ -153,7 +153,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public DateTime ActivationTime { get; set; }
         [Required(ErrorMessage = "必填信息")]
-        public string Type { get; set; }
+        public string OrganizationTypeId { get; set; }
         public string ParentId { get; set; }
         public string IconAssetId { get; set; }
     }

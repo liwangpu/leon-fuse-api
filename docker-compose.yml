@@ -28,19 +28,19 @@ services:
     networks:
       - dmz-morejee-net
 
-  apps.morejee.service:
-    image: appsmorejeeservice
-    build:
-      context: .
-      dockerfile: apps-morejee/Apps.MoreJee.Service/Dockerfile
-    ports:
-      - "1883:80"
-    volumes:
-      - "/var/bamboo/appsmorejeeservice/logs:/app/logs"
-    environment:
-      ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_morejee;User Id=postgres;Password=omega'
-    networks:
-      - dmz-morejee-net
+  # apps.morejee.service:
+  #   image: appsmorejeeservice
+  #   build:
+  #     context: .
+  #     dockerfile: apps-morejee/Apps.MoreJee.Service/Dockerfile
+  #   ports:
+  #     - "1883:80"
+  #   volumes:
+  #     - "/var/bamboo/appsmorejeeservice/logs:/app/logs"
+  #   environment:
+  #     ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_morejee;User Id=postgres;Password=omega'
+  #   networks:
+  #     - dmz-morejee-net
 
 
 networks:
