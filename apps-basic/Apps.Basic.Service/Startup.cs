@@ -51,13 +51,17 @@ namespace Apps.Basic.Service
             services.AddEntityFrameworkNpgsql();
             var connStr = Configuration["ConnectionString"];
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connStr));
-            Console.WriteLine("database connection string:{0}", connStr);
+            Console.WriteLine("AppSetting=>ConnectionString:{0}", connStr);
             #endregion
 
             #region JwtBearer Setting
-            //var JwtSettingsIssuer = Configuration["JwtSettings:Issuer"];
-            //Console.WriteLine("JwtSettings:Issuer参数:{0}", JwtSettingsIssuer);
-            //var authenticationProviderKey = "IdentityApiKey";
+            var jwtSettingsIssuer = Configuration["JwtSettings:Issuer"];
+            var audience = Configuration["JwtSettings:Audience"];
+            var secretKey = Configuration["JwtSettings:SecretKey"];
+            Console.WriteLine("AppSetting=>JwtSettings:Issuer:{0}", jwtSettingsIssuer);
+            Console.WriteLine("AppSetting=>JwtSettings:Audience:{0}", audience);
+            Console.WriteLine("AppSetting=>JwtSettings:SecretKey:{0}", secretKey);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
                 {
@@ -67,9 +71,9 @@ namespace Apps.Basic.Service
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["JwtSettings:Issuer"],
-                        ValidAudience = Configuration["JwtSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"])),
+                        ValidIssuer = jwtSettingsIssuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                         ClockSkew = TimeSpan.Zero
                     };
                 });
@@ -78,7 +82,7 @@ namespace Apps.Basic.Service
             #region Service Registry
             services.AddScoped<IRepository<Account>, AccountRepository>();
             services.AddScoped<IRepository<UserNav>, UserNavRepository>();
-            services.AddScoped<IRepository<FileAsset>, FileRepository>();
+            //services.AddScoped<IRepository<FileAsset>, FileRepository>();
             services.AddScoped<IRepository<Navigation>, NavigationRepository>();
             services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
             services.AddScoped<IRepository<Organization>, OrganizationRepository>();
@@ -106,8 +110,10 @@ namespace Apps.Basic.Service
                 var serverId = Configuration["GuidSettings:ServerId"];
                 var guidSalt = Configuration["GuidSettings:GuidSalt"];
                 var guidMinLen = Configuration["GuidSettings:GuidMinLen"];
+                Console.WriteLine("AppSetting=>GuidSettings:ServerId:{0}", serverId);
+                Console.WriteLine("AppSetting=>GuidSettings:GuidSalt:{0}", guidSalt);
+                Console.WriteLine("AppSetting=>GuidSettings:GuidMinLen:{0}", guidMinLen);
                 GuidGen.Init(serverId, guidSalt, guidMinLen);
-
             }
             #endregion
 

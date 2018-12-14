@@ -1,5 +1,6 @@
 ﻿using Apps.Base.Common;
 using Apps.Base.Common.Consts;
+using Apps.Base.Common.Controllers;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.Basic.Data.Entities;

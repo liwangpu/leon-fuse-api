@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Apps.Base.Common.Controllers;
 
 namespace Apps.Basic.Service.Controllers
 {

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 
-namespace Apps.Base.APIGateway
+namespace Apps.FileSystem.Service
 {
     public class Program
     {
@@ -16,8 +16,8 @@ namespace Apps.Base.APIGateway
         public static IWebHost BuildWebHost(string[] args)
         {
             var config = new ConfigurationBuilder()
+                //.AddJsonFile("hosting.json", optional: true)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("ocelot.json", optional: true, reloadOnChange: true)
                 .AddCommandLine(args)
                 .Build();
 

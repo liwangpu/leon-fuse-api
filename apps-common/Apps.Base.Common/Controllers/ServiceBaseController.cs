@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Apps.Basic.Service.Controllers
+namespace Apps.Base.Common.Controllers
 {
     public abstract class ServiceBaseController<T> : AppBaseController
         where T : class, IData, new()

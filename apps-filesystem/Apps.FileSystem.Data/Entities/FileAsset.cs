@@ -1,7 +1,7 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
 
-namespace Apps.Basic.Data.Entities
+namespace Apps.FileSystem.Data.Entities
 {
     public class FileAsset : IEntity
     {
@@ -53,10 +53,6 @@ namespace Apps.Basic.Data.Entities
         /// 原始文件上传时本地路径
         /// </summary>
         public string LocalPath { get; set; }
-        ///// <summary>
-        ///// 资源上传时间
-        ///// </summary>
-        //public string UploadTime { get; set; }
         /// <summary>
         /// 图标
         /// </summary>

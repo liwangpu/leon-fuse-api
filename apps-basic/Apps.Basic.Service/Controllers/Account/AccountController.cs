@@ -112,8 +112,8 @@ namespace Apps.Basic.Service.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(entity.Icon))
                 {
-                    var fsUrl = await _Context.Files.Where(x => x.Id == entity.Icon).Select(x => x.Url).FirstOrDefaultAsync();
-                    dto.Icon = fsUrl != null ? fsUrl : string.Empty;
+                    //var fsUrl = await _Context.Files.Where(x => x.Id == entity.Icon).Select(x => x.Url).FirstOrDefaultAsync();
+                    //dto.Icon = fsUrl != null ? fsUrl : string.Empty;
                 }
                 return await Task.FromResult(dto);
             });

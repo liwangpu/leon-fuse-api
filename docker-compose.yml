@@ -13,6 +13,8 @@ services:
       - "/var/bamboo/appsbaseapigateway/logs:/app/logs"
     networks:
       - dmz-morejee-net
+    depends_on:
+      - apps.basic.service
 
   apps.basic.service:
     image: appsbasicservice

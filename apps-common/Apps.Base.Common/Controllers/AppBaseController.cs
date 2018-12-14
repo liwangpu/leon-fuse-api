@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace Apps.Basic.Service.Controllers
+namespace Apps.Base.Common.Controllers
 {
     public class AppBaseController : ControllerBase
     {
