@@ -69,6 +69,7 @@ namespace ApiServer.Controllers
                 entity.PartnerPrice = model.PartnerPrice;
                 entity.PurchasePrice = model.PurchasePrice;
                 entity.Icon = model.IconAssetId;
+                entity.Components = model.Components;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -95,7 +96,9 @@ namespace ApiServer.Controllers
                 entity.Price = model.Price;
                 entity.PartnerPrice = model.PartnerPrice;
                 entity.PurchasePrice = model.PurchasePrice;
-                entity.Icon = model.IconAssetId;
+                entity.Components = model.Components;
+                if (!string.IsNullOrWhiteSpace(model.IconAssetId))
+                    entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

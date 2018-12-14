@@ -102,7 +102,8 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Content = model.Content;
-                entity.Icon = model.IconAssetId;
+                if (!string.IsNullOrWhiteSpace(model.IconAssetId))
+                    entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

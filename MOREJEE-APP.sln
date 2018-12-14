@@ -49,9 +49,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-FileSystem", "Apps-Fil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Data", "apps-filesystem\Apps.FileSystem.Data\Apps.FileSystem.Data.csproj", "{70D1B47B-98DB-48A8-8EBD-3EAD4999A3AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps.FileSystem.Export", "apps-filesystem\Apps.FileSystem.Export\Apps.FileSystem.Export.csproj", "{E7E0935D-9702-4C8D-9567-414ED1C6421C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Export", "apps-filesystem\Apps.FileSystem.Export\Apps.FileSystem.Export.csproj", "{E7E0935D-9702-4C8D-9567-414ED1C6421C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps.FileSystem.Service", "apps-filesystem\Apps.FileSystem.Service\Apps.FileSystem.Service.csproj", "{223046F5-3FAE-45B3-AD71-91623CD949FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Service", "apps-filesystem\Apps.FileSystem.Service\Apps.FileSystem.Service.csproj", "{223046F5-3FAE-45B3-AD71-91623CD949FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Foundation", "Apps-Foundation", "{FAD9CC05-C969-4AEA-9897-38328784F471}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -37,6 +37,7 @@ namespace ApiModel.Entities
         /// 第三方ID，此产品在供应商自己的系统比如ERP的ID
         /// </summary>
         public string TPID { get; set; }
+        public string Components { get; set; }
 
         /// <summary>
         /// 所在产品的ID
@@ -77,6 +78,7 @@ namespace ApiModel.Entities
             dto.TPID = TPID;
             dto.ProductId = ProductId;
             dto.CategoryName = CategoryName;
+            dto.Components = Components;
             if (IconFileAsset != null)
             {
                 dto.IconAsset = IconFileAsset.ToDTO();
@@ -107,6 +109,7 @@ namespace ApiModel.Entities
         public List<FileAssetDTO> Album { get; set; }
         public string Icon { get; set; }
         public FileAsset IconFileAsset { get; set; }
+        public string Components { get; set; }
     }
 
     /// <summary>
@@ -148,5 +151,6 @@ namespace ApiModel.Entities
         /// 所依赖材质文件Ids
         /// </summary>
         public List<string> MaterialIds { get; set; }
+        public string Components { get; set; }
     }
 }

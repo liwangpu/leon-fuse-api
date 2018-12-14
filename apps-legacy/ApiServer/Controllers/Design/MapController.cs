@@ -110,7 +110,8 @@ namespace ApiServer.Controllers
                 entity.PackageName = model.PackageName;
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.FileAssetId = model.FileAssetId;
-                entity.Icon = model.IconAssetId;
+                if (!string.IsNullOrWhiteSpace(model.IconAssetId))
+                    entity.Icon = model.IconAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;
                 return await Task.FromResult(entity);

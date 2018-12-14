@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181214095815_LeonAddMaterialToStaticmesh20181214")]
+    partial class LeonAddMaterialToStaticmesh20181214
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1142,8 +1143,6 @@ namespace ApiServer.Migrations
                     b.Property<string>("Album");
 
                     b.Property<string>("CategoryId");
-
-                    b.Property<string>("Components");
 
                     b.Property<DateTime>("CreatedTime");
 

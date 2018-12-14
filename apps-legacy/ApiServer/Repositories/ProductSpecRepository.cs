@@ -118,23 +118,6 @@ namespace ApiServer.Repositories
                             refMesh.FileAsset = tmp;
                     }
 
-                    if (map.Items[idx].MaterialIds != null && map.Items[idx].MaterialIds.Count > 0)
-                    {
-                        var matids = map.Items[idx].MaterialIds;
-                        foreach (var item in matids)
-                        {
-                            var refMat = await _DbContext.Materials.FindAsync(item);
-                            if (refMat != null)
-                            {
-                                var tmp = await _DbContext.Files.FindAsync(refMat.FileAssetId);
-                                if (tmp != null)
-                                {
-                                    refMat.FileAsset = tmp;
-                                    refMesh.Materials.Add(refMat);
-                                }
-                            }
-                        }
-                    }
                     res.StaticMeshAsset.Add(refMesh);
                 }
             }

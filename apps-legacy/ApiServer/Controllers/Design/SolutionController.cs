@@ -125,7 +125,8 @@ namespace ApiServer.Controllers.Design
                 entity.Description = model.Description;
                 if (!string.IsNullOrWhiteSpace(model.LayoutId))
                     entity.LayoutId = model.LayoutId;
-                entity.Icon = model.IconAssetId;
+                if (!string.IsNullOrWhiteSpace(model.IconAssetId))
+                    entity.Icon = model.IconAssetId;
                 entity.CategoryId = model.CategoryId;
                 entity.IsSnapshot = model.IsSnapshot;
                 entity.SnapshotData = model.SnapshotData;

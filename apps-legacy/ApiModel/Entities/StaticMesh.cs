@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 namespace ApiModel.Entities
 {
     public class StaticMesh : ClientAssetEntity, IListable, IDTOTransfer<StaticMeshDTO>
@@ -9,16 +7,12 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string SrcFileAssetId { get; set; }
-
+        /// <summary>
+        /// 字符型Materials,服务器不做处理,只是简单存储
+        /// </summary>
+        public string Materials { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }
-        [NotMapped]
-        public List<Material> Materials { get; set; }
-
-        public StaticMesh()
-        {
-            Materials = new List<Material>();
-        }
 
         public StaticMeshDTO ToDTO()
         {
@@ -40,8 +34,7 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.CategoryName = CategoryName;
-            if (Materials != null && Materials.Count > 0)
-                dto.Materials = Materials.Select(x => x.ToDTO()).ToList();
+            dto.Materials = Materials;
 
             if (IconFileAsset != null)
             {
@@ -71,6 +64,6 @@ namespace ApiModel.Entities
         public string SrcFileAssetId { get; set; }
         public string Url { get; set; }
         public FileAssetDTO FileAsset { get; set; }
-        public List<MaterialDTO> Materials { get; set; }
+        public string Materials { get; set; }
     }
 }

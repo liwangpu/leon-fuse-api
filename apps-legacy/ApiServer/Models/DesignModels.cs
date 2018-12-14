@@ -64,6 +64,7 @@ namespace ApiServer.Models
         public decimal PartnerPrice { get; set; }
         public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
+        public string Components { get; set; }
     }
     #endregion
 
@@ -86,6 +87,7 @@ namespace ApiServer.Models
         public decimal PartnerPrice { get; set; }
         public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
+        public string Components { get; set; }
     }
     #endregion
 
