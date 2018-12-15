@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Remove="Controllers\Files1Controller.cs" />
     <Compile Remove="Controllers\FilesController.cs" />
+    <Compile Remove="Repositories\File2Repository.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +19,9 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.7.2" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.7.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,26 +3,42 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Apps.Base.Common;
+using Apps.Base.Common.Controllers;
+using Apps.FileSystem.Data.Entities;
+using Apps.FileSystem.Export.Models;
+using Apps.FileSystem.Service.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Apps.FileSystem.Service.Controllers
 {
-    [Route("/[controller]")]
+    [Authorize]
+    [Route("[controller]")]
     [ApiController]
-    public class FileController : ControllerBase
+    public class FileController : ServiceBaseController<FileAsset>
     {
         private IHostingEnvironment hostEnv;
         private string uploadPath;
 
-        public FileController(IHostingEnvironment env)
+        #region 构造函数
+        public FileController(IHostingEnvironment env, FileRepository repository)
+                : base(repository)
         {
             hostEnv = env;
             uploadPath = Path.Combine(hostEnv.WebRootPath, "upload");
             if (Directory.Exists(uploadPath) == false)
                 Directory.CreateDirectory(uploadPath);
         }
+        #endregion
+
+        public override Task<IActionResult> Get(string id)
+        {
+            throw new NotImplementedException();
+        }
+
 
         [Route("UploadFormFile")]
         [HttpPost]

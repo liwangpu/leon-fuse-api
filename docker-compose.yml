@@ -2,19 +2,48 @@ version: '3.4'
 
 services:
 
-  apps.base.apigateway:
-    image: appsbaseapigateway
+  apps.mongodb:
+    image: appsmongodb
     build:
       context: .
-      dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
+      dockerfile: apps-foundation/Apps_MongoDB/Dockerfile
     ports:
-      - "1881:80"
-    volumes:
-      - "/var/bamboo/appsbaseapigateway/logs:/app/logs"
-    networks:
+      - "27017:27017"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    networks: 
       - dmz-morejee-net
-    depends_on:
-      - apps.basic.service
+
+  apps.postgresdb:
+    image: appspostgresdb
+    build:
+      context: .
+      dockerfile: apps-foundation/Apps_PostgresDB/Dockerfile
+    ports:
+      - "15266:5432"
+    volumes:
+      - "/var/bamboo/postgresdb/data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'root'
+    networks: 
+      - dmz-morejee-net
+
+  # apps.base.apigateway:
+  #   image: appsbaseapigateway
+  #   build:
+  #     context: .
+  #     dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
+  #   ports:
+  #     - "1881:80"
+  #   volumes:
+  #     - "/var/bamboo/appsbaseapigateway/logs:/app/logs"
+  #   networks:
+  #     - dmz-morejee-net
+  #   depends_on:
+  #     - apps.basic.service
+  #     - apps.mongodb
 
   apps.basic.service:
     image: appsbasicservice
@@ -26,7 +55,7 @@ services:
     volumes:
       - "/var/bamboo/appsbasicservice/logs:/app/logs"
     environment:
-      ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_basic;User Id=postgres;Password=omega'
+      ConnectionString: 'Server=apps.postgresdb;Port=5432;Database=dmz_basic;User Id=postgres;Password=root'
     networks:
       - dmz-morejee-net
 
@@ -40,7 +69,7 @@ services:
   #   volumes:
   #     - "/var/bamboo/appsmorejeeservice/logs:/app/logs"
   #   environment:
-  #     ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_test_morejee;User Id=postgres;Password=omega'
+  #     ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_morejee;User Id=postgres;Password=omega'
   #   networks:
   #     - dmz-morejee-net
 
