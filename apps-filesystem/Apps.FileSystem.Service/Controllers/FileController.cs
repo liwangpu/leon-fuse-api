@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Apps.Base.Common;
 using Apps.Base.Common.Controllers;
+using Apps.Base.Common.Interfaces;
 using Apps.FileSystem.Data.Entities;
 using Apps.FileSystem.Export.Models;
 using Apps.FileSystem.Service.Repositories;
@@ -24,7 +25,7 @@ namespace Apps.FileSystem.Service.Controllers
         private string uploadPath;
 
         #region 构造函数
-        public FileController(IHostingEnvironment env, FileRepository repository)
+        public FileController(IHostingEnvironment env, IRepository<FileAsset> repository)
                 : base(repository)
         {
             hostEnv = env;
@@ -34,9 +35,11 @@ namespace Apps.FileSystem.Service.Controllers
         }
         #endregion
 
-        public override Task<IActionResult> Get(string id)
+        [HttpGet("{id}")]
+        public override async Task<IActionResult> Get(string id)
         {
-            throw new NotImplementedException();
+            var res = await Task.FromResult(id);
+            return Ok(res);
         }
 
 

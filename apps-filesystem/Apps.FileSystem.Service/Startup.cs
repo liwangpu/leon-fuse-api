@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Apps.Base.Common;
+﻿using Apps.Base.Common;
 using Apps.Base.Common.Interfaces;
 using Apps.FileSystem.Data.Entities;
 using Apps.FileSystem.Service.Contexts;
@@ -16,9 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IO;
+using System.Text;
 
 namespace Apps.FileSystem.Service
 {
@@ -36,7 +31,7 @@ namespace Apps.FileSystem.Service
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<AppConfig>(Configuration);
-            //services.AddScoped<FileRepository>();
+
 
             #region PGSQL Setting
             services.AddEntityFrameworkNpgsql();
