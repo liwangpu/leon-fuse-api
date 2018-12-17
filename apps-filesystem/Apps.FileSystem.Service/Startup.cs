@@ -1,5 +1,6 @@
 ﻿using Apps.Base.Common;
 using Apps.Base.Common.Interfaces;
+using Apps.Base.Common.MiddleWares;
 using Apps.FileSystem.Data.Entities;
 using Apps.FileSystem.Service.Contexts;
 using Apps.FileSystem.Service.Repositories;
@@ -77,10 +78,15 @@ namespace Apps.FileSystem.Service
         {
             hostStaticFileServer(app, env);
             var dbContext = serviceProvider.GetService<AppDbContext>();
-            var appConfig = serviceProvider.GetService<AppConfig>();
 
             app.UseCors("AllowAll");
             app.UseAuthentication();
+
+            #region Authorization Middleware
+            var apiGateway = Configuration["APIGatewayServer"];
+            app.Use(AuthorizeMiddleWare.Authorize(apiGateway));
+            #endregion
+
             app.UseMvc();
 
             #region App Init

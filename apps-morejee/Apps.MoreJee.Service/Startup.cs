@@ -1,5 +1,6 @@
 ﻿using Apps.Base.Common;
 using Apps.Base.Common.Interfaces;
+using Apps.Base.Common.MiddleWares;
 using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
 using Apps.MoreJee.Service.Repositories;
@@ -91,6 +92,12 @@ namespace Apps.MoreJee.Service
 
             app.UseCors("AllowAll");
             app.UseAuthentication();
+
+            #region Authorization Middleware
+            var apiGateway = Configuration["APIGatewayServer"];
+            app.Use(AuthorizeMiddleWare.Authorize(apiGateway));
+            #endregion
+
             app.UseMvc();
 
             #region App Init
