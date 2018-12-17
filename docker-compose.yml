@@ -67,6 +67,8 @@ services:
       - JwtSettings:ExpiresDay=1
       # ConnectionString
       - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_filesystem;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # MicroServices
+      - APIGatewayServer=apps.base.apigateway
     networks:
       - dmz-morejee-net
 

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Apps.Base.Common.Consts;
 using Apps.Base.Common.Attributes;
+using System.Collections.Generic;
 
 namespace Apps.Basic.Service.Controllers
 {
@@ -133,6 +134,28 @@ namespace Apps.Basic.Service.Controllers
         {
             var acc = await _Context.Accounts.FirstOrDefaultAsync(x => x.Id == id);
             return Ok(acc != null ? acc.Name : string.Empty);
+        }
+        #endregion
+
+        #region GetNameByIds 根据Ids获取用户姓名集合
+        /// <summary>
+        /// 根据Ids获取用户姓名集合
+        /// </summary>
+        /// <param name="ids">逗号分隔的id</param>
+        /// <returns></returns>
+        [Route("GetNameByIds")]
+        [ProducesResponseType(typeof(List<string>), 200)]
+        public async Task<IActionResult> GetNameByIds(string ids)
+        {
+            ids = string.IsNullOrWhiteSpace(ids) ? string.Empty : ids;
+            var names = new List<string>();
+            var idArr = ids.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            foreach (var id in idArr)
+            {
+                var acc = await _Context.Accounts.FirstOrDefaultAsync(x => x.Id == id);
+                names.Add(acc != null ? acc.Name : string.Empty);
+            }
+            return Ok(names);
         } 
         #endregion
 

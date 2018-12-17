@@ -78,7 +78,6 @@ namespace Apps.MoreJee.Service
             });
             #endregion
 
-
             #region Service Registry
             services.AddScoped<IRepository<Map>, MapRepository>();
             #endregion

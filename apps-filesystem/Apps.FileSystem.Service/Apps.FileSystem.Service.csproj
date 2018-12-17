@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\apps-basic\Apps.Basic.Export\Apps.Basic.Export.csproj" />
     <ProjectReference Include="..\..\apps-common\Apps.Base.Common\Apps.Base.Common.csproj" />
     <ProjectReference Include="..\Apps.FileSystem.Data\Apps.FileSystem.Data.csproj" />
     <ProjectReference Include="..\Apps.FileSystem.Export\Apps.FileSystem.Export.csproj" />

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 
 namespace Apps.Base.Common.Controllers
 {
@@ -41,6 +43,21 @@ namespace Apps.Base.Common.Controllers
                 var claim = User.Claims.Where(x => x.Type == "OrganizationId").FirstOrDefault();
                 if (claim != null)
                     return claim.Value;
+                return string.Empty;
+            }
+        }
+
+        public string Token
+        {
+            get
+            {
+                string authorizationStr = Request.Headers["Authorization"];
+                if (!string.IsNullOrWhiteSpace(authorizationStr))
+                {
+                    var arr = authorizationStr.Split("bearer ", StringSplitOptions.RemoveEmptyEntries);
+                    if (arr.Length > 0)
+                        return arr[0].Trim();
+                }
                 return string.Empty;
             }
         }

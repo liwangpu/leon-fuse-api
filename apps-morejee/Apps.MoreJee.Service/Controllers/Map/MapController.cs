@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Apps.Base.Common;
 using Apps.Base.Common.Attributes;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
+using Apps.Basic.Export.Services;
 using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Export.DTOs;
 using Apps.MoreJee.Export.Models;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System;
+using System.Threading.Tasks;
 
 namespace Apps.MoreJee.Service.Controllers
 {
@@ -24,12 +24,14 @@ namespace Apps.MoreJee.Service.Controllers
     public class MapController : ListviewController<Map>
     {
         protected override AppDbContext _Context { get; }
+        protected AppConfig _AppConfig { get; }
 
         #region 构造函数
-        public MapController(IRepository<Map> repository, AppDbContext context)
+        public MapController(IRepository<Map> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
             : base(repository)
         {
             _Context = context;
+            _AppConfig = settingsOptions.Value;
         }
         #endregion
 
@@ -68,6 +70,8 @@ namespace Apps.MoreJee.Service.Controllers
         [ProducesResponseType(typeof(MapDTO), 200)]
         public async override Task<IActionResult> Get(string id)
         {
+            var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
+
             var toDTO = new Func<Map, Task<MapDTO>>(async (entity) =>
             {
                 var dto = new MapDTO();
@@ -82,6 +86,13 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.Properties = entity.Properties;
                 dto.PackageName = entity.PackageName;
                 dto.UnCookedAssetId = entity.UnCookedAssetId;
+                dto.CreatorName = await accountMicroService.GetNameById(entity.Creator);
+
+                await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
+                {
+                    dto.CreatorName = creatorName;
+                    dto.ModifierName = modifierName;
+                });
 
                 return await Task.FromResult(dto);
             });

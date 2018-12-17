@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Apps.Basic.Service
+﻿namespace Apps.Base.Common
 {
     public class AppConfig
     {
+        public string APIGatewayServer { get; set; }
         public string ConnectionString { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public GuidSettings GuidSettings { get; set; }
