@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Apps.FileSystem.Service.Migrations
 {
-    public partial class InitDb : Migration
+    public partial class InitDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,13 +17,15 @@ namespace Apps.FileSystem.Service.Migrations
                     Modifier = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
                     ActiveFlag = table.Column<int>(nullable: false),
                     Url = table.Column<string>(nullable: true),
                     Md5 = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),
                     FileExt = table.Column<string>(nullable: true),
                     LocalPath = table.Column<string>(nullable: true),
-                    Icon = table.Column<string>(nullable: true)
+                    FileState = table.Column<int>(nullable: false),
+                    OrganizationId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

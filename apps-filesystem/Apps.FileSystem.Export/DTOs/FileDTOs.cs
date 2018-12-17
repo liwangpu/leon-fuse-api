@@ -1,9 +1,10 @@
-﻿using Apps.Base.Common.Interfaces;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Apps.FileSystem.Data.Entities
+namespace Apps.FileSystem.Export.DTOs
 {
-    public class FileAsset : IEntity
+    public class FileDTO
     {
         /// <summary>
         /// Id
@@ -30,10 +31,6 @@ namespace Apps.FileSystem.Data.Entities
         /// </summary>
         public DateTime ModifiedTime { get; set; }
         /// <summary>
-        /// 描述
-        /// </summary>
-        public string Description { get; set; }
-        /// <summary>
         /// 数据激活状态标记
         /// </summary>
         public int ActiveFlag { get; set; }
@@ -58,12 +55,8 @@ namespace Apps.FileSystem.Data.Entities
         /// </summary>
         public string LocalPath { get; set; }
         /// <summary>
-        /// 文件状态
+        /// 描述
         /// </summary>
-        public int FileState { get; set; }
-        /// <summary>
-        /// 组织Id
-        /// </summary>
-        public string OrganizationId { get; set; }
+        public string Description { get; set; }
     }
 }

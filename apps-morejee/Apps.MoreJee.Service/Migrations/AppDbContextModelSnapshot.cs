@@ -32,6 +32,8 @@ namespace Apps.MoreJee.Service.Migrations
 
                     b.Property<string>("Dependencies");
 
+                    b.Property<string>("Description");
+
                     b.Property<string>("FileAssetId");
 
                     b.Property<string>("Icon");

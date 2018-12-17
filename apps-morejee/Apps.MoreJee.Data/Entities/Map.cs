@@ -34,6 +34,10 @@ namespace Apps.MoreJee.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// 场景引用资源文件Id
         /// </summary>
         public string FileAssetId { get; set; }

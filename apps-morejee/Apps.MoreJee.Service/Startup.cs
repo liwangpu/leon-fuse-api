@@ -1,5 +1,8 @@
 ﻿using Apps.Base.Common;
+using Apps.Base.Common.Interfaces;
+using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
+using Apps.MoreJee.Service.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -51,9 +54,13 @@ namespace Apps.MoreJee.Service
             #endregion
 
             #region JwtBearer Setting
-            //var JwtSettingsIssuer = Configuration["JwtSettings:Issuer"];
-            //Console.WriteLine("JwtSettings:Issuer参数:{0}", JwtSettingsIssuer);
-            //var authenticationProviderKey = "IdentityApiKey";
+            var jwtSettingsIssuer = Configuration["JwtSettings:Issuer"];
+            var audience = Configuration["JwtSettings:Audience"];
+            var secretKey = Configuration["JwtSettings:SecretKey"];
+            Console.WriteLine("AppSetting=>JwtSettings:Issuer:{0}", jwtSettingsIssuer);
+            Console.WriteLine("AppSetting=>JwtSettings:Audience:{0}", audience);
+            Console.WriteLine("AppSetting=>JwtSettings:SecretKey:{0}", secretKey);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -63,12 +70,17 @@ namespace Apps.MoreJee.Service
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["JwtSettings:Issuer"],
-                    ValidAudience = Configuration["JwtSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"])),
+                    ValidIssuer = jwtSettingsIssuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                     ClockSkew = TimeSpan.Zero
                 };
             });
+            #endregion
+
+
+            #region Service Registry
+            services.AddScoped<IRepository<Map>, MapRepository>();
             #endregion
         }
 

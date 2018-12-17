@@ -5,7 +5,6 @@ using Apps.Basic.Data.Entities;
 using Apps.Basic.Export.DTOs;
 using Apps.Basic.Export.Models;
 using Apps.Basic.Service.Contexts;
-using Apps.Basic.Service.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +12,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Apps.Base.Common.Consts;
+using Apps.Base.Common.Attributes;
 
 namespace Apps.Basic.Service.Controllers
 {
@@ -119,6 +119,21 @@ namespace Apps.Basic.Service.Controllers
             });
             return await _GetByIdRequest(id, toDTO);
         }
+        #endregion
+
+        #region GetNameById 根据Id获取用户姓名
+        /// <summary>
+        /// 根据Id获取用户姓名
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("GetNameById")]
+        [ProducesResponseType(typeof(string), 200)]
+        public async Task<IActionResult> GetNameById(string id)
+        {
+            var acc = await _Context.Accounts.FirstOrDefaultAsync(x => x.Id == id);
+            return Ok(acc != null ? acc.Name : string.Empty);
+        } 
         #endregion
 
         #region Post 创建用户

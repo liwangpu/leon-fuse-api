@@ -30,9 +30,11 @@ namespace Apps.FileSystem.Service.Migrations
 
                     b.Property<string>("Creator");
 
+                    b.Property<string>("Description");
+
                     b.Property<string>("FileExt");
 
-                    b.Property<string>("Icon");
+                    b.Property<int>("FileState");
 
                     b.Property<string>("LocalPath");
 
@@ -43,6 +45,8 @@ namespace Apps.FileSystem.Service.Migrations
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
 
                     b.Property<long>("Size");
 

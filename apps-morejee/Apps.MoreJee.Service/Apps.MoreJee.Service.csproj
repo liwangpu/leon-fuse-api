@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\apps-basic\Apps.Basic.Export\Apps.Basic.Export.csproj" />
+    <ProjectReference Include="..\..\apps-filesystem\Apps.FileSystem.Export\Apps.FileSystem.Export.csproj" />
     <ProjectReference Include="..\Apps.MoreJee.Data\Apps.MoreJee.Data.csproj" />
     <ProjectReference Include="..\Apps.MoreJee.Export\Apps.MoreJee.Export.csproj" />
   </ItemGroup>

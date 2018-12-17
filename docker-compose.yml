@@ -25,8 +25,8 @@ services:
     volumes:
       - "/var/bamboo/postgresdb/data:/var/lib/postgresql/data"
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'root'
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
     networks: 
       - dmz-morejee-net
 
@@ -45,6 +45,31 @@ services:
       - apps.basic.service
   #     - apps.mongodb
 
+  apps.filesystem.service:
+    image: appsfilesystemservice
+    build:
+      context: .
+      dockerfile: apps-filesystem/Apps.FileSystem.Service/Dockerfile
+    ports:
+      - "1884:80"
+    volumes:
+      - "/var/bamboo/appsfilesystemservice/logs:/app/logs"
+      - "/var/bamboo/appsfilesystemservice/files:/app/wwwroot"
+    environment:
+      # GuidSettings
+      - GuidSettings:ServerId=${GuidSettings_ServerId}
+      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+      # JwtSettings
+      - JwtSettings:Issuer=decohero.net
+      - JwtSettings:Audience=decohero.net
+      - JwtSettings:SecretKey=damaozhu-anzhumeiju-app
+      - JwtSettings:ExpiresDay=1
+      # ConnectionString
+      - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_filesystem;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+    networks:
+      - dmz-morejee-net
+
   apps.basic.service:
     image: appsbasicservice
     build:
@@ -55,7 +80,17 @@ services:
     volumes:
       - "/var/bamboo/appsbasicservice/logs:/app/logs"
     environment:
-      ConnectionString: 'Server=apps.postgresdb;Port=5432;Database=dmz_basic;User Id=postgres;Password=root'
+      # GuidSettings
+      - GuidSettings:ServerId=${GuidSettings_ServerId}
+      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+      # JwtSettings
+      - JwtSettings:Issuer=decohero.net
+      - JwtSettings:Audience=decohero.net
+      - JwtSettings:SecretKey=damaozhu-anzhumeiju-app
+      - JwtSettings:ExpiresDay=1
+      # ConnectionString
+      - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_basic;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
     networks:
       - dmz-morejee-net
 

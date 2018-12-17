@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Apps.MoreJee.Service.Migrations
 {
-    public partial class InitDb : Migration
+    public partial class InitDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,6 +18,7 @@ namespace Apps.MoreJee.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     ActiveFlag = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
                     FileAssetId = table.Column<string>(nullable: true),
                     Dependencies = table.Column<string>(nullable: true),
                     Properties = table.Column<string>(nullable: true),

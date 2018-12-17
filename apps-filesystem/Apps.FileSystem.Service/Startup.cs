@@ -67,15 +67,7 @@ namespace Apps.FileSystem.Service
 
             #region Service Registry
             services.AddScoped<IRepository<FileAsset>, FileRepository>();
-            //services.AddScoped<IRepository<UserNav>, UserNavRepository>();
-            ////services.AddScoped<IRepository<FileAsset>, FileRepository>();
-            //services.AddScoped<IRepository<Navigation>, NavigationRepository>();
-            //services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
-            //services.AddScoped<IRepository<Organization>, OrganizationRepository>();
-            //services.AddScoped<IRepository<OrganizationType>, OrganizationTypeRepository>();
-            //services.AddScoped<ITreeRepository<OrganizationTree>, OrganizationTreeRepository>();
-            //services.AddScoped<IRepository<Department>, DepartmentRepository>();
-            //services.add
+
             #endregion
 
         }

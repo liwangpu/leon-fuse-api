@@ -1,8 +1,10 @@
 ﻿using Apps.Base.Common;
+using Apps.Base.Common.Consts;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +25,7 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task<string> CanCreateAsync(Map data, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanDeleteAsync(string id, string accountId)
@@ -33,17 +35,24 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task<string> CanGetByIdAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanUpdateAsync(Map data, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task CreateAsync(Map data, string accountId)
         {
-            throw new NotImplementedException();
+            data.Id = GuidGen.NewGUID();
+            data.ActiveFlag = AppConst.Active;
+            data.Creator = accountId;
+            data.Modifier = accountId;
+            data.CreatedTime = DateTime.Now;
+            data.ModifiedTime = data.CreatedTime;
+            _Context.Maps.Add(data);
+            await _Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id, string accountId)
@@ -53,7 +62,8 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task<Map> GetByIdAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var entity = await _Context.Maps.FirstOrDefaultAsync(x => x.Id == id);
+            return entity;
         }
 
         public async Task<PagedData<Map>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<Map>, Task<IQueryable<Map>>> advanceQuery = null)
@@ -71,7 +81,10 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task UpdateAsync(Map data, string accountId)
         {
-            throw new NotImplementedException();
+            data.Modifier = accountId;
+            data.ModifiedTime = data.CreatedTime;
+            _Context.Maps.Update(data);
+            await _Context.SaveChangesAsync();
         }
     }
 }

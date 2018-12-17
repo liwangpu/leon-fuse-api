@@ -6,11 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\apps-common\Apps.Base.Common\Apps.Base.Common.csproj" />
+    <PackageReference Include="Flurl" Version="2.8.0" />
+    <PackageReference Include="Flurl.Http" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\..\apps-common\Apps.Base.Common\Apps.Base.Common.csproj" />
   </ItemGroup>
 
 </Project>

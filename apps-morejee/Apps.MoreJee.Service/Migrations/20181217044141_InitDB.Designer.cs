@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181212034537_InitDb")]
-    partial class InitDb
+    [Migration("20181217044141_InitDB")]
+    partial class InitDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,6 +33,8 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<string>("Creator");
 
                     b.Property<string>("Dependencies");
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("FileAssetId");
 

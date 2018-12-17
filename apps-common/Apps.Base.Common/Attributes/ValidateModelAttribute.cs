@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-namespace Apps.Basic.Service.Filters
+namespace Apps.Base.Common.Attributes
 {
     /// <summary>
     /// 模型绑定过滤器

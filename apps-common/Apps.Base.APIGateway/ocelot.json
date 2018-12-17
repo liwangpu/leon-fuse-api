@@ -181,12 +181,36 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
     },
     {
+      "DownstreamPathTemplate": "/File",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apps.filesystem.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Files",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/File",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apps.filesystem.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/File",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
       "DownstreamPathTemplate": "/File/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
-          "Port": 1884
+          "Host": "apps.filesystem.service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/Files/{everything}",
@@ -197,11 +221,47 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
-          "Port": 1884
+          "Host": "apps.filesystem.service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/File/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Upload/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apps.filesystem.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Upload/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Map",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1883
+        }
+      ],
+      "UpstreamPathTemplate": "/Map",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Map/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1883
+        }
+      ],
+      "UpstreamPathTemplate": "/Map/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
     }
   ],
