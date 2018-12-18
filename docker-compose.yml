@@ -3,10 +3,7 @@ version: '3.4'
 services:
 
   # apps.mongodb:
-  #   image: appsmongodb
-  #   build:
-  #     context: .
-  #     dockerfile: apps-foundation/Apps_MongoDB/Dockerfile
+  #   image: mongo:3.2.21-jessie
   #   ports:
   #     - "27017:27017"
   #   environment:
@@ -16,10 +13,7 @@ services:
   #     - dmz-morejee-net
 
   apps.postgresdb:
-    image: appspostgresdb
-    build:
-      context: .
-      dockerfile: apps-foundation/Apps_PostgresDB/Dockerfile
+    image: postgres:10.5
     ports:
       - "15266:5432"
     volumes:

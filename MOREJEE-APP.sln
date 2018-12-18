@@ -53,18 +53,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Export", "a
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Service", "apps-filesystem\Apps.FileSystem.Service\Apps.FileSystem.Service.csproj", "{223046F5-3FAE-45B3-AD71-91623CD949FF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Foundation", "Apps-Foundation", "{FAD9CC05-C969-4AEA-9897-38328784F471}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MongoDB", "MongoDB", "{11C304DC-B835-4902-8910-D913AF22F1AB}"
-	ProjectSection(SolutionItems) = preProject
-		apps-foundation\Apps_MongoDB\Dockerfile = apps-foundation\Apps_MongoDB\Dockerfile
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostgresDB", "PostgresDB", "{024F8A89-9D1C-4948-BD9E-1A71FF5BC1EE}"
-	ProjectSection(SolutionItems) = preProject
-		apps-foundation\Apps_PostgresDB\Dockerfile = apps-foundation\Apps_PostgresDB\Dockerfile
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Cloud-Dev|Any CPU = Cloud-Dev|Any CPU
@@ -275,8 +263,6 @@ Global
 		{70D1B47B-98DB-48A8-8EBD-3EAD4999A3AD} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{E7E0935D-9702-4C8D-9567-414ED1C6421C} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{223046F5-3FAE-45B3-AD71-91623CD949FF} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
-		{11C304DC-B835-4902-8910-D913AF22F1AB} = {FAD9CC05-C969-4AEA-9897-38328784F471}
-		{024F8A89-9D1C-4948-BD9E-1A71FF5BC1EE} = {FAD9CC05-C969-4AEA-9897-38328784F471}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1F15B0A-1C9E-4766-A6EA-45FB37ECAA34}
