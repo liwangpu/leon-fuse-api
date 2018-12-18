@@ -285,7 +285,7 @@ namespace Apps.FileSystem.Service.Controllers
                 || res.FileExt.Equals(".bmp", StringComparison.CurrentCultureIgnoreCase)
                 )
                 {
-                    //ImageThumbnailCreator.SaveImageThumbnails(renamedPath);
+                    ImageThumbnailCreator.SaveImageThumbnails(renamedPath);
                 }
 
             });

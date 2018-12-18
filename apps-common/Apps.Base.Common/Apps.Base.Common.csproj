@@ -9,6 +9,7 @@
     <PackageReference Include="Flurl.Http" Version="2.4.0" />
     <PackageReference Include="Hashids.net" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
   </ItemGroup>
 
 </Project>

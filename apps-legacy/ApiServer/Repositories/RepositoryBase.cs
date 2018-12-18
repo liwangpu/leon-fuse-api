@@ -137,6 +137,8 @@ namespace ApiServer.Repositories
         public async Task<Organization> GetUserRootOrgan(string accid)
         {
             var account = await _DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
+            if (account.OrganizationId == AppConst.BambooOrganId)
+                return await _DbContext.Organizations.FirstOrDefaultAsync(x => x.Id == AppConst.BambooOrganId);
             if (account != null)
             {
                 var rootNode = await _DbContext.PermissionTrees.FirstAsync(x => x.ObjId == account.OrganizationId);

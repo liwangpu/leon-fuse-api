@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Apps.MoreJee.Export.DTOs
 {
-    public class MapDTO
+    public class StaticMeshDTO
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -18,9 +16,12 @@ namespace Apps.MoreJee.Export.DTOs
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string SrcFileAssetId { get; set; }
+        public string Materials { get; set; }
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
         public string Icon { get; set; }
+        public string Url { get; set; }
         public string OrganizationId { get; set; }
     }
 }

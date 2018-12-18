@@ -33,6 +33,10 @@ namespace Apps.FileSystem.Service
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<AppConfig>(Configuration);
 
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()));
 
             #region PGSQL Setting
             services.AddEntityFrameworkNpgsql();

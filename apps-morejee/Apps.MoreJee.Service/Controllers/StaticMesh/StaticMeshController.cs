@@ -17,39 +17,39 @@ using System.Threading.Tasks;
 namespace Apps.MoreJee.Service.Controllers
 {
     /// <summary>
-    /// 场景控制器
+    /// 模型控制器
     /// </summary>
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class MapController : ListviewController<Map>
+    public class StaticMeshController : ListviewController<StaticMesh>
     {
         protected override AppDbContext _Context { get; }
 
         #region 构造函数
-        public MapController(IRepository<Map> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
+        public StaticMeshController(IRepository<StaticMesh> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
             : base(repository, settingsOptions)
         {
             _Context = context;
         }
         #endregion
 
-        #region Get 根据分页获取场景信息
+        #region Get 根据分页获取模型信息
         /// <summary>
-        /// 根据分页获取场景信息
+        /// 根据分页获取模型信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData<MapDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<StaticMeshDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Map, Task<MapDTO>>(async (entity) =>
+            var toDTO = new Func<StaticMesh, Task<StaticMeshDTO>>(async (entity) =>
             {
-                var dto = new MapDTO();
+                var dto = new StaticMeshDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
@@ -73,28 +73,32 @@ namespace Apps.MoreJee.Service.Controllers
                 {
                     dto.Icon = url;
                 });
+                await fileMicroServer.GetUrlById(entity.FileAssetId, (url) =>
+                {
+                    dto.Url = url;
+                });
                 return await Task.FromResult(dto);
             });
             return await _PagingRequest(model, toDTO);
         }
         #endregion
 
-        #region Get 根据Id获取场景信息
+        #region Get 根据Id获取模型信息
         /// <summary>
-        /// 根据Id获取场景信息
+        /// 根据Id获取模型信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(StaticMeshDTO), 200)]
         public async override Task<IActionResult> Get(string id)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Map, Task<MapDTO>>(async (entity) =>
+            var toDTO = new Func<StaticMesh, Task<StaticMeshDTO>>(async (entity) =>
             {
-                var dto = new MapDTO();
+                var dto = new StaticMeshDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
@@ -114,28 +118,28 @@ namespace Apps.MoreJee.Service.Controllers
                     dto.ModifierName = modifierName;
                 });
                 await fileMicroServer.GetUrlById(entity.Icon, (url) =>
-                 {
-                     dto.Icon = url;
-                 });
+                {
+                    dto.Icon = url;
+                });
                 return await Task.FromResult(dto);
             });
             return await _GetByIdRequest(id, toDTO);
         }
         #endregion
 
-        #region Post 新建场景信息
+        #region Post 新建模型信息
         /// <summary>
-        /// 新建场景信息
+        /// 新建模型信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(StaticMeshDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Post([FromBody]MapCreateModel model)
+        public async Task<IActionResult> Post([FromBody]StaticMeshCreateModel model)
         {
-            var mapping = new Func<Map, Task<Map>>(async (entity) =>
+            var mapping = new Func<StaticMesh, Task<StaticMesh>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
@@ -152,19 +156,19 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
-        #region Put 更新场景信息
+        #region Put 更新模型信息
         /// <summary>
-        /// 更新场景信息
+        /// 更新模型信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(StaticMeshDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Put([FromBody]MapEditModel model)
+        public async Task<IActionResult> Put([FromBody]StaticMeshUpdateModel model)
         {
-            var mapping = new Func<Map, Task<Map>>(async (entity) =>
+            var mapping = new Func<StaticMesh, Task<StaticMesh>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;

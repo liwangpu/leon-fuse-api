@@ -81,6 +81,9 @@ namespace Apps.MoreJee.Service
 
             #region Service Registry
             services.AddScoped<IRepository<Map>, MapRepository>();
+            services.AddScoped<IRepository<Material>, MaterialRepository>();
+            services.AddScoped<IRepository<StaticMesh>, StaticMeshRepository>();
+            
             #endregion
         }
 

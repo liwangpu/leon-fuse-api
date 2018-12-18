@@ -325,12 +325,16 @@ namespace ApiServer
                     if (userNavs.Count <= 0)
                     {
                         //从json恢复角色导航栏信息
-                        var strUserNavs = File.ReadAllText(filePath);
-                        var userNavList = JsonConvert.DeserializeObject<List<UserNav>>(strUserNavs);
-                        foreach (var item in userNavList)
-                            context.UserNavs.Add(item);
-                        context.SaveChanges();
-                        Console.WriteLine("Auto Recover UserNavs From Backup");
+                        //从json恢复导航栏项信息
+                        if (File.Exists(filePath))
+                        {
+                            var strUserNavs = File.ReadAllText(filePath);
+                            var userNavList = JsonConvert.DeserializeObject<List<UserNav>>(strUserNavs);
+                            foreach (var item in userNavList)
+                                context.UserNavs.Add(item);
+                            context.SaveChanges();
+                            Console.WriteLine("Auto Recover UserNavs From Backup");
+                        }
                     }
                     else
                     {

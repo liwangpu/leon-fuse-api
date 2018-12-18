@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Apps.MoreJee.Service.Migrations
 {
-    public partial class InitDB : Migration
+    public partial class AddStaticMesh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Maps",
+                name: "StaticMeshs",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
@@ -18,24 +18,27 @@ namespace Apps.MoreJee.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     ActiveFlag = table.Column<int>(nullable: false),
+                    OrganizationId = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     FileAssetId = table.Column<string>(nullable: true),
                     Dependencies = table.Column<string>(nullable: true),
                     Properties = table.Column<string>(nullable: true),
+                    SrcFileAssetId = table.Column<string>(nullable: true),
+                    Materials = table.Column<string>(nullable: true),
                     PackageName = table.Column<string>(nullable: true),
-                    UnCookedAssetId = table.Column<string>(nullable: true),
-                    Icon = table.Column<string>(nullable: true)
+                    UnCookedAssetId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Maps", x => x.Id);
+                    table.PrimaryKey("PK_StaticMeshs", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Maps");
+                name: "StaticMeshs");
         }
     }
 }

@@ -96,9 +96,7 @@
   </ItemGroup>
 
   <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties appsettings_1Production_1json__JSONSchema="" appsettings_1Development_1json__JSONSchema="" />
-    </VisualStudio>
+    <VisualStudio><UserProperties appsettings_1Development_1json__JSONSchema="" /></VisualStudio>
   </ProjectExtensions>
 
 </Project>

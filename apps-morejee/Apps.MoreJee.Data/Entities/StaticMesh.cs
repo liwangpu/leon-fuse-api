@@ -1,9 +1,13 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
 
+
 namespace Apps.MoreJee.Data.Entities
 {
-    public class Map : IEntity, IListView
+    /// <summary>
+    /// 模型
+    /// </summary>
+    public class StaticMesh : IEntity, IListView
     {
         /// <summary>
         /// Id
@@ -38,20 +42,23 @@ namespace Apps.MoreJee.Data.Entities
         /// </summary>
         public string OrganizationId { get; set; }
         /// <summary>
+        /// 图标
+        /// </summary>
+        public string Icon { get; set; }
+        /// <summary>
         /// 描述
         /// </summary>
         public string Description { get; set; }
-        /// <summary>
-        /// 场景引用资源文件Id
-        /// </summary>
         public string FileAssetId { get; set; }
-        /// <summary>
-        /// 场景依赖项
-        /// </summary>
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string SrcFileAssetId { get; set; }
+        /// <summary>
+        /// 字符型Materials,服务器不做处理,只是简单存储
+        /// </summary>
+        public string Materials { get; set; }
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
-        public string Icon { get; set; }
+
     }
 }

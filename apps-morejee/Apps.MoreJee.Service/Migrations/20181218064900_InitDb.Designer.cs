@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181217044141_InitDB")]
-    partial class InitDB
+    [Migration("20181218064900_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +46,8 @@ namespace Apps.MoreJee.Service.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("OrganizationId");
+
                     b.Property<string>("PackageName");
 
                     b.Property<string>("Properties");
@@ -55,6 +57,44 @@ namespace Apps.MoreJee.Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Maps");
+                });
+
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.Material", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Dependencies");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("FileAssetId");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<string>("PackageName");
+
+                    b.Property<string>("Parameters");
+
+                    b.Property<string>("UnCookedAssetId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Materials");
                 });
 #pragma warning restore 612, 618
         }

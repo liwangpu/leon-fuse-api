@@ -1,0 +1,71 @@
+version: '3.4'
+
+services:
+  dmzpostgresdb:
+    image: postgres:10.5
+    volumes:
+      - "/var/bamboo/dmzpostgresdb/data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
+    ports:
+      - "1990:5432"
+    networks:
+      - dmzapinet
+
+  dmzapiserver:
+    image: dmzapiserver
+    build:
+      context: .
+      dockerfile: ApiServer/Dockerfile
+    ports:
+      - "1991:80"
+    networks:
+      - dmzapinet
+    environment:
+      # GuidSettings
+      - GuidSettings:ServerId=${GuidSettings_ServerId}
+      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+      # JwtSettings
+      - JwtSettings:Issuer=damaozhu.com.cn
+      - JwtSettings:Audience=damaozhu.com.cn
+      - JwtSettings:SecretKey=damaozhu-dev-test-app
+      - JwtSettings:ExpiresDay=1
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+    volumes:
+      - "/var/bamboo/dmzapiserver/logs:/app/logs"
+      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+    depends_on:
+      - dmzpostgresdb
+
+  dmzapiserver_ehome:
+    image: dmzapiserverehome
+    build:
+      context: .
+      dockerfile: ApiServer/Dockerfile
+    ports:
+      - "1992:80"
+    networks:
+      - dmzapinet
+    environment:
+      # GuidSettings
+      - GuidSettings:ServerId=${GuidSettings_ServerId}
+      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+      # JwtSettings
+      - JwtSettings:Issuer=damaozhu.com.cn
+      - JwtSettings:Audience=damaozhu.com.cn
+      - JwtSettings:SecretKey=damaozhu-ehome-test-app
+      - JwtSettings:ExpiresDay=1
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_ehome;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+    volumes:
+      - "/var/bamboo/dmzapiserver_ehome/logs:/app/logs"
+      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+    depends_on:
+      - dmzpostgresdb
+
+networks:
+  dmzapinet:

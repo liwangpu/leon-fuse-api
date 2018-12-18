@@ -1,9 +1,5 @@
 ﻿using Apps.MoreJee.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Apps.MoreJee.Service.Contexts
 {
@@ -21,9 +17,17 @@ namespace Apps.MoreJee.Service.Contexts
         #endregion
 
         /// <summary>
-        /// 用户
+        /// 场景
         /// </summary>
         public DbSet<Map> Maps { get; set; }
+        /// <summary>
+        /// 材质
+        /// </summary>
+        public DbSet<Material> Materials { get; set; }
+        /// <summary>
+        /// 模型
+        /// </summary>
+        public DbSet<StaticMesh> StaticMeshs { get; set; }
 
     }
 }

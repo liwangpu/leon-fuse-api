@@ -1,15 +1,12 @@
 ﻿using Apps.Base.Common;
 using Apps.FileSystem.Export.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Flurl;
 using Flurl.Http;
+using System;
+using System.Threading.Tasks;
 
 namespace Apps.FileSystem.Export.Services
 {
-    public class FileMicroService: MicroServiceBase
+    public class FileMicroService : MicroServiceBase
     {
 
         #region 构造函数
@@ -20,12 +17,37 @@ namespace Apps.FileSystem.Export.Services
         }
         #endregion
 
+        #region GetById 根据Id获取文件信息
+        /// <summary>
+        /// 根据Id获取文件信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<FileDTO> GetById(string id)
         {
-            var dto = await $"{Server}/File".WithOAuthBearerToken(Token).GetJsonAsync<FileDTO>();
-
+            if (string.IsNullOrWhiteSpace(id))
+                return null;
+            var dto = await $"{Server}/File/{id}".WithOAuthBearerToken(Token).GetJsonAsync<FileDTO>();
             return dto;
         }
+        #endregion
+
+        #region GetUrlById 获取id对应文件url
+        /// <summary>
+        /// 获取id对应文件url
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="assign"></param>
+        /// <returns></returns>
+        public async Task GetUrlById(string id, Action<string> assign)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return;
+            var dto = await GetById(id);
+            if (dto != null)
+                assign(dto.Url);
+        }
+        #endregion
 
     }
 }
