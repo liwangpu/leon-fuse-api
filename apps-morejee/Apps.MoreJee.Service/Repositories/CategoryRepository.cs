@@ -9,21 +9,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace Apps.MoreJee.Service.Repositories
 {
-    public class MaterialRepository : IRepository<Material>
+    public class CategoryRepository : IRepository<AssetCategory>
     {
         protected readonly AppDbContext _Context;
 
         #region 构造函数
-        public MaterialRepository(AppDbContext context)
+        public CategoryRepository(AppDbContext context)
         {
             _Context = context;
         }
         #endregion
 
-        public async Task<string> CanCreateAsync(Material data, string accountId)
+        public async Task<string> CanCreateAsync(AssetCategory data, string accountId)
         {
             return await Task.FromResult(string.Empty);
         }
@@ -38,12 +37,12 @@ namespace Apps.MoreJee.Service.Repositories
             return await Task.FromResult(string.Empty);
         }
 
-        public async Task<string> CanUpdateAsync(Material data, string accountId)
+        public async Task<string> CanUpdateAsync(AssetCategory data, string accountId)
         {
             return await Task.FromResult(string.Empty);
         }
 
-        public async Task CreateAsync(Material data, string accountId)
+        public async Task CreateAsync(AssetCategory data, string accountId)
         {
             throw new NotImplementedException();
         }
@@ -53,15 +52,15 @@ namespace Apps.MoreJee.Service.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<Material> GetByIdAsync(string id, string accountId)
+        public async Task<AssetCategory> GetByIdAsync(string id, string accountId)
         {
-            var entity = await _Context.Materials.FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _Context.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
             return entity;
         }
 
-        public async Task<PagedData<Material>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<Material>, Task<IQueryable<Material>>> advanceQuery = null)
+        public async Task<PagedData<AssetCategory>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<AssetCategory>, Task<IQueryable<AssetCategory>>> advanceQuery = null)
         {
-            var query = _Context.Materials.AsQueryable();
+            var query = _Context.AssetCategories.AsQueryable();
             if (advanceQuery != null)
                 query = await advanceQuery(query);
             //关键词过滤查询
@@ -72,7 +71,7 @@ namespace Apps.MoreJee.Service.Repositories
             return result;
         }
 
-        public async Task UpdateAsync(Material data, string accountId)
+        public async Task UpdateAsync(AssetCategory data, string accountId)
         {
             throw new NotImplementedException();
         }

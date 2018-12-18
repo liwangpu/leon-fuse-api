@@ -28,6 +28,10 @@ namespace Apps.MoreJee.Service.Contexts
         /// 模型
         /// </summary>
         public DbSet<StaticMesh> StaticMeshs { get; set; }
+        /// <summary>
+        /// 资源分类
+        /// </summary>
+        public DbSet<AssetCategory> AssetCategories { get; set; }
 
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181218110242_AddCategory")]
+    partial class AddCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +32,6 @@ namespace Apps.MoreJee.Service.Migrations
 
                     b.Property<string>("Creator");
 
-                    b.Property<string>("Description");
-
                     b.Property<int>("DisplayIndex");
 
                     b.Property<string>("Icon");
@@ -41,8 +41,6 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
 
                     b.Property<string>("ParentId");
 

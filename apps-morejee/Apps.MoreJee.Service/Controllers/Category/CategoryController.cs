@@ -16,37 +16,40 @@ using System.Threading.Tasks;
 
 namespace Apps.MoreJee.Service.Controllers
 {
+    /// <summary>
+    /// 资源分类控制器
+    /// </summary>
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class MaterialController : ListviewController<Material>
+    public class CategoryController : ListviewController<AssetCategory>
     {
         protected override AppDbContext _Context { get; }
 
         #region 构造函数
-        public MaterialController(IRepository<Material> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
+        public CategoryController(IRepository<AssetCategory> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
             : base(repository, settingsOptions)
         {
             _Context = context;
         }
         #endregion
 
-        #region Get 根据分页获取材质信息
+        #region Get 根据分页获取场景信息
         /// <summary>
-        /// 根据分页获取材质信息
+        /// 根据分页获取场景信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData<MaterialDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<CategoryDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Material, Task<MaterialDTO>>(async (entity) =>
+            var toDTO = new Func<AssetCategory, Task<CategoryDTO>>(async (entity) =>
             {
-                var dto = new MaterialDTO();
+                var dto = new CategoryDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
@@ -54,11 +57,10 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.FileAssetId = entity.FileAssetId;
-                dto.Dependencies = entity.Dependencies;
-                dto.PackageName = entity.PackageName;
-                dto.UnCookedAssetId = entity.UnCookedAssetId;
                 dto.OrganizationId = entity.OrganizationId;
+                dto.Type = entity.Type;
+                dto.DisplayIndex = entity.DisplayIndex;
+                dto.ParentId = entity.ParentId;
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
@@ -75,22 +77,22 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
-        #region Get 根据Id获取材质信息
+        #region Get 根据Id获取场景信息
         /// <summary>
-        /// 根据Id获取材质信息
+        /// 根据Id获取场景信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(MaterialDTO), 200)]
+        [ProducesResponseType(typeof(CategoryDTO), 200)]
         public async override Task<IActionResult> Get(string id)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Material, Task<MaterialDTO>>(async (entity) =>
+            var toDTO = new Func<AssetCategory, Task<CategoryDTO>>(async (entity) =>
             {
-                var dto = new MaterialDTO();
+                var dto = new CategoryDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
@@ -98,11 +100,11 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.FileAssetId = entity.FileAssetId;
-                dto.Dependencies = entity.Dependencies;
-                dto.PackageName = entity.PackageName;
-                dto.UnCookedAssetId = entity.UnCookedAssetId;
                 dto.OrganizationId = entity.OrganizationId;
+                dto.Type = entity.Type;
+                dto.DisplayIndex = entity.DisplayIndex;
+                dto.ParentId = entity.ParentId;
+
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
@@ -117,6 +119,5 @@ namespace Apps.MoreJee.Service.Controllers
             return await _GetByIdRequest(id, toDTO);
         }
         #endregion
-
     }
 }
