@@ -10,5 +10,6 @@ namespace Apps.Basic.Data.Entities
         public string ParentId { get; set; }
         public string NodeType { get; set; }
         public string ObjId { get; set; }
+        public string OrganizationId { get; set; }
     }
 }

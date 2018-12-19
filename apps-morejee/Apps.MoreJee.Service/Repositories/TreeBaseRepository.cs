@@ -51,7 +51,7 @@ namespace Apps.MoreJee.Service.Repositories
                 data.Id = GuidGen.NewGUID();
                 data.LValue = parentNode.RValue;
                 data.RValue = data.LValue + 1;
-                var refNodes = await _Context.Set<T>().Where(x => x.RValue >= parentNode.RValue).ToListAsync();
+                var refNodes = await _Context.Set<T>().Where(x => x.NodeType == data.NodeType && x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
                 for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                 {
                     var cur = refNodes[idx];

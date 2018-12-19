@@ -280,12 +280,15 @@ namespace Apps.Basic.Service
                 if (navs.Count <= 0)
                 {
                     //从json恢复导航栏项信息
-                    var strNavs = File.ReadAllText(filePath);
-                    var navList = JsonConvert.DeserializeObject<List<Navigation>>(strNavs);
-                    foreach (var item in navList)
-                        context.Navigations.Add(item);
-                    context.SaveChanges();
-                    Console.WriteLine("Auto Recover Navigations From Backup");
+                    if (File.Exists(filePath))
+                    {
+                        var strNavs = File.ReadAllText(filePath);
+                        var navList = JsonConvert.DeserializeObject<List<Navigation>>(strNavs);
+                        foreach (var item in navList)
+                            context.Navigations.Add(item);
+                        context.SaveChanges();
+                        Console.WriteLine("Auto Recover Navigations From Backup");
+                    }
                 }
                 else
                 {
@@ -309,12 +312,15 @@ namespace Apps.Basic.Service
                     if (userNavs.Count <= 0)
                     {
                         //从json恢复角色导航栏信息
-                        var strUserNavs = File.ReadAllText(filePath);
-                        var userNavList = JsonConvert.DeserializeObject<List<UserNav>>(strUserNavs);
-                        foreach (var item in userNavList)
-                            context.UserNavs.Add(item);
-                        context.SaveChanges();
-                        Console.WriteLine("Auto Recover UserNavs From Backup");
+                        if (File.Exists(filePath))
+                        {
+                            var strUserNavs = File.ReadAllText(filePath);
+                            var userNavList = JsonConvert.DeserializeObject<List<UserNav>>(strUserNavs);
+                            foreach (var item in userNavList)
+                                context.UserNavs.Add(item);
+                            context.SaveChanges();
+                            Console.WriteLine("Auto Recover UserNavs From Backup");
+                        }
                     }
                     else
                     {
@@ -333,12 +339,15 @@ namespace Apps.Basic.Service
                     if (userNavDetails.Count <= 0)
                     {
                         //从json恢复角色导航栏详情信息
-                        var strUserNavDetails = File.ReadAllText(filePath);
-                        var userNavDetailList = JsonConvert.DeserializeObject<List<UserNavDetail>>(strUserNavDetails);
-                        foreach (var item in userNavDetailList)
-                            context.UserNavDetails.Add(item);
-                        context.SaveChanges();
-                        Console.WriteLine("Auto Recover UserNavDetails From Backup");
+                        if (File.Exists(filePath))
+                        {
+                            var strUserNavDetails = File.ReadAllText(filePath);
+                            var userNavDetailList = JsonConvert.DeserializeObject<List<UserNavDetail>>(strUserNavDetails);
+                            foreach (var item in userNavDetailList)
+                                context.UserNavDetails.Add(item);
+                            context.SaveChanges();
+                            Console.WriteLine("Auto Recover UserNavDetails From Backup");
+                        }
                     }
                     else
                     {

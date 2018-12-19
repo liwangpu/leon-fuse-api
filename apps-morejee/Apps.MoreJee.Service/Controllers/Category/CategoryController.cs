@@ -42,13 +42,28 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
+        protected async Task<CategoryDTO> _ToDTO(AssetCategory item)
+        {
+            var dto = new CategoryDTO();
+            dto.Id = item.Id;
+            dto.Name = item.Name;
+            dto.Description = item.Description;
+            dto.Type = item.Type;
+            dto.DisplayIndex = item.DisplayIndex;
+            dto.Creator = item.Creator;
+            dto.Modifier = item.Modifier;
+            dto.CreatedTime = item.CreatedTime;
+            dto.ModifiedTime = item.ModifiedTime;
+            return await Task.FromResult(dto);
+        }
+
         #region _FindCategoryChildren 获取下级分类信息
         /// <summary>
         /// 获取下级分类信息
         /// </summary>
         /// <param name="list"></param>
         /// <param name="parent"></param>
-        protected void _FindCategoryChildren(LinkedList<AssetCategory> list, CategoryDTO parent)
+        protected async Task _FindCategoryChildren(LinkedList<AssetCategory> list, CategoryDTO parent)
         {
             if (parent.Children == null)
                 parent.Children = new List<CategoryDTO>();
@@ -61,16 +76,7 @@ namespace Apps.MoreJee.Service.Controllers
                 var item = node.Value;
                 if (item.ParentId == parent.Id)
                 {
-                    var child = new CategoryDTO();
-                    child.Id = item.Id;
-                    child.Name = item.Name;
-                    child.Description = item.Description;
-                    child.Type = item.Type;
-                    child.DisplayIndex = item.DisplayIndex;
-                    child.Creator = item.Creator;
-                    child.Modifier = item.Modifier;
-                    child.CreatedTime = item.CreatedTime;
-                    child.ModifiedTime = item.ModifiedTime;
+                    var child = await _ToDTO(item);
                     parent.Children.Add(child);
                     list.Remove(node);
                 }
@@ -81,7 +87,7 @@ namespace Apps.MoreJee.Service.Controllers
 
             foreach (var item in parent.Children)
             {
-                _FindCategoryChildren(list, item);
+                await _FindCategoryChildren(list, item);
             }
         }
         #endregion
@@ -97,16 +103,7 @@ namespace Apps.MoreJee.Service.Controllers
             var parentCat = await _Context.AssetCategories.FirstAsync(d => d.Id == parentId);
             if (parentCat != null)
             {
-                var dto = new CategoryDTO();
-                dto.Id = parentCat.Id;
-                dto.Name = parentCat.Name;
-                dto.Description = parentCat.Description;
-                dto.Type = parentCat.Type;
-                dto.DisplayIndex = parentCat.DisplayIndex;
-                dto.Creator = parentCat.Creator;
-                dto.Modifier = parentCat.Modifier;
-                dto.CreatedTime = parentCat.CreatedTime;
-                dto.ModifiedTime = parentCat.ModifiedTime;
+                var dto = await _ToDTO(parentCat);
 
                 dto.Children = new List<CategoryDTO>();
                 var sameLevelCats = await _Context.AssetCategories.Where(d => d.ParentId == parentId).Select(x => new CategoryDTO
@@ -144,18 +141,7 @@ namespace Apps.MoreJee.Service.Controllers
 
             var toDTO = new Func<AssetCategory, Task<CategoryDTO>>(async (entity) =>
             {
-                var dto = new CategoryDTO();
-                dto.Id = entity.Id;
-                dto.Name = entity.Name;
-                dto.Description = entity.Description;
-                dto.Creator = entity.Creator;
-                dto.Modifier = entity.Modifier;
-                dto.CreatedTime = entity.CreatedTime;
-                dto.ModifiedTime = entity.ModifiedTime;
-                dto.OrganizationId = entity.OrganizationId;
-                dto.Type = entity.Type;
-                dto.DisplayIndex = entity.DisplayIndex;
-                dto.ParentId = entity.ParentId;
+                var dto = await _ToDTO(entity);
 
                 //await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 //{
@@ -212,23 +198,12 @@ namespace Apps.MoreJee.Service.Controllers
 
             var cats = _Context.AssetCategories.Where(x => x.Type == type && x.OrganizationId == organId).ToList();
 
-            var rootDTO = cats.Where(x => x.IsRoot == true).Select(x => new CategoryDTO
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Description = x.Description,
-                Type = x.Type,
-                DisplayIndex = x.DisplayIndex,
-                Creator = x.Creator,
-                Modifier = x.Modifier,
-                CreatedTime = x.CreatedTime,
-                ModifiedTime = x.ModifiedTime
-            }).First();
-
+            var root = cats.Where(x => x.IsRoot == true).First();
+            var rootDTO = await _ToDTO(root);
             var linkedList = new LinkedList<AssetCategory>();
             foreach (var item in cats)
                 linkedList.AddLast(item);
-            _FindCategoryChildren(linkedList, rootDTO);
+            await _FindCategoryChildren(linkedList, rootDTO);
 
             return rootDTO;
         }

@@ -13,6 +13,7 @@ services:
   #     - dmz-morejee-net
 
   apps.postgresdb:
+    container_name: appspostgresdb_c
     image: postgres:10.5
     ports:
       - "15266:5432"
@@ -25,6 +26,7 @@ services:
       - dmz-morejee-net
 
   apps.base.apigateway:
+    container_name: appsbaseapigateway_c
     image: appsbaseapigateway
     build:
       context: .
@@ -40,6 +42,7 @@ services:
   #     - apps.mongodb
 
   apps.filesystem.service:
+    container_name: appsfilesystemservice_c
     image: appsfilesystemservice
     build:
       context: .
@@ -67,6 +70,7 @@ services:
       - dmz-morejee-net
 
   apps.basic.service:
+    container_name: appsbasicservice_c
     image: appsbasicservice
     build:
       context: .
@@ -75,6 +79,7 @@ services:
       - "1882:80"
     volumes:
       - "/var/bamboo/appsbasicservice/logs:/app/logs"
+      - "/var/bamboo/appsbasicservice/AppBackup:/app/wwwroot/AppBackup"
     environment:
       # GuidSettings
       - GuidSettings:ServerId=${GuidSettings_ServerId}
@@ -91,6 +96,7 @@ services:
       - dmz-morejee-net
 
   # apps.morejee.service:
+  #   container_name: appsmorejeeservice_c
   #   image: appsmorejeeservice
   #   build:
   #     context: .
