@@ -12,5 +12,6 @@ namespace Apps.Base.Common.Interfaces
         string ParentId { get; set; }
         string NodeType { get; set; }
         string ObjId { get; set; }
+        string OrganizationId { get; set; }
     }
 }

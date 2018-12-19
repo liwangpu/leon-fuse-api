@@ -84,7 +84,8 @@ namespace Apps.MoreJee.Service
             services.AddScoped<IRepository<Material>, MaterialRepository>();
             services.AddScoped<IRepository<StaticMesh>, StaticMeshRepository>();
             services.AddScoped<IRepository<AssetCategory>, CategoryRepository>();
-            
+            services.AddScoped<ITreeRepository<AssetCategoryTree>, CategoryTreeRepository>();
+
             #endregion
         }
 

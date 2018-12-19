@@ -85,7 +85,7 @@ namespace Apps.Base.Common.Controllers
         /// <param name="mapping"></param>
         /// <param name="afterCreated"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> afterCreated = null)
+        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> afterCreated)
         {
             var data = await mapping(new T());
             var createdMessage = await _Repository.CanCreateAsync(data, CurrentAccountId);
@@ -95,9 +95,24 @@ namespace Apps.Base.Common.Controllers
                 return BadRequest(ModelState);
             }
             await _Repository.CreateAsync(data, CurrentAccountId);
-            if (afterCreated != null)
-                return await afterCreated(data);
-            return await Get(data.Id);
+            return await afterCreated(data);
+        }
+
+        /// <summary>
+        /// 重载
+        /// </summary>
+        /// <param name="mapping"></param>
+        /// <param name="afterCreated"></param>
+        /// <returns></returns>
+        protected async Task<IActionResult> _PostRequest(Func<T, Task<T>> mapping, Func<T, Task> afterCreated = null)
+        {
+            var funAfterCreated = new Func<T, Task<IActionResult>>(async (entity) =>
+            {
+                if (afterCreated != null)
+                    await afterCreated(entity);
+                return await Get(entity.Id);
+            });
+            return await _PostRequest(mapping, funAfterCreated);
         }
         #endregion
 
@@ -109,7 +124,7 @@ namespace Apps.Base.Common.Controllers
         /// <param name="mapping"></param>
         /// <param name="afterUpdated"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> afterUpdated = null)
+        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> afterUpdated)
         {
             var metadata = await _Repository.GetByIdAsync(id, CurrentAccountId);
             if (metadata == null)
@@ -124,9 +139,18 @@ namespace Apps.Base.Common.Controllers
                 return BadRequest(ModelState);
             }
             await _Repository.UpdateAsync(data, CurrentAccountId);
-            if (afterUpdated != null)
-                return await afterUpdated(data);
-            return await Get(data.Id);
+            return await afterUpdated(data);
+        }
+
+        protected async Task<IActionResult> _PutRequest(string id, Func<T, Task<T>> mapping, Func<T, Task> afterUpdated = null)
+        {
+            var funAfterCreated = new Func<T, Task<IActionResult>>(async (entity) =>
+            {
+                if (afterUpdated != null)
+                    await afterUpdated(entity);
+                return await Get(entity.Id);
+            });
+            return await _PutRequest(id, mapping, funAfterCreated);
         }
         #endregion
 
@@ -137,7 +161,7 @@ namespace Apps.Base.Common.Controllers
         /// <param name="id"></param>
         /// <param name="afterDeleted"></param>
         /// <returns></returns>
-        protected async Task<IActionResult> _DeleteRequest(string id, Func<Task<IActionResult>> afterDeleted = null)
+        protected async Task<IActionResult> _DeleteRequest(string id, Func<Task<IActionResult>> afterDeleted)
         {
             var deleteMessage = await _Repository.CanDeleteAsync(id, CurrentAccountId);
             if (!string.IsNullOrWhiteSpace(deleteMessage))
@@ -146,12 +170,20 @@ namespace Apps.Base.Common.Controllers
                 return BadRequest(ModelState);
             }
             await _Repository.DeleteAsync(id, CurrentAccountId);
-            if (afterDeleted != null)
-                return await afterDeleted();
-            return Ok();
+            return await afterDeleted();
+        }
+
+        protected async Task<IActionResult> _DeleteRequest(string id, Func<Task> afterDeleted = null)
+        {
+            var funAfterDeleted = new Func<Task<IActionResult>>(async () =>
+            {
+                if (afterDeleted != null)
+                    await afterDeleted();
+                return Ok();
+            });
+            return await _DeleteRequest(id, funAfterDeleted);
         }
         #endregion
-
 
     }
 }

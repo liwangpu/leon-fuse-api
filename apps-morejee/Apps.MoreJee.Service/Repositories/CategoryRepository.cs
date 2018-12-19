@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 namespace Apps.MoreJee.Service.Repositories
 {
     public class CategoryRepository : IRepository<AssetCategory>
@@ -44,12 +45,20 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task CreateAsync(AssetCategory data, string accountId)
         {
-            throw new NotImplementedException();
+            data.Id = GuidGen.NewGUID();
+            data.Creator = accountId;
+            data.Modifier = accountId;
+            data.CreatedTime = DateTime.Now;
+            data.ModifiedTime = data.CreatedTime;
+            //校正index
+            data.DisplayIndex = await _Context.AssetCategories.CountAsync(x => x.Type == data.Type && x.OrganizationId == data.OrganizationId && x.ParentId == data.ParentId);
+            _Context.AssetCategories.Add(data);
+            await _Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+
         }
 
         public async Task<AssetCategory> GetByIdAsync(string id, string accountId)
@@ -73,7 +82,10 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task UpdateAsync(AssetCategory data, string accountId)
         {
-            throw new NotImplementedException();
+            data.Modifier = accountId;
+            data.ModifiedTime = data.CreatedTime;
+            _Context.AssetCategories.Update(data);
+            await _Context.SaveChangesAsync();
         }
     }
 }

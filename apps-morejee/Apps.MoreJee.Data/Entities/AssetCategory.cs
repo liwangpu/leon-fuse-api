@@ -31,9 +31,9 @@ namespace Apps.MoreJee.Data.Entities
         /// </summary>
         public DateTime ModifiedTime { get; set; }
         /// <summary>
-        /// 数据激活状态标记
+        /// 是否为根分类
         /// </summary>
-        public int ActiveFlag { get; set; }
+        public bool IsRoot{ get; set; }
         public string Description { get; set; }
         public string OrganizationId { get; set; }
         public string Icon { get; set; }

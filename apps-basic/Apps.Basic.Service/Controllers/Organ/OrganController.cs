@@ -130,7 +130,7 @@ namespace Apps.Basic.Service.Controllers
                 entity.ActiveFlag = AppConst.Active;
                 return await Task.FromResult(entity);
             });
-            var afterCreated = new Func<Organization, Task<IActionResult>>(async (organ) =>
+            var afterCreated = new Func<Organization, Task>(async (organ) =>
             {
                 #region 创建默认管理员
                 {
@@ -180,8 +180,6 @@ namespace Apps.Basic.Service.Controllers
                     await _OrganTreeRepository.CreateAsync(organTree, CurrentAccountId);
                 }
                 #endregion
-
-                return await Get(organ.Id);
             });
             return await _PostRequest(mapping, afterCreated);
         }
@@ -209,10 +207,9 @@ namespace Apps.Basic.Service.Controllers
                 return await Task.FromResult(entity);
             });
 
-            var afterCreated = new Func<Organization, Task<IActionResult>>(async (organ) =>
+            var afterCreated = new Func<Organization, Task>(async (organ) =>
             {
-
-                #region 同步超级管理员的激活时间和过期时间
+                /// 同步超级管理员的激活时间和过期时间
                 var admin = await _Context.Accounts.FirstOrDefaultAsync(x => x.Id == organ.OwnerId);
                 if (admin != null)
                 {
@@ -220,9 +217,6 @@ namespace Apps.Basic.Service.Controllers
                     admin.ExpireTime = organ.ExpireTime;
                     await _AccountRepository.UpdateAsync(admin, CurrentAccountId);
                 }
-                #endregion
-
-                return await Get(organ.Id);
             });
             return await _PutRequest(model.Id, mapping, afterCreated);
         }

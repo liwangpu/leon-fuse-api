@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Apps.Base.Common.Interfaces
 {
@@ -11,6 +9,5 @@ namespace Apps.Base.Common.Interfaces
         string Modifier { get; set; }
         DateTime CreatedTime { get; set; }
         DateTime ModifiedTime { get; set; }
-        int ActiveFlag { get; set; }
     }
 }

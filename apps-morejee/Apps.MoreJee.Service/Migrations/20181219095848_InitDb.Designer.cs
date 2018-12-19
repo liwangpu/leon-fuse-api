@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181218111812_CategoryAddDes")]
-    partial class CategoryAddDes
+    [Migration("20181219095848_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,8 +26,6 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ActiveFlag");
-
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
@@ -37,6 +35,8 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<int>("DisplayIndex");
 
                     b.Property<string>("Icon");
+
+                    b.Property<bool>("IsRoot");
 
                     b.Property<DateTime>("ModifiedTime");
 
@@ -53,6 +53,28 @@ namespace Apps.MoreJee.Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AssetCategories");
+                });
+
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.AssetCategoryTree", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LValue");
+
+                    b.Property<string>("NodeType");
+
+                    b.Property<string>("ObjId");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<string>("ParentId");
+
+                    b.Property<int>("RValue");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssetCategoryTrees");
                 });
 
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.Map", b =>
