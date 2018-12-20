@@ -53,6 +53,7 @@ namespace Apps.MoreJee.Service.Controllers
             var dto = new CategoryDTO();
             dto.Id = item.Id;
             dto.Name = item.Name;
+            dto.Value = item.Name;
             dto.Description = item.Description;
             dto.Type = item.Type;
             dto.IsRoot = item.IsRoot;

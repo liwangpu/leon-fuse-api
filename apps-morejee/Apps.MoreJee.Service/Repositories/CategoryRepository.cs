@@ -1,12 +1,10 @@
 ﻿using Apps.Base.Common;
-using Apps.Base.Common.Consts;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
