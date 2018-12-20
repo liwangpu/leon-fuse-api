@@ -42,6 +42,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DockerCompose", "DockerComp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{28BB17AA-AC2A-4E71-923F-59B8A454EF8E}"
 	ProjectSection(SolutionItems) = preProject
+		README\appsbasic_db_restore.bat = README\appsbasic_db_restore.bat
+		README\init.bat = README\init.bat
+		README\ocelot_replace.bat = README\ocelot_replace.bat
 		README\必读.txt = README\必读.txt
 	EndProjectSection
 EndProject

@@ -29,6 +29,9 @@ namespace Apps.MoreJee.Service
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);
                 })
+#if DEBUG
+                .UseUrls("http://*:1883")
+#endif
                 .UseNLog()
                 .UseKestrel(options =>
                 {

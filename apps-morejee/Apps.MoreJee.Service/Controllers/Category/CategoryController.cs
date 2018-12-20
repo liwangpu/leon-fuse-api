@@ -42,6 +42,12 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
+        #region _ToDTO DTO实体信息
+        /// <summary>
+        /// DTO实体信息
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         protected async Task<CategoryDTO> _ToDTO(AssetCategory item)
         {
             var dto = new CategoryDTO();
@@ -49,6 +55,8 @@ namespace Apps.MoreJee.Service.Controllers
             dto.Name = item.Name;
             dto.Description = item.Description;
             dto.Type = item.Type;
+            dto.IsRoot = item.IsRoot;
+            dto.ParentId = item.ParentId;
             dto.DisplayIndex = item.DisplayIndex;
             dto.Creator = item.Creator;
             dto.Modifier = item.Modifier;
@@ -56,6 +64,7 @@ namespace Apps.MoreJee.Service.Controllers
             dto.ModifiedTime = item.ModifiedTime;
             return await Task.FromResult(dto);
         }
+        #endregion
 
         #region _FindCategoryChildren 获取下级分类信息
         /// <summary>
@@ -106,23 +115,42 @@ namespace Apps.MoreJee.Service.Controllers
                 var dto = await _ToDTO(parentCat);
 
                 dto.Children = new List<CategoryDTO>();
-                var sameLevelCats = await _Context.AssetCategories.Where(d => d.ParentId == parentId).Select(x => new CategoryDTO
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Type = x.Type,
-                    DisplayIndex = x.DisplayIndex,
-                    Creator = x.Creator,
-                    Modifier = x.Modifier,
-                    CreatedTime = x.CreatedTime,
-                    ModifiedTime = x.ModifiedTime
-                }).OrderBy(x => x.DisplayIndex).ToListAsync();
-                dto.Children.AddRange(sameLevelCats);
+                var sameLevelCats = await _Context.AssetCategories.Where(d => d.ParentId == parentId).OrderBy(x => x.DisplayIndex).ToListAsync();
+                foreach (var item in sameLevelCats)
+                    dto.Children.Add(await _ToDTO(item));
                 dto.Children = dto.Children.OrderBy(x => x.DisplayIndex).ToList();
                 return dto;
             }
             return new CategoryDTO();
+        }
+        #endregion
+
+        #region _CreateDefaultCategory 创建默认分类
+        /// <summary>
+        /// 创建默认分类
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected async Task _CreateDefaultCategory(string type)
+        {
+            var existRoot = await _Context.AssetCategories.AnyAsync(x => x.Type == type && x.OrganizationId == CurrentAccountOrganizationId && x.IsRoot == true);
+            if (!existRoot)
+            {
+                //创建分类
+                var defaultCategory = new AssetCategory();
+                defaultCategory.Name = "Auto Create Category";
+                defaultCategory.Type = type;
+                defaultCategory.IsRoot = true;
+                defaultCategory.OrganizationId = CurrentAccountOrganizationId;
+                await _Repository.CreateAsync(defaultCategory, CurrentAccountId);
+
+                //创建分类树
+                var categoryTree = new AssetCategoryTree();
+                categoryTree.ObjId = defaultCategory.Id;
+                categoryTree.NodeType = type;
+                categoryTree.OrganizationId = defaultCategory.OrganizationId;
+                await _CategoryTreeRepository.CreateAsync(categoryTree, CurrentAccountId);
+            }
         }
         #endregion
 
@@ -162,41 +190,21 @@ namespace Apps.MoreJee.Service.Controllers
         /// <summary>
         /// 获取整个类型(product, material)下的所有分类信息，已经整理成一个树结构
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(CategoryDTO), 200)]
-        public async Task<CategoryDTO> GetByType(string type)
+        public async Task<CategoryDTO> GetByType([FromQuery]CategoryQueryModel model)
         {
             //标准化类型字段
-            type = string.IsNullOrWhiteSpace(type) ? string.Empty : type.ToLower();
+            model.Type = model.Type.ToLower();
             var organId = CurrentAccountOrganizationId;
-            _Context.AssetCategories.Where(x => x.Type == type.ToLower() && x.OrganizationId == organId).ToList();
+            _Context.AssetCategories.Where(x => x.Type == model.Type && x.OrganizationId == organId).ToList();
 
-            #region 创建默认分类
-            {
-                var existRoot = await _Context.AssetCategories.AnyAsync(x => x.Type == type && x.OrganizationId == CurrentAccountOrganizationId && x.IsRoot == true);
-                if (!existRoot)
-                {
-                    //创建分类
-                    var defaultCategory = new AssetCategory();
-                    defaultCategory.Name = "Auto Create Category";
-                    defaultCategory.Type = type;
-                    defaultCategory.IsRoot = true;
-                    defaultCategory.OrganizationId = CurrentAccountOrganizationId;
-                    await _Repository.CreateAsync(defaultCategory, CurrentAccountId);
+            // 创建默认分类
+            await _CreateDefaultCategory(model.Type);
 
-                    //创建分类树
-                    var categoryTree = new AssetCategoryTree();
-                    categoryTree.ObjId = defaultCategory.Id;
-                    categoryTree.NodeType = type;
-                    categoryTree.OrganizationId = defaultCategory.OrganizationId;
-                    await _CategoryTreeRepository.CreateAsync(categoryTree, CurrentAccountId);
-                }
-            }
-            #endregion
-
-            var cats = _Context.AssetCategories.Where(x => x.Type == type && x.OrganizationId == organId).ToList();
+            var cats = _Context.AssetCategories.Where(x => x.Type == model.Type && x.OrganizationId == organId).ToList();
 
             var root = cats.Where(x => x.IsRoot == true).First();
             var rootDTO = await _ToDTO(root);
@@ -209,22 +217,49 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
+        #region GetFlat 获取扁平结构的分类信息
+        /// <summary>
+        /// 获取扁平结构的分类信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("Flat")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<CategoryDTO>), 200)]
+        public async Task<IActionResult> GetFlat([FromQuery]CategoryQueryModel model)
+        {
+            //标准化类型字段
+            model.Type = model.Type.ToLower();
+            var organId = CurrentAccountOrganizationId;
+
+            //创建默认分类
+            await _CreateDefaultCategory(model.Type);
+
+            var categories = await _Context.AssetCategories.Where(x => x.Type == model.Type && x.OrganizationId == organId).ToListAsync();
+            var categorieDTO = new List<CategoryDTO>();
+            foreach (var item in categories)
+                categorieDTO.Add(await _ToDTO(item));
+
+            return Ok(categorieDTO);
+        }
+        #endregion
+
         #region GetAll 获取所有分类信息
         /// <summary>
         /// 获取所有分类信息
         /// </summary>
         /// <param name="organId"></param>
         /// <returns></returns>
-        [Route("all")]
+        [Route("All")]
         [HttpGet]
         [ProducesResponseType(typeof(AssetCategoryPack), 200)]
         public async Task<AssetCategoryPack> GetAll(string organId)
         {
             var pack = new AssetCategoryPack();
             pack.Categories = new List<CategoryDTO>();
-            pack.Categories.Add(await GetByType(Product_Category));
-            pack.Categories.Add(await GetByType(Material_Category));
-            pack.Categories.Add(await GetByType(ProductGroup_Category));
+            pack.Categories.Add(await GetByType(new CategoryQueryModel { Type = Product_Category }));
+            pack.Categories.Add(await GetByType(new CategoryQueryModel { Type = Material_Category }));
+            pack.Categories.Add(await GetByType(new CategoryQueryModel { Type = ProductGroup_Category }));
             return pack;
         }
         #endregion
@@ -267,29 +302,8 @@ namespace Apps.MoreJee.Service.Controllers
                 await _CategoryTreeRepository.CreateAsync(categoryTree, CurrentAccountId);
             });
 
-            #region 创建默认分类
-            {
-                var existRoot = await _Context.AssetCategories.AnyAsync(x => x.Type == model.Type && x.OrganizationId == CurrentAccountOrganizationId && x.IsRoot == true);
-                if (!existRoot)
-                {
-                    //创建分类
-                    var defaultCategory = new AssetCategory();
-                    defaultCategory.Name = "Auto Create Category";
-                    defaultCategory.Type = model.Type;
-                    defaultCategory.IsRoot = true;
-                    defaultCategory.OrganizationId = CurrentAccountOrganizationId;
-                    await _Repository.CreateAsync(defaultCategory, CurrentAccountId);
-
-                    //创建分类树
-                    var categoryTree = new AssetCategoryTree();
-                    categoryTree.ObjId = defaultCategory.Id;
-                    categoryTree.NodeType = model.Type;
-                    categoryTree.OrganizationId = defaultCategory.OrganizationId;
-                    await _CategoryTreeRepository.CreateAsync(categoryTree, CurrentAccountId);
-                    return await Get(defaultCategory.Id);
-                }
-            }
-            #endregion
+            // 创建默认分类
+            await _CreateDefaultCategory(model.Type);
 
             return await _PostRequest(mapping, afterCreated);
         }

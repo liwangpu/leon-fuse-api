@@ -58,7 +58,12 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task DeleteAsync(string id, string accountId)
         {
-
+            var entity = await _Context.AssetCategories.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity != null)
+            {
+                _Context.AssetCategories.Remove(entity);
+                await _Context.SaveChangesAsync();
+            }
         }
 
         public async Task<AssetCategory> GetByIdAsync(string id, string accountId)

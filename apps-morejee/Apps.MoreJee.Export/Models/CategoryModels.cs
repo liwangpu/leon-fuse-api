@@ -4,6 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 namespace Apps.MoreJee.Export.Models
 {
+    public class CategoryQueryModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Type { get; set; }
+    }
+
     public class CategoryCreateModel
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]

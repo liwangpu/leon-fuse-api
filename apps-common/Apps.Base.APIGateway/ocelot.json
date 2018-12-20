@@ -245,7 +245,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -257,7 +257,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -269,7 +269,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -281,7 +281,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -293,7 +293,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -305,7 +305,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -317,7 +317,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],
@@ -329,7 +329,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.3.19",
+          "Host": "192.168.1.176",
           "Port": 1883
         }
       ],

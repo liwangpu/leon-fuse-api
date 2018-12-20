@@ -19,6 +19,7 @@ namespace Apps.MoreJee.Export.DTOs
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
         public string Type { get; set; }
+        public bool IsRoot { get; set; }
         public int DisplayIndex { get; set; }
         public List<CategoryDTO> Children { get; set; }
     }
