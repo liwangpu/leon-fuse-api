@@ -3,15 +3,17 @@ using System;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181221073037_ProductAddDes")]
+    partial class ProductAddDes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,8 +163,6 @@ namespace Apps.MoreJee.Service.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
 
                     b.Property<DateTime>("CreatedTime");
 

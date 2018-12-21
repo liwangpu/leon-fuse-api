@@ -36,6 +36,14 @@ namespace Apps.MoreJee.Service.Contexts
         /// 资源分类树
         /// </summary>
         public DbSet<AssetCategoryTree> AssetCategoryTrees { get; set; }
+        /// <summary>
+        /// 产品
+        /// </summary>
+        public DbSet<Product> Products { get; set; }
+        /// <summary>
+        /// 规格
+        /// </summary>
+        public DbSet<ProductSpec> ProductSpecs { get; set; }
 
     }
 }

@@ -163,6 +163,9 @@ namespace Apps.Base.Common.Controllers
         /// <returns></returns>
         protected async Task<IActionResult> _DeleteRequest(string id, Func<Task<IActionResult>> afterDeleted)
         {
+            var entity = await _Repository.GetByIdAsync(id,CurrentAccountId);
+            if (entity == null)
+                return NotFound();
             var deleteMessage = await _Repository.CanDeleteAsync(id, CurrentAccountId);
             if (!string.IsNullOrWhiteSpace(deleteMessage))
             {

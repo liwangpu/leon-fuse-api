@@ -39,6 +39,7 @@ services:
       - dmz-morejee-net
     depends_on:
       - apps.basic.service
+      - apps.filesystem.service
   #     - apps.mongodb
 
   apps.filesystem.service:
@@ -66,6 +67,8 @@ services:
       - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_filesystem;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
       # MicroServices
       - APIGatewayServer=apps.base.apigateway
+    depends_on:
+      - apps.postgresdb
     networks:
       - dmz-morejee-net
 
@@ -92,6 +95,8 @@ services:
       - JwtSettings:ExpiresDay=1
       # ConnectionString
       - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_basic;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+    depends_on:
+      - apps.postgresdb
     networks:
       - dmz-morejee-net
 

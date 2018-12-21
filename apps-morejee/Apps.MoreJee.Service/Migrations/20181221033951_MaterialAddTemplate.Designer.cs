@@ -3,15 +3,17 @@ using System;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181221033951_MaterialAddTemplate")]
+    partial class MaterialAddTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,80 +157,6 @@ namespace Apps.MoreJee.Service.Migrations
                     b.ToTable("Materials");
                 });
 
-            modelBuilder.Entity("Apps.MoreJee.Data.Entities.Product", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("CategoryId");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<string>("Unit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Apps.MoreJee.Data.Entities.ProductSpec", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActiveFlag");
-
-                    b.Property<string>("Components");
-
-                    b.Property<DateTime>("CreatedTime");
-
-                    b.Property<string>("Creator");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<DateTime>("ModifiedTime");
-
-                    b.Property<string>("Modifier");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<decimal>("PartnerPrice");
-
-                    b.Property<decimal>("Price");
-
-                    b.Property<string>("ProductId");
-
-                    b.Property<decimal>("PurchasePrice");
-
-                    b.Property<string>("StaticMeshs");
-
-                    b.Property<string>("TPID");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductSpecs");
-                });
-
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.StaticMesh", b =>
                 {
                     b.Property<string>("Id")
@@ -269,13 +197,6 @@ namespace Apps.MoreJee.Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StaticMeshs");
-                });
-
-            modelBuilder.Entity("Apps.MoreJee.Data.Entities.ProductSpec", b =>
-                {
-                    b.HasOne("Apps.MoreJee.Data.Entities.Product", "Product")
-                        .WithMany("Specifications")
-                        .HasForeignKey("ProductId");
                 });
 #pragma warning restore 612, 618
         }

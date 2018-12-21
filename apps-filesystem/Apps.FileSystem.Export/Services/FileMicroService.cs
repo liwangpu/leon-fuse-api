@@ -27,7 +27,7 @@ namespace Apps.FileSystem.Export.Services
         {
             if (string.IsNullOrWhiteSpace(id))
                 return null;
-            var dto = await $"{Server}/File/{id}".WithOAuthBearerToken(Token).GetJsonAsync<FileDTO>();
+            var dto = await $"{Server}/File/{id}".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetJsonAsync<FileDTO>();
             return dto;
         }
         #endregion

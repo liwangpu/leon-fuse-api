@@ -58,6 +58,8 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
                 dto.FileAssetId = entity.FileAssetId;
+                dto.SrcFileAssetId = entity.SrcFileAssetId;
+                dto.Materials = entity.Materials;
                 dto.Dependencies = entity.Dependencies;
                 dto.Properties = entity.Properties;
                 dto.PackageName = entity.PackageName;
@@ -107,6 +109,8 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
                 dto.FileAssetId = entity.FileAssetId;
+                dto.SrcFileAssetId = entity.SrcFileAssetId;
+                dto.Materials = entity.Materials;
                 dto.Dependencies = entity.Dependencies;
                 dto.Properties = entity.Properties;
                 dto.PackageName = entity.PackageName;
@@ -182,6 +186,33 @@ namespace Apps.MoreJee.Service.Controllers
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region Delete 删除模型信息
+        /// <summary>
+        /// 删除模型信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public virtual async Task<IActionResult> Delete(string id)
+        {
+            return await _DeleteRequest(id);
+        }
+        #endregion
+
+        #region BatchDelete 批量删除模型项信息
+        /// <summary>
+        /// 批量删除模型项信息
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [Route("BatchDelete")]
+        [HttpDelete]
+        public virtual async Task<IActionResult> BatchDelete(string ids)
+        {
+            return await _BatchDeleteRequest(ids);
         }
         #endregion
     }

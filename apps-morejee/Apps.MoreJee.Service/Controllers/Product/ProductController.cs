@@ -10,60 +10,61 @@ using Apps.MoreJee.Export.Models;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
 namespace Apps.MoreJee.Service.Controllers
 {
-    /// <summary>
-    /// 场景控制器
-    /// </summary>
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class MapController : ListviewController<Map>
+    public class ProductController : ListviewController<Product>
     {
         protected override AppDbContext _Context { get; }
 
         #region 构造函数
-        public MapController(IRepository<Map> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
+        public ProductController(IRepository<Product> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
             : base(repository, settingsOptions)
         {
             _Context = context;
         }
         #endregion
 
-        #region Get 根据分页获取场景信息
+        #region Get 根据分页获取产品信息
         /// <summary>
-        /// 根据分页获取场景信息
+        /// 根据分页获取产品信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData<MapDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<ProductDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Map, Task<MapDTO>>(async (entity) =>
+            var toDTO = new Func<Product, Task<ProductDTO>>(async (entity) =>
             {
-                var dto = new MapDTO();
+                var dto = new ProductDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
+                dto.Unit = entity.Unit;
                 dto.Description = entity.Description;
                 dto.Creator = entity.Creator;
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.FileAssetId = entity.FileAssetId;
-                dto.Dependencies = entity.Dependencies;
-                dto.Properties = entity.Properties;
-                dto.PackageName = entity.PackageName;
-                dto.UnCookedAssetId = entity.UnCookedAssetId;
                 dto.OrganizationId = entity.OrganizationId;
-
+                dto.CategoryId = entity.CategoryId;
+                dto.ActiveFlag = entity.ActiveFlag;
+                if (!string.IsNullOrWhiteSpace(entity.CategoryId))
+                {
+                    var category = await _Context.AssetCategories.FirstOrDefaultAsync(x => x.Id == entity.CategoryId);
+                    if (category != null)
+                        dto.CategoryName = category.Name;
+                }
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
@@ -79,132 +80,77 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
-        #region Get 根据Id获取场景信息
+        #region Get 根据Id获取产品信息
         /// <summary>
-        /// 根据Id获取场景信息
+        /// 根据Id获取产品信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(ProductDTO), 200)]
         public async override Task<IActionResult> Get(string id)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Map, Task<MapDTO>>(async (entity) =>
+            var toDTO = new Func<Product, Task<ProductDTO>>(async (entity) =>
             {
-                var dto = new MapDTO();
+                var dto = new ProductDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
+                dto.Unit = entity.Unit;
                 dto.Description = entity.Description;
                 dto.Creator = entity.Creator;
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-                dto.FileAssetId = entity.FileAssetId;
-                dto.Dependencies = entity.Dependencies;
-                dto.Properties = entity.Properties;
-                dto.PackageName = entity.PackageName;
-                dto.UnCookedAssetId = entity.UnCookedAssetId;
                 dto.OrganizationId = entity.OrganizationId;
+                dto.CategoryId = entity.CategoryId;
+                dto.ActiveFlag = entity.ActiveFlag;
+                if (!string.IsNullOrWhiteSpace(entity.CategoryId))
+                {
+                    var category = await _Context.AssetCategories.FirstOrDefaultAsync(x => x.Id == entity.CategoryId);
+                    if (category != null)
+                        dto.CategoryName = category.Name;
+                }
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
                     dto.ModifierName = modifierName;
                 });
                 await fileMicroServer.GetUrlById(entity.Icon, (url) =>
-                 {
-                     dto.Icon = url;
-                 });
+                {
+                    dto.Icon = url;
+                });
                 return await Task.FromResult(dto);
             });
             return await _GetByIdRequest(id, toDTO);
         }
         #endregion
 
-        #region Post 新建场景信息
+        #region Post 新建产品信息
         /// <summary>
-        /// 新建场景信息
+        /// 新建产品信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
+        [ProducesResponseType(typeof(ProductDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Post([FromBody]MapCreateModel model)
+        public async Task<IActionResult> Post([FromBody]ProductCreateModel model)
         {
-            var mapping = new Func<Map, Task<Map>>(async (entity) =>
+            var mapping = new Func<Product, Task<Product>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.PackageName = model.PackageName;
-                entity.UnCookedAssetId = model.UnCookedAssetId;
-                entity.FileAssetId = model.FileAssetId;
-                entity.Dependencies = model.Dependencies;
-                entity.Properties = model.Properties;
+                entity.Unit = model.Unit;
+                entity.CategoryId = model.CategoryId;
                 entity.OrganizationId = CurrentAccountOrganizationId;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
-        }
-        #endregion
-
-        #region Put 更新场景信息
-        /// <summary>
-        /// 更新场景信息
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPut]
-        [ValidateModel]
-        [ProducesResponseType(typeof(MapDTO), 200)]
-        [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Put([FromBody]MapEditModel model)
-        {
-            var mapping = new Func<Map, Task<Map>>(async (entity) =>
-            {
-                entity.Name = model.Name;
-                entity.Description = model.Description;
-                entity.PackageName = model.PackageName;
-                entity.UnCookedAssetId = model.UnCookedAssetId;
-                entity.FileAssetId = model.FileAssetId;
-                if (!string.IsNullOrWhiteSpace(model.IconAssetId))
-                    entity.Icon = model.IconAssetId;
-                entity.Dependencies = model.Dependencies;
-                entity.Properties = model.Properties;
-                return await Task.FromResult(entity);
-            });
-            return await _PutRequest(model.Id, mapping);
-        }
-        #endregion
-
-        #region Delete 删除场景信息
-        /// <summary>
-        /// 删除场景信息
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpDelete("{id}")]
-        public virtual async Task<IActionResult> Delete(string id)
-        {
-            return await _DeleteRequest(id);
-        } 
-        #endregion
-
-        #region BatchDelete 批量删除场景项信息
-        /// <summary>
-        /// 批量删除场景项信息
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        [Route("BatchDelete")]
-        [HttpDelete]
-        public virtual async Task<IActionResult> BatchDelete(string ids)
-        {
-            return await _BatchDeleteRequest(ids);
         }
         #endregion
     }

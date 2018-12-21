@@ -6,23 +6,25 @@ using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Apps.MoreJee.Service.Repositories
 {
-    public class MaterialRepository : IRepository<Material>
+    public class ProductRepository : IRepository<Product>
     {
         protected readonly AppDbContext _Context;
 
         #region 构造函数
-        public MaterialRepository(AppDbContext context)
+        public ProductRepository(AppDbContext context)
         {
             _Context = context;
         }
         #endregion
 
-        public async Task<string> CanCreateAsync(Material data, string accountId)
+        public async Task<string> CanCreateAsync(Product data, string accountId)
         {
             return await Task.FromResult(string.Empty);
         }
@@ -37,12 +39,12 @@ namespace Apps.MoreJee.Service.Repositories
             return await Task.FromResult(string.Empty);
         }
 
-        public async Task<string> CanUpdateAsync(Material data, string accountId)
+        public async Task<string> CanUpdateAsync(Product data, string accountId)
         {
             return await Task.FromResult(string.Empty);
         }
 
-        public async Task CreateAsync(Material data, string accountId)
+        public async Task CreateAsync(Product data, string accountId)
         {
             data.Id = GuidGen.NewGUID();
             data.ActiveFlag = AppConst.Active;
@@ -50,32 +52,24 @@ namespace Apps.MoreJee.Service.Repositories
             data.Modifier = accountId;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = data.CreatedTime;
-            _Context.Materials.Add(data);
+            _Context.Products.Add(data);
             await _Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            var entity = await _Context.Materials.FirstOrDefaultAsync(x => x.Id == id);
-            if (entity != null)
-            {
-                entity.ActiveFlag = AppConst.InActive;
-                entity.Modifier = accountId;
-                entity.ModifiedTime = DateTime.Now;
-                _Context.Materials.Update(entity);
-                await _Context.SaveChangesAsync();
-            }
+            throw new NotImplementedException();
         }
 
-        public async Task<Material> GetByIdAsync(string id, string accountId)
+        public async Task<Product> GetByIdAsync(string id, string accountId)
         {
-            var entity = await _Context.Materials.FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _Context.Products.FirstOrDefaultAsync(x => x.Id == id);
             return entity;
         }
 
-        public async Task<PagedData<Material>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<Material>, Task<IQueryable<Material>>> advanceQuery = null)
+        public async Task<PagedData<Product>> SimplePagedQueryAsync(PagingRequestModel model, string accountId, Func<IQueryable<Product>, Task<IQueryable<Product>>> advanceQuery = null)
         {
-            var query = _Context.Materials.AsQueryable();
+            var query = _Context.Products.AsQueryable();
             if (advanceQuery != null)
                 query = await advanceQuery(query);
             //关键词过滤查询
@@ -86,11 +80,11 @@ namespace Apps.MoreJee.Service.Repositories
             return result;
         }
 
-        public async Task UpdateAsync(Material data, string accountId)
+        public async Task UpdateAsync(Product data, string accountId)
         {
             data.Modifier = accountId;
             data.ModifiedTime = data.CreatedTime;
-            _Context.Materials.Update(data);
+            _Context.Products.Update(data);
             await _Context.SaveChangesAsync();
         }
     }

@@ -6,7 +6,6 @@ using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task<string> CanDeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(string.Empty);
         }
 
         public async Task<string> CanGetByIdAsync(string id, string accountId)
@@ -57,7 +56,15 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var entity = await _Context.Maps.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity != null)
+            {
+                entity.ActiveFlag = AppConst.InActive;
+                entity.Modifier = accountId;
+                entity.ModifiedTime = DateTime.Now;
+                _Context.Maps.Update(entity);
+                await _Context.SaveChangesAsync();
+            }
         }
 
         public async Task<Map> GetByIdAsync(string id, string accountId)
@@ -74,7 +81,7 @@ namespace Apps.MoreJee.Service.Repositories
             //关键词过滤查询
             if (!string.IsNullOrWhiteSpace(model.Search))
                 query = query.Where(d => d.Name.Contains(model.Search));
-
+            query = query.Where(x => x.ActiveFlag == AppConst.Active);
             var result = await query.SimplePaging(model.Page, model.PageSize, model.OrderBy, "Name", model.Desc);
             return result;
         }

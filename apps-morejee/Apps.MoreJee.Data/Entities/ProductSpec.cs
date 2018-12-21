@@ -3,10 +3,7 @@ using System;
 
 namespace Apps.MoreJee.Data.Entities
 {
-    /// <summary>
-    /// 材质
-    /// </summary>
-    public class Material : IEntity, IListView
+    public class ProductSpec : IEntity, IListView
     {
         /// <summary>
         /// Id
@@ -37,23 +34,29 @@ namespace Apps.MoreJee.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
-        /// 描述
-        /// </summary>
-        public string Description { get; set; }
-        /// <summary>
         /// 组织Id
         /// </summary>
         public string OrganizationId { get; set; }
-        /// <summary>
-        /// 材质分类
-        /// </summary>
-        public string CategoryId { get; set; }
         public string Icon { get; set; }
-        public string FileAssetId { get; set; }
-        public string Dependencies { get; set; }
-        public string Parameters { get; set; }
-        public string Template { get; set; }
-        public string PackageName { get; set; }
-        public string UnCookedAssetId { get; set; }
+        /// <summary>
+        /// 零售价，单位为元
+        /// </summary>
+        public decimal Price { get; set; }
+        /// <summary>
+        /// 合伙人价格|渠道价，单位为元
+        /// </summary>
+        public decimal PartnerPrice { get; set; }
+        /// <summary>
+        /// 进货价，单位为元
+        /// </summary>
+        public decimal PurchasePrice { get; set; }
+        /// <summary>
+        /// 第三方ID，此产品在供应商自己的系统比如ERP的ID
+        /// </summary>
+        public string TPID { get; set; }
+        public string Components { get; set; }
+        public string StaticMeshs { get; set; }
+        public string ProductId { get; set; }
+        public Product Product { get; set; }
     }
 }
