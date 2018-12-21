@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 
 namespace Apps.Base.Common.Controllers
 {
@@ -54,9 +53,13 @@ namespace Apps.Base.Common.Controllers
                 string authorizationStr = Request.Headers["Authorization"];
                 if (!string.IsNullOrWhiteSpace(authorizationStr))
                 {
-                    var arr = authorizationStr.Split("bearer ", StringSplitOptions.RemoveEmptyEntries);
-                    if (arr.Length > 0)
-                        return arr[0].Trim();
+                    //authorizationStr = authorizationStr.Replace("Bearer ", "bearer ");
+                    //var arr = authorizationStr.Split("bearer ", StringSplitOptions.RemoveEmptyEntries);
+                    //if (arr.Length > 0)
+                    //    return arr[0].Trim();
+                    var arr = authorizationStr.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                    if (arr.Length > 1)
+                        return arr[1].Trim();
                 }
                 return string.Empty;
             }

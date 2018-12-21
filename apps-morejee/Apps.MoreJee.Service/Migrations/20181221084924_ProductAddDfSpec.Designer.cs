@@ -3,15 +3,17 @@ using System;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181221084924_ProductAddDfSpec")]
+    partial class ProductAddDfSpec
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,8 +203,6 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
-
-                    b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 

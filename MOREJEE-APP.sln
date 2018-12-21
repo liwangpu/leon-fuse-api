@@ -42,10 +42,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DockerCompose", "DockerComp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{28BB17AA-AC2A-4E71-923F-59B8A454EF8E}"
 	ProjectSection(SolutionItems) = preProject
-		appsbasic_db_restore.bat = appsbasic_db_restore.bat
-		ocelot_replace.bat = ocelot_replace.bat
-		project_init.bat = project_init.bat
-		README\必读.txt = README\必读.txt
+		README\1.项目结构.md = README\1.项目结构.md
+		README\2.调试方式.md = README\2.调试方式.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-FileSystem", "Apps-FileSystem", "{C299A4ED-0C72-46FC-8988-8C0393C4B174}"
@@ -55,6 +53,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Export", "apps-filesystem\Apps.FileSystem.Export\Apps.FileSystem.Export.csproj", "{E7E0935D-9702-4C8D-9567-414ED1C6421C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.FileSystem.Service", "apps-filesystem\Apps.FileSystem.Service\Apps.FileSystem.Service.csproj", "{223046F5-3FAE-45B3-AD71-91623CD949FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shells", "shells", "{AC7D0B21-D0E7-4A5A-9570-82A9BB13FA0F}"
+	ProjectSection(SolutionItems) = preProject
+		README\shells\appsapigateway_remap.bat = README\shells\appsapigateway_remap.bat
+		README\shells\appsbasic_db_restore.bat = README\shells\appsbasic_db_restore.bat
+		README\shells\project_init.bat = README\shells\project_init.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -266,6 +271,7 @@ Global
 		{70D1B47B-98DB-48A8-8EBD-3EAD4999A3AD} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{E7E0935D-9702-4C8D-9567-414ED1C6421C} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{223046F5-3FAE-45B3-AD71-91623CD949FF} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
+		{AC7D0B21-D0E7-4A5A-9570-82A9BB13FA0F} = {28BB17AA-AC2A-4E71-923F-59B8A454EF8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1F15B0A-1C9E-4766-A6EA-45FB37ECAA34}

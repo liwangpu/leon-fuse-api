@@ -46,6 +46,10 @@ namespace Apps.MoreJee.Data.Entities
         public string Unit { get; set; }
         public string CategoryId { get; set; }
         /// <summary>
+        /// 产品默认规格Id
+        /// </summary>
+        public string DefaultSpecId { get; set; }
+        /// <summary>
         /// 规格
         /// </summary>
         public List<ProductSpec> Specifications { get; set; }

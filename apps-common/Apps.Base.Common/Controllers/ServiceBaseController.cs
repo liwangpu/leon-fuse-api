@@ -148,7 +148,7 @@ namespace Apps.Base.Common.Controllers
             {
                 if (afterUpdated != null)
                     await afterUpdated(entity);
-                return await Get(entity.Id);
+                return Ok();
             });
             return await _PutRequest(id, mapping, funAfterCreated);
         }

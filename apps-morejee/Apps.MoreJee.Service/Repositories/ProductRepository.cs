@@ -6,10 +6,8 @@ using Apps.MoreJee.Data.Entities;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 
 namespace Apps.MoreJee.Service.Repositories
 {
@@ -58,12 +56,20 @@ namespace Apps.MoreJee.Service.Repositories
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var entity = await _Context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity != null)
+            {
+                entity.ActiveFlag = AppConst.InActive;
+                entity.Modifier = accountId;
+                entity.ModifiedTime = DateTime.Now;
+                _Context.Products.Update(entity);
+                await _Context.SaveChangesAsync();
+            }
         }
 
         public async Task<Product> GetByIdAsync(string id, string accountId)
         {
-            var entity = await _Context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _Context.Products.Include(x=>x.Specifications).FirstOrDefaultAsync(x => x.Id == id);
             return entity;
         }
 

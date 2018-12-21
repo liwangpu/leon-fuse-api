@@ -86,6 +86,7 @@ namespace Apps.MoreJee.Service
             services.AddScoped<IRepository<AssetCategory>, CategoryRepository>();
             services.AddScoped<ITreeRepository<AssetCategoryTree>, CategoryTreeRepository>();
             services.AddScoped<IRepository<Product>, ProductRepository>();
+            services.AddScoped<IRepository<ProductSpec>, ProductSpecRepository>();
             
             #endregion
         }

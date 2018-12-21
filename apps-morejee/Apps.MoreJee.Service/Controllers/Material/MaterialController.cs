@@ -144,6 +144,7 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.OrganizationId = entity.OrganizationId;
                 dto.CategoryId = entity.CategoryId;
                 dto.ActiveFlag = entity.ActiveFlag;
+                dto.IconAssetId = entity.Icon;
                 if (!string.IsNullOrWhiteSpace(entity.CategoryId))
                 {
                     var category = await _Context.AssetCategories.FirstOrDefaultAsync(x => x.Id == entity.CategoryId);

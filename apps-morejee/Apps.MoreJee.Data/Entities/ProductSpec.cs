@@ -56,6 +56,7 @@ namespace Apps.MoreJee.Data.Entities
         public string TPID { get; set; }
         public string Components { get; set; }
         public string StaticMeshs { get; set; }
+        public string Description { get; set; }
         public string ProductId { get; set; }
         public Product Product { get; set; }
     }

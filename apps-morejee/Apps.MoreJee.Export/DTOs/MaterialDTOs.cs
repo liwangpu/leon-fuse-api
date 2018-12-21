@@ -17,6 +17,7 @@ namespace Apps.MoreJee.Export.DTOs
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
         public string Icon { get; set; }
+        public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }

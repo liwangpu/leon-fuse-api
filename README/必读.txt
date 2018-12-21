@@ -1,3 +1,0 @@
-调试方式:(基于Docker ToolBox)
-
-docker cp E:/Leon/AppCode/Bamboo/leon-fuse-api/apps-basic/Apps.Basic.Service/wwwroot/AppBackup/. appsbasicservice_c:/app/wwwroot/AppBackup

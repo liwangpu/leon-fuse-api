@@ -108,6 +108,7 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.PackageName = entity.PackageName;
                 dto.UnCookedAssetId = entity.UnCookedAssetId;
                 dto.OrganizationId = entity.OrganizationId;
+                dto.IconAssetId = entity.Icon;
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
