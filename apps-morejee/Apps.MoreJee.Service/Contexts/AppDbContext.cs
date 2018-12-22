@@ -60,6 +60,13 @@ namespace Apps.MoreJee.Service.Contexts
         /// 区域类型
         /// </summary>
         public DbSet<AreaType> AreaTypes { get; set; }
-
+        /// <summary>
+        /// 产品组
+        /// </summary>
+        public DbSet<ProductGroup> ProductGroups { get; set; }
+        /// <summary>
+        /// 产品替换组
+        /// </summary>
+        public DbSet<ProductReplaceGroup> ProductReplaceGroups { get; set; }
     }
 }
