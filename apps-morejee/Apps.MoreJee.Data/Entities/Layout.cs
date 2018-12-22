@@ -1,9 +1,10 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
 
+
 namespace Apps.MoreJee.Data.Entities
 {
-    public class Map : IEntity, IListView
+    public class Layout : IEntity, IListView
     {
         /// <summary>
         /// Id
@@ -34,24 +35,13 @@ namespace Apps.MoreJee.Data.Entities
         /// </summary>
         public int ActiveFlag { get; set; }
         /// <summary>
-        /// 组织Id
-        /// </summary>
-        public string OrganizationId { get; set; }
-        /// <summary>
         /// 描述
         /// </summary>
         public string Description { get; set; }
         /// <summary>
-        /// 场景引用资源文件Id
+        /// 组织Id
         /// </summary>
-        public string FileAssetId { get; set; }
-        /// <summary>
-        /// 场景依赖项
-        /// </summary>
-        public string Dependencies { get; set; }
-        public string Properties { get; set; }
-        public string PackageName { get; set; }
-        public string UnCookedAssetId { get; set; }
+        public string OrganizationId { get; set; }
         public string Icon { get; set; }
         public string Data { get; set; }
     }

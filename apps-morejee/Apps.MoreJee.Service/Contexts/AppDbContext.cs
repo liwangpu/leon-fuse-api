@@ -44,6 +44,10 @@ namespace Apps.MoreJee.Service.Contexts
         /// 规格
         /// </summary>
         public DbSet<ProductSpec> ProductSpecs { get; set; }
+        /// <summary>
+        /// 户型
+        /// </summary>
+        public DbSet<Layout> Layouts { get; set; }
 
     }
 }
