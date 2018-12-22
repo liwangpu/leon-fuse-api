@@ -1,10 +1,10 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
-using System.Collections.Generic;
+
 
 namespace Apps.MoreJee.Data.Entities
 {
-    public class Layout : IEntity, IListView
+    public class Solution : IEntity, IListView
     {
         /// <summary>
         /// Id
@@ -43,7 +43,10 @@ namespace Apps.MoreJee.Data.Entities
         /// </summary>
         public string OrganizationId { get; set; }
         public string Icon { get; set; }
+        public bool IsSnapshot { get; set; }
+        public string SnapshotData { get; set; }
+        public string LayoutId { get; set; }
+        public Layout Layout { get; set; }
         public string Data { get; set; }
-        public List<Solution> Solutions { get; set; }
     }
 }

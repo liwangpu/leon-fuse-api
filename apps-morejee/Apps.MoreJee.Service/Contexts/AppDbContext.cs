@@ -48,6 +48,10 @@ namespace Apps.MoreJee.Service.Contexts
         /// 户型
         /// </summary>
         public DbSet<Layout> Layouts { get; set; }
+        /// <summary>
+        /// 方案
+        /// </summary>
+        public DbSet<Solution> Solutions { get; set; }
 
     }
 }
