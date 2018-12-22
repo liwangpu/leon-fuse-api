@@ -17,51 +17,48 @@ using System.Threading.Tasks;
 namespace Apps.MoreJee.Service.Controllers
 {
     /// <summary>
-    /// 方案控制器
+    /// 套餐控制器
     /// </summary>
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class SolutionController : ListviewController<Solution>
+    public class PackageController : ListviewController<Package>
     {
         protected override AppDbContext _Context { get; }
 
         #region 构造函数
-        public SolutionController(IRepository<Solution> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
+        public PackageController(IRepository<Package> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
             : base(repository, settingsOptions)
         {
             _Context = context;
         }
         #endregion
 
-        #region Get 根据分页获取方案信息
+        #region Get 根据分页获取套餐信息
         /// <summary>
-        /// 根据分页获取方案信息
+        /// 根据分页获取套餐信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedData<SolutionDTO>), 200)]
+        [ProducesResponseType(typeof(PagedData<PackageDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Solution, Task<SolutionDTO>>(async (entity) =>
+            var toDTO = new Func<Package, Task<PackageDTO>>(async (entity) =>
             {
-                var dto = new SolutionDTO();
+                var dto = new PackageDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
                 dto.Creator = entity.Creator;
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
-                dto.ModifiedTime = entity.ModifiedTime;
+                dto.Content = entity.Content;
                 dto.OrganizationId = entity.OrganizationId;
-                dto.IsSnapshot = entity.IsSnapshot;
-                dto.SnapshotData = entity.SnapshotData;
-                dto.LayoutId = entity.LayoutId;
-                dto.Data = entity.Data;
+                dto.IconAssetId = entity.Icon;
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
@@ -77,22 +74,22 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
-        #region Get 根据Id获取方案信息
+        #region Get 根据Id获取套餐信息
         /// <summary>
-        /// 根据Id获取方案信息
+        /// 根据Id获取套餐信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(SolutionDTO), 200)]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
         public async override Task<IActionResult> Get(string id)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
             var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer, Token);
 
-            var toDTO = new Func<Solution, Task<SolutionDTO>>(async (entity) =>
+            var toDTO = new Func<Package, Task<PackageDTO>>(async (entity) =>
             {
-                var dto = new SolutionDTO();
+                var dto = new PackageDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
                 dto.Description = entity.Description;
@@ -100,11 +97,9 @@ namespace Apps.MoreJee.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
+                dto.Content = entity.Content;
                 dto.OrganizationId = entity.OrganizationId;
-                dto.IsSnapshot = entity.IsSnapshot;
-                dto.SnapshotData = entity.SnapshotData;
-                dto.LayoutId = entity.LayoutId;
-                dto.Data = entity.Data;
+                dto.IconAssetId = entity.Icon;
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
@@ -120,67 +115,59 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
-        #region Post 新建方案信息
+        #region Post 新建套餐信息
         /// <summary>
-        /// 新建方案信息
+        /// 新建套餐信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType(typeof(SolutionDTO), 200)]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Post([FromBody]SolutionCreateModel model)
+        public async Task<IActionResult> Post([FromBody]PackageCreateModel model)
         {
-            var Solutionping = new Func<Solution, Task<Solution>>(async (entity) =>
+            var Packageping = new Func<Package, Task<Package>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.Data = model.Data;
-                if (!string.IsNullOrWhiteSpace(model.LayoutId))
-                    entity.LayoutId = model.LayoutId;
-                entity.IsSnapshot = model.IsSnapshot;
-                entity.SnapshotData = model.SnapshotData;
+                entity.Content = model.Content;
                 entity.OrganizationId = CurrentAccountOrganizationId;
                 return await Task.FromResult(entity);
             });
-            return await _PostRequest(Solutionping);
+            return await _PostRequest(Packageping);
         }
         #endregion
 
-        #region Put 更新方案信息
+        #region Put 更新套餐信息
         /// <summary>
-        /// 更新方案信息
+        /// 更新套餐信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [ProducesResponseType(typeof(SolutionDTO), 200)]
+        [ProducesResponseType(typeof(PackageDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Put([FromBody]SolutionUpdateModel model)
+        public async Task<IActionResult> Put([FromBody]PackageUpdateModel model)
         {
-            var Solutionping = new Func<Solution, Task<Solution>>(async (entity) =>
+            var Packageping = new Func<Package, Task<Package>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.Data = model.Data;
+                entity.Content = model.Content;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
-                if (!string.IsNullOrWhiteSpace(model.LayoutId))
-                    entity.LayoutId = model.LayoutId;
-                entity.IsSnapshot = model.IsSnapshot;
-                entity.SnapshotData = model.SnapshotData;
                 return await Task.FromResult(entity);
             });
-            return await _PutRequest(model.Id, Solutionping);
+            return await _PutRequest(model.Id, Packageping);
         }
         #endregion
 
-        #region Delete 删除方案信息
+        #region Delete 删除套餐信息
         /// <summary>
-        /// 删除方案信息
+        /// 删除套餐信息
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -191,9 +178,9 @@ namespace Apps.MoreJee.Service.Controllers
         }
         #endregion
 
-        #region BatchDelete 批量删除方案项信息
+        #region BatchDelete 批量删除套餐项信息
         /// <summary>
-        /// 批量删除方案项信息
+        /// 批量删除套餐项信息
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>

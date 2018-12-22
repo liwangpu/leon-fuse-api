@@ -52,6 +52,10 @@ namespace Apps.MoreJee.Service.Contexts
         /// 方案
         /// </summary>
         public DbSet<Solution> Solutions { get; set; }
+        /// <summary>
+        /// 套餐
+        /// </summary>
+        public DbSet<Package> Packages { get; set; }
 
     }
 }

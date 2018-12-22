@@ -455,6 +455,30 @@
       ],
       "UpstreamPathTemplate": "/Solution/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Package",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1883
+        }
+      ],
+      "UpstreamPathTemplate": "/Package",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Package/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1883
+        }
+      ],
+      "UpstreamPathTemplate": "/Package/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
     }
   ],
   "GlobalConfiguration": {
