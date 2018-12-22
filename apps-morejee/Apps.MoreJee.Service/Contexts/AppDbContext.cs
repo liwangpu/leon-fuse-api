@@ -56,6 +56,10 @@ namespace Apps.MoreJee.Service.Contexts
         /// 套餐
         /// </summary>
         public DbSet<Package> Packages { get; set; }
+        /// <summary>
+        /// 区域类型
+        /// </summary>
+        public DbSet<AreaType> AreaTypes { get; set; }
 
     }
 }
