@@ -286,11 +286,15 @@ namespace Apps.MoreJee.Service.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("CategoryId");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
 
                     b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
 
                     b.Property<string>("Items");
 

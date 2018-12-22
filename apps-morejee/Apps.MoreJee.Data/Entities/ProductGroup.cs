@@ -3,7 +3,7 @@ using System;
 
 namespace Apps.MoreJee.Data.Entities
 {
-    public class ProductGroup : IEntity
+    public class ProductGroup : IEntity, IListView
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -14,6 +14,8 @@ namespace Apps.MoreJee.Data.Entities
         public int ActiveFlag { get; set; }
         public string OrganizationId { get; set; }
         public string Description { get; set; }
+        public string CategoryId { get; set; }
+        public string Icon { get; set; }
         /// <summary>
         /// 轴心的精确位置
         /// </summary>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Apps.MoreJee.Export.DTOs
 {
@@ -20,5 +18,7 @@ namespace Apps.MoreJee.Export.DTOs
         public int PivotType { get; set; }
         public int Orientation { get; set; }
         public string Items { get; set; }
+        public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
     }
 }

@@ -2,21 +2,21 @@
 
 namespace Apps.MoreJee.Service.Migrations
 {
-    public partial class ProductAddDfSpec : Migration
+    public partial class ProductGroupAddDes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "DefaultSpecId",
-                table: "Products",
+                name: "Icon",
+                table: "ProductGroups",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "DefaultSpecId",
-                table: "Products");
+                name: "Icon",
+                table: "ProductGroups");
         }
     }
 }

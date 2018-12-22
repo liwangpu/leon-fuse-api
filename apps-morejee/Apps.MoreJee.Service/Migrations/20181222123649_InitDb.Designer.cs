@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.MoreJee.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181221073037_ProductAddDes")]
-    partial class ProductAddDes
+    [Migration("20181222123649_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,34 @@ namespace Apps.MoreJee.Service.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.AreaType", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AreaTypes");
+                });
 
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.AssetCategory", b =>
                 {
@@ -77,6 +105,36 @@ namespace Apps.MoreJee.Service.Migrations
                     b.ToTable("AssetCategoryTrees");
                 });
 
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.Layout", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Data");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Layouts");
+                });
+
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.Map", b =>
                 {
                     b.Property<string>("Id")
@@ -87,6 +145,8 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
+
+                    b.Property<string>("Data");
 
                     b.Property<string>("Dependencies");
 
@@ -157,6 +217,36 @@ namespace Apps.MoreJee.Service.Migrations
                     b.ToTable("Materials");
                 });
 
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.Package", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("Content");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Packages");
+                });
+
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.Product", b =>
                 {
                     b.Property<string>("Id")
@@ -164,9 +254,13 @@ namespace Apps.MoreJee.Service.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("CategoryId");
+
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
+
+                    b.Property<string>("DefaultSpecId");
 
                     b.Property<string>("Description");
 
@@ -187,6 +281,72 @@ namespace Apps.MoreJee.Service.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.ProductGroup", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("CategoryId");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Items");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<int>("Orientation");
+
+                    b.Property<string>("PivotLocation");
+
+                    b.Property<int>("PivotType");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductGroups");
+                });
+
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.ProductReplaceGroup", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("DefaultItemId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("GroupItemIds");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductReplaceGroups");
+                });
+
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.ProductSpec", b =>
                 {
                     b.Property<string>("Id")
@@ -199,6 +359,8 @@ namespace Apps.MoreJee.Service.Migrations
                     b.Property<DateTime>("CreatedTime");
 
                     b.Property<string>("Creator");
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("Icon");
 
@@ -227,6 +389,44 @@ namespace Apps.MoreJee.Service.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductSpecs");
+                });
+
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.Solution", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActiveFlag");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Data");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<bool>("IsSnapshot");
+
+                    b.Property<string>("LayoutId");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<string>("SnapshotData");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LayoutId");
+
+                    b.ToTable("Solutions");
                 });
 
             modelBuilder.Entity("Apps.MoreJee.Data.Entities.StaticMesh", b =>
@@ -276,6 +476,13 @@ namespace Apps.MoreJee.Service.Migrations
                     b.HasOne("Apps.MoreJee.Data.Entities.Product", "Product")
                         .WithMany("Specifications")
                         .HasForeignKey("ProductId");
+                });
+
+            modelBuilder.Entity("Apps.MoreJee.Data.Entities.Solution", b =>
+                {
+                    b.HasOne("Apps.MoreJee.Data.Entities.Layout", "Layout")
+                        .WithMany("Solutions")
+                        .HasForeignKey("LayoutId");
                 });
 #pragma warning restore 612, 618
         }
