@@ -51,7 +51,7 @@ namespace Apps.Basic.Service.Repositories
                 data.Id = GuidGen.NewGUID();
                 data.LValue = parentNode.RValue;
                 data.RValue = data.LValue + 1;
-                var refNodes = await _Context.Set<T>().Where(x => x.RValue >= parentNode.RValue).ToListAsync();
+                var refNodes = await _Context.Set<T>().Where(x => x.NodeType == data.NodeType && x.OrganizationId == data.OrganizationId && x.RValue >= parentNode.RValue).ToListAsync();
                 for (int idx = refNodes.Count - 1; idx >= 0; idx--)
                 {
                     var cur = refNodes[idx];
@@ -73,34 +73,6 @@ namespace Apps.Basic.Service.Repositories
             }
         }
         #endregion
-
-        //#region protected AddSiblingNode 添加相邻节点
-        ///// <summary>
-        ///// 添加相邻节点
-        ///// </summary>
-        ///// <param name="data"></param>
-        ///// <param name="sibling"></param>
-        ///// <returns></returns>
-        //protected async Task AddSiblingNode(T data, string sibling)
-        //{
-        //    var siblingNode = await _Context.Set<T>().FindAsync(sibling);
-        //    if (siblingNode != null)
-        //    {
-        //        data.Id = GuidGen.NewGUID();
-        //        data.LValue = siblingNode.RValue + 1;
-        //        data.RValue = data.LValue + 1;
-        //        var refNodes = await _Context.Set<T>().Where(x => x.RValue >= siblingNode.RValue).ToListAsync();
-        //        for (int idx = refNodes.Count - 1; idx >= 0; idx--)
-        //        {
-        //            var cur = refNodes[idx];
-        //            cur.RValue += 2;
-        //            _Context.Set<T>().Update(cur);
-        //        }
-        //        _Context.Set<T>().Add(data);
-        //        await _Context.SaveChangesAsync();
-        //    }
-        //}
-        //#endregion
 
         #region GetDescendantNode 获取下级节点
         /// <summary>
@@ -182,8 +154,9 @@ namespace Apps.Basic.Service.Repositories
         }
         #endregion
 
+        #region CreateAsync 创建节点
         /// <summary>
-        /// 创建树节点
+        /// 创建节点
         /// </summary>
         /// <param name="data"></param>
         /// <param name="accountId"></param>
@@ -196,28 +169,67 @@ namespace Apps.Basic.Service.Repositories
             else
                 await AddChildNode(data);
         }
+        #endregion
 
+        #region DeleteAsync 删除节点
         /// <summary>
-        /// 删除树节点
+        /// 删除节点
         /// </summary>
         /// <param name="id"></param>
         /// <param name="accountId"></param>
         /// <returns></returns>
         public async virtual Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
-        }
+            var node = await _Context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
 
-        #region GetNodeByObjId 根据节点对应实体Id获取节点信息
+            /*
+             * 删除节点的基础理论
+             * 1.删除当前节点以及左右值包含的所有节点
+             * 2.设当前节点左右值之间的差距是x
+             *      树上右值都大于当前节点右值的节点中
+             *          1)如果左值大于当前节点,则该节点的左右值都减去(x+1)
+             *          2)如果左值小于当前节点,则仅右值减去(x+1)
+             */
+
+            //1.删除当前节点以及左右值包含的所有节点
+            var containNodes = await _Context.Set<T>().Where(x => x.NodeType == node.NodeType && x.OrganizationId == node.OrganizationId && x.LValue >= node.LValue && x.RValue <= node.RValue).ToListAsync();
+            _Context.Set<T>().RemoveRange(containNodes);
+            await _Context.SaveChangesAsync();
+
+            //树上右值都大于当前节点右值的节点中
+            var linkedNodes = await _Context.Set<T>().Where(x => x.NodeType == node.NodeType && x.OrganizationId == node.OrganizationId && x.RValue > node.RValue).ToListAsync();
+
+            var step = node.RValue - node.LValue + 1;
+
+            foreach (var it in linkedNodes)
+            {
+                if (it.LValue > node.LValue)
+                {
+                    //1)如果左值大于当前节点,则该节点的左右值都减去(x+1)
+                    it.LValue = it.LValue - step;
+                    it.RValue = it.RValue - step;
+                }
+                else
+                {
+                    //2)如果左值小于当前节点,则仅右值减去(x + 1)
+                    it.RValue = it.RValue - step;
+                }
+            }
+            _Context.Set<T>().UpdateRange(linkedNodes);
+            await _Context.SaveChangesAsync();
+        }
+        #endregion
+
+        #region GetNodeByObjId 根据实体Id获取节点信息
         /// <summary>
-        /// 根据节点对应实体Id获取节点信息
+        /// 根据实体Id获取节点信息
         /// </summary>
         /// <param name="objId"></param>
         /// <returns></returns>
         public async Task<T> GetNodeByObjId(string objId)
         {
             return await _Context.Set<T>().FirstOrDefaultAsync(x => x.ObjId == objId);
-        } 
+        }
         #endregion
     }
 }

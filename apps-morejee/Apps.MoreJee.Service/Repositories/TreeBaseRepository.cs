@@ -2,7 +2,6 @@
 using Apps.Base.Common.Interfaces;
 using Apps.MoreJee.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -154,6 +153,13 @@ namespace Apps.MoreJee.Service.Repositories
         }
         #endregion
 
+        #region CreateAsync 创建节点
+        /// <summary>
+        /// 创建节点
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
         public async virtual Task CreateAsync(T data, string accountId)
         {
             data.Id = GuidGen.NewGUID();
@@ -162,7 +168,15 @@ namespace Apps.MoreJee.Service.Repositories
             else
                 await AddChildNode(data);
         }
+        #endregion
 
+        #region DeleteAsync 删除节点
+        /// <summary>
+        /// 删除节点
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
         public async virtual Task DeleteAsync(string id, string accountId)
         {
             var node = await _Context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
@@ -203,10 +217,18 @@ namespace Apps.MoreJee.Service.Repositories
             _Context.Set<T>().UpdateRange(linkedNodes);
             await _Context.SaveChangesAsync();
         }
+        #endregion
 
+        #region GetNodeByObjId 根据实体Id获取节点信息
+        /// <summary>
+        /// 根据实体Id获取节点信息
+        /// </summary>
+        /// <param name="objId"></param>
+        /// <returns></returns>
         public async Task<T> GetNodeByObjId(string objId)
         {
             return await _Context.Set<T>().FirstOrDefaultAsync(x => x.ObjId == objId);
-        }
+        } 
+        #endregion
     }
 }
