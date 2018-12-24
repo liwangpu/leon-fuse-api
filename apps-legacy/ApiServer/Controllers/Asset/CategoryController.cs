@@ -104,12 +104,15 @@ namespace ApiServer.Controllers
 
             AssetCategoryPack pack = new AssetCategoryPack();
             pack.Categories = new List<AssetCategoryDTO>();
-            AssetCategoryDTO cat = null;
-            cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(AppConst.S_Category_Product, organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(AppConst.S_Category_Material, organId); if (cat != null) pack.Categories.Add(cat);
-            //cat = await (_Store as AssetCategoryRepository).GetCategoryAsync("package", organId); if (cat != null) pack.Categories.Add(cat);
-            //cat = await (_Store as AssetCategoryRepository).GetCategoryAsync("order", organId); if (cat != null) pack.Categories.Add(cat);
-            cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(AppConst.S_Category_ProductGroup, organId); if (cat != null) pack.Categories.Add(cat);
+
+            //root node parentid == "".
+            List<AssetCategory> rootlist = await _Repository._DbContext.AssetCategories.Where(d => d.ParentId == "" && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
+            foreach (var root in rootlist)
+            {
+                AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(root.Type, organId);
+                if (cat != null)
+                    pack.Categories.Add(cat); 
+            }
             return pack;
         }
         #endregion
