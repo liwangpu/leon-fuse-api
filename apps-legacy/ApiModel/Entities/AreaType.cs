@@ -5,8 +5,6 @@ namespace ApiModel.Entities
     public class AreaType : EntityBase, IListable, IDTOTransfer<AreaTypeDTO>
     {
         public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
         public AreaTypeDTO ToDTO()
         {
@@ -21,11 +19,8 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             return dto;
         }
     }
@@ -34,6 +29,6 @@ namespace ApiModel.Entities
     {
         public string IconAssetId { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

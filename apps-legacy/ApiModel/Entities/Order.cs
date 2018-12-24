@@ -23,8 +23,6 @@ namespace ApiModel.Entities
         public string Url { get; set; }
         [NotMapped]
         public string WorkFlowItemName { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
         public OrderDTO ToDTO()
         {
@@ -47,11 +45,8 @@ namespace ApiModel.Entities
             dto.CustomerName = CustomerName;
             dto.CustomerPhone = CustomerPhone;
             dto.CustomerAddress = CustomerAddress;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             if (OrderDetails != null)
                 dto.OrderDetails = OrderDetails.Select(x => x.ToDTO()).ToList();
             if (OrderFlowLogs != null)
@@ -76,7 +71,7 @@ namespace ApiModel.Entities
         public string CustomerPhone { get; set; }
         public string WorkFlowItemId { get; set; }
         public string WorkFlowItemName { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
         public int TotalNum { get; set; }
         public decimal TotalPrice { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }

@@ -36,13 +36,27 @@ namespace ApiServer.Repositories
             var data = await _GetByIdAsync(id);
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            {
+                var fs = _DbContext.Files.FirstOrDefault(x => x.Id == data.Icon);
+                if (fs != null)
+                    data.IconFileAssetUrl = fs.Url;
+            }
+
 
             if (!string.IsNullOrWhiteSpace(data.CategoryId))
                 data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
 
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
-                data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
+            {
+                var fs = _DbContext.Files.FirstOrDefault(x => x.Id == data.FileAssetId);
+                if (fs != null)
+                {
+                    data.FileAssetUrl = fs.Url;
+                    data.FileAssetId = fs.Id;
+                }
+
+            }
+
 
             return data.ToDTO();
         }
@@ -105,11 +119,26 @@ namespace ApiServer.Repositories
                 for (int idx = result.Data.Count - 1; idx >= 0; idx--)
                 {
                     var curData = result.Data[idx];
-                    if (!string.IsNullOrWhiteSpace(curData.Icon))
-                        curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
-
+                    curData.Dependencies = null;
+                    curData.Parameters = null;
                     if (!string.IsNullOrWhiteSpace(curData.CategoryId))
-                        curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
+                        curData.AssetCategory = await _DbContext.AssetCategories.FirstOrDefaultAsync(x => x.Id == curData.CategoryId);
+                    if (!string.IsNullOrWhiteSpace(curData.Icon))
+                    {
+                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                        if (fs != null)
+                        {
+                            curData.IconFileAssetUrl = fs.Url;
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(curData.FileAssetId))
+                    {
+                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.FileAssetId);
+                        if (fs != null)
+                        {
+                            curData.FileAssetUrl = fs.Url;
+                        }
+                    }
                 }
             }
             return result;

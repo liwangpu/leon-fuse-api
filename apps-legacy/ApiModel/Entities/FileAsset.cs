@@ -30,8 +30,7 @@ namespace ApiModel.Entities
         /// 扩展属性1,各实体根据自己需要存储
         /// </summary>
         public string ExtraProperty1 { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+
 
         public FileAssetDTO ToDTO()
         {
@@ -67,7 +66,7 @@ namespace ApiModel.Entities
         public string LocalPath { get; set; }
         public string Icon { get; set; }
         public int FileState { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 
 }

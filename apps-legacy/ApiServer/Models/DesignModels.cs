@@ -65,6 +65,7 @@ namespace ApiServer.Models
         public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
         public string Components { get; set; }
+        public string StaticMeshIds { get; set; }
     }
     #endregion
 
@@ -88,6 +89,7 @@ namespace ApiServer.Models
         public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
         public string Components { get; set; }
+        public string StaticMeshIds { get; set; }
     }
     #endregion
 

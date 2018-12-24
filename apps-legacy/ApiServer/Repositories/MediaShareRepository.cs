@@ -2,6 +2,7 @@
 using ApiModel.Enums;
 using ApiServer.Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace ApiServer.Repositories
@@ -62,11 +63,23 @@ namespace ApiServer.Repositories
             data.FileAssetId = media.FileAssetId;
             data.Rotation = media.Rotation;
             data.Location = media.Location;
-            if (!string.IsNullOrWhiteSpace(media.Icon))
-                data.IconFileAsset = await _DbContext.Files.FindAsync(media.Icon);
-            if (!string.IsNullOrWhiteSpace(media.FileAssetId))
-                data.FileAsset = await _DbContext.Files.FindAsync(media.FileAssetId);
 
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == media.Icon);
+                if (fs != null)
+                {
+                    data.IconFileAssetUrl = fs.Url;
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(data.FileAssetId))
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == media.FileAssetId);
+                if (fs != null)
+                {
+                    data.FileAssetUrl = fs.Url;
+                }
+            }
 
 
             return data.ToDTO();

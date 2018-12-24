@@ -33,6 +33,9 @@ namespace ApiServer.Controllers
         /// 根据分页查询信息获取用户角色概要信息
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="organType"></param>
+        /// <param name="excludeInner"></param>
+        /// <param name="innerOnly"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedData<UserRoleDTO>), 200)]
@@ -50,7 +53,7 @@ namespace ApiServer.Controllers
                     query = query.Where(x => x.IsInner == true);
 
                 query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
-                return query;
+                return await Task.FromResult(query);
             });
             return await _GetPagingRequest(model, null, advanceQuery);
         }

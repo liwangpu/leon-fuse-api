@@ -72,10 +72,26 @@ namespace ApiServer.Repositories
         {
             var data = await _GetByIdAsync(id);
 
+            //if (!string.IsNullOrWhiteSpace(data.Icon))
+            //    data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            //if (!string.IsNullOrWhiteSpace(data.FileAssetId))
+            //    data.FileAsset = await _DbContext.Files.FindAsync(data.Icon);
             if (!string.IsNullOrWhiteSpace(data.Icon))
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.Icon);
+                if (fs != null)
+                {
+                    data.IconFileAssetUrl = fs.Url;
+                }
+            }
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
-                data.FileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.FileAssetId);
+                if (fs != null)
+                {
+                    data.FileAssetUrl = fs.Url;
+                }
+            }
             return data.ToDTO();
         }
         #endregion

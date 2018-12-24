@@ -11,8 +11,6 @@ namespace ApiModel.Entities
         public string ApplyOrgans { get; set; }
         public bool IsInner { get; set; }
         public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
         public UserRoleDTO ToDTO()
         {
@@ -41,6 +39,6 @@ namespace ApiModel.Entities
         public bool IsInner { get; set; }
         public string Icon { get; set; }
         public string ApplyOrgans { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

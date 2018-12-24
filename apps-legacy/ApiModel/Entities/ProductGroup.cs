@@ -29,8 +29,6 @@ namespace ApiModel.Entities
         public string Items { get; set; }
 
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public AssetCategory AssetCategory { get; set; }
 
         public ProductGroupDTO ToDTO()
@@ -53,11 +51,8 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.ResourceType = ResourceType;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
 
             if (AssetCategory != null)
                 dto.CategoryName = AssetCategory.Name;
@@ -74,7 +69,7 @@ namespace ApiModel.Entities
     {
         public string Icon { get; set; }
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        
         public int No { get; set; }
         public string ProductId { get; set; }
         public string Rotation { get; set; }
@@ -96,7 +91,7 @@ namespace ApiModel.Entities
         public int PivotType { get; set; }
         public int Orientation { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
     #endregion
 

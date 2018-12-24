@@ -49,10 +49,13 @@ namespace ApiServer.Repositories
                             {
                                 if (!string.IsNullOrWhiteSpace(product.Icon))
                                 {
-                                    curData.IconFileAsset = await _DbContext.Files.FindAsync(product.Icon);
-                                    product.IconFileAsset = curData.IconFileAsset;
+                                    var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == product.Icon);
+                                    if (fs != null)
+                                    {
+                                        curData.IconFileAssetUrl = fs.Url;
+                                        product.IconFileAssetUrl = fs.Url;
+                                    }
                                 }
-
                                 curData.DefaultItem = product;
                                 groupItems.Insert(0, product);
                             }
@@ -96,10 +99,20 @@ namespace ApiServer.Repositories
                     //默认项,取出icon信息做为展示
                     if (productId == data.DefaultItemId)
                     {
+                        //if (!string.IsNullOrWhiteSpace(product.Icon))
+                        //{
+                        //    data.IconFileAsset = await _DbContext.Files.FindAsync(product.Icon);
+                        //    product.IconFileAsset = data.IconFileAsset;
+                        //}
+
                         if (!string.IsNullOrWhiteSpace(product.Icon))
                         {
-                            data.IconFileAsset = await _DbContext.Files.FindAsync(product.Icon);
-                            product.IconFileAsset = data.IconFileAsset;
+                            var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == product.Icon);
+                            if (fs != null)
+                            {
+                                data.IconFileAssetUrl = fs.Url;
+                                product.IconFileAssetUrl = fs.Url;
+                            }
                         }
 
                         data.DefaultItem = product;

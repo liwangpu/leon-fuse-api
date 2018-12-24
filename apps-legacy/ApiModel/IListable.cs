@@ -8,6 +8,6 @@ namespace ApiModel
     public interface IListable : IEntity
     {
         string Icon { get; set; }
-        FileAsset IconFileAsset { get; set; }
+        string IconFileAssetUrl { get; set; }
     }
 }

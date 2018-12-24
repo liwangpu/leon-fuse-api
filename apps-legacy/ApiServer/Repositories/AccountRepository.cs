@@ -264,7 +264,13 @@ namespace ApiServer.Repositories
             }
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.Icon);
+                if (fs != null)
+                {
+                    data.IconFileAssetUrl = fs.Url;
+                }
+            }
             if (!string.IsNullOrWhiteSpace(data.DepartmentId))
                 data.Department = await _DbContext.Departments.FindAsync(data.DepartmentId);
             if (data.AdditionRoles != null && data.AdditionRoles.Count > 0)

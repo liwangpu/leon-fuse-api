@@ -1,5 +1,6 @@
 ﻿using ApiModel.Consts;
 using ApiModel.Enums;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,6 +28,9 @@ namespace ApiModel
         public string FolderName { get; set; }
         [NotMapped]
         public string CategoryName { get; set; }
+        [JsonIgnore]
+        [NotMapped]
+        public string IconFileAssetUrl { get; set; }
         /// <summary>
         /// 启用状态 1启用 0禁用
         /// </summary>

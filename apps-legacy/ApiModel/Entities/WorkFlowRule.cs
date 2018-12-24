@@ -6,9 +6,7 @@ namespace ApiModel.Entities
     {
         public bool IsInner { get; set; }
         public string Keyword { get; set; }
-        public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string Icon { get; set; }   
 
         public WorkFlowRuleDTO ToDTO()
         {
@@ -34,7 +32,7 @@ namespace ApiModel.Entities
         public bool IsInner { get; set; }
         public string Keyword { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
         public string WorkFlowName { get; set; }
     }
 }

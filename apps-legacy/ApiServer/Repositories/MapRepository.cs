@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ApiModel.Consts;
 using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Data;
+using ApiServer.Models;
+using BambooCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiServer.Repositories
@@ -79,12 +82,56 @@ namespace ApiServer.Repositories
             var data = await _GetByIdAsync(id);
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.Icon);
+                if (fs != null)
+                {
+                    data.IconFileAssetUrl = fs.Url;
+                }
+            }
             if (!string.IsNullOrWhiteSpace(data.FileAssetId))
-                data.FileAsset = await _DbContext.Files.FindAsync(data.FileAssetId);
+            {
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.FileAssetId);
+                if (fs != null)
+                {
+                    data.FileAssetUrl = fs.Url;
+                }
+            }
+
             return data.ToDTO();
         }
         #endregion
 
+        public override async Task<PagedData<Map>> SimplePagedQueryAsync(PagingRequestModel model, string accid, Func<IQueryable<Map>, Task<IQueryable<Map>>> advanceQuery = null)
+        {
+            var result = await base.SimplePagedQueryAsync(model, accid, advanceQuery);
+            if (result.Total > 0)
+            {
+                for (int idx = result.Data.Count - 1; idx >= 0; idx--)
+                {
+                    var curData = result.Data[idx];
+                    curData.Dependencies = null;
+                    curData.Properties = null;
+                    if (!string.IsNullOrWhiteSpace(curData.Icon))
+                    {
+                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                        if (fs != null)
+                        {
+                            curData.IconFileAssetUrl = fs.Url;
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(curData.FileAssetId))
+                    {
+                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.FileAssetId);
+                        if (fs != null)
+                        {
+                            curData.FileAssetUrl = fs.Url;
+                        }
+                    }
+
+                }
+            }
+            return result;
+        }
     }
 }

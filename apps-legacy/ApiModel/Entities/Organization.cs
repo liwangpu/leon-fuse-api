@@ -23,8 +23,6 @@ namespace ApiModel.Entities
         public List<AssetFolder> Folders { get; set; }
         public List<FileAsset> Files { get; set; }
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public string OrganizationTypeName { get; set; }
 
         public OrganizationDTO ToDTO()
@@ -48,11 +46,8 @@ namespace ApiModel.Entities
             dto.OrganizationTypeName = OrganizationTypeName;
             dto.ExpireTime = ExpireTime;
             dto.ActivationTime = ActivationTime;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             return dto;
         }
     }
@@ -72,6 +67,6 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime ActivationTime { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

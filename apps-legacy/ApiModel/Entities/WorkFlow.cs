@@ -11,8 +11,6 @@ namespace ApiModel.Entities
         /// </summary>
         public string ApplyOrgans { get; set; }
         public List<WorkFlowItem> WorkFlowItems { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
         public WorkFlowDTO ToDTO()
         {
@@ -40,7 +38,7 @@ namespace ApiModel.Entities
     {
         public string Icon { get; set; }
         public string ApplyOrgans { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
         public List<WorkFlowItem> WorkFlowItems { get; set; }
     }
 }

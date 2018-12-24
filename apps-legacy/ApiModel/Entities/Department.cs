@@ -8,10 +8,7 @@ namespace ApiModel.Entities
         public string ParentId { get; set; }
         public Department Parent { get; set; }
         public Organization Organization { get; set; }
-        public string Icon { get; set; }
-
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string Icon { get; set; }  
 
         public DepartmentDTO ToDTO()
         {
@@ -36,6 +33,6 @@ namespace ApiModel.Entities
     {
         public string ParentId { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

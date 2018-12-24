@@ -5,8 +5,6 @@ namespace ApiModel.Entities
     public class Layout : EntityBase, IAsset, IDTOTransfer<LayoutDTO>
     {
         public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
         /// <summary>
         /// 户型数据,内容为类LayoutData的Json字符串。
         /// </summary>
@@ -29,11 +27,8 @@ namespace ApiModel.Entities
             dto.Data = Data;
             dto.CategoryId = CategoryId;
             dto.CategoryName = CategoryName;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             return dto;
         }
     }
@@ -42,7 +37,7 @@ namespace ApiModel.Entities
     {
         public string IconAssetId { get; set; }
         public string Data { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
         public string Icon { get; set; }
     }
 }

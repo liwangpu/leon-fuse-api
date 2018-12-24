@@ -15,9 +15,6 @@ namespace ApiModel.Entities
         public bool IsInner { get; set; }
         public bool NewTapOpen { get; set; }
         public string QueryParams { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-
         public NavigationDTO ToDTO()
         {
             var dto = new NavigationDTO();
@@ -50,6 +47,6 @@ namespace ApiModel.Entities
         public string Field { get; set; }
         public string NodeType { get; set; }
         public string QueryParams { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

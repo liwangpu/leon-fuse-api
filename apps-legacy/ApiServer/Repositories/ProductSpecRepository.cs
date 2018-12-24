@@ -91,35 +91,57 @@ namespace ApiServer.Repositories
             var res = await _GetByIdAsync(id);
             if (!string.IsNullOrWhiteSpace(res.Icon))
             {
-                var ass = await _DbContext.Files.FindAsync(res.Icon);
-                if (ass != null)
-                    res.IconFileAsset = ass;
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == res.Icon);
+                if (fs != null)
+                {
+                    res.IconFileAssetUrl = fs.Url;
+                }
             }
             if (!string.IsNullOrWhiteSpace(res.Album))
             {
                 var albumIds = res.Album.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
                 for (int idx = albumIds.Count - 1; idx >= 0; idx--)
                 {
-                    var ass = await _DbContext.Files.FindAsync(albumIds[idx]);
+                    var ass = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == albumIds[idx]);
                     if (ass != null)
                         res.AlbumAsset.Add(ass);
                 }
             }
             if (!string.IsNullOrWhiteSpace(res.StaticMeshIds))
             {
-                var map = JsonConvert.DeserializeObject<SpecMeshMap>(res.StaticMeshIds);
-                for (int idx = map.Items.Count - 1; idx >= 0; idx--)
+                try
                 {
-                    var refMesh = await _DbContext.StaticMeshs.FindAsync(map.Items[idx].StaticMeshId);
-                    if (refMesh != null)
+                    var map = JsonConvert.DeserializeObject<SpecMeshMap>(res.StaticMeshIds);
+                    for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                     {
-                        var tmp = await _DbContext.Files.FindAsync(refMesh.FileAssetId);
-                        if (tmp != null)
-                            refMesh.FileAsset = tmp;
-                    }
+                        var refMesh = await _DbContext.StaticMeshs.FirstOrDefaultAsync(x => x.Id == map.Items[idx].StaticMeshId);
+                        if (refMesh != null)
+                        {
+                            //var tmp = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == refMesh.FileAssetId);
+                            //if (tmp != null)
+                            //    refMesh.FileAsset = tmp;
+                            if (!string.IsNullOrWhiteSpace(refMesh.Icon))
+                            {
+                                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == refMesh.Icon);
+                                if (fs != null)
+                                {
+                                    refMesh.IconFileAssetUrl = fs.Url;
+                                }
+                            }
+                            if (!string.IsNullOrWhiteSpace(refMesh.FileAssetId))
+                            {
+                                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == refMesh.FileAssetId);
+                                if (fs != null)
+                                {
+                                    refMesh.FileAssetUrl = fs.Url;
+                                }
+                            }
 
-                    res.StaticMeshAsset.Add(refMesh);
+                            res.StaticMeshAsset.Add(refMesh);
+                        }
+                    }
                 }
+                catch (Exception) { }
             }
 
             return res.ToDTO();

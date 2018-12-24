@@ -75,7 +75,7 @@ namespace ApiServer.Controllers.Design
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.SrcFileAssetId = model.SrcFileAssetId;
-                entity.Materials = model.Materials;
+                entity.DyMaterials = model.Materials;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -105,7 +105,7 @@ namespace ApiServer.Controllers.Design
                 entity.PackageName = model.PackageName;
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.SrcFileAssetId = model.SrcFileAssetId;
-                entity.Materials = model.Materials;
+                entity.DyMaterials = model.Materials;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

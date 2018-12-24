@@ -29,6 +29,23 @@ namespace DataTransferHelper
             using (var srcDb = new SrcContext())
             using (var destDb = new DestContext())
             {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 ////Files
                 //foreach (var item in srcDb.Files)
                 //{
@@ -89,132 +106,132 @@ namespace DataTransferHelper
                 //destDb.SaveChanges();
                 //Console.WriteLine($"{"PermissionTrees"} 迁移完毕");
 
-                //ProductGroups
-                foreach (var item in srcDb.ProductGroups)
-                {
-                    var exist = destDb.ProductGroups.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.ProductGroups.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"ProductGroups"} 迁移完毕");
-
-                //ProductReplaceGroups
-                foreach (var item in srcDb.ProductReplaceGroups)
-                {
-                    var exist = destDb.ProductReplaceGroups.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.ProductReplaceGroups.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"ProductReplaceGroups"} 迁移完毕");
-
-
-                //ProductReplaceGroups
-                foreach (var item in srcDb.ResourcePermissions)
-                {
-                    var exist = destDb.ResourcePermissions.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.ResourcePermissions.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"ResourcePermissions"} 迁移完毕");
-
-
-
-
-
-                //Products
-                foreach (var item in srcDb.Products)
-                {
-                    var exist = destDb.Products.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.Products.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"Products"} 迁移完毕");
-
-                //Products
-                foreach (var item in srcDb.ProductSpec)
-                {
-                    var exist = destDb.ProductSpec.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.ProductSpec.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"ProductSpec"} 迁移完毕");
-
-
-                //StaticMeshs
-                foreach (var item in srcDb.StaticMeshs)
-                {
-                    var exist = destDb.StaticMeshs.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.StaticMeshs.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"StaticMeshs"} 迁移完毕");
-
-                //Maps
-                foreach (var item in srcDb.Maps)
-                {
-                    var exist = destDb.Maps.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.Maps.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"Maps"} 迁移完毕");
-
-                ////Layouts
-                //foreach (var item in srcDb.Layouts)
+                ////ProductGroups
+                //foreach (var item in srcDb.ProductGroups)
                 //{
-                //    var exist = destDb.Layouts.Any(x => x.Id == item.Id);
+                //    var exist = destDb.ProductGroups.Any(x => x.Id == item.Id);
                 //    if (!exist)
                 //    {
-                //        destDb.Layouts.Add(item);
+                //        destDb.ProductGroups.Add(item);
                 //    }
                 //}
                 //destDb.SaveChanges();
-                //Console.WriteLine($"{"Layouts"} 迁移完毕");
+                //Console.WriteLine($"{"ProductGroups"} 迁移完毕");
 
-                ////Solutions
-                //foreach (var item in srcDb.Solutions)
+                ////ProductReplaceGroups
+                //foreach (var item in srcDb.ProductReplaceGroups)
                 //{
-                //    var exist = destDb.Solutions.Any(x => x.Id == item.Id);
+                //    var exist = destDb.ProductReplaceGroups.Any(x => x.Id == item.Id);
                 //    if (!exist)
                 //    {
-                //        destDb.Solutions.Add(item);
+                //        destDb.ProductReplaceGroups.Add(item);
                 //    }
                 //}
                 //destDb.SaveChanges();
-                //Console.WriteLine($"{"Solutions"} 迁移完毕");
+                //Console.WriteLine($"{"ProductReplaceGroups"} 迁移完毕");
 
 
-                //Packages
-                foreach (var item in srcDb.Packages)
-                {
-                    var exist = destDb.Packages.Any(x => x.Id == item.Id);
-                    if (!exist)
-                    {
-                        destDb.Packages.Add(item);
-                    }
-                }
-                destDb.SaveChanges();
-                Console.WriteLine($"{"Packages"} 迁移完毕");
+                ////ProductReplaceGroups
+                //foreach (var item in srcDb.ResourcePermissions)
+                //{
+                //    var exist = destDb.ResourcePermissions.Any(x => x.Id == item.Id);
+                //    if (!exist)
+                //    {
+                //        destDb.ResourcePermissions.Add(item);
+                //    }
+                //}
+                //destDb.SaveChanges();
+                //Console.WriteLine($"{"ResourcePermissions"} 迁移完毕");
+
+
+
+
+
+                ////Products
+                //foreach (var item in srcDb.Products)
+                //{
+                //    var exist = destDb.Products.Any(x => x.Id == item.Id);
+                //    if (!exist)
+                //    {
+                //        destDb.Products.Add(item);
+                //    }
+                //}
+                //destDb.SaveChanges();
+                //Console.WriteLine($"{"Products"} 迁移完毕");
+
+                ////Products
+                //foreach (var item in srcDb.ProductSpec)
+                //{
+                //    var exist = destDb.ProductSpec.Any(x => x.Id == item.Id);
+                //    if (!exist)
+                //    {
+                //        destDb.ProductSpec.Add(item);
+                //    }
+                //}
+                //destDb.SaveChanges();
+                //Console.WriteLine($"{"ProductSpec"} 迁移完毕");
+
+
+                ////StaticMeshs
+                //foreach (var item in srcDb.StaticMeshs)
+                //{
+                //    var exist = destDb.StaticMeshs.Any(x => x.Id == item.Id);
+                //    if (!exist)
+                //    {
+                //        destDb.StaticMeshs.Add(item);
+                //    }
+                //}
+                //destDb.SaveChanges();
+                //Console.WriteLine($"{"StaticMeshs"} 迁移完毕");
+
+                ////Maps
+                //foreach (var item in srcDb.Maps)
+                //{
+                //    var exist = destDb.Maps.Any(x => x.Id == item.Id);
+                //    if (!exist)
+                //    {
+                //        destDb.Maps.Add(item);
+                //    }
+                //}
+                //destDb.SaveChanges();
+                //Console.WriteLine($"{"Maps"} 迁移完毕");
+
+                //////Layouts
+                ////foreach (var item in srcDb.Layouts)
+                ////{
+                ////    var exist = destDb.Layouts.Any(x => x.Id == item.Id);
+                ////    if (!exist)
+                ////    {
+                ////        destDb.Layouts.Add(item);
+                ////    }
+                ////}
+                ////destDb.SaveChanges();
+                ////Console.WriteLine($"{"Layouts"} 迁移完毕");
+
+                //////Solutions
+                ////foreach (var item in srcDb.Solutions)
+                ////{
+                ////    var exist = destDb.Solutions.Any(x => x.Id == item.Id);
+                ////    if (!exist)
+                ////    {
+                ////        destDb.Solutions.Add(item);
+                ////    }
+                ////}
+                ////destDb.SaveChanges();
+                ////Console.WriteLine($"{"Solutions"} 迁移完毕");
+
+
+                ////Packages
+                //foreach (var item in srcDb.Packages)
+                //{
+                //    var exist = destDb.Packages.Any(x => x.Id == item.Id);
+                //    if (!exist)
+                //    {
+                //        destDb.Packages.Add(item);
+                //    }
+                //}
+                //destDb.SaveChanges();
+                //Console.WriteLine($"{"Packages"} 迁移完毕");
 
 
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiModel.Entities
 {
@@ -8,8 +9,9 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
 
+        [JsonIgnore]
         [NotMapped]
-        public FileAsset FileAsset { get; set; }
+        public string FileAssetUrl { get; set; }
         [NotMapped]
         public AssetCategory AssetCategory { get; set; }
 
@@ -33,17 +35,10 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.CategoryName = CategoryName;
-            if (FileAsset != null)
-            {
-                dto.FileAsset = FileAsset.ToDTO();
-                dto.Url = FileAsset.Url;
-            }
+            dto.Url = FileAssetUrl;
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
 
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
             if (AssetCategory != null)
                 dto.CategoryName = AssetCategory.Name;
             dto.CategoryId = CategoryId;
@@ -59,6 +54,5 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
         public string Url { get; set; }
-        public FileAssetDTO FileAsset { get; set; }
     }
 }

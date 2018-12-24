@@ -39,10 +39,14 @@ namespace ApiServer.Repositories
                 for (int nidx = data.Specifications.Count - 1; nidx >= 0; nidx--)
                 {
                     var spec = data.Specifications[nidx];
+
                     if (!string.IsNullOrWhiteSpace(spec.Icon))
                     {
-                        var iconass = await _DbContext.Files.FindAsync(spec.Icon);
-                        spec.IconFileAsset = iconass;
+                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == spec.Icon);
+                        if (fs != null)
+                        {
+                            spec.IconFileAssetUrl = fs.Url;
+                        }
                     }
 
                     if (!string.IsNullOrWhiteSpace(spec.StaticMeshIds))
@@ -50,13 +54,25 @@ namespace ApiServer.Repositories
                         var map = JsonConvert.DeserializeObject<SpecMeshMap>(spec.StaticMeshIds);
                         for (int idx = map.Items.Count - 1; idx >= 0; idx--)
                         {
-                            var refMesh = await _DbContext.StaticMeshs.FindAsync(map.Items[idx].StaticMeshId);
+                            var refMesh = await _DbContext.StaticMeshs.FirstOrDefaultAsync(x => x.Id == map.Items[idx].StaticMeshId);
                             if (refMesh != null)
                             {
-                                var fs = await _DbContext.Files.FindAsync(refMesh.FileAssetId);
-                                refMesh.FileAsset = fs;
-                                var ifs = await _DbContext.Files.FindAsync(refMesh.Icon);
-                                refMesh.IconFileAsset = ifs;
+                                if (!string.IsNullOrWhiteSpace(refMesh.Icon))
+                                {
+                                    var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == refMesh.Icon);
+                                    if (fs != null)
+                                    {
+                                        refMesh.IconFileAssetUrl = fs.Url;
+                                    }
+                                }
+                                if (!string.IsNullOrWhiteSpace(refMesh.FileAssetId))
+                                {
+                                    var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == refMesh.FileAssetId);
+                                    if (fs != null)
+                                    {
+                                        refMesh.FileAssetUrl = fs.Url;
+                                    }
+                                }
                             }
                             spec.StaticMeshAsset.Add(refMesh);
                         }
@@ -66,7 +82,11 @@ namespace ApiServer.Repositories
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
             {
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.Icon);
+                if (fs != null)
+                {
+                    data.IconFileAssetUrl = fs.Url;
+                }
             }
             if (!string.IsNullOrWhiteSpace(data.CategoryId))
                 data.AssetCategory = await _DbContext.AssetCategories.FindAsync(data.CategoryId);
@@ -158,15 +178,33 @@ namespace ApiServer.Repositories
                 for (int idx = result.Data.Count - 1; idx >= 0; idx--)
                 {
                     var curData = result.Data[idx];
+
                     if (!string.IsNullOrWhiteSpace(curData.Icon))
-                        curData.IconFileAsset = await _DbContext.Files.FindAsync(curData.Icon);
+                    {
+                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                        if (fs != null)
+                        {
+                            curData.IconFileAssetUrl = fs.Url;
+                        }
+                    }
 
                     if (!string.IsNullOrWhiteSpace(curData.CategoryId))
                         curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
 
                     var defaultSpec = await _DbContext.ProductSpec.Where(x => x.ProductId == curData.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();
                     if (defaultSpec != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(defaultSpec.Icon))
+                        {
+                            var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == defaultSpec.Icon);
+                            if (fs != null)
+                            {
+                                defaultSpec.IconFileAssetUrl = fs.Url;
+                            }
+                        }
                         curData.Specifications = new List<ProductSpec>() { defaultSpec };
+                    }
+                       
                 }
             }
             return result;

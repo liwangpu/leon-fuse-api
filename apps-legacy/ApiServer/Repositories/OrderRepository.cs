@@ -91,10 +91,21 @@ namespace ApiServer.Repositories
 
                         if (!string.IsNullOrWhiteSpace(item.ProductSpec.Icon))
                         {
-                            item.ProductSpec.IconFileAsset = await _DbContext.Files.FindAsync(item.ProductSpec.Icon);
-                            //以第一个产品作为订单icon
-                            if (idx == 0)
-                                data.IconFileAsset = item.ProductSpec.IconFileAsset;
+                            //item.ProductSpec.IconFileAsset = await _DbContext.Files.FindAsync(item.ProductSpec.Icon);
+                            ////以第一个产品作为订单icon
+                            //if (idx == 0)
+                            //    data.IconFileAsset = item.ProductSpec.IconFileAsset;
+                            if (!string.IsNullOrWhiteSpace(item.ProductSpec.Icon))
+                            {
+                                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == item.ProductSpec.Icon);
+                                if (fs != null)
+                                {
+                                    item.ProductSpec.IconFileAssetUrl = fs.Url;
+                                }
+                                if (idx == 0)
+                                    data.IconFileAssetUrl = item.ProductSpec.IconFileAssetUrl;
+                            }
+
                         }
                     }
 

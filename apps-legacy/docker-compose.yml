@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   dmzpostgresdb:
+    container_name: dmzpostgresdb_c
     image: postgres:10.5
     volumes:
       - "/var/bamboo/dmzpostgresdb/data:/var/lib/postgresql/data"
@@ -14,6 +15,7 @@ services:
       - dmzapinet
 
   dmzapiserver:
+    container_name: dmzapiserver_c
     image: dmzapiserver
     build:
       context: .
@@ -41,10 +43,8 @@ services:
       - dmzpostgresdb
 
   dmzapiserver_ehome:
-    image: dmzapiserverehome
-    build:
-      context: .
-      dockerfile: ApiServer/Dockerfile
+    container_name: dmzapiserver_ehome_c
+    image: dmzapiserver
     ports:
       - "1992:80"
     networks:

@@ -5,8 +5,6 @@ namespace ApiModel.Entities
 {
     public class ClientAsset : EntityBase, IAsset
     {
-        public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string Icon { get; set; }        
     }
 }

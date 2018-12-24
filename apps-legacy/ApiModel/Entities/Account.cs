@@ -36,12 +36,9 @@ namespace ApiModel.Entities
         public List<AccountRole> AdditionRoles { get; set; }
 
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public string OrganizationName { get; set; }
         [NotMapped]
         public string OrganizationIcon { get; set; }
-
         /// <summary>
         /// 权限记录，记录能访问的所有类型资源的所有权限设置。不在此列出的则无法访问。
         /// </summary>
@@ -79,8 +76,8 @@ namespace ApiModel.Entities
                 dto.DepartmentName = Department.Name;
             if (Type.Contains("admin"))
                 dto.IsAdmin = true;
-            if (IconFileAsset != null)
-                dto.Icon = IconFileAsset.Url;
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             return dto;
         }
     }
@@ -100,9 +97,9 @@ namespace ApiModel.Entities
         public string Role { get; set; }
         public string Type { get; set; }
         public bool IsAdmin { get; set; }
+        public string IconAssetId { get; set; }
         public DateTime ExpireTime { get; set; }
-        public DateTime ActivationTime { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        public DateTime ActivationTime { get; set; }        
         public List<AccountRole> AdditionRoles { get; set; }
     }
 }

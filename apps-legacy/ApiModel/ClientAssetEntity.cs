@@ -7,6 +7,5 @@ namespace ApiModel
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
     }
 }

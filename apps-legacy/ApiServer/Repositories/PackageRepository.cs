@@ -89,7 +89,13 @@ namespace ApiServer.Repositories
                                 if (grp != null)
                                 {
                                     if (!string.IsNullOrWhiteSpace(grp.Icon))
-                                        grp.IconFileAsset = await _DbContext.Files.FindAsync(grp.Icon);
+                                    {
+                                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == grp.Icon);
+                                        if (fs != null)
+                                        {
+                                            grp.IconFileAssetUrl = fs.Url;
+                                        }
+                                    }
                                     groups.Add(grp.ToDTO());
                                 }
 
@@ -108,7 +114,13 @@ namespace ApiServer.Repositories
                                 if (prd != null)
                                 {
                                     if (!string.IsNullOrWhiteSpace(prd.Icon))
-                                        prd.IconFileAsset = await _DbContext.Files.FindAsync(prd.Icon);
+                                    {
+                                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == prd.Icon);
+                                        if (fs != null)
+                                        {
+                                            prd.IconFileAssetUrl = fs.Url;
+                                        }
+                                    }
                                     products.Add(prd.ToDTO());
                                 }
                             }
@@ -168,7 +180,11 @@ namespace ApiServer.Repositories
 
             if (!string.IsNullOrWhiteSpace(data.Icon))
             {
-                data.IconFileAsset = await _DbContext.Files.FindAsync(data.Icon);
+                var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == data.Icon);
+                if (fs != null)
+                {
+                    data.IconFileAssetUrl = fs.Url;
+                }
             }
 
             return data.ToDTO();

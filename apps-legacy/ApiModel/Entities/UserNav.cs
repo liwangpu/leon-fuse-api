@@ -11,9 +11,7 @@ namespace ApiModel.Entities
         [NotMapped]
         public string Icon { get; set; }
         [NotMapped]
-        public string RoleName { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string RoleName { get; set; }   
 
         public UserNavDTO ToDTO()
         {
@@ -33,7 +31,7 @@ namespace ApiModel.Entities
     {
         public string Role { get; set; }
         public string RoleName { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
         public string Icon { get; set; }
         public List<UserNavDetail> UserNavDetails { get; set; }
     }

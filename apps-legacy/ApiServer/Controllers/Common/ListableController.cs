@@ -196,8 +196,19 @@ namespace ApiServer.Controllers.Common
             for (int ddx = datas.Count - 1; ddx >= 0; ddx--)
             {
                 var curData = datas[ddx];
-                if (string.IsNullOrWhiteSpace(curData.Icon))
-                    curData.IconFileAsset = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                //if (string.IsNullOrWhiteSpace(curData.Icon))      
+                //{
+                //    var fs = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                //    curData.Icon =;
+                //}
+                if (!string.IsNullOrWhiteSpace(curData.Icon))
+                {
+                    var fs = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                    if (fs != null)
+                    {
+                        curData.IconFileAssetUrl = fs.Url;
+                    }
+                }
                 var creator = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Creator == curData.Creator);
                 curData.CreatorName = creator != null ? creator.Name : "";
                 var modifier = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Modifier == curData.Modifier);

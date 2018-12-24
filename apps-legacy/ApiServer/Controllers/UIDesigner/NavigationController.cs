@@ -73,7 +73,7 @@ namespace ApiServer.Controllers.UIDesigner
         public async Task<IActionResult> GetByRole(string role)
         {
             var navs = _Repository._DbContext.Navigations.Select(x => x.ToDTO());
-            return Ok(navs);
+            return await Task.FromResult(Ok(navs));
         }
         #endregion
 

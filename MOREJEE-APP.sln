@@ -10,6 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-MoreJee", "Apps-MoreJee", "{82AF59DE-EC8C-4161-81C9-56DBC1D6D966}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Legacy", "Apps-Legacy", "{3097E782-8305-4027-B39C-357AAEB0B686}"
+	ProjectSection(SolutionItems) = preProject
+		apps-legacy\.env = apps-legacy\.env
+		apps-legacy\docker-compose.yml = apps-legacy\docker-compose.yml
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.Basic.Data", "apps-basic\Apps.Basic.Data\Apps.Basic.Data.csproj", "{88E83460-813F-44A1-A679-A6D3FA424EE1}"
 EndProject
@@ -60,6 +64,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shells", "shells", "{AC7D0B
 		README\shells\appsbasic_db_restore.bat = README\shells\appsbasic_db_restore.bat
 		README\shells\project_init.bat = README\shells\project_init.bat
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransferHelper", "apps-legacy\DataTransferHelper\DataTransferHelper.csproj", "{BC120EDE-D350-46E4-A352-562A38D2C08C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -251,6 +257,18 @@ Global
 		{223046F5-3FAE-45B3-AD71-91623CD949FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{223046F5-3FAE-45B3-AD71-91623CD949FF}.Release|x64.ActiveCfg = Release|Any CPU
 		{223046F5-3FAE-45B3-AD71-91623CD949FF}.Release|x64.Build.0 = Release|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Cloud-Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Cloud-Dev|Any CPU.Build.0 = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Cloud-Dev|x64.ActiveCfg = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Cloud-Dev|x64.Build.0 = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -272,6 +290,7 @@ Global
 		{E7E0935D-9702-4C8D-9567-414ED1C6421C} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{223046F5-3FAE-45B3-AD71-91623CD949FF} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{AC7D0B21-D0E7-4A5A-9570-82A9BB13FA0F} = {28BB17AA-AC2A-4E71-923F-59B8A454EF8E}
+		{BC120EDE-D350-46E4-A352-562A38D2C08C} = {3097E782-8305-4027-B39C-357AAEB0B686}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1F15B0A-1C9E-4766-A6EA-45FB37ECAA34}

@@ -16,10 +16,6 @@ namespace ApiModel.Entities
         [NotMapped]
         public string Server { get; set; }
         [NotMapped]
-        public FileAsset FileAsset { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public string FileAssetUrl { get; set; }
 
         public MediaDTO ToDTO()
@@ -41,15 +37,10 @@ namespace ApiModel.Entities
             dto.OrganizationId = OrganizationId;
             dto.Type = Type;
             dto.CategoryName = CategoryName;
-            if (FileAsset != null)
-            {
-                dto.FileAssetUrl = FileAsset.Url;
-            }
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.FileAssetId = FileAssetId;
+            dto.FileAssetUrl = FileAssetUrl;
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             if (MediaShareResources != null && MediaShareResources.Count > 0)
             {
                 var list = new List<MediaShareResourceDTO>();
@@ -60,8 +51,12 @@ namespace ApiModel.Entities
                     curItem.Rotation = Rotation;
                     curItem.Location = Location;
                     curItem.FileAssetId = FileAssetId;
-                    curItem.IconFileAsset = IconFileAsset;
-                    curItem.FileAsset = FileAsset;
+                    //curItem.IconFileAsset = IconFileAsset;
+                    //curItem.FileAsset = FileAsset;
+                    curItem.Icon = IconFileAssetUrl;
+                    curItem.IconAssetId = Icon;
+                    curItem.FileAssetId = FileAssetId;
+                    curItem.FileAssetUrl = FileAssetUrl;
                     curItem.Url = Server;
                     list.Add(curItem.ToDTO());
                 }
@@ -102,11 +97,11 @@ namespace ApiModel.Entities
         [NotMapped]
         public string Icon { get; set; }
         [NotMapped]
+        public string IconAssetId { get; set; }
+        [NotMapped]
         public string FileAssetId { get; set; }
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
-        public FileAsset FileAsset { get; set; }
+        public string FileAssetUrl { get; set; }
 
         public MediaShareResourceDTO ToDTO()
         {
@@ -127,14 +122,9 @@ namespace ApiModel.Entities
             dto.Password = Password;
             dto.Icon = Icon;
             dto.Url = Url;
-            if (FileAsset != null)
-            {
-                dto.FileAssetUrl = FileAsset.Url;
-            }
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
+            dto.FileAssetUrl = FileAssetUrl;
             return dto;
         }
     }
@@ -150,6 +140,7 @@ namespace ApiModel.Entities
         public string Password { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
+        public string IconAssetId { get; set; }
         public string FileAssetUrl { get; set; }
     }
 
@@ -164,7 +155,7 @@ namespace ApiModel.Entities
         public string SolutionId { get; set; }
         public List<MediaShareResourceDTO> MediaShares { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
 
     }
 }

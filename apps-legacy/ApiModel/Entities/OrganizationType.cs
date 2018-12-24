@@ -8,10 +8,6 @@ namespace ApiModel.Entities
         public string TypeCode { get; set; }
         public string Icon { get; set; }
         public bool IsInner { get; set; }
-
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-
         public OrganizationTypeDTO ToDTO()
         {
             var dto = new OrganizationTypeDTO();
@@ -37,7 +33,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string ApplyOrgans { get; set; }
         public bool IsInner { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 
 }

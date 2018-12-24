@@ -47,8 +47,6 @@ namespace ApiModel.Entities
 
         /**************** DTO专用容器 ****************/
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public List<FileAsset> AlbumAsset { get; set; }
         [NotMapped]
         public List<StaticMesh> StaticMeshAsset { get; set; }
@@ -79,12 +77,9 @@ namespace ApiModel.Entities
             dto.ProductId = ProductId;
             dto.CategoryName = CategoryName;
             dto.Components = Components;
-            if (IconFileAsset != null)
-            {
-                dto.IconAsset = IconFileAsset.ToDTO();
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.StaticMeshIds = StaticMeshIds;
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             if (AlbumAsset != null && AlbumAsset.Count > 0)
                 dto.Album = AlbumAsset.Select(x => x.ToDTO()).ToList();
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
@@ -104,11 +99,11 @@ namespace ApiModel.Entities
         public decimal PurchasePrice { get; set; }
         public string TPID { get; set; }
         public string ProductId { get; set; }
-        public FileAssetDTO IconAsset { get; set; }
+        public string StaticMeshIds { get; set; }
         public List<StaticMeshDTO> StaticMeshes { get; set; }
         public List<FileAssetDTO> Album { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
         public string Components { get; set; }
     }
 

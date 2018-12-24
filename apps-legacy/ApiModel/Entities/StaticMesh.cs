@@ -10,9 +10,9 @@ namespace ApiModel.Entities
         /// <summary>
         /// 字符型Materials,服务器不做处理,只是简单存储
         /// </summary>
-        public string Materials { get; set; }
+        public string DyMaterials { get; set; }
         [NotMapped]
-        public FileAsset FileAsset { get; set; }
+        public string FileAssetUrl { get; set; }
 
         public StaticMeshDTO ToDTO()
         {
@@ -34,21 +34,11 @@ namespace ApiModel.Entities
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
             dto.CategoryName = CategoryName;
-            dto.Materials = Materials;
-
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
-
-            if (FileAsset != null)
-            {
-                dto.FileAsset = FileAsset.ToDTO();
-                dto.Url = FileAsset.Url;
-            }
-
-
+            dto.Materials = DyMaterials;
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
+            dto.FileAssetId = FileAssetId;
+            dto.Url = FileAssetUrl;
 
             return dto;
         }
@@ -63,7 +53,6 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string SrcFileAssetId { get; set; }
         public string Url { get; set; }
-        public FileAssetDTO FileAsset { get; set; }
         public string Materials { get; set; }
     }
 }

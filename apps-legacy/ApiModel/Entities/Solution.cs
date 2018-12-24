@@ -14,8 +14,6 @@ namespace ApiModel.Entities
         /// 内容为 SolutionData 对象的 json字符串
         /// </summary>
         public string Data { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
 
         public SolutionDTO ToDTO()
         {
@@ -37,11 +35,8 @@ namespace ApiModel.Entities
             dto.ResourceType = ResourceType;
             dto.IsSnapshot = IsSnapshot;
             dto.SnapshotData = SnapshotData;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             return dto;
         }
     }
@@ -54,6 +49,6 @@ namespace ApiModel.Entities
         public string Data { get; set; }
         public string LayoutId { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

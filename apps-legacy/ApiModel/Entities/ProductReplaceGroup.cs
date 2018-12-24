@@ -8,8 +8,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string DefaultItemId { get; set; }
         public string GroupItemIds { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+
         [NotMapped]
         public Product DefaultItem { get; set; }
         [NotMapped]
@@ -34,11 +33,8 @@ namespace ApiModel.Entities
             dto.DefaultItemId = DefaultItemId;
             dto.GroupItemIds = GroupItemIds;
 
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             if (DefaultItem != null)
                 dto.DefaultItem = DefaultItem.ToDTO();
 
@@ -59,7 +55,7 @@ namespace ApiModel.Entities
         public ProductDTO DefaultItem { get; set; }
         public List<ProductDTO> GroupItems { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 
 }

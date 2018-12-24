@@ -13,9 +13,6 @@ namespace ApiModel.Entities
         public string BusinessCard { get; set; }
         public string Inviter { get; set; }
 
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-
         public MemberRegistryDTO ToDTO()
         {
             var dto = new MemberRegistryDTO();
@@ -54,6 +51,6 @@ namespace ApiModel.Entities
         public string Area { get; set; }
         public string BusinessCard { get; set; }
         public string Inviter { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 }

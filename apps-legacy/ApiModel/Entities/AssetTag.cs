@@ -6,8 +6,6 @@ namespace ApiModel.Entities
 {
     public class AssetTag : EntityBase, IListable
     {
-        public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string Icon { get; set; } 
     }
 }

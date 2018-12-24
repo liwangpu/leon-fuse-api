@@ -17,8 +17,6 @@ namespace ApiModel.Entities
         [NotMapped]
         public string Icon { get; set; }
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public ProductSpec ProductSpec { get; set; }
         [NotMapped]
         public List<OrderDetailAttachment> Attachments { get; set; }
@@ -48,8 +46,7 @@ namespace ApiModel.Entities
                     dto.ProductDescription = ProductSpec.Product.Description;
                     dto.ProductUnit = ProductSpec.Product.Unit;
                 }
-                if (ProductSpec.IconFileAsset != null)
-                    dto.Icon = ProductSpec.IconFileAsset.Url;
+                dto.Icon = ProductSpec.Icon;
             }
 
             return dto;

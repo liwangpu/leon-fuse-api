@@ -16,8 +16,6 @@ namespace ApiModel.Entities
         public List<ProductSpec> Specifications { get; set; }
 
         [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-        [NotMapped]
         public AssetCategory AssetCategory { get; set; }
 
         public ProductDTO ToDTO()
@@ -44,12 +42,8 @@ namespace ApiModel.Entities
                 dto.PurchasePrice = defaultSpec.PurchasePrice;
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
             }
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
-
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             if (AssetCategory != null)
                 dto.CategoryName = AssetCategory.Name;
             return dto;
@@ -65,7 +59,7 @@ namespace ApiModel.Entities
         public List<ProductSpecDTO> Specifications { get; set; }
         public string Icon { get; set; }
         public string Unit { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
 
 }

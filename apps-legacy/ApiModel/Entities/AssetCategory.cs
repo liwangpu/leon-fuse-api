@@ -10,10 +10,6 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string ParentId { get; set; }
         public int DisplayIndex { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-
-
         public AssetCategoryDTO ToDTO()
         {
             AssetCategoryDTO dto = new AssetCategoryDTO();

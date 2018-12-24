@@ -8,8 +8,6 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string Folder { get; set; }
         [NotMapped]
-        public string Icon { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
+        public string Icon { get; set; } 
     }
 }

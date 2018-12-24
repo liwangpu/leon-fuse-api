@@ -20,9 +20,6 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public PackageContent ContentIns { get; set; }
-        [NotMapped]
-        public FileAsset IconFileAsset { get; set; }
-
         #region ToDTO
         public PackageDTO ToDTO()
         {
@@ -42,11 +39,8 @@ namespace ApiModel.Entities
             dto.ResourceType = ResourceType;
             if (ContentIns != null)
                 dto.ContentIns = ContentIns;
-            if (IconFileAsset != null)
-            {
-                dto.Icon = IconFileAsset.Url;
-                dto.IconAssetId = IconFileAsset.Id;
-            }
+            dto.Icon = IconFileAssetUrl;
+            dto.IconAssetId = Icon;
             return dto;
         }
         #endregion
@@ -64,7 +58,7 @@ namespace ApiModel.Entities
         public string Content { get; set; }
         public PackageContent ContentIns { get; set; }
         public string Icon { get; set; }
-        public FileAsset IconFileAsset { get; set; }
+        
     }
     #endregion
 
