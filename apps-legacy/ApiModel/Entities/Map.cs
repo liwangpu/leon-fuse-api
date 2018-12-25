@@ -10,6 +10,8 @@ namespace ApiModel.Entities
 
         [NotMapped]
         public string FileAssetUrl { get; set; }
+        [NotMapped]
+        public FileAsset FileAsset { get; set; }
 
         public MapDTO ToDTO()
         {
@@ -33,6 +35,8 @@ namespace ApiModel.Entities
             dto.IconAssetId = Icon;
             dto.FileAssetId = FileAssetId;
             dto.FileAssetUrl = FileAssetUrl;
+            if (FileAsset != null)
+                dto.FileAsset = FileAsset.ToDTO();
             return dto;
         }
     }
@@ -44,6 +48,7 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string FileAssetUrl { get; set; }
+        public FileAssetDTO FileAsset { get; set; }
     }
 
 

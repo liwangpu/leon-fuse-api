@@ -71,6 +71,7 @@ namespace ApiServer.Repositories
                                     if (fs != null)
                                     {
                                         refMesh.FileAssetUrl = fs.Url;
+                                        refMesh.FileAsset = fs;
                                     }
                                 }
                             }

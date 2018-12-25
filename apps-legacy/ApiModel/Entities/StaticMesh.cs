@@ -13,6 +13,8 @@ namespace ApiModel.Entities
         public string DyMaterials { get; set; }
         [NotMapped]
         public string FileAssetUrl { get; set; }
+        [NotMapped]
+        public FileAsset FileAsset { get; set; }
 
         public StaticMeshDTO ToDTO()
         {
@@ -39,7 +41,8 @@ namespace ApiModel.Entities
             dto.IconAssetId = Icon;
             dto.FileAssetId = FileAssetId;
             dto.Url = FileAssetUrl;
-
+            if (FileAsset != null)
+                dto.FileAsset = FileAsset.ToDTO();
             return dto;
         }
     }
@@ -54,5 +57,6 @@ namespace ApiModel.Entities
         public string SrcFileAssetId { get; set; }
         public string Url { get; set; }
         public string Materials { get; set; }
+        public FileAssetDTO FileAsset { get; set; }
     }
 }

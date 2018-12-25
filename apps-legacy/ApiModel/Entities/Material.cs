@@ -9,6 +9,8 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
 
+        [NotMapped]
+        public FileAsset FileAsset { get; set; }
         [JsonIgnore]
         [NotMapped]
         public string FileAssetUrl { get; set; }
@@ -38,7 +40,8 @@ namespace ApiModel.Entities
             dto.Url = FileAssetUrl;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
-
+            if (FileAsset != null)
+                dto.FileAsset = FileAsset.ToDTO();
             if (AssetCategory != null)
                 dto.CategoryName = AssetCategory.Name;
             dto.CategoryId = CategoryId;
@@ -54,5 +57,6 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
         public string Url { get; set; }
+        public FileAssetDTO FileAsset { get; set; }
     }
 }

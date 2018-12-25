@@ -95,6 +95,7 @@ namespace ApiServer.Repositories
                 if (fs != null)
                 {
                     data.FileAssetUrl = fs.Url;
+                    data.FileAsset = fs;
                 }
             }
 

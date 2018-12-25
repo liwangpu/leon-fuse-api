@@ -53,6 +53,7 @@ namespace ApiServer.Repositories
                 {
                     data.FileAssetUrl = fs.Url;
                     data.FileAssetId = fs.Id;
+                    data.FileAsset = fs;
                 }
 
             }
