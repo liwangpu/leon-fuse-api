@@ -55,7 +55,7 @@ namespace ApiServer.Repositories
                 }
             }
 
-            data.Server = appConfig.MediaShareServer;
+            data.Server = appConfig.Plugins.MediaShare;
 
             return data.ToDTO();
         }

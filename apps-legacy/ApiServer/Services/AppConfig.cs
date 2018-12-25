@@ -6,7 +6,6 @@
     public class AppConfig
     {
         public string ConnectionString { get; set; }
-        public string MediaShareServer { get; set; }
         public string MessageMail { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public SMTPSettings SMTPSettings { get; set; }
@@ -36,5 +35,6 @@
     public class Plugins
     {
         public string OrderViewer { get; set; }
+        public string MediaShare { get; set; }
     }
 }

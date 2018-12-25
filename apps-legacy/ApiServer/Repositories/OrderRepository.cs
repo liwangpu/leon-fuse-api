@@ -101,6 +101,7 @@ namespace ApiServer.Repositories
                                 if (fs != null)
                                 {
                                     item.ProductSpec.IconFileAssetUrl = fs.Url;
+                                    item.ProductSpec.Icon = fs.Url;
                                 }
                                 if (idx == 0)
                                     data.IconFileAssetUrl = item.ProductSpec.IconFileAssetUrl;

@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Legacy", "Apps-Legacy", "{3097E782-8305-4027-B39C-357AAEB0B686}"
 	ProjectSection(SolutionItems) = preProject
 		apps-legacy\.env = apps-legacy\.env
+		apps-legacy\docker-compose.bamboo.yml = apps-legacy\docker-compose.bamboo.yml
 		apps-legacy\docker-compose.yml = apps-legacy\docker-compose.yml
 	EndProjectSection
 EndProject

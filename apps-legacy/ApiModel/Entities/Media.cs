@@ -85,7 +85,7 @@ namespace ApiModel.Entities
             }
             get
             {
-                return $"{_Url}&t={Type}&id={Id}";
+                return $"{_Url}?t={Type}&id={Id}";
             }
         }
         [NotMapped]
