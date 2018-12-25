@@ -28,16 +28,18 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
+            dto.IsRoot = string.IsNullOrWhiteSpace(ParentId);
             dto.Children = new List<AssetCategoryDTO>();
             return dto;
         }
     }
 
-    public class AssetCategoryDTO: EntityBase
+    public class AssetCategoryDTO : EntityBase
     {
         public string Value { get; set; }
         public string Icon { get; set; }
         public string ParentId { get; set; }
+        public bool IsRoot { get; set; }
         /// <summary>
         /// 分类的类型，比如产品product, 材质material
         /// </summary>

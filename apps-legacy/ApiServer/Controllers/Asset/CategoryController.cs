@@ -111,7 +111,7 @@ namespace ApiServer.Controllers
             {
                 AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(root.Type, organId);
                 if (cat != null)
-                    pack.Categories.Add(cat); 
+                    pack.Categories.Add(cat);
             }
             return pack;
         }
@@ -131,7 +131,12 @@ namespace ApiServer.Controllers
         {
             if (string.IsNullOrWhiteSpace(organId))
                 organId = (await _GetCurrentUserRootOrgan()).Id;
-
+            //已经在重构版本的里面改好,这里使用临时方案
+            var existCat = _Repository._DbContext.AssetCategories.Any(x => x.OrganizationId == organId && x.Type == type);
+            if (!existCat)
+            {
+                await Get(type, organId);
+            }
             return await (_Repository as AssetCategoryRepository).GetFlatCategory(type, organId);
         }
         #endregion

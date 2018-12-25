@@ -1,4 +1,5 @@
-﻿using BambooCommon;
+﻿using ApiModel.Consts;
+using BambooCommon;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -58,7 +59,25 @@ namespace ApiModel.Entities
             dto.Phone = Phone;
             dto.Frozened = Frozened;
             dto.Type = Type;
-            dto.Role = Type;
+            dto.RoleId = Type;
+            //临时方案,已经在重构版本里面改好
+            if (Type == UserRoleConst.SysAdmin)
+                dto.RoleName = "系统超级管理员";
+            else if (Type == UserRoleConst.SysService)
+                dto.RoleName = "系统客服";
+            else if (Type == UserRoleConst.BrandAdmin)
+                dto.RoleName = "品牌商管理员";
+            else if (Type == UserRoleConst.BrandMember)
+                dto.RoleName = "品牌商用户";
+            else if (Type == UserRoleConst.PartnerAdmin)
+                dto.RoleName = "代理商管理员";
+            else if (Type == UserRoleConst.PartnerMember)
+                dto.RoleName = "代理商用户";
+            else if (Type == UserRoleConst.SupplierAdmin)
+                dto.RoleName = "供应商管理员";
+            else if (Type == UserRoleConst.SupplierMember)
+                dto.RoleName = "供应商用户";
+            else { }
             dto.ExpireTime = ExpireTime;
             dto.ActivationTime = ActivationTime;
             dto.Creator = Creator;
@@ -94,12 +113,13 @@ namespace ApiModel.Entities
         public string DepartmentName { get; set; }
         public string Phone { get; set; }
         public bool Frozened { get; set; }
-        public string Role { get; set; }
+        public string RoleId { get; set; }
+        public string RoleName { get; set; }
         public string Type { get; set; }
         public bool IsAdmin { get; set; }
         public string IconAssetId { get; set; }
         public DateTime ExpireTime { get; set; }
-        public DateTime ActivationTime { get; set; }        
+        public DateTime ActivationTime { get; set; }
         public List<AccountRole> AdditionRoles { get; set; }
     }
 }
