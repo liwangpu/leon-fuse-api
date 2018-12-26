@@ -68,7 +68,6 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.TypeCode = model.TypeCode;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -91,7 +90,6 @@ namespace ApiServer.Controllers
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.TypeCode = model.TypeCode;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

@@ -38,7 +38,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SysAdmin;
-                    role.Role = UserRoleConst.SysAdmin;
                     role.ApplyOrgans = OrganTyeConst.System_Supplier;
                     role.Name = "系统超级管理员";
                     role.Creator = AppConst.BambooAdminId;
@@ -54,7 +53,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SysService;
-                    role.Role = UserRoleConst.SysService;
                     role.ApplyOrgans = OrganTyeConst.System_Supplier;
                     role.Name = "系统客服";
                     role.Creator = AppConst.BambooAdminId;
@@ -70,7 +68,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.BrandAdmin;
-                    role.Role = UserRoleConst.BrandAdmin;
                     role.ApplyOrgans = OrganTyeConst.Brand;
                     role.Name = "品牌商管理员";
                     role.Creator = AppConst.BambooAdminId;
@@ -86,7 +83,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.BrandMember;
-                    role.Role = UserRoleConst.BrandMember;
                     role.ApplyOrgans = OrganTyeConst.Brand;
                     role.Name = "品牌商用户";
                     role.Creator = AppConst.BambooAdminId;
@@ -102,7 +98,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.PartnerAdmin;
-                    role.Role = UserRoleConst.PartnerAdmin;
                     role.ApplyOrgans = OrganTyeConst.Partner;
                     role.Name = "代理商管理员";
                     role.Creator = AppConst.BambooAdminId;
@@ -118,7 +113,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.PartnerMember;
-                    role.Role = UserRoleConst.PartnerMember;
                     role.ApplyOrgans = OrganTyeConst.Partner;
                     role.Name = "代理商用户";
                     role.Creator = AppConst.BambooAdminId;
@@ -134,7 +128,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SupplierAdmin;
-                    role.Role = UserRoleConst.SupplierAdmin;
                     role.ApplyOrgans = OrganTyeConst.Supplier;
                     role.Name = "供应商管理员";
                     role.Creator = AppConst.BambooAdminId;
@@ -150,7 +143,6 @@ namespace ApiServer
                 {
                     var role = new UserRole();
                     role.Id = UserRoleConst.SupplierMember;
-                    role.Role = UserRoleConst.SupplierMember;
                     role.ApplyOrgans = OrganTyeConst.Supplier;
                     role.Name = "供应商用户";
                     role.Creator = AppConst.BambooAdminId;
@@ -175,7 +167,6 @@ namespace ApiServer
                 {
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.System_Supplier;
-                    organType.TypeCode = OrganTyeConst.System_Supplier;
                     organType.Name = "系统供应商";
                     organType.Creator = AppConst.BambooAdminId;
                     organType.Modifier = AppConst.BambooAdminId;
@@ -190,7 +181,6 @@ namespace ApiServer
                 {
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.Brand;
-                    organType.TypeCode = OrganTyeConst.Brand;
                     organType.Name = "品牌商";
                     organType.Creator = AppConst.BambooAdminId;
                     organType.Modifier = AppConst.BambooAdminId;
@@ -205,7 +195,6 @@ namespace ApiServer
                 {
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.Partner;
-                    organType.TypeCode = OrganTyeConst.Partner;
                     organType.Name = "代理商";
                     organType.Creator = AppConst.BambooAdminId;
                     organType.Modifier = AppConst.BambooAdminId;
@@ -220,7 +209,6 @@ namespace ApiServer
                 {
                     var organType = new OrganizationType();
                     organType.Id = OrganTyeConst.Supplier;
-                    organType.TypeCode = OrganTyeConst.Supplier;
                     organType.Name = "供应商";
                     organType.Creator = AppConst.BambooAdminId;
                     organType.Modifier = AppConst.BambooAdminId;

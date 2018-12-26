@@ -298,7 +298,7 @@ namespace ApiServer.Repositories
 
                     if (!string.IsNullOrWhiteSpace(curData.OrganizationTypeId))
                     {
-                        var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == curData.OrganizationTypeId).FirstOrDefaultAsync();
+                        var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.Id == curData.OrganizationTypeId).FirstOrDefaultAsync();
                         if (organType != null)
                             curData.OrganizationTypeName = organType.Name;
                     }
@@ -327,7 +327,7 @@ namespace ApiServer.Repositories
             }
             if (!string.IsNullOrWhiteSpace(data.OrganizationTypeId))
             {
-                var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.TypeCode == data.OrganizationTypeId).FirstOrDefaultAsync();
+                var organType = await _DbContext.OrganizationTypes.Where(x => x.ActiveFlag == AppConst.I_DataState_Active && x.Id == data.OrganizationTypeId).FirstOrDefaultAsync();
                 if (organType != null)
                     data.OrganizationTypeName = organType.Name;
             }

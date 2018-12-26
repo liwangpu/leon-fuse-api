@@ -23,7 +23,7 @@ namespace ApiServer.Repositories
                 {
                     if (!string.IsNullOrWhiteSpace(data.Role))
                     {
-                        var refNav = await _DbContext.UserRoles.Where(x => x.Role == data.Role).FirstOrDefaultAsync();
+                        var refNav = await _DbContext.UserRoles.Where(x => x.Id == data.Role).FirstOrDefaultAsync();
                         if (refNav != null)
                         {
                             data.RoleName = refNav.Name;

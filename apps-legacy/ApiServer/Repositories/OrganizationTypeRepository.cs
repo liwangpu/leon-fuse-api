@@ -20,12 +20,6 @@ namespace ApiServer.Repositories
 
         public override async Task SatisfyCreateAsync(string accid, OrganizationType data, ModelStateDictionary modelState)
         {
-            if (!string.IsNullOrWhiteSpace(data.TypeCode))
-            {
-                var exist = await _DbContext.OrganizationTypes.CountAsync(x => x.TypeCode == data.TypeCode && data.ActiveFlag == 1 && x.Id != data.Id) > 0;
-                if (exist)
-                    modelState.AddModelError("Role", "该类型关键词已经使用");
-            }
             if (!string.IsNullOrWhiteSpace(data.Name))
             {
                 var exist = await _DbContext.OrganizationTypes.CountAsync(x => x.Name == data.Name && data.ActiveFlag == 1 && x.Id != data.Id) > 0;
@@ -41,12 +35,6 @@ namespace ApiServer.Repositories
                 modelState.AddModelError("IsInner", "不能修改内置量信息");
             }
 
-            if (!string.IsNullOrWhiteSpace(data.TypeCode))
-            {
-                var exist = await _DbContext.OrganizationTypes.CountAsync(x => x.TypeCode == data.TypeCode && data.ActiveFlag == 1 && x.Id != data.Id) > 0;
-                if (exist)
-                    modelState.AddModelError("Role", "该类型关键词已经使用");
-            }
             if (!string.IsNullOrWhiteSpace(data.Name))
             {
                 var exist = await _DbContext.OrganizationTypes.CountAsync(x => x.Name == data.Name && data.ActiveFlag == 1 && x.Id != data.Id) > 0;

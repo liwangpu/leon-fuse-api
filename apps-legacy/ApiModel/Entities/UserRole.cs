@@ -4,7 +4,6 @@ namespace ApiModel.Entities
 {
     public class UserRole : EntityBase, IListable, IDTOTransfer<UserRoleDTO>
     {
-        public string Role { get; set; }
         /// <summary>
         /// 适用组织类型,逗号分隔
         /// </summary>
@@ -17,7 +16,6 @@ namespace ApiModel.Entities
             var dto = new UserRoleDTO();
             dto.Id = Id;
             dto.Name = Name;
-            dto.Role = Role;
             dto.ApplyOrgans = ApplyOrgans;
             dto.Description = Description;
             dto.OrganizationId = OrganizationId;
@@ -35,7 +33,6 @@ namespace ApiModel.Entities
 
     public class UserRoleDTO : EntityBase, IListable
     {
-        public string Role { get; set; }
         public bool IsInner { get; set; }
         public string Icon { get; set; }
         public string ApplyOrgans { get; set; }

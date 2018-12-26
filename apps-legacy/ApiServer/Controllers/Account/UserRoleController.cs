@@ -109,7 +109,6 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.Role = model.Role;
                 entity.ApplyOrgans = model.ApplyOrgans;
                 entity.OrganizationId = organId;
                 return await Task.FromResult(entity);
@@ -136,7 +135,6 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.Role = model.Role;
                 entity.ApplyOrgans = model.ApplyOrgans;
                 entity.OrganizationId = organId;
                 return await Task.FromResult(entity);

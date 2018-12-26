@@ -165,7 +165,6 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        public string TypeCode { get; set; }
     }
 
     public class OrganizationTypeEditModel
@@ -176,15 +175,12 @@ namespace ApiServer.Models
         public string Name { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
-        public string TypeCode { get; set; }
     }
 
     public class UserRoleCreateModel
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Role { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string IconAssetId { get; set; }
@@ -197,8 +193,6 @@ namespace ApiServer.Models
         public string Id { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
-        public string Role { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string IconAssetId { get; set; }

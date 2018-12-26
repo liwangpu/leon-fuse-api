@@ -5,7 +5,6 @@ namespace ApiModel.Entities
 {
     public class OrganizationType : EntityBase, IListable, IDTOTransfer<OrganizationTypeDTO>
     {
-        public string TypeCode { get; set; }
         public string Icon { get; set; }
         public bool IsInner { get; set; }
         public OrganizationTypeDTO ToDTO()
@@ -21,7 +20,6 @@ namespace ApiModel.Entities
             dto.ModifiedTime = ModifiedTime;
             dto.CreatorName = CreatorName;
             dto.ModifierName = ModifierName;
-            dto.TypeCode = TypeCode;
             dto.IsInner = IsInner;
             return dto;
         }
@@ -29,11 +27,9 @@ namespace ApiModel.Entities
 
     public class OrganizationTypeDTO : EntityBase, IListable
     {
-        public string TypeCode { get; set; }
         public string Icon { get; set; }
         public string ApplyOrgans { get; set; }
         public bool IsInner { get; set; }
-        
     }
 
 }
