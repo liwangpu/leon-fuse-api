@@ -72,6 +72,11 @@ namespace ApiServer.Repositories
         }
         #endregion
 
+        public override async Task<bool> CanReadAsync(string accid, string id)
+        {
+            return await Task.FromResult(true);
+        }
+
         #region CanCreateAsync 判断数据是否满足创建规范
         /// <summary>
         /// CanCreateAsync

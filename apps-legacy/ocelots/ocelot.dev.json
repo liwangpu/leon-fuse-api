@@ -1,0 +1,26 @@
+{
+    "ReRoutes": [
+        
+      {
+        "DownstreamPathTemplate": "/{everthing}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "dmzapiserver",
+            "Port": 80
+          }
+        ],
+        "UpstreamPathTemplate": "/{everthing}",
+        "UpstreamHttpMethod": [
+          "Get",
+          "Post",
+          "Put",
+          "Delete",
+          "Options"
+        ]
+      }
+    ],
+    "GlobalConfiguration": {
+      "BaseUrl": "http://api.mybusiness.com"
+    }
+  }

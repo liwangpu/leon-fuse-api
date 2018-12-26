@@ -101,11 +101,51 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(AccountDTO), 200)]
         public async Task<IActionResult> Get(string id)
         {
             return await _GetByIdRequest(id);
+        }
+        #endregion
+
+        #region GetNameById 根据Id获取用户姓名
+        /// <summary>
+        /// 根据Id获取用户姓名
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("GetNameById")]
+        [ProducesResponseType(typeof(string), 200)]
+        public async Task<IActionResult> GetNameById(string id)
+        {
+            var acc = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == id);
+            return Ok(acc != null ? acc.Name : string.Empty);
+        }
+        #endregion
+
+        #region GetNameByIds 根据Ids获取用户姓名集合
+        /// <summary>
+        /// 根据Ids获取用户姓名集合
+        /// </summary>
+        /// <param name="ids">逗号分隔的id</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("GetNameByIds")]
+        [ProducesResponseType(typeof(List<string>), 200)]
+        public async Task<IActionResult> GetNameByIds(string ids)
+        {
+            ids = string.IsNullOrWhiteSpace(ids) ? string.Empty : ids;
+            var names = new List<string>();
+            var idArr = ids.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            foreach (var id in idArr)
+            {
+                var acc = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == id);
+                names.Add(acc != null ? acc.Name : string.Empty);
+            }
+            return Ok(names);
         }
         #endregion
 

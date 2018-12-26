@@ -65,7 +65,15 @@ namespace ApiServer.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_AppConfig.JwtSettings.SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[] { new Claim(ClaimTypes.Name, account.Id) };
+            //var claims = new[] { new Claim(ClaimTypes.Name, account.Id) };
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, account.Id)
+                , new Claim(ClaimTypes.Role, account.Type)
+                , new Claim("OrganizationId", account.OrganizationId)
+            };
+
 
             var expires = DateTime.Now.AddDays(_AppConfig.JwtSettings.ExpiresDay);
             var token = new JwtSecurityToken(

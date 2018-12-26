@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Legacy", "Apps-Legacy"
 		apps-legacy\.env = apps-legacy\.env
 		apps-legacy\docker-compose.bamboo.yml = apps-legacy\docker-compose.bamboo.yml
 		apps-legacy\docker-compose.yml = apps-legacy\docker-compose.yml
+		apps-legacy\ocelot.json = apps-legacy\ocelot.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.Basic.Data", "apps-basic\Apps.Basic.Data\Apps.Basic.Data.csproj", "{88E83460-813F-44A1-A679-A6D3FA424EE1}"
@@ -67,6 +68,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shells", "shells", "{AC7D0B
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransferHelper", "apps-legacy\DataTransferHelper\DataTransferHelper.csproj", "{BC120EDE-D350-46E4-A352-562A38D2C08C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-OMS", "Apps-OMS", "{5269A622-9631-4535-BDB1-4500B2B7D2A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.OMS.Data", "apps-oms\Apps.OMS.Data\Apps.OMS.Data.csproj", "{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.OMS.Export", "apps-oms\Apps.OMS.Export\Apps.OMS.Export.csproj", "{9D129F29-B599-46D1-89C5-7E67FF38AC83}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.OMS.Service", "apps-oms\Apps.OMS.Service\Apps.OMS.Service.csproj", "{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shells", "shells", "{48AC7A50-9CE4-4539-984F-5F99FEF3D7F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -270,6 +281,42 @@ Global
 		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|x64.ActiveCfg = Release|Any CPU
 		{BC120EDE-D350-46E4-A352-562A38D2C08C}.Release|x64.Build.0 = Release|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Cloud-Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Cloud-Dev|Any CPU.Build.0 = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Cloud-Dev|x64.ActiveCfg = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Cloud-Dev|x64.Build.0 = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1}.Release|x64.Build.0 = Release|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Cloud-Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Cloud-Dev|Any CPU.Build.0 = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Cloud-Dev|x64.ActiveCfg = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Cloud-Dev|x64.Build.0 = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Debug|x64.Build.0 = Debug|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83}.Release|x64.Build.0 = Release|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Cloud-Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Cloud-Dev|Any CPU.Build.0 = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Cloud-Dev|x64.ActiveCfg = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Cloud-Dev|x64.Build.0 = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Debug|x64.Build.0 = Debug|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Release|x64.ActiveCfg = Release|Any CPU
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -292,6 +339,10 @@ Global
 		{223046F5-3FAE-45B3-AD71-91623CD949FF} = {C299A4ED-0C72-46FC-8988-8C0393C4B174}
 		{AC7D0B21-D0E7-4A5A-9570-82A9BB13FA0F} = {28BB17AA-AC2A-4E71-923F-59B8A454EF8E}
 		{BC120EDE-D350-46E4-A352-562A38D2C08C} = {3097E782-8305-4027-B39C-357AAEB0B686}
+		{1049A128-C527-4E4E-A6D5-1DBB253DA6F1} = {5269A622-9631-4535-BDB1-4500B2B7D2A5}
+		{9D129F29-B599-46D1-89C5-7E67FF38AC83} = {5269A622-9631-4535-BDB1-4500B2B7D2A5}
+		{6102D3D4-07FD-4A58-90E5-6818A5BC01FD} = {5269A622-9631-4535-BDB1-4500B2B7D2A5}
+		{48AC7A50-9CE4-4539-984F-5F99FEF3D7F9} = {3097E782-8305-4027-B39C-357AAEB0B686}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1F15B0A-1C9E-4766-A6EA-45FB37ECAA34}

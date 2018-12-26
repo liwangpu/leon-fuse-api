@@ -1,4 +1,5 @@
 ﻿using Apps.Base.Common;
+using Apps.Basic.Export.DTOs;
 using Flurl.Http;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,30 @@ namespace Apps.Basic.Export.Services
     {
 
         #region 构造函数
+        public AccountMicroService(string server)
+         : base(server)
+        {
+
+        }
         public AccountMicroService(string server, string token)
             : base(server, token)
         {
 
+        }
+        #endregion
+
+        #region GetById 根据Id获取用户信息
+        /// <summary>
+        /// 根据Id获取用户信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<AccountDTO> GetById(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return null;
+            var dto = await $"{Server}/Account/{id}".AllowAnyHttpStatus().GetJsonAsync<AccountDTO>();
+            return dto;
         }
         #endregion
 
@@ -25,7 +46,7 @@ namespace Apps.Basic.Export.Services
         /// <returns></returns>
         public async Task<string> GetNameById(string id)
         {
-            var name = await $"{Server}/Account/GetNameById?id={id}".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetStringAsync();
+            var name = await $"{Server}/Account/GetNameById?id={id}".AllowAnyHttpStatus().GetStringAsync();
             return name;
         }
         #endregion
@@ -38,7 +59,7 @@ namespace Apps.Basic.Export.Services
         /// <returns></returns>
         public async Task<List<string>> GetNameByIds(string ids)
         {
-            var names = await $"{Server}/Account/GetNameByIds?ids={ids}".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetJsonAsync<List<string>>();
+            var names = await $"{Server}/Account/GetNameByIds?ids={ids}".AllowAnyHttpStatus().GetJsonAsync<List<string>>();
             return names;
         }
         #endregion
@@ -58,7 +79,7 @@ namespace Apps.Basic.Export.Services
             var ids = $"{creator},{modifier}";
             var names = await GetNameByIds(ids);
             assign(names[0], names[1]);
-        } 
+        }
         #endregion
 
     }

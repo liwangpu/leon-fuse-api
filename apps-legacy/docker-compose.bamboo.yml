@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+
   dmzpostgresdb:
     container_name: dmzpostgresdb_c
     ports:
@@ -32,8 +33,8 @@ services:
     environment:
       - SERVER=http://testapi.damaozhu.com.cn
 
-  dmzapiserver_ehome:
-    container_name: dmzapiserver_ehome_c
+  dmzapiserver_dev:
+    container_name: dmzapiserver_dev_c
     ports:
       - "1993:80"
     environment:
@@ -51,8 +52,8 @@ services:
       - "/var/bamboo/dmzapiserver_ehome/logs:/app/logs"
       - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
       
-  dmztoolsite_for_dmzapiserver_ehome:
-    container_name: dmztoolsite_for_dmzapiserver_ehome_c
+  dmztoolsite_for_dmzapiserver_dev:
+    container_name: dmztoolsite_for_dmzapiserver_dev_c
     ports:
       - "1994:3000"
     environment:

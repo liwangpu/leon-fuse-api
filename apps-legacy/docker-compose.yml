@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+
   dmzpostgresdb:
     container_name: dmzpostgresdb_c
     image: postgres:10.5
@@ -57,42 +58,54 @@ services:
     depends_on:
       - dmzapiserver
 
-  dmzapiserver_ehome:
-    container_name: dmzapiserver_ehome_c
-    image: dmzapiserver
-    ports:
-      - "1993:80"
-    networks:
-      - dmzapinet
-    environment:
-      # GuidSettings
-      - GuidSettings:ServerId=${GuidSettings_ServerId}
-      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
-      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
-      # JwtSettings
-      - JwtSettings:Issuer=damaozhu.com.cn
-      - JwtSettings:Audience=damaozhu.com.cn
-      - JwtSettings:SecretKey=damaozhu-ehome-test-app
-      - JwtSettings:ExpiresDay=1
-      # ConnectionString
-      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_ehome;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
-    volumes:
-      - "/var/bamboo/dmzapiserver_ehome/logs:/app/logs"
-      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
-    depends_on:
-      - dmzpostgresdb
+  # dmzapiserver_dev:
+  #   container_name: dmzapiserver_dev_c
+  #   image: dmzapiserver
+  #   ports:
+  #     - "1993:80"
+  #   networks:
+  #     - dmzapinet
+  #   environment:
+  #     # GuidSettings
+  #     - GuidSettings:ServerId=${GuidSettings_ServerId}
+  #     - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+  #     - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+  #     # JwtSettings
+  #     - JwtSettings:Issuer=damaozhu.com.cn
+  #     - JwtSettings:Audience=damaozhu.com.cn
+  #     - JwtSettings:SecretKey=damaozhu-ehome-test-app
+  #     - JwtSettings:ExpiresDay=1
+  #     # ConnectionString
+  #     - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_ehome;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+  #   volumes:
+  #     - "/var/bamboo/dmzapiserver_dev/logs:/app/logs"
+  #     - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+  #   depends_on:
+  #     - dmzpostgresdb
 
-  dmztoolsite_for_dmzapiserver_ehome:
-    container_name: dmztoolsite_for_dmzapiserver_ehome_c
-    image: liwangp2012/bamboo-tool-site:latest
+  # dmztoolsite_for_dmzapiserver_dev:
+  #   container_name: dmztoolsite_for_dmzapiserver_dev_c
+  #   image: liwangp2012/bamboo-tool-site:latest
+  #   ports:
+  #     - "1994:3000"
+  #   networks:
+  #     - dmzapinet
+  #   environment:
+  #     - SERVER=dmzapiserver_dev
+  #   depends_on:
+  #     - dmzapiserver_dev
+
+  dmzapigateway:
+    container_name: dmzapigateway_c
+    build:
+      context: ../
+      dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
     ports:
-      - "1994:3000"
+      - "1995:80"
+    volumes:
+      - "/var/bamboo/dmzapigateway/logs:/app/logs"
     networks:
       - dmzapinet
-    environment:
-      - SERVER=dmzapiserver_ehome
-    depends_on:
-      - dmzapiserver_ehome
 
 networks:
   dmzapinet:
