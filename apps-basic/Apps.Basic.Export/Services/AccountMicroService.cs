@@ -1,5 +1,6 @@
 ﻿using Apps.Base.Common;
 using Apps.Basic.Export.DTOs;
+using Apps.Basic.Export.Models;
 using Flurl.Http;
 using System;
 using System.Collections.Generic;
@@ -82,5 +83,12 @@ namespace Apps.Basic.Export.Services
         }
         #endregion
 
+        public async Task<AccountDTO> CreateAccount(AccountCreateModel data)
+        {
+            var dto = await $"{Server}/Account".WithOAuthBearerToken(Token).AllowAnyHttpStatus().PostJsonAsync(data).ReceiveJson<AccountDTO>();
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Id))
+                return null;
+            return dto;
+        }
     }
 }

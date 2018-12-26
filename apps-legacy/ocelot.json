@@ -41,8 +41,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "dmzapiserver",
-          "Port": 80
+          "Host": "192.168.1.176",
+          "Port": 1882
         }
       ],
       "UpstreamPathTemplate": "/{everthing}",

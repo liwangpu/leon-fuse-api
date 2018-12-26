@@ -99,6 +99,34 @@ namespace Apps.Base.Common.Controllers
         }
 
         /// <summary>
+        /// 重载,注意,该方案传递的data是作为创建动作还是更新动作的关键
+        /// 如果data为空,即为创建,但是如果有值且id不为空,即将进行更新操作
+        /// data中的其他字段在mapping中匹配
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="mapping"></param>
+        /// <param name="afterCreated"></param>
+        /// <returns></returns>
+        protected async Task<IActionResult> _PostRequest(T data, Func<T, Task<T>> mapping, Func<T, Task<IActionResult>> afterCreated = null)
+        {
+            if (data != null && !string.IsNullOrWhiteSpace(data.Id))
+            {
+                if (afterCreated == null)
+                    return await _PutRequest(data.Id, mapping);
+                else
+                    return await _PutRequest(data.Id, mapping, afterCreated);
+            }
+            else
+            {
+                if (afterCreated == null)
+                    return await _PostRequest(mapping);
+                else
+                    return await _PostRequest(mapping, afterCreated);
+            }
+
+        }
+
+        /// <summary>
         /// 重载
         /// </summary>
         /// <param name="mapping"></param>
@@ -163,7 +191,7 @@ namespace Apps.Base.Common.Controllers
         /// <returns></returns>
         protected async Task<IActionResult> _DeleteRequest(string id, Func<Task<IActionResult>> afterDeleted)
         {
-            var entity = await _Repository.GetByIdAsync(id,CurrentAccountId);
+            var entity = await _Repository.GetByIdAsync(id, CurrentAccountId);
             if (entity == null)
                 return NotFound();
             var deleteMessage = await _Repository.CanDeleteAsync(id, CurrentAccountId);

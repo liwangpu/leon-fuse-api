@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.OMS.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181226085840_AddMemberRegistry")]
+    [Migration("20181226101413_AddMemberRegistry")]
     partial class AddMemberRegistry
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,8 @@ namespace Apps.OMS.Service.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ActiveFlag");
+
+                    b.Property<string>("Approver");
 
                     b.Property<string>("Area");
 

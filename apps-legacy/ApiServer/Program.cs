@@ -29,6 +29,9 @@ namespace ApiServer
                        logging.SetMinimumLevel(LogLevel.Trace);
                    })
                 .UseNLog()
+#if DEBUG
+                .UseUrls("http://*:1882")
+#endif
                 .UseKestrel(options =>
                 {
                     //最大文件上传3G

@@ -47,11 +47,11 @@ namespace Apps.OMS.Service.Repositories
         {
             data.Id = GuidGen.NewGUID();
             data.ActiveFlag = AppConst.Active;
-            if (!string.IsNullOrWhiteSpace(accountId))
-            {
-                data.Creator = accountId;
-                data.Modifier = accountId;
-            }
+            //if (!string.IsNullOrWhiteSpace(accountId))
+            //{
+            //    data.Creator = accountId;
+            //    data.Modifier = accountId;
+            //}
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = data.CreatedTime;
             _Context.MemberRegistries.Add(data);

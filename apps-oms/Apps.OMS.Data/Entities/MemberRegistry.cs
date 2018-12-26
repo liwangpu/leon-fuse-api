@@ -49,6 +49,13 @@ namespace Apps.OMS.Data.Entities
         public string Area { get; set; }
         public string BusinessCard { get; set; }
         public string Inviter { get; set; }
+        /// <summary>
+        /// 是否审批
+        /// </summary>
         public bool IsApprove { get; set; }
+        /// <summary>
+        /// 审批人
+        /// </summary>
+        public string Approver { get; set; }
     }
 }

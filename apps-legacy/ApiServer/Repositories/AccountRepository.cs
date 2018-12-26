@@ -37,12 +37,12 @@ namespace ApiServer.Repositories
                     modelState.AddModelError("Mail", "该邮箱已经使用");
             }
 
-            if (!string.IsNullOrWhiteSpace(data.Phone))
-            {
-                var existPhone = await _DbContext.Accounts.CountAsync(x => x.Phone == data.Phone) > 0;
-                if (existPhone)
-                    modelState.AddModelError("Phone", "该电话已经使用");
-            }
+            //if (!string.IsNullOrWhiteSpace(data.Phone))
+            //{
+            //    var existPhone = await _DbContext.Accounts.CountAsync(x => x.Phone == data.Phone) > 0;
+            //    if (existPhone)
+            //        modelState.AddModelError("Phone", "该电话已经使用");
+            //}
 
         }
         #endregion

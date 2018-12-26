@@ -29,7 +29,8 @@ namespace Apps.OMS.Service.Migrations
                     Area = table.Column<string>(nullable: true),
                     BusinessCard = table.Column<string>(nullable: true),
                     Inviter = table.Column<string>(nullable: true),
-                    IsApprove = table.Column<bool>(nullable: false)
+                    IsApprove = table.Column<bool>(nullable: false),
+                    Approver = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

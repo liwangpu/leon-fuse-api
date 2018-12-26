@@ -26,6 +26,8 @@ namespace Apps.OMS.Service.Migrations
 
                     b.Property<int>("ActiveFlag");
 
+                    b.Property<string>("Approver");
+
                     b.Property<string>("Area");
 
                     b.Property<string>("BusinessCard");

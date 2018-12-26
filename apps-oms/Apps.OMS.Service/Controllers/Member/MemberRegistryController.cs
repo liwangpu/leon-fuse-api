@@ -4,6 +4,7 @@ using Apps.Base.Common.Consts;
 using Apps.Base.Common.Controllers;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
+using Apps.Basic.Export.Models;
 using Apps.Basic.Export.Services;
 using Apps.OMS.Data.Entities;
 using Apps.OMS.Export.DTOs;
@@ -148,31 +149,89 @@ namespace Apps.OMS.Service.Controllers
             }
 
             var refMember = await _Context.MemberRegistries.FirstOrDefaultAsync(x => x.Mail == model.Mail.Trim() && x.OrganizationId == inviteUser.OrganizationId);
-            var member = refMember != null ? refMember : new MemberRegistry();
-            if (string.IsNullOrWhiteSpace(member.Id))
-                member.Id = GuidGen.NewGUID();
-            member.Name = model.Name;
-            member.Description = model.Remark;
-            member.ActiveFlag = AppConst.Active;
-            member.Phone = model.Phone;
-            member.Mail = model.Mail;
-            member.Company = model.Company;
-            member.Province = model.Province;
-            member.City = model.City;
-            member.Area = model.Area;
-            member.Inviter = model.Inviter;
-            member.Creator = model.Inviter;
-            member.Modifier = model.Inviter;
-            member.OrganizationId = inviteUser.OrganizationId;
-            if (refMember == null)
-                member.CreatedTime = DateTime.Now;
-            member.ModifiedTime = DateTime.Now;
-            if (refMember == null)
-                _Context.MemberRegistries.Add(member);
-            else
-                _Context.MemberRegistries.Update(member);
-            await _Context.SaveChangesAsync();
-            return Ok();
+
+            var mapping = new Func<MemberRegistry, Task<MemberRegistry>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Remark;
+                entity.ActiveFlag = AppConst.Active;
+                entity.Phone = model.Phone;
+                entity.Mail = model.Mail;
+                entity.Company = model.Company;
+                entity.Province = model.Province;
+                entity.City = model.City;
+                entity.Area = model.Area;
+                entity.Inviter = model.Inviter;
+                entity.Creator = model.Inviter;
+                entity.Modifier = model.Inviter;
+                entity.OrganizationId = inviteUser.OrganizationId;
+                return await Task.FromResult(entity);
+            });
+            return await _PostRequest(refMember, mapping);
+        }
+        #endregion
+
+        #region Put 更新会员邀请信息
+        /// <summary>
+        /// 更新会员邀请信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(MemberRegistryDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Put([FromBody]MemberRegistryUpdateModel model)
+        {
+            var mapping = new Func<MemberRegistry, Task<MemberRegistry>>(async (entity) =>
+            {
+                entity.Name = model.Name;
+                entity.Description = model.Remark;
+                entity.Phone = model.Phone;
+                entity.Mail = model.Mail;
+                entity.Company = model.Company;
+                entity.Province = model.Province;
+                entity.City = model.City;
+                entity.Area = model.Area;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region ApproveRegistry 审核会员注册申请
+        /// <summary>
+        /// 审核会员注册申请
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("ApproveRegistry")]
+        [HttpPost]
+        [ValidateModel]
+        [ProducesResponseType(typeof(Nullable), 200)]
+        public async Task<IActionResult> ApproveRegistry([FromBody]MemberRegistryApproveModel model)
+        {
+            var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
+            var mapping = new Func<MemberRegistry, Task<MemberRegistry>>(async (entity) =>
+            {
+                entity.IsApprove = true;
+                entity.Approver = CurrentAccountId;
+                return await Task.FromResult(entity);
+            });
+            var afterUpdated = new Func<MemberRegistry, Task>(async (member) =>
+            {
+                var user = new AccountCreateModel();
+                user.Mail = member.Mail;
+                user.Phone = member.Phone;
+                user.Name = member.Name;
+                user.Password = AppConst.NormalPassword;
+                user.Description = member.Description;
+                user.ActivationTime = DateTime.Now;
+                user.ExpireTime = DateTime.Now.AddYears(1);
+                var dto = await accountMicroService.CreateAccount(user);
+
+            });
+            return await _PutRequest(model.Id, mapping, afterUpdated);
         }
         #endregion
     }
