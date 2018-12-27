@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.OMS.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20181227051350_AddHierachyParam")]
-    partial class AddHierachyParam
+    [Migration("20181227110625_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,38 @@ namespace Apps.OMS.Service.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("Apps.OMS.Data.Entities.Member", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountId");
+
+                    b.Property<string>("Area");
+
+                    b.Property<string>("BusinessCard");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Company");
+
+                    b.Property<DateTime>("CreatedTime");
+
+                    b.Property<string>("Creator");
+
+                    b.Property<string>("Inviter");
+
+                    b.Property<DateTime>("ModifiedTime");
+
+                    b.Property<string>("Modifier");
+
+                    b.Property<string>("Province");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Members");
+                });
 
             modelBuilder.Entity("Apps.OMS.Data.Entities.MemberHierarchyParam", b =>
                 {
@@ -45,6 +77,22 @@ namespace Apps.OMS.Service.Migrations
                     b.ToTable("MemberHierarchyParams");
                 });
 
+            modelBuilder.Entity("Apps.OMS.Data.Entities.MemberHierarchySetting", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("MemberHierarchyParamId");
+
+                    b.Property<string>("OrganizationId");
+
+                    b.Property<decimal>("Rate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MemberHierarchySettings");
+                });
+
             modelBuilder.Entity("Apps.OMS.Data.Entities.MemberRegistry", b =>
                 {
                     b.Property<string>("Id")
@@ -67,8 +115,6 @@ namespace Apps.OMS.Service.Migrations
                     b.Property<string>("Creator");
 
                     b.Property<string>("Description");
-
-                    b.Property<string>("Icon");
 
                     b.Property<string>("Inviter");
 

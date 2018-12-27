@@ -27,12 +27,14 @@ namespace Apps.OMS.Service.Controllers
     {
         protected AppConfig _AppConfig { get; }
         protected AppDbContext _Context { get; }
+        protected IRepository<Member> _MemberRepository { get; }
 
         #region 构造函数
-        public MemberRegistryController(IRepository<MemberRegistry> repository, AppDbContext context, IOptions<AppConfig> settingsOptions)
+        public MemberRegistryController(IRepository<MemberRegistry> repository, IRepository<Member> memberRepository, AppDbContext context, IOptions<AppConfig> settingsOptions)
             : base(repository)
         {
             _Context = context;
+            _MemberRepository = memberRepository;
             _AppConfig = settingsOptions.Value;
         }
         #endregion
@@ -218,17 +220,30 @@ namespace Apps.OMS.Service.Controllers
                 entity.Approver = CurrentAccountId;
                 return await Task.FromResult(entity);
             });
-            var afterUpdated = new Func<MemberRegistry, Task>(async (member) =>
+            var afterUpdated = new Func<MemberRegistry, Task>(async (entity) =>
             {
                 var user = new AccountCreateModel();
-                user.Mail = member.Mail;
-                user.Phone = member.Phone;
-                user.Name = member.Name;
+                user.Mail = GuidGen.NewGUID();//使用guid作为邮件,以防邮件重复创建用户失败
+                user.Phone = entity.Phone;
+                user.Name = entity.Name;
                 user.Password = AppConst.NormalPassword;
-                user.Description = member.Description;
+                user.Description = entity.Description;
                 user.ActivationTime = DateTime.Now;
                 user.ExpireTime = DateTime.Now.AddYears(1);
                 var dto = await accountMicroService.CreateAccount(user);
+                //创建会员基本信息
+                if (dto != null)
+                {
+                    var member = new Member();
+                    member.AccountId = dto.Id;
+                    member.Province = entity.Province;
+                    member.City = entity.City;
+                    member.Area = entity.Area;
+                    member.Company = entity.Company;
+                    member.BusinessCard = entity.BusinessCard;
+                    member.Inviter = entity.Inviter;
+                    await _MemberRepository.CreateAsync(member, CurrentAccountId);
+                }
 
             });
             return await _PutRequest(model.Id, mapping, afterUpdated);

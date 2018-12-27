@@ -1,17 +1,15 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Apps.OMS.Data.Entities
 {
-    public class MemberRegistry : IEntity
+    public class Member : IEntity, IListView
     {
         /// <summary>
         /// Id
         /// </summary>
         public string Id { get; set; }
-        /// <summary>
-        /// 名称
-        /// </summary>
-        public string Name { get; set; }
         /// <summary>
         /// 创建人
         /// </summary>
@@ -28,33 +26,18 @@ namespace Apps.OMS.Data.Entities
         /// 更新时间
         /// </summary>
         public DateTime ModifiedTime { get; set; }
-        /// <summary>
-        /// 数据激活状态标记
-        /// </summary>
-        public int ActiveFlag { get; set; }
-        /// <summary>
-        /// 组织Id
-        /// </summary>
-        public string OrganizationId { get; set; }
-        /// <summary>
-        /// 描述
-        /// </summary>
+        [NotMapped]
         public string Description { get; set; }
-        public string Phone { get; set; }
-        public string Mail { get; set; }
         public string Company { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
         public string Area { get; set; }
         public string BusinessCard { get; set; }
+        public string AccountId { get; set; }
         public string Inviter { get; set; }
-        /// <summary>
-        /// 是否审批
-        /// </summary>
-        public bool IsApprove { get; set; }
-        /// <summary>
-        /// 审批人
-        /// </summary>
-        public string Approver { get; set; }
+        [NotMapped]
+        public string Name { get; set; }
+        [NotMapped]
+        public string Icon { get; set; }
     }
 }
