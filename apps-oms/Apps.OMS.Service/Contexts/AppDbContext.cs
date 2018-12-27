@@ -18,5 +18,9 @@ namespace Apps.OMS.Service.Contexts
         #endregion
 
         public DbSet<MemberRegistry> MemberRegistries { get; set; }
+
+        public DbSet<MemberHierarchyParam> MemberHierarchyParams { get; set; }
+
+        public DbSet<MemberHierarchySetting> MemberHierarchySettings { get; set; }
     }
 }

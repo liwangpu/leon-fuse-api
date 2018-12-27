@@ -37,12 +37,36 @@
       ]
     },
     {
-      "DownstreamPathTemplate": "/{everthing}",
+      "DownstreamPathTemplate": "/MemberHierarchyParam",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "192.168.1.176",
-          "Port": 1882
+          "Port": 1996
+        }
+      ],
+      "UpstreamPathTemplate": "/MemberHierarchyParam",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/MemberHierarchyParam/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1996
+        }
+      ],
+      "UpstreamPathTemplate": "/MemberHierarchyParam/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everthing}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dmzapiserver",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/{everthing}",

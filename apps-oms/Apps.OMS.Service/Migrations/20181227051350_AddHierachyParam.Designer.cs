@@ -3,15 +3,17 @@ using System;
 using Apps.OMS.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.OMS.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181227051350_AddHierachyParam")]
+    partial class AddHierachyParam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,28 +45,10 @@ namespace Apps.OMS.Service.Migrations
                     b.ToTable("MemberHierarchyParams");
                 });
 
-            modelBuilder.Entity("Apps.OMS.Data.Entities.MemberHierarchySetting", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("MemberHierarchyParamId");
-
-                    b.Property<string>("OrganizationId");
-
-                    b.Property<decimal>("Rate");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MemberHierarchySettings");
-                });
-
             modelBuilder.Entity("Apps.OMS.Data.Entities.MemberRegistry", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AccountId");
 
                     b.Property<int>("ActiveFlag");
 

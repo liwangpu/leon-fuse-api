@@ -48,6 +48,7 @@ namespace Apps.OMS.Data.Entities
         public string City { get; set; }
         public string Area { get; set; }
         public string BusinessCard { get; set; }
+        public string AccountId { get; set; }
         public string Inviter { get; set; }
         /// <summary>
         /// 是否审批

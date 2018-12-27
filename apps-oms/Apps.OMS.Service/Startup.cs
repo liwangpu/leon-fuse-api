@@ -81,7 +81,8 @@ namespace Apps.OMS.Service
 
             #region Service Registry
             services.AddScoped<IRepository<MemberRegistry>, MemberRegistryRepository>();
-
+            services.AddScoped<IRepository<MemberHierarchyParam>, MemberHierarchyParamRepository>();
+            
             #endregion
         }
 
