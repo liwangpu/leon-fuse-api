@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Legacy", "Apps-Legacy"
 		apps-legacy\docker-compose.bamboo.yml = apps-legacy\docker-compose.bamboo.yml
 		apps-legacy\docker-compose.yml = apps-legacy\docker-compose.yml
 		apps-legacy\ocelot.json = apps-legacy\ocelot.json
+		apps-legacy\必读.md = apps-legacy\必读.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.Basic.Data", "apps-basic\Apps.Basic.Data\Apps.Basic.Data.csproj", "{88E83460-813F-44A1-A679-A6D3FA424EE1}"
@@ -78,6 +79,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.OMS.Service", "apps-oms\Apps.OMS.Service\Apps.OMS.Service.csproj", "{6102D3D4-07FD-4A58-90E5-6818A5BC01FD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shells", "shells", "{48AC7A50-9CE4-4539-984F-5F99FEF3D7F9}"
+	ProjectSection(SolutionItems) = preProject
+		apps-legacy\shells\apigateway_remap.bat = apps-legacy\shells\apigateway_remap.bat
+		apps-legacy\shells\bamboo_deploy.bat = apps-legacy\shells\bamboo_deploy.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

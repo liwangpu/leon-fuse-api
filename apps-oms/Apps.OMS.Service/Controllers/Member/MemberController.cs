@@ -68,8 +68,10 @@ namespace Apps.OMS.Service.Controllers
                     dto.Icon = account.Icon;
                 }
 
-                dto.Inviter = entity.Inviter;
-                dto.InviterName = await accountMicroService.GetNameById(entity.Inviter);
+                //dto.Inviter = entity.Inviter;
+                //dto.InviterName = await accountMicroService.GetNameById(entity.Inviter);
+                dto.Superior = entity.Superior;
+                dto.SuperiorName = await accountMicroService.GetNameById(entity.Superior);
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
@@ -121,6 +123,8 @@ namespace Apps.OMS.Service.Controllers
 
                 dto.Inviter = entity.Inviter;
                 dto.InviterName = await accountMicroService.GetNameById(entity.Inviter);
+                dto.Superior = entity.Superior;
+                //dto.SuperiorName = await accountMicroService.GetNameById(entity.Superior);
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {

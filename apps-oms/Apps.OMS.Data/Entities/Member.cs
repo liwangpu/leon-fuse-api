@@ -34,7 +34,14 @@ namespace Apps.OMS.Data.Entities
         public string Area { get; set; }
         public string BusinessCard { get; set; }
         public string AccountId { get; set; }
+        /// <summary>
+        /// 邀请人
+        /// </summary>
         public string Inviter { get; set; }
+        /// <summary>
+        /// 上级
+        /// </summary>
+        public string Superior { get; set; }
         [NotMapped]
         public string Name { get; set; }
         [NotMapped]

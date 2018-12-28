@@ -11,6 +11,10 @@ namespace ApiModel.Entities
         /// </summary>
         public string Unit { get; set; }
         /// <summary>
+        /// 是否已经发布
+        /// </summary>
+        public bool IsPublish { get; set; }
+        /// <summary>
         /// 规格
         /// </summary>
         public List<ProductSpec> Specifications { get; set; }
@@ -34,6 +38,8 @@ namespace ApiModel.Entities
             dto.ModifierName = ModifierName;
             dto.CategoryName = CategoryName;
             dto.Unit = Unit;
+            dto.IsPublish = IsPublish;
+
             if (Specifications != null && Specifications.Count > 0)
             {
                 var defaultSpec = Specifications.OrderByDescending(x => x.CreatedTime).First();
@@ -59,7 +65,7 @@ namespace ApiModel.Entities
         public List<ProductSpecDTO> Specifications { get; set; }
         public string Icon { get; set; }
         public string Unit { get; set; }
-        
+        public bool IsPublish { get; set; }
     }
 
 }

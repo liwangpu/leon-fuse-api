@@ -242,6 +242,7 @@ namespace Apps.OMS.Service.Controllers
                     member.Company = entity.Company;
                     member.BusinessCard = entity.BusinessCard;
                     member.Inviter = entity.Inviter;
+                    member.Superior = entity.Inviter;
                     await _MemberRepository.CreateAsync(member, CurrentAccountId);
                 }
 

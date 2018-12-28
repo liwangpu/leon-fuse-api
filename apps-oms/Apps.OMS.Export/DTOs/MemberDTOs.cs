@@ -26,6 +26,8 @@ namespace Apps.OMS.Export.DTOs
         public string BusinessCard { get; set; }
         public string Inviter { get; set; }
         public string InviterName { get; set; }
+        public string Superior { get; set; }
+        public string SuperiorName { get; set; }
     }
 
     public class MemberRegistryDTO

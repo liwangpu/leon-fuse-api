@@ -21,6 +21,7 @@ namespace ApiServer.Models
         public decimal Price { get; set; }
         public decimal PartnerPrice { get; set; }
         public decimal PurchasePrice { get; set; }
+        public bool IsPublish { get; set; }
     }
     #endregion
 
@@ -43,6 +44,7 @@ namespace ApiServer.Models
         public decimal Price { get; set; }
         public decimal PartnerPrice { get; set; }
         public decimal PurchasePrice { get; set; }
+        public bool IsPublish { get; set; }
     }
     #endregion
 
