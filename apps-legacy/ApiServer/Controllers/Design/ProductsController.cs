@@ -139,9 +139,6 @@ namespace ApiServer.Controllers
                     defaultSpec.Id = GuidGen.NewGUID();
                     defaultSpec.Name = entity.Name;
                     defaultSpec.Product = entity;
-                    defaultSpec.Price = model.Price;
-                    defaultSpec.PurchasePrice = model.PurchasePrice;
-                    defaultSpec.PartnerPrice = model.PartnerPrice;
                     defaultSpec.OrganizationId = account.OrganizationId;
                     defaultSpec.Creator = accid;
                     defaultSpec.Modifier = accid;
@@ -179,37 +176,6 @@ namespace ApiServer.Controllers
                     entity.Icon = model.IconAssetId;
                 entity.Unit = model.Unit;
                 entity.CategoryId = model.CategoryId;
-
-                var defaultSpec = await _Repository._DbContext.ProductSpec.Where(x => x.ProductId == entity.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();
-
-                var accid = AuthMan.GetAccountId(this);
-                if (defaultSpec != null)
-                {
-                    defaultSpec.Name = entity.Name;
-                    defaultSpec.Price = model.Price;
-                    defaultSpec.PurchasePrice = model.PurchasePrice;
-                    defaultSpec.PartnerPrice = model.PartnerPrice;
-                    defaultSpec.Modifier = accid;
-                    defaultSpec.ModifiedTime = DateTime.UtcNow;
-                }
-                else
-                {
-                    var account = await _Repository._DbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accid);
-                    defaultSpec = new ProductSpec();
-                    defaultSpec.Id = GuidGen.NewGUID();
-                    defaultSpec.Name = entity.Name;
-                    defaultSpec.Product = entity;
-                    defaultSpec.Price = model.Price;
-                    defaultSpec.PurchasePrice = model.PurchasePrice;
-                    defaultSpec.PartnerPrice = model.PartnerPrice;
-                    defaultSpec.OrganizationId = account.OrganizationId;
-                    defaultSpec.Creator = accid;
-                    defaultSpec.Modifier = accid;
-                    defaultSpec.CreatedTime = DateTime.UtcNow;
-                    defaultSpec.ModifiedTime = DateTime.UtcNow;
-                    entity.Specifications = new List<ProductSpec>() { defaultSpec };
-                }
-
 
                 return await Task.FromResult(entity);
             });

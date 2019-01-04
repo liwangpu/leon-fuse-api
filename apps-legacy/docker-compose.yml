@@ -82,7 +82,7 @@ services:
       - "/var/bamboo/dmzapiserver_dev/logs:/app/logs"
       - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
     depends_on:
-      - dmzpostgresdb
+      - dmzapiserver
 
   dmztoolsite_for_dmzapiserver_dev:
     container_name: dmztoolsite_for_dmzapiserver_dev_c
