@@ -43,7 +43,7 @@ namespace ApiServer.Controllers
         [HttpPost]
         public async Task<IActionResult> RequestToken([FromBody]TokenRequestModel model)
         {
-            var account = await _Context.Accounts.FirstOrDefaultAsync(x => x.Mail.ToLower() == model.Account.ToLower() || x.Phone == model.Account);
+            var account = await _Context.Accounts.Include(x => x.Organization).FirstOrDefaultAsync(x => x.Mail.ToLower() == model.Account.ToLower() || x.Phone == model.Account);
             if (account == null)
                 return BadRequest(new ErrorRespondModel() { Message = "用户名或者密码有误" });
 
@@ -57,9 +57,20 @@ namespace ApiServer.Controllers
             if (now < account.ActivationTime.AddDays(-1))
                 return BadRequest(new ErrorRespondModel() { Message = "账户未启用" });
 
-            if (now > account.ExpireTime)
+            if (now > account.Organization.ExpireTime)
+            {
                 return BadRequest(new ErrorRespondModel() { Message = "账户已失效" });
+            }
+            else
+            {
+                //普通用户,过期时间在组织过期时间之内
+                if (account.Organization.OwnerId != account.Id)
+                {
+                    if (now > account.ExpireTime)
+                        return BadRequest(new ErrorRespondModel() { Message = "账户已失效" });
 
+                }
+            }
 
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_AppConfig.JwtSettings.SecretKey));

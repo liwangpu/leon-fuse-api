@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using DataTransferHelper.Contexts;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-
+using ApiModel.Entities;
+using Newtonsoft.Json;
 namespace DataTransferHelper
 {
     class Program
@@ -35,6 +36,55 @@ namespace DataTransferHelper
             using (var srcDb = new SrcContext())
             using (var destDb = new DestContext())
             {
+                //var errSpecIds = destDb.ProductSpec.Where(x => string.IsNullOrWhiteSpace(x.StaticMeshIds)).Select(x=>x.Id).ToList();
+
+
+                //var orgSpec = srcDb.ProductSpec.Where(x => errSpecIds.Contains(x.Id)).Count();
+
+                //var a = 1l;
+
+                //var rightSpecIds = destDb.ProductSpec.Where(x => string.IsNullOrWhiteSpace(x.StaticMeshIds)).Select(x => x.Id).ToList();
+
+                //var errSpecs = srcDb.ProductSpec.Where(x => string.IsNullOrWhiteSpace(x.StaticMeshIds)).ToList();
+
+                //for (int idx = 0, len = errSpecs.Count - 1; idx >= 0; idx--)
+                //{
+                //    if (rightSpecIds.Count(x=>x==errSpecs[idx].Id)>0)
+                //    {
+                //        errSpecs.RemoveAt(idx);
+                //    }
+                //}
+
+                //var a = 1;
+
+
+
+                //for (int i = 0, len = errSpecs.Count; i < len; i++)
+                //{
+                //    //var item = errSpecs[i];
+                //    ////var source = srcDb.ProductSpec.Where(x => x.Id == item.Id).FirstOrDefault();
+                //    ////if (source!=null)
+                //    ////{
+                //    ////    item.StaticMeshIds = source.StaticMeshIds;
+                //    ////    destDb.ProductSpec.Update(item);
+                //    ////}
+                //    //var source = destDb.StaticMeshs.Where(x => x.Name == item.Name).FirstOrDefault();
+                //    //if (source != null)
+                //    //{
+                //    //    var ccom = new SpecMeshMap();
+                //    //    var ddd = new SpecMeshMapItem();
+                //    //    ddd.StaticMeshId = source.Id;
+                //    //    ccom.Items.Add(ddd);
+                //    //    item.StaticMeshIds = JsonConvert.SerializeObject(ccom);
+                //    //    destDb.ProductSpec.Update(item);
+                //    //}
+
+
+
+                //}
+                //destDb.SaveChanges();
+
+                #region MyRegion
                 ////1=>转移files
                 //{
                 //    var srcFileIds = srcDb.Files.Where(x => x.OrganizationId == bamboo_organId).Select(x => x.Id).ToList();
@@ -487,8 +537,7 @@ namespace DataTransferHelper
                 //destDb.SaveChanges();
                 //Console.WriteLine($"{"Packages"} 迁移完毕");
 
-
-
+                #endregion
             }
 
         }

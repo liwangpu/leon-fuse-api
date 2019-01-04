@@ -18,7 +18,7 @@ services:
       - JwtSettings:SecretKey=damaozhu-dev-test-app
       - JwtSettings:ExpiresDay=1
       # ConnectionString
-      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz1;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
       # Plugins
       - Plugins:OrderViewer=http://share.damaozhu.com.cn/dmz/order/viewer
       - Plugins:MediaShare=http://share.damaozhu.com.cn/dmz/share/panorama
