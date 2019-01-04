@@ -96,17 +96,17 @@ services:
     depends_on:
       - dmzapiserver_dev
 
-  # dmzapigateway:
-  #   container_name: dmzapigateway_c
-  #   build:
-  #     context: ../
-  #     dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
-  #   ports:
-  #     - "1995:80"
-  #   volumes:
-  #     - "/var/bamboo/dmzapigateway/logs:/app/logs"
-  #   networks:
-  #     - dmzapinet
+  dmzapigateway:
+    container_name: dmzapigateway_c
+    build:
+      context: ../
+      dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
+    ports:
+      - "1995:80"
+    volumes:
+      - "/var/bamboo/dmzapigateway/logs:/app/logs"
+    networks:
+      - dmzapinet
 
 networks:
   dmzapinet:

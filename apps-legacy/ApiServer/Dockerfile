@@ -19,5 +19,5 @@ RUN dotnet publish ApiServer.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-COPY ApiServer/wwwroot/AppBackup/. /app/wwwroot/AppBackup/
+COPY ApiServer/wwwroot/AppBackup/. ./wwwroot/AppBackup/
 ENTRYPOINT ["dotnet", "ApiServer.dll"]
