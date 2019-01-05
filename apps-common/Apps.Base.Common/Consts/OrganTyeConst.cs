@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Apps.Base.Common.Consts
+﻿namespace Apps.Base.Common.Consts
 {
     public class OrganTyeConst
     {

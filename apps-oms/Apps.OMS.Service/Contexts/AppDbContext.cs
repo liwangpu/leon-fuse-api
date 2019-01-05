@@ -24,5 +24,7 @@ namespace Apps.OMS.Service.Contexts
         public DbSet<MemberHierarchyParam> MemberHierarchyParams { get; set; }
 
         public DbSet<MemberHierarchySetting> MemberHierarchySettings { get; set; }
+
+        public DbSet<NationalUrban> NationalUrbans { get; set; }
     }
 }

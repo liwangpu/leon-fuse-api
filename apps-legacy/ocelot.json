@@ -85,6 +85,30 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
     },
     {
+      "DownstreamPathTemplate": "/NationalUrban",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1996
+        }
+      ],
+      "UpstreamPathTemplate": "/NationalUrban",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
+      "DownstreamPathTemplate": "/NationalUrban/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.1.176",
+          "Port": 1996
+        }
+      ],
+      "UpstreamPathTemplate": "/NationalUrban/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ]
+    },
+    {
       "DownstreamPathTemplate": "/{everthing}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
