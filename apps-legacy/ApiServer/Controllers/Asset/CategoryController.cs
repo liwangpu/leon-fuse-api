@@ -161,6 +161,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
+                entity.CustomData = model.CustomData;
                 if (!string.IsNullOrWhiteSpace(model.ParentId))
                     entity.Type = (await _Repository._DbContext.AssetCategories.FirstAsync(d => d.Id == model.ParentId)).Type;
                 else
@@ -193,6 +194,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
+                entity.CustomData = model.CustomData;
                 entity.OrganizationId = model.OrganizationId;
                 return entity;
             });

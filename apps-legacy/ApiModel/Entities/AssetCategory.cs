@@ -10,6 +10,7 @@ namespace ApiModel.Entities
         public string Type { get; set; }
         public string ParentId { get; set; }
         public int DisplayIndex { get; set; }
+        public string CustomData { get; set; }
         public AssetCategoryDTO ToDTO()
         {
             AssetCategoryDTO dto = new AssetCategoryDTO();
@@ -20,6 +21,7 @@ namespace ApiModel.Entities
             dto.Description = Description;
             dto.Icon = Icon;
             dto.Type = Type;
+            dto.CustomData = CustomData;
             dto.DisplayIndex = DisplayIndex;
             dto.OrganizationId = OrganizationId;
             dto.Creator = Creator;
@@ -48,6 +50,7 @@ namespace ApiModel.Entities
         /// 在父级分类中的显示顺序，数值为0 - (childrencount - 1)
         /// </summary>
         public int DisplayIndex { get; set; }
+        public string CustomData { get; set; }
         public List<AssetCategoryDTO> Children { get; set; }
     }
 

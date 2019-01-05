@@ -71,6 +71,7 @@ namespace ApiServer.Controllers
                 entity.Icon = model.IconAssetId;
                 entity.Components = model.Components;
                 entity.StaticMeshIds = model.StaticMeshIds;
+                entity.Slots = model.Slots;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -99,6 +100,7 @@ namespace ApiServer.Controllers
                 entity.PurchasePrice = model.PurchasePrice;
                 entity.Components = model.Components;
                 entity.StaticMeshIds = model.StaticMeshIds;
+                entity.Slots = model.Slots;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);

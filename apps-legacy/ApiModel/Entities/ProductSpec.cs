@@ -38,7 +38,10 @@ namespace ApiModel.Entities
         /// </summary>
         public string TPID { get; set; }
         public string Components { get; set; }
-
+        /// <summary>
+        /// 产品规格增加 string Slots属性是为了所有的产品可以自定义吸附和对齐或者组装用的插槽，方便产品之间进行组装。
+        /// </summary>
+        public string Slots { get; set; }
         /// <summary>
         /// 所在产品的ID
         /// </summary>
@@ -77,6 +80,7 @@ namespace ApiModel.Entities
             dto.ProductId = ProductId;
             dto.CategoryName = CategoryName;
             dto.Components = Components;
+            dto.Slots = Slots;
             dto.StaticMeshIds = StaticMeshIds;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
@@ -103,7 +107,7 @@ namespace ApiModel.Entities
         public List<StaticMeshDTO> StaticMeshes { get; set; }
         public List<FileAssetDTO> Album { get; set; }
         public string Icon { get; set; }
-        
+        public string Slots { get; set; }
         public string Components { get; set; }
     }
 

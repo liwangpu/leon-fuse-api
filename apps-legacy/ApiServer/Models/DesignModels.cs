@@ -61,6 +61,7 @@ namespace ApiServer.Models
         public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
         public string Components { get; set; }
+        public string Slots { get; set; }
         public string StaticMeshIds { get; set; }
     }
     #endregion
@@ -85,6 +86,7 @@ namespace ApiServer.Models
         public decimal PurchasePrice { get; set; }
         public string IconAssetId { get; set; }
         public string Components { get; set; }
+        public string Slots { get; set; }
         public string StaticMeshIds { get; set; }
     }
     #endregion
@@ -730,6 +732,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
+        public string CustomData { get; set; }
     }
 
     public class AssetCategoryEditModel : EntityEditModel
@@ -737,6 +740,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
+        public string CustomData { get; set; }
     }
 
     public class ProductReplaceGroupCreateModel : EntityCreateModel
