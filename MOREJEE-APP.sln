@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps-Legacy", "Apps-Legacy"
 	ProjectSection(SolutionItems) = preProject
 		apps-legacy\.env = apps-legacy\.env
 		apps-legacy\docker-compose.bamboo.yml = apps-legacy\docker-compose.bamboo.yml
+		apps-legacy\docker-compose.dev.yml = apps-legacy\docker-compose.dev.yml
 		apps-legacy\docker-compose.yml = apps-legacy\docker-compose.yml
 		apps-legacy\ocelot.json = apps-legacy\ocelot.json
 		apps-legacy\必读.md = apps-legacy\必读.md
@@ -81,7 +82,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shells", "shells", "{48AC7A50-9CE4-4539-984F-5F99FEF3D7F9}"
 	ProjectSection(SolutionItems) = preProject
 		apps-legacy\shells\apigateway_remap.bat = apps-legacy\shells\apigateway_remap.bat
+		apps-legacy\shells\appsbasic_db_restore.bat = apps-legacy\shells\appsbasic_db_restore.bat
 		apps-legacy\shells\bamboo_deploy.bat = apps-legacy\shells\bamboo_deploy.bat
+		apps-legacy\shells\dev_deploy.bat = apps-legacy\shells\dev_deploy.bat
 	EndProjectSection
 EndProject
 Global

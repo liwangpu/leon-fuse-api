@@ -12,6 +12,6 @@ echo 3) rebuild projects
 docker-compose build
 
 echo 4) install projects
-docker-compose -f docker-compose.yml -f docker-compose.bamboo.yml up
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 pause

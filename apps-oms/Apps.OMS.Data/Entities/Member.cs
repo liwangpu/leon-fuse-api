@@ -31,7 +31,7 @@ namespace Apps.OMS.Data.Entities
         public string Company { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
-        public string Area { get; set; }
+        public string County { get; set; }
         public string BusinessCard { get; set; }
         public string AccountId { get; set; }
         /// <summary>

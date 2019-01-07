@@ -22,7 +22,7 @@ namespace Apps.OMS.Export.Models
         public string Province { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string City { get; set; }
-        public string Area { get; set; }
+        public string County { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Inviter { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
@@ -48,7 +48,7 @@ namespace Apps.OMS.Export.Models
         public string Province { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string City { get; set; }
-        public string Area { get; set; }
+        public string County { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Inviter { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
@@ -62,5 +62,14 @@ namespace Apps.OMS.Export.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string Id { get; set; }
+    }
+
+    public class MemberUpdateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string Id { get; set; }
+        public string Province { get; set; }
+        public string City { get; set; }
+        public string County { get; set; }
     }
 }

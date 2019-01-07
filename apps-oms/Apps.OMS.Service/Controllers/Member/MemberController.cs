@@ -1,22 +1,22 @@
 ﻿using Apps.Base.Common;
-using Apps.Base.Common.Controllers;
+using Apps.Base.Common.Attributes;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.Basic.Export.Services;
 using Apps.OMS.Data.Entities;
 using Apps.OMS.Export.DTOs;
 using Apps.OMS.Export.Models;
+using Apps.OMS.Export.Services;
 using Apps.OMS.Service.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Apps.OMS.Service.Controllers
 {
+    [Authorize]
     [Route("/[controller]")]
     [ApiController]
     public class MemberController : ListviewController<Member>
@@ -42,6 +42,7 @@ namespace Apps.OMS.Service.Controllers
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer);
+            var nationalUrbanMicroService = new NationalUrbanMicroService(_AppConfig.APIGatewayServer);
 
             var toDTO = new Func<Member, Task<MemberDTO>>(async (entity) =>
             {
@@ -55,8 +56,15 @@ namespace Apps.OMS.Service.Controllers
                 dto.ModifiedTime = entity.ModifiedTime;
                 dto.Province = entity.Province;
                 dto.City = entity.City;
-                dto.Area = entity.Area;
+                dto.County = entity.County;
                 dto.Company = entity.Company;
+
+                await nationalUrbanMicroService.GetNameByIds(entity.Province, entity.City, entity.County, (provinceName, cityName, countyName) =>
+                {
+                    dto.ProvinceName = provinceName;
+                    dto.CityName = cityName;
+                    dto.CountyName = countyName;
+                });
 
                 var account = await accountMicroService.GetById(entity.AccountId);
                 if (account != null)
@@ -95,6 +103,7 @@ namespace Apps.OMS.Service.Controllers
         public override async Task<IActionResult> Get(string id)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer);
+            var nationalUrbanMicroService = new NationalUrbanMicroService(_AppConfig.APIGatewayServer);
 
             var toDTO = new Func<Member, Task<MemberDTO>>(async (entity) =>
             {
@@ -108,8 +117,15 @@ namespace Apps.OMS.Service.Controllers
                 dto.ModifiedTime = entity.ModifiedTime;
                 dto.Province = entity.Province;
                 dto.City = entity.City;
-                dto.Area = entity.Area;
+                dto.County = entity.County;
                 dto.Company = entity.Company;
+
+                await nationalUrbanMicroService.GetNameByIds(entity.Province, entity.City, entity.County, (provinceName, cityName, countyName) =>
+                {
+                    dto.ProvinceName = provinceName;
+                    dto.CityName = cityName;
+                    dto.CountyName = countyName;
+                });
 
                 var account = await accountMicroService.GetById(entity.AccountId);
                 if (account != null)
@@ -134,6 +150,28 @@ namespace Apps.OMS.Service.Controllers
                 return await Task.FromResult(dto);
             });
             return await _GetByIdRequest(id, toDTO);
+        }
+        #endregion
+
+        #region Put 编辑会员信息
+        /// <summary>
+        /// 编辑会员信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> Put([FromBody] MemberUpdateModel model)
+        {
+            var mapping = new Func<Member, Task<Member>>(async (entity) =>
+            {
+                entity.Province = model.Province;
+                entity.City = model.City;
+                entity.County = model.County;
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.Id, mapping);
         }
         #endregion
     }

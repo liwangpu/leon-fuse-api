@@ -22,7 +22,10 @@ namespace Apps.OMS.Export.DTOs
         public string Icon { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
-        public string Area { get; set; }
+        public string County { get; set; }
+        public string ProvinceName { get; set; }
+        public string CityName { get; set; }
+        public string CountyName { get; set; }
         public string BusinessCard { get; set; }
         public string Inviter { get; set; }
         public string InviterName { get; set; }
@@ -48,7 +51,10 @@ namespace Apps.OMS.Export.DTOs
         public string Icon { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
-        public string Area { get; set; }
+        public string County { get; set; }
+        public string ProvinceName { get; set; }
+        public string CityName { get; set; }
+        public string CountyName { get; set; }
         public string BusinessCard { get; set; }
         public string Inviter { get; set; }
         public string InviterName { get; set; }
