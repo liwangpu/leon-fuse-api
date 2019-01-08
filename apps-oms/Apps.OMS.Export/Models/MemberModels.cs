@@ -16,7 +16,6 @@ namespace Apps.OMS.Export.Models
         public string Mail { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Phone { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string Company { get; set; }
         [Required(ErrorMessage = "必填信息")]
         public string Province { get; set; }
