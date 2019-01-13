@@ -47,66 +47,66 @@ services:
     depends_on:
       - dmzpostgresdb
 
-  dmztoolsite_for_dmzapiserver:
-    container_name: dmztoolsite_for_dmzapiserver_c
-    image: liwangp2012/bamboo-tool-site:latest
-    ports:
-      - "1992:3000"
-    networks:
-      - dmzapinet
-    # environment:
-    #   - SERVER=dmzapiserver
-    depends_on:
-      - dmzapiserver
+  # dmztoolsite_for_dmzapiserver:
+  #   container_name: dmztoolsite_for_dmzapiserver_c
+  #   image: liwangp2012/bamboo-tool-site:latest
+  #   ports:
+  #     - "1992:3000"
+  #   networks:
+  #     - dmzapinet
+  #   # environment:
+  #   #   - SERVER=dmzapiserver
+  #   depends_on:
+  #     - dmzapiserver
 
-  dmzapiserver_dev:
-    container_name: dmzapiserver_dev_c
-    image: dmzapiserver
-    ports:
-      - "1993:80"
-    networks:
-      - dmzapinet
-    # environment:
-    #   # GuidSettings
-    #   - GuidSettings:ServerId=${GuidSettings_ServerId}
-    #   - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
-    #   - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
-    #   # JwtSettings
-    #   - JwtSettings:Issuer=damaozhu.com.cn
-    #   - JwtSettings:Audience=damaozhu.com.cn
-    #   - JwtSettings:SecretKey=damaozhu-ehome-test-app
-    #   - JwtSettings:ExpiresDay=1
-    #   # ConnectionString
-    #   - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_ehome;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
-    volumes:
-      - "/var/bamboo/dmzapiserver_dev/logs:/app/logs"
-      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
-    depends_on:
-      - dmzapiserver
+  # dmzapiserver_dev:
+  #   container_name: dmzapiserver_dev_c
+  #   image: dmzapiserver
+  #   ports:
+  #     - "1993:80"
+  #   networks:
+  #     - dmzapinet
+  #   # environment:
+  #   #   # GuidSettings
+  #   #   - GuidSettings:ServerId=${GuidSettings_ServerId}
+  #   #   - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+  #   #   - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+  #   #   # JwtSettings
+  #   #   - JwtSettings:Issuer=damaozhu.com.cn
+  #   #   - JwtSettings:Audience=damaozhu.com.cn
+  #   #   - JwtSettings:SecretKey=damaozhu-ehome-test-app
+  #   #   - JwtSettings:ExpiresDay=1
+  #   #   # ConnectionString
+  #   #   - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_ehome;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+  #   volumes:
+  #     - "/var/bamboo/dmzapiserver_dev/logs:/app/logs"
+  #     - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+  #   depends_on:
+  #     - dmzapiserver
 
-  dmztoolsite_for_dmzapiserver_dev:
-    container_name: dmztoolsite_for_dmzapiserver_dev_c
-    image: liwangp2012/bamboo-tool-site:latest
-    ports:
-      - "1994:3000"
-    networks:
-      - dmzapinet
-    # environment:
-    #   - SERVER=dmzapiserver_dev
-    depends_on:
-      - dmzapiserver_dev
+  # dmztoolsite_for_dmzapiserver_dev:
+  #   container_name: dmztoolsite_for_dmzapiserver_dev_c
+  #   image: liwangp2012/bamboo-tool-site:latest
+  #   ports:
+  #     - "1994:3000"
+  #   networks:
+  #     - dmzapinet
+  #   # environment:
+  #   #   - SERVER=dmzapiserver_dev
+  #   depends_on:
+  #     - dmzapiserver_dev
 
-  dmzapigateway:
-    container_name: dmzapigateway_c
-    build:
-      context: ../
-      dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
-    ports:
-      - "1995:80"
-    volumes:
-      - "/var/bamboo/dmzapigateway/logs:/app/logs"
-    networks:
-      - dmzapinet
+  # dmzapigateway:
+  #   container_name: dmzapigateway_c
+  #   build:
+  #     context: ../
+  #     dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
+  #   ports:
+  #     - "1995:80"
+  #   volumes:
+  #     - "/var/bamboo/dmzapigateway/logs:/app/logs"
+  #   networks:
+  #     - dmzapinet
 
 networks:
   dmzapinet:

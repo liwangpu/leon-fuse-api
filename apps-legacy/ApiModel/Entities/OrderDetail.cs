@@ -17,7 +17,11 @@ namespace ApiModel.Entities
         [NotMapped]
         public string Icon { get; set; }
         [NotMapped]
+        public string ProductId { get; set; }
+        [NotMapped]
         public ProductSpec ProductSpec { get; set; }
+        [NotMapped]
+        public string ProductCategoryName { get; set; }
         [NotMapped]
         public List<OrderDetailAttachment> Attachments { get; set; }
 
@@ -42,9 +46,12 @@ namespace ApiModel.Entities
                 dto.ProductSpecName = ProductSpec.Name;
                 if (ProductSpec.Product != null)
                 {
+                    dto.ProductId = ProductSpec.Product.Id;
                     dto.ProductName = ProductSpec.Product.Name;
                     dto.ProductDescription = ProductSpec.Product.Description;
                     dto.ProductUnit = ProductSpec.Product.Unit;
+                    dto.ProductCategoryId = ProductSpec.Product.CategoryId;
+                    dto.ProductCategoryName = ProductSpec.Product.CategoryName;
                 }
                 dto.Icon = ProductSpec.Icon;
             }
@@ -61,8 +68,10 @@ namespace ApiModel.Entities
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
-        //public int OrderDetailStateId { get; set; }
+        public string ProductId { get; set; }
+        public string ProductCategoryId { get; set; }
         public string ProductName { get; set; }
+        public string ProductCategoryName { get; set; }
         public string ProductUnit { get; set; }
         public string ProductDescription { get; set; }
         public string ProductSpecName { get; set; }
