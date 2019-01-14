@@ -75,6 +75,7 @@ namespace ApiServer.Controllers.Design
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
+                entity.FileAssetId = model.FileAssetId;
                 entity.PackageName = model.PackageName;
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.Dependencies = model.Dependencies;
@@ -103,6 +104,7 @@ namespace ApiServer.Controllers.Design
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.PackageName = model.PackageName;
+                entity.FileAssetId = model.FileAssetId;
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;

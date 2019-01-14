@@ -69,6 +69,7 @@ namespace ApiServer.Models
     /// </summary>
     public class ClientAssetCreateModel : EntityCreateModel
     {
+        public string FileAssetId { get; set; }
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
     }
@@ -80,6 +81,7 @@ namespace ApiServer.Models
     /// </summary>
     public class ClientAssetEditModel : EntityEditModel
     {
+        public string FileAssetId { get; set; }
         public string PackageName { get; set; }
         public string UnCookedAssetId { get; set; }
     }
