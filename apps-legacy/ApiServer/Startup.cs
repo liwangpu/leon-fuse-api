@@ -192,7 +192,7 @@ namespace ApiServer
             #region Database Init
             {
                 dbContext.Database.Migrate();
-                //DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
+                DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
             }
             #endregion
         }

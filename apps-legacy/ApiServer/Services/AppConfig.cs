@@ -7,6 +7,7 @@
     {
         public string ConnectionString { get; set; }
         public string MessageMail { get; set; }
+        public string APIGatewayServer { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public SMTPSettings SMTPSettings { get; set; }
         public Plugins Plugins { get; set; }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -16,6 +17,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,11 +27,14 @@ namespace ApiServer.Controllers
     public class OrdersController : ListableController<Order, OrderDTO>
     {
         protected IHostingEnvironment _Env;
+        public AppConfig appConfig { get; }
+
         #region 构造函数
-        public OrdersController(IRepository<Order, OrderDTO> repository, IHostingEnvironment env)
+        public OrdersController(IRepository<Order, OrderDTO> repository, IHostingEnvironment env, IOptions<AppConfig> settingsOptions)
             : base(repository)
         {
             _Env = env;
+            appConfig = settingsOptions.Value;
         }
         #endregion
 
@@ -280,6 +285,9 @@ namespace ApiServer.Controllers
             if (order == null)
                 return NotFound();
 
+            if (order.OrderDetails != null && order.OrderDetails.Count > 0)
+                order.OrderDetails = order.OrderDetails.OrderBy(x => x.ProductCategoryId).ToList();
+
             var buffer = new byte[0];
             using (var package = new ExcelPackage())
             {
@@ -294,14 +302,23 @@ namespace ApiServer.Controllers
                     rng.Style.WrapText = true;
                     rng.Merge = true;
 
-                    var logoImgPath = Path.Combine(_Env.WebRootPath, "Attachments", "ehome-logo.jpg");
-                    if (System.IO.File.Exists(logoImgPath))
-                    {
-                        var logoImg = Image.FromFile(logoImgPath);
-                        var picture = sheet1.Drawings.AddPicture("ehome-logo", logoImg);
-                        picture.SetPosition(gapRow, 1, gapRow, 1);
-                        picture.SetSize(166, 114);
-                    }
+                    //var logoImgPath = Path.Combine(_Env.WebRootPath, "Attachments", "ehome-logo.jpg");
+                    //Console.WriteLine(logoImgPath + "--" + System.IO.File.Exists(logoImgPath));
+                    //if (System.IO.File.Exists(logoImgPath))
+                    //{
+                    //    var logoImg = Image.FromStream(new FileStream(logoImgPath, FileMode.Open));
+                    //    var picture = sheet1.Drawings.AddPicture("ehome-logo", logoImg);
+                    //    picture.SetPosition(gapRow, 1, gapRow, 1);
+                    //    picture.SetSize(166, 114);
+                    //}
+                    //using (WebClient webClient = new WebClient())
+                    //{
+                    //    var logoImg = Image.FromStream(webClient.OpenRead("http://testapi.damaozhu.com.cn/upload/5efe9f42be2fcc6049bbe44ac127b44c.png"));
+                    //    ////var logoImg = Image.FromFile(iconImgPath);
+                    //    //var picture = sheet1.Drawings.AddPicture("ehome-logo", logoImg);
+                    //    //picture.SetPosition(gapRow, 1, gapRow, 1);
+                    //    //picture.SetSize(166, 114);
+                    //}
                 }
 
                 using (var rng = sheet1.Cells[gapRow + 1, gapCol + 3, gapRow + 3, gapCol + 7])
@@ -390,18 +407,18 @@ namespace ApiServer.Controllers
                 {
                     var ditem = order.OrderDetails[idx];
                     sheet1.Cells[gapRow + idx + 7, gapCol + 1].Value = idx + 1;
-                    if (!string.IsNullOrWhiteSpace(ditem.Icon))
-                    {
-                        ditem.Icon = ditem.Icon.Replace("/upload/", "");
-                        var iconImgPath = Path.Combine(_Env.WebRootPath, "upload", ditem.Icon);
-                        if (System.IO.File.Exists(iconImgPath))
-                        {
-                            var logoImg = Image.FromFile(iconImgPath);
-                            var picture = sheet1.Drawings.AddPicture("icon" + idx, logoImg);
-                            picture.SetPosition(gapRow + 6 + idx, 1, gapCol + 2, 1);
-                            picture.SetSize(80, 80);
-                        }
-                    }
+                    //if (!string.IsNullOrWhiteSpace(ditem.Icon))
+                    //{
+                    //    ditem.Icon = ditem.Icon.Replace("/upload/", "");
+                    //    var iconImgPath = Path.Combine(_Env.WebRootPath, "upload", ditem.Icon);
+                    //    if (System.IO.File.Exists(iconImgPath))
+                    //    {
+                    //        var logoImg = Image.FromFile(iconImgPath);
+                    //        var picture = sheet1.Drawings.AddPicture("icon" + idx, logoImg);
+                    //        picture.SetPosition(gapRow + 6 + idx, 1, gapCol + 2, 1);
+                    //        picture.SetSize(80, 80);
+                    //    }
+                    //}
 
                     sheet1.Cells[gapRow + idx + 7, gapCol + 4].Value = ditem.ProductName;
                     sheet1.Cells[gapRow + idx + 7, gapCol + 5].Value = ditem.ProductCategoryName;
@@ -479,6 +496,7 @@ namespace ApiServer.Controllers
                     rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                     rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                     rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    rng.Style.WrapText = true;
                 }
 
                 sheet1.Row(gapRow + 61).Height = 18;
