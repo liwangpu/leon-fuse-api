@@ -178,6 +178,7 @@ namespace Apps.OMS.Service.Controllers
                 entity.Province = model.Province;
                 entity.City = model.City;
                 entity.County = model.County;
+                entity.BusinessCard = model.BusinessCard;
                 entity.Inviter = model.Inviter;
                 entity.Creator = model.Inviter;
                 entity.Modifier = model.Inviter;

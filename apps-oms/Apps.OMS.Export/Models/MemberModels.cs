@@ -26,6 +26,8 @@ namespace Apps.OMS.Export.Models
         public string Inviter { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Remark { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string BusinessCard { get; set; }
     }
 
     /// <summary>

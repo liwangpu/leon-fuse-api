@@ -154,8 +154,9 @@ namespace ApiServer.Controllers
                     HttpContext.Request.Body.CopyTo(sw.BaseStream);
                 }
             };
-
-            return await SaveUpload(saveFile);
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _Repository._DbContext.Accounts.FindAsync(accid);
+            return await SaveUpload(saveFile, account);
         }
         #endregion
 
@@ -181,8 +182,40 @@ namespace ApiServer.Controllers
                     fs.Flush();
                 }
             };
-            return await SaveUpload(saveFile);
+            var accid = AuthMan.GetAccountId(this);
+            var account = await _Repository._DbContext.Accounts.FindAsync(accid);
+
+            return await SaveUpload(saveFile, account);
         }
+        #endregion
+
+        #region UploadAttachment Form表单方式上传一个附件
+        /// <summary>
+        /// Form表单方式上传一个附件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Route("UploadAttachment")]
+        [HttpPost]
+        public async Task<IActionResult> UploadAttachment(IFormFile file)
+        {
+            if (file == null)
+                return BadRequest();
+
+            Action<string> saveFile = (path) =>
+            {
+                using (FileStream fs = System.IO.File.Create(path))
+                {
+                    file.CopyTo(fs);
+                    // 清空缓冲区数据
+                    fs.Flush();
+                }
+            };
+            var account = await _Repository._DbContext.Accounts.FindAsync(AppConst.BambooAdminId);
+
+            return await SaveUpload(saveFile, account);
+        } 
         #endregion
 
         #region private SaveUpload 真实保存上传文件过程
@@ -190,8 +223,9 @@ namespace ApiServer.Controllers
         /// 真实保存上传文件过程
         /// </summary>
         /// <param name="saveFile"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        private async Task<IActionResult> SaveUpload(Action<string> saveFile)
+        private async Task<IActionResult> SaveUpload(Action<string> saveFile, Account owner)
         {
             string fileState = "";
             string fileExt = "";
@@ -218,12 +252,6 @@ namespace ApiServer.Controllers
             if (fileExt.Length > 0 && fileExt[0] != '.')
                 fileExt = "." + fileExt;
 
-            var accid = AuthMan.GetAccountId(this);
-            var account = await _Repository._DbContext.Accounts.FindAsync(accid);
-
-
-
-
             FileAsset res = new FileAsset();
             res.Id = GuidGen.NewGUID(); //先生成临时ID，用于保存文件
             res.Name = localPath.Length > 0 ? Path.GetFileName(localPath) : res.Id;
@@ -233,9 +261,9 @@ namespace ApiServer.Controllers
             res.FileExt = fileExt;
             res.LocalPath = localPath;
             res.Description = description;
-            res.Creator = accid;
-            res.Modifier = accid;
-            res.OrganizationId = account.OrganizationId;
+            res.Creator = owner.Id;
+            res.Modifier = owner.Id;
+            res.OrganizationId = owner.OrganizationId;
 
 
             //保存
@@ -297,7 +325,7 @@ namespace ApiServer.Controllers
                 createThumbnails();
             }
 
-            await _Repository.CreateAsync(accid, res); //记录到数据库
+            await _Repository.CreateAsync(owner.Id, res); //记录到数据库
 
             return Ok(res);
         }

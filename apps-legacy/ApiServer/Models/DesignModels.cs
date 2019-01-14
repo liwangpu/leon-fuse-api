@@ -737,7 +737,6 @@ namespace ApiServer.Models
 
     public class AssetCategoryEditModel : EntityEditModel
     {
-        [Required(ErrorMessage = "必填信息")]
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
         public string CustomData { get; set; }

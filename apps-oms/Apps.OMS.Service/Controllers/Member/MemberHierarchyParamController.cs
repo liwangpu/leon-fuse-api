@@ -167,5 +167,12 @@ namespace Apps.OMS.Service.Controllers
             return Ok();
         }
         #endregion
+
+        [HttpGet("HierarchySetting")]
+        [ProducesResponseType(typeof(decimal), 200)]
+        public async Task<IActionResult> GetPointExchange()
+        {
+            return Ok(2);
+        }
     }
 }

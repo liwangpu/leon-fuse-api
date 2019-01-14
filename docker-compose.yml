@@ -2,119 +2,140 @@ version: '3.4'
 
 services:
 
-  # apps.mongodb:
-  #   image: mongo:3.2.21-jessie
-  #   ports:
-  #     - "27017:27017"
-  #   environment:
-  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
-  #     ME_CONFIG_MONGODB_ADMINPASSWORD: root
-  #   networks: 
-  #     - dmz-morejee-net
-
-  apps.postgresdb:
-    container_name: appspostgresdb_c
-    image: postgres:10.5
-    ports:
-      - "15266:5432"
-    volumes:
-      - "/var/bamboo/postgresdb/data:/var/lib/postgresql/data"
-    environment:
-      - POSTGRES_USER=${PostgresDB_User}
-      - POSTGRES_PASSWORD=${PostgresDB_Password}
-    networks: 
-      - dmz-morejee-net
-
-  apps.base.apigateway:
-    container_name: appsbaseapigateway_c
-    image: appsbaseapigateway
+  apps-base-apigateway:
+    image: apps-base-apigateway:latest
     build:
       context: .
       dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
-    ports:
-      - "1881:80"
-    volumes:
-      - "/var/bamboo/appsbaseapigateway/logs:/app/logs"
-    networks:
-      - dmz-morejee-net
-    depends_on:
-      - apps.basic.service
-      - apps.filesystem.service
-  #     - apps.mongodb
 
-  apps.filesystem.service:
-    container_name: appsfilesystemservice_c
-    image: appsfilesystemservice
+  apps-legacy-basic-service:
+    image: apps-legacy-basic-service:latest
+    build:
+      context: ./apps-legacy
+      dockerfile: ApiServer/Dockerfile
+
+  apps-oms-service:
+    image: apps-oms-service:latest
     build:
       context: .
-      dockerfile: apps-filesystem/Apps.FileSystem.Service/Dockerfile
-    ports:
-      - "1884:80"
-    volumes:
-      - "/var/bamboo/appsfilesystemservice/logs:/app/logs"
-      - "/var/bamboo/appsfilesystemservice/files:/app/wwwroot"
-    environment:
-      # GuidSettings
-      - GuidSettings:ServerId=${GuidSettings_ServerId}
-      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
-      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
-      # JwtSettings
-      - JwtSettings:Issuer=decohero.net
-      - JwtSettings:Audience=decohero.net
-      - JwtSettings:SecretKey=damaozhu-anzhumeiju-app
-      - JwtSettings:ExpiresDay=1
-      # ConnectionString
-      - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_filesystem;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
-      # MicroServices
-      - APIGatewayServer=apps.base.apigateway
-    depends_on:
-      - apps.postgresdb
-    networks:
-      - dmz-morejee-net
-
-  apps.basic.service:
-    container_name: appsbasicservice_c
-    image: appsbasicservice
-    build:
-      context: .
-      dockerfile: apps-basic/Apps.Basic.Service/Dockerfile
-    ports:
-      - "1882:80"
-    volumes:
-      - "/var/bamboo/appsbasicservice/logs:/app/logs"
-      - "/var/bamboo/appsbasicservice/AppBackup:/app/wwwroot/AppBackup"
-    environment:
-      # GuidSettings
-      - GuidSettings:ServerId=${GuidSettings_ServerId}
-      - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
-      - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
-      # JwtSettings
-      - JwtSettings:Issuer=decohero.net
-      - JwtSettings:Audience=decohero.net
-      - JwtSettings:SecretKey=damaozhu-anzhumeiju-app
-      - JwtSettings:ExpiresDay=1
-      # ConnectionString
-      - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_basic;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
-    depends_on:
-      - apps.postgresdb
-    networks:
-      - dmz-morejee-net
-
-  # apps.morejee.service:
-  #   container_name: appsmorejeeservice_c
-  #   image: appsmorejeeservice
-  #   build:
-  #     context: .
-  #     dockerfile: apps-morejee/Apps.MoreJee.Service/Dockerfile
-  #   ports:
-  #     - "1883:80"
-  #   volumes:
-  #     - "/var/bamboo/appsmorejeeservice/logs:/app/logs"
-  #   environment:
-  #     ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_morejee;User Id=postgres;Password=omega'
-  #   networks:
-  #     - dmz-morejee-net
+      dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
 
 
-networks:
-  dmz-morejee-net:
+
+
+#   # apps.mongodb:
+#   #   image: mongo:3.2.21-jessie
+#   #   ports:
+#   #     - "27017:27017"
+#   #   environment:
+#   #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#   #     ME_CONFIG_MONGODB_ADMINPASSWORD: root
+#   #   networks: 
+#   #     - dmz-morejee-net
+
+#   apps.postgresdb:
+#     container_name: appspostgresdb_c
+#     image: postgres:10.5
+#     ports:
+#       - "15266:5432"
+#     volumes:
+#       - "/var/bamboo/postgresdb/data:/var/lib/postgresql/data"
+#     environment:
+#       - POSTGRES_USER=${PostgresDB_User}
+#       - POSTGRES_PASSWORD=${PostgresDB_Password}
+#     networks: 
+#       - dmz-morejee-net
+
+#   apps.base.apigateway:
+#     container_name: appsbaseapigateway_c
+#     image: appsbaseapigateway
+#     build:
+#       context: .
+#       dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
+#     ports:
+#       - "1881:80"
+#     volumes:
+#       - "/var/bamboo/appsbaseapigateway/logs:/app/logs"
+#     networks:
+#       - dmz-morejee-net
+#     depends_on:
+#       - apps.basic.service
+#       - apps.filesystem.service
+#   #     - apps.mongodb
+
+#   apps.filesystem.service:
+#     container_name: appsfilesystemservice_c
+#     image: appsfilesystemservice
+#     build:
+#       context: .
+#       dockerfile: apps-filesystem/Apps.FileSystem.Service/Dockerfile
+#     ports:
+#       - "1884:80"
+#     volumes:
+#       - "/var/bamboo/appsfilesystemservice/logs:/app/logs"
+#       - "/var/bamboo/appsfilesystemservice/files:/app/wwwroot"
+#     environment:
+#       # GuidSettings
+#       - GuidSettings:ServerId=${GuidSettings_ServerId}
+#       - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+#       - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+#       # JwtSettings
+#       - JwtSettings:Issuer=decohero.net
+#       - JwtSettings:Audience=decohero.net
+#       - JwtSettings:SecretKey=damaozhu-anzhumeiju-app
+#       - JwtSettings:ExpiresDay=1
+#       # ConnectionString
+#       - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_filesystem;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+#       # MicroServices
+#       - APIGatewayServer=apps.base.apigateway
+#     depends_on:
+#       - apps.postgresdb
+#     networks:
+#       - dmz-morejee-net
+
+#   apps.basic.service:
+#     container_name: appsbasicservice_c
+#     image: appsbasicservice
+#     build:
+#       context: .
+#       dockerfile: apps-basic/Apps.Basic.Service/Dockerfile
+#     ports:
+#       - "1882:80"
+#     volumes:
+#       - "/var/bamboo/appsbasicservice/logs:/app/logs"
+#       - "/var/bamboo/appsbasicservice/AppBackup:/app/wwwroot/AppBackup"
+#     environment:
+#       # GuidSettings
+#       - GuidSettings:ServerId=${GuidSettings_ServerId}
+#       - GuidSettings:GuidSalt=${GuidSettings_GuidSalt}
+#       - GuidSettings:GuidMinLen=${GuidSettings_GuidMinLen}
+#       # JwtSettings
+#       - JwtSettings:Issuer=decohero.net
+#       - JwtSettings:Audience=decohero.net
+#       - JwtSettings:SecretKey=damaozhu-anzhumeiju-app
+#       - JwtSettings:ExpiresDay=1
+#       # ConnectionString
+#       - ConnectionString=Server=apps.postgresdb;Port=5432;Database=dmz_basic;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+#     depends_on:
+#       - apps.postgresdb
+#     networks:
+#       - dmz-morejee-net
+
+#   # apps.morejee.service:
+#   #   container_name: appsmorejeeservice_c
+#   #   image: appsmorejeeservice
+#   #   build:
+#   #     context: .
+#   #     dockerfile: apps-morejee/Apps.MoreJee.Service/Dockerfile
+#   #   ports:
+#   #     - "1883:80"
+#   #   volumes:
+#   #     - "/var/bamboo/appsmorejeeservice/logs:/app/logs"
+#   #   environment:
+#   #     ConnectionString: 'Server=192.168.1.6;Port=5433;Database=dmz_morejee;User Id=postgres;Password=omega'
+#   #   networks:
+#   #     - dmz-morejee-net
+
+
+# networks:
+#   dmz-morejee-net:
