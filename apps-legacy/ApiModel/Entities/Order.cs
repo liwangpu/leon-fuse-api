@@ -23,7 +23,10 @@ namespace ApiModel.Entities
         public string Url { get; set; }
         [NotMapped]
         public string WorkFlowItemName { get; set; }
-
+        [NotMapped]
+        public int TotalNum { get; set; }
+        [NotMapped]
+        public decimal TotalPrice { get; set; }
         public OrderDTO ToDTO()
         {
             var dto = new OrderDTO();
@@ -51,6 +54,8 @@ namespace ApiModel.Entities
                 dto.OrderDetails = OrderDetails.Select(x => x.ToDTO()).ToList();
             if (OrderFlowLogs != null)
                 dto.OrderFlowLogs = OrderFlowLogs;
+            dto.TotalNum = TotalNum;
+            dto.TotalPrice = TotalPrice;
             return dto;
         }
     }

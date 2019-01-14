@@ -84,10 +84,16 @@ namespace ApiServer.Repositories
                 for (int idx = data.OrderDetails.Count - 1; idx >= 0; idx--)
                 {
                     var item = data.OrderDetails[idx];
+                    data.TotalNum += item.Num;
+                    data.TotalPrice += item.TotalPrice;
                     item.ProductSpec = await _DbContext.ProductSpec.Where(x => x.Id == item.ProductSpecId).Select(x => new ProductSpec() { Name = x.Name, ProductId = x.ProductId, Icon = x.Icon }).FirstOrDefaultAsync();
                     if (item.ProductSpec != null)
                     {
-                        item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Name = x.Name, Description = x.Description, Unit = x.Unit }).FirstOrDefaultAsync();
+                        item.ProductSpec.Product = await _DbContext.Products.Where(x => x.Id == item.ProductSpec.ProductId).Select(x => new Product() { Id = x.Id, Name = x.Name, Description = x.Description, Unit = x.Unit, CategoryId = x.CategoryId }).FirstOrDefaultAsync();
+                        if (item.ProductSpec.Product != null && !string.IsNullOrWhiteSpace(item.ProductSpec.Product.CategoryId))
+                        {
+                            item.ProductSpec.Product.CategoryName = await _DbContext.AssetCategories.Where(x => x.Id == item.ProductSpec.Product.CategoryId).Select(x => x.Name).FirstOrDefaultAsync();
+                        }
 
                         if (!string.IsNullOrWhiteSpace(item.ProductSpec.Icon))
                         {
@@ -112,7 +118,7 @@ namespace ApiServer.Repositories
 
                     if (!string.IsNullOrWhiteSpace(item.AttachmentIds))
                     {
-                        var idArr = item.AttachmentIds.Split(",",StringSplitOptions.RemoveEmptyEntries);
+                        var idArr = item.AttachmentIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
                         var attaches = new List<OrderDetailAttachment>();
                         foreach (var fid in idArr)
                         {
