@@ -4,6 +4,7 @@ using Apps.Base.Common.MiddleWares;
 using Apps.OMS.Data.Entities;
 using Apps.OMS.Service.Contexts;
 using Apps.OMS.Service.Repositories;
+using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,6 +48,8 @@ namespace Apps.OMS.Service
             .AllowAnyHeader()
             .AllowCredentials()));
 
+
+
             #region PGSQL Setting
             services.AddEntityFrameworkNpgsql();
             var connStr = Configuration["ConnectionString"];
@@ -83,12 +86,14 @@ namespace Apps.OMS.Service
             services.AddScoped<IRepository<MemberRegistry>, MemberRegistryRepository>();
             services.AddScoped<IRepository<MemberHierarchyParam>, MemberHierarchyParamRepository>();
             services.AddScoped<IRepository<Member>, MemberRepository>();
-            
+
             #endregion
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, IApplicationLifetime lifetime)
         {
             var dbContext = serviceProvider.GetService<AppDbContext>();
             var appConfig = serviceProvider.GetService<AppConfig>();
@@ -101,6 +106,7 @@ namespace Apps.OMS.Service
             app.Use(AuthorizeMiddleWare.Authorize(apiGateway));
             #endregion
 
+            app.RegisterConsul(lifetime);
             app.UseMvc();
 
             #region App Init
@@ -119,6 +125,8 @@ namespace Apps.OMS.Service
                 DatabaseInitTool.InitDatabase(app, env, serviceProvider, dbContext);
             }
             #endregion
+
+
         }
     }
 }

@@ -29,6 +29,9 @@ namespace Apps.Base.APIGateway
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);
                 })
+#if DEBUG
+                .UseUrls("http://*:1881")
+#endif
                 .UseNLog()
                 .UseKestrel(options =>
                 {
