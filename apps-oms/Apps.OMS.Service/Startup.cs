@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -96,8 +97,8 @@ namespace Apps.OMS.Service
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, IApplicationLifetime lifetime)
         {
             var dbContext = serviceProvider.GetService<AppDbContext>();
-            var appConfig = serviceProvider.GetService<AppConfig>();
-
+            var settingsOptions = serviceProvider.GetService<IOptions<AppConfig>>();
+            var appConfig = settingsOptions.Value;
             app.UseCors("AllowAll");
             app.UseAuthentication();
 
@@ -106,7 +107,7 @@ namespace Apps.OMS.Service
             app.Use(AuthorizeMiddleWare.Authorize(apiGateway));
             #endregion
 
-            app.RegisterConsul(lifetime);
+            app.RegisterConsul(lifetime, appConfig);
             app.UseMvc();
 
             #region App Init

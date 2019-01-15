@@ -29,6 +29,6 @@
     </Content>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties ocelot_1json__JSONSchema="http://json.schemastore.org/schema-org-action" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties ocelot_1json__JSONSchema="http://json.schemastore.org/travis" /></VisualStudio></ProjectExtensions>
 
 </Project>

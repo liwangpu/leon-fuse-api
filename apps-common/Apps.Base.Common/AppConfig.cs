@@ -6,6 +6,7 @@
         public string ConnectionString { get; set; }
         public JwtSettings JwtSettings { get; set; }
         public GuidSettings GuidSettings { get; set; }
+        public ConsulConfig ConsulConfig { get; set; }
     }
 
     /// <summary>
@@ -19,10 +20,26 @@
         public int ExpiresDay { get; set; }
     }
 
+    /// <summary>
+    /// GUID配置
+    /// </summary>
     public class GuidSettings
     {
         public int ServerId { get; set; }
         public string GuidSalt { get; set; }
         public int GuidMinLen { get; set; }
     }
+
+    public class ConsulConfig
+    {
+        public NodeMember Server { get; set; }
+        public NodeMember Client { get; set; }
+    }
+
+    public class NodeMember
+    {
+        public string IP { get; set; }
+        public string Port { get; set; }
+    }
+
 }

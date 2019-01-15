@@ -1,4 +1,5 @@
-﻿using Consul;
+﻿using Apps.Base.Common;
+using Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using System;
@@ -7,9 +8,9 @@ namespace Apps.OMS.Service
 {
     public static class ConsulExtension
     {
-        public static IApplicationBuilder RegisterConsul(this IApplicationBuilder app, IApplicationLifetime lifetime)
+        public static IApplicationBuilder RegisterConsul(this IApplicationBuilder app, IApplicationLifetime lifetime, AppConfig config)
         {
-            var consulClient = new ConsulClient(x => x.Address = new Uri($"http://localhost:8500"));//请求注册的 Consul 地址
+            var consulClient = new ConsulClient(x => x.Address = new Uri($"http://{config.ConsulConfig.Server.IP}:{config.ConsulConfig.Server.Port}"));//请求注册的 Consul 地址
             var httpCheck = new AgentServiceCheck()
             {
 
@@ -17,7 +18,7 @@ namespace Apps.OMS.Service
 
                 Interval = TimeSpan.FromSeconds(10),//健康检查时间间隔，或者称为心跳间隔
 
-                HTTP = $"http://192.168.1.176:1996/api/health",//健康检查地址
+                HTTP = $"http://{config.ConsulConfig.Client.IP}:{config.ConsulConfig.Client.Port}/api/health",//健康检查地址
 
                 Timeout = TimeSpan.FromSeconds(5)
             };
@@ -27,15 +28,15 @@ namespace Apps.OMS.Service
 
                 Checks = new[] { httpCheck },
 
-                ID = "omsservice1",
+                ID = $"dmzomsservice-{config.ConsulConfig.Client.IP}:{config.ConsulConfig.Client.Port}",
 
                 Name = "dmzomsservice",
 
-                Address = "192.168.1.176",
+                Address = $"{config.ConsulConfig.Client.IP}",
 
-                Port = 1996,
+                Port = Convert.ToInt32(config.ConsulConfig.Client.Port),
 
-                Tags = new[] { $"urlprefix-/mymy" }//添加 urlprefix-/servicename 格式的 tag 标签，以便 Fabio 识别
+                Tags = new[] { $"urlprefix-/dmzomsservice" }//添加 urlprefix-/servicename 格式的 tag 标签，以便 Fabio 识别
             };
 
             consulClient.Agent.ServiceDeregister(registration.ID).Wait();
@@ -43,9 +44,7 @@ namespace Apps.OMS.Service
 
             lifetime.ApplicationStopping.Register(() =>
             {
-
                 consulClient.Agent.ServiceDeregister(registration.ID).Wait();//服务停止时取消注册
-
             });
 
             return app;
