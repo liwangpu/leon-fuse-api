@@ -1,0 +1,68 @@
+version: '3.4'
+
+services:
+  dmzpostgresdb:
+    container_name: dmzpostgresdb-c
+    image: postgres:10.5
+    volumes:
+      - "/var/bamboo/dmzpostgresdb/data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
+    ports:
+      - "5700:5432"
+    networks:
+      - dmznet
+
+  dmzconsulservice:
+    image: consul:latest
+    container_name: dmzconsulservice-c
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "8500:8500"
+    networks:
+      - dmznet
+
+  appsapigateway:
+    image: apps-base-apigateway:latest
+    container_name: appsapigateway-c
+    ports:
+      - "1881:80"
+    depends_on:
+      - consulserv
+    networks:
+      - dmznet
+
+  appsomsservice:
+    image: apps-oms-service:latest
+    container_name: appsomsservice-c
+    volumes:
+      - "/var/bamboo/dmzomsserver/logs:/app/logs"
+      - "/var/bamboo/dmzomsserver/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Dev}
+      - JwtSettings:Audience=${JwtSettings_Audience_Dev}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Dev}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Dev}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${OMSServerDB_Dev};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Dev}
+      - Plugins:MediaShare=${Plugins_MediaShare_Dev}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer_Dev}
+      - ConsulConfig:Server:IP=consulserv
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=appsomsservice
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "8503:80"
+    depends_on:
+      - dmzpostgresdb
+      - consulserv
+    networks:
+      - dmznet
+      
+networks:
+  dmznet:
