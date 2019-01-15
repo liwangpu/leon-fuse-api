@@ -116,6 +116,7 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [HttpGet]
         [AllowAnonymous]
         [Route("GetNameById")]
         [ProducesResponseType(typeof(string), 200)]
@@ -132,6 +133,7 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="ids">逗号分隔的id</param>
         /// <returns></returns>
+        [HttpGet]
         [AllowAnonymous]
         [Route("GetNameByIds")]
         [ProducesResponseType(typeof(List<string>), 200)]

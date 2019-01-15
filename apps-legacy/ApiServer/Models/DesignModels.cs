@@ -168,7 +168,6 @@ namespace ApiServer.Models
     /// </summary>
     public class MaterialCreateModel : ClientAssetCreateModel
     {
-        public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
         public string CategoryId { get; set; }
@@ -183,7 +182,6 @@ namespace ApiServer.Models
     public class MaterialEditModel : ClientAssetEditModel
     {
         public string Icon { get; set; }
-        public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
         public string CategoryId { get; set; }
@@ -514,7 +512,6 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
-        public string FileAssetId { get; set; }
     }
     #endregion
 
@@ -527,7 +524,6 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
-        public string FileAssetId { get; set; }
     }
     #endregion
 

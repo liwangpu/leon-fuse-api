@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -21,16 +21,16 @@
 
   <ItemGroup>
     <Compile Remove="Stores\**" />
+    <Compile Remove="wwwroot\upload\**" />
     <Content Remove="Stores\**" />
+    <Content Remove="wwwroot\upload\**" />
     <EmbeddedResource Remove="Stores\**" />
+    <EmbeddedResource Remove="wwwroot\upload\**" />
     <None Remove="Stores\**" />
+    <None Remove="wwwroot\upload\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\**" />
-    <Content Remove="wwwroot\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
-    <None Remove="wwwroot\**" />
     <Content Include="wwwroot\dist\prod\**\*" />
     <Content Update="wwwroot\dist\prod\**\*;appsettings.json;web.config">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

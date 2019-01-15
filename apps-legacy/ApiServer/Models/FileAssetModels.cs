@@ -69,7 +69,6 @@ namespace ApiServer.Models
     /// </summary>
     public class StaticMeshCreateModel: ClientAssetCreateModel
     {
-        public string FileAssetId { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
@@ -84,7 +83,6 @@ namespace ApiServer.Models
     /// </summary>
     public class StaticMeshEditModel: ClientAssetEditModel
     {
-        public string FileAssetId { get; set; }
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
