@@ -10,6 +10,9 @@ COPY BambooCommon/BambooCommon.csproj BambooCommon/
 COPY ApiModel/ApiModel.csproj ApiModel/
 RUN dotnet restore ApiServer/ApiServer.csproj
 COPY . .
+# COPY ApiServer/wwwroot/AppBackup/navigations.json wwwroot/AppBackup/
+# COPY ApiServer/wwwroot/AppBackup/user-nav-details.json wwwroot/AppBackup/
+# COPY ApiServer/wwwroot/AppBackup/user-navs.json wwwroot/AppBackup/
 WORKDIR /src/ApiServer
 RUN dotnet build ApiServer.csproj -c Release -o /app
 
@@ -19,5 +22,4 @@ RUN dotnet publish ApiServer.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-COPY ApiServer/wwwroot/AppBackup/. wwwroot/AppBackup/
 ENTRYPOINT ["dotnet", "ApiServer.dll"]

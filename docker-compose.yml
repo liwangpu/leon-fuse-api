@@ -8,14 +8,14 @@ services:
       context: .
       dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
 
-  # apps-legacy-basic-service:
-  #   image: apps-legacy-basic-service:latest
-  #   build:
-  #     context: ./apps-legacy
-  #     dockerfile: ApiServer/Dockerfile
+  apps-legacy-basic-service:
+    image: apps-legacy-basic-service:latest
+    build:
+      context: ./apps-legacy
+      dockerfile: ApiServer/Dockerfile
 
-  # apps-oms-service:
-  #   image: apps-oms-service:latest
-  #   build:
-  #     context: .
-  #     dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
+  apps-oms-service:
+    image: apps-oms-service:latest
+    build:
+      context: .
+      dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
