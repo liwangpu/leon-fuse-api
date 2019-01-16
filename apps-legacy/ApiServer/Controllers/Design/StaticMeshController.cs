@@ -76,6 +76,7 @@ namespace ApiServer.Controllers.Design
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.SrcFileAssetId = model.SrcFileAssetId;
                 entity.DyMaterials = model.Materials;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -106,6 +107,7 @@ namespace ApiServer.Controllers.Design
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.SrcFileAssetId = model.SrcFileAssetId;
                 entity.DyMaterials = model.Materials;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

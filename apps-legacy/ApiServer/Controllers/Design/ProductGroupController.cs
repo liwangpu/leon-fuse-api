@@ -109,6 +109,7 @@ namespace ApiServer.Controllers.Design
                 entity.Orientation = model.Orientation;
                 entity.Serie = model.Serie;
                 entity.CategoryId = model.CategoryId;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -139,6 +140,7 @@ namespace ApiServer.Controllers.Design
                 entity.Orientation = model.Orientation;
                 entity.Serie = model.Serie;
                 entity.CategoryId = model.CategoryId;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

@@ -17,7 +17,7 @@ namespace ApiModel.Entities
         /// 套餐内容, 内容为PackageContent对象的json字符串
         /// </summary>
         public string Content { get; set; }
-
+        public string Color { get; set; }
         [NotMapped]
         public PackageContent ContentIns { get; set; }
         #region ToDTO
@@ -41,6 +41,7 @@ namespace ApiModel.Entities
                 dto.ContentIns = ContentIns;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
+            dto.Color = Color;
             return dto;
         }
         #endregion
@@ -58,7 +59,7 @@ namespace ApiModel.Entities
         public string Content { get; set; }
         public PackageContent ContentIns { get; set; }
         public string Icon { get; set; }
-        
+        public string Color { get; set; }
     }
     #endregion
 

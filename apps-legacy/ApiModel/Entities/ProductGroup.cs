@@ -22,7 +22,7 @@ namespace ApiModel.Entities
         /// 朝向的枚举， Forward, Back, Left, Right.  前后左右。 actor的正前方位Forward
         /// </summary>
         public int Orientation { get; set; }
-
+        public string Color { get; set; }
         /// <summary>
         /// 结构为 List<ProductGroupItem>
         /// </summary>
@@ -53,7 +53,7 @@ namespace ApiModel.Entities
             dto.ResourceType = ResourceType;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
-
+            dto.Color = Color;
             if (AssetCategory != null)
                 dto.CategoryName = AssetCategory.Name;
             return dto;
@@ -91,7 +91,7 @@ namespace ApiModel.Entities
         public int PivotType { get; set; }
         public int Orientation { get; set; }
         public string Icon { get; set; }
-        
+        public string Color { get; set; }
     }
     #endregion
 

@@ -9,7 +9,7 @@ namespace ApiModel.Entities
         public bool IsSnapshot { get; set; }
         public string SnapshotData { get; set; }
         public Layout Layout { get; set; }
-
+        public string Color { get; set; }
         /// <summary>
         /// 内容为 SolutionData 对象的 json字符串
         /// </summary>
@@ -37,6 +37,7 @@ namespace ApiModel.Entities
             dto.SnapshotData = SnapshotData;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
+            dto.Color = Color;
             return dto;
         }
     }
@@ -49,6 +50,6 @@ namespace ApiModel.Entities
         public string Data { get; set; }
         public string LayoutId { get; set; }
         public string Icon { get; set; }
-        
+        public string Color { get; set; }
     }
 }

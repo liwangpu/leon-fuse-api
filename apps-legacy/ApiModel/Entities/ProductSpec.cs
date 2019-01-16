@@ -42,6 +42,7 @@ namespace ApiModel.Entities
         /// 产品规格增加 string Slots属性是为了所有的产品可以自定义吸附和对齐或者组装用的插槽，方便产品之间进行组装。
         /// </summary>
         public string Slots { get; set; }
+        public string Color { get; set; }
         /// <summary>
         /// 所在产品的ID
         /// </summary>
@@ -84,6 +85,7 @@ namespace ApiModel.Entities
             dto.StaticMeshIds = StaticMeshIds;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
+            dto.Color = Color;
             if (AlbumAsset != null && AlbumAsset.Count > 0)
                 dto.Album = AlbumAsset.Select(x => x.ToDTO()).ToList();
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
@@ -97,6 +99,7 @@ namespace ApiModel.Entities
     /// </summary>
     public class ProductSpecDTO : EntityBase, IListable
     {
+        public string Color { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
         public decimal PartnerPrice { get; set; }

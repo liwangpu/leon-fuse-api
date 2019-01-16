@@ -74,6 +74,7 @@ namespace ApiServer.Models
         public string Properties { get; set; }
         public string SrcFileAssetId { get; set; }
         public string Materials { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -88,6 +89,7 @@ namespace ApiServer.Models
         public string Properties { get; set; }
         public string SrcFileAssetId { get; set; }
         public string Materials { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 

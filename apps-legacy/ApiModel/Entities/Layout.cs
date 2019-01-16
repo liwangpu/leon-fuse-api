@@ -9,7 +9,7 @@ namespace ApiModel.Entities
         /// 户型数据,内容为类LayoutData的Json字符串。
         /// </summary>
         public string Data { get; set; }
-
+        public string Color { get; set; }
         public LayoutDTO ToDTO()
         {
             var dto = new LayoutDTO();
@@ -29,6 +29,7 @@ namespace ApiModel.Entities
             dto.CategoryName = CategoryName;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
+            dto.Color = Color;
             return dto;
         }
     }
@@ -37,7 +38,7 @@ namespace ApiModel.Entities
     {
         public string IconAssetId { get; set; }
         public string Data { get; set; }
-        
+        public string Color { get; set; }
         public string Icon { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
-
+        public string Color { get; set; }
         [NotMapped]
         public string FileAssetUrl { get; set; }
         [NotMapped]
@@ -37,12 +37,14 @@ namespace ApiModel.Entities
             dto.FileAssetUrl = FileAssetUrl;
             if (FileAsset != null)
                 dto.FileAsset = FileAsset.ToDTO();
+            dto.Color = Color;
             return dto;
         }
     }
 
     public class MapDTO : ClientAssetEntity
     {
+        public string Color { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }

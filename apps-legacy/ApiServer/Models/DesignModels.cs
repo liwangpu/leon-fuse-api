@@ -19,6 +19,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
         public bool IsPublish { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -39,6 +40,7 @@ namespace ApiServer.Models
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
         public bool IsPublish { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -63,6 +65,7 @@ namespace ApiServer.Models
         public string Components { get; set; }
         public string Slots { get; set; }
         public string StaticMeshIds { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -88,6 +91,7 @@ namespace ApiServer.Models
         public string Components { get; set; }
         public string Slots { get; set; }
         public string StaticMeshIds { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -132,6 +136,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public bool IsSnapshot { get; set; }
         public string SnapshotData { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -153,6 +158,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public bool IsSnapshot { get; set; }
         public string SnapshotData { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -172,6 +178,7 @@ namespace ApiServer.Models
         public string Parameters { get; set; }
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -186,6 +193,7 @@ namespace ApiServer.Models
         public string Parameters { get; set; }
         public string CategoryId { get; set; }
         public string IconAssetId { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -287,6 +295,7 @@ namespace ApiServer.Models
         public string State { get; set; }
         public string IconAssetId { get; set; }
         public DateTime StateTime { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -306,6 +315,7 @@ namespace ApiServer.Models
         public string State { get; set; }
         public string IconAssetId { get; set; }
         public DateTime StateTime { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -512,6 +522,7 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -524,6 +535,7 @@ namespace ApiServer.Models
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string IconAssetId { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -562,6 +574,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public string CategoryId { get; set; }
         public string Data { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -580,6 +593,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public string CategoryId { get; set; }
         public string Data { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -592,6 +606,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -604,6 +619,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Properties { get; set; }
+        public string Color { get; set; }
     }
     #endregion
 
@@ -707,6 +723,7 @@ namespace ApiServer.Models
         public int PivotType { get; set; }
         public int Orientation { get; set; }
         public string CategoryId { get; set; }
+        public string Color { get; set; }
     }
 
     public class ProductGroupEditModel : EntityEditModel
@@ -718,6 +735,7 @@ namespace ApiServer.Models
         public int PivotType { get; set; }
         public int Orientation { get; set; }
         public string CategoryId { get; set; }
+        public string Color { get; set; }
     }
 
 

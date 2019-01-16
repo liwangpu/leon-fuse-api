@@ -7,7 +7,7 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string FileAssetId { get; set; }
-
+        public string Color { get; set; }
         [NotMapped]
         public string FileAssetUrl { get; set; }
         [NotMapped]
@@ -31,7 +31,7 @@ namespace ApiModel.Entities
             dto.Dependencies = Dependencies;
             dto.Properties = Properties;
             dto.CategoryName = CategoryName;
-
+            dto.Color = Color;
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
             dto.FileAssetId = FileAssetId;
@@ -45,6 +45,7 @@ namespace ApiModel.Entities
 
     public class TextureDTO : ClientAssetEntity
     {
+        public string Color { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }

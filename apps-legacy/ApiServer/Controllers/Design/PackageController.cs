@@ -78,6 +78,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.Content = model.Content;
                 entity.Icon = model.IconAssetId;
+                entity.Color = model.Color;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -102,6 +103,7 @@ namespace ApiServer.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Content = model.Content;
+                entity.Color = model.Color;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);

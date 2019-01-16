@@ -109,6 +109,7 @@ namespace ApiServer.Controllers
                 entity.CategoryId = model.CategoryId;
                 entity.Dependencies = model.Dependencies;
                 entity.Parameters = model.Parameters;
+                entity.Color = model.Color;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -140,6 +141,7 @@ namespace ApiServer.Controllers
                 entity.CategoryId = model.CategoryId;
                 entity.Dependencies = model.Dependencies;
                 entity.Parameters = model.Parameters;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

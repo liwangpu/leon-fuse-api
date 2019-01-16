@@ -8,7 +8,7 @@ namespace ApiModel.Entities
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }
         public string Parameters { get; set; }
-
+        public string Color { get; set; }
         [NotMapped]
         public FileAsset FileAsset { get; set; }
         [JsonIgnore]
@@ -45,13 +45,14 @@ namespace ApiModel.Entities
             if (AssetCategory != null)
                 dto.CategoryName = AssetCategory.Name;
             dto.CategoryId = CategoryId;
-
+            dto.Color = Color;
             return dto;
         }
     }
 
     public class MaterialDTO : ClientAssetEntity
     {
+        public string Color { get; set; }
         public string IconAssetId { get; set; }
         public string FileAssetId { get; set; }
         public string Dependencies { get; set; }

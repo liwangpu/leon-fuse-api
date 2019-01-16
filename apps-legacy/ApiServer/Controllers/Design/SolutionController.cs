@@ -102,6 +102,7 @@ namespace ApiServer.Controllers.Design
                 entity.Data = model.Data;
                 entity.IsSnapshot = model.IsSnapshot;
                 entity.SnapshotData = model.SnapshotData;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);
@@ -131,6 +132,7 @@ namespace ApiServer.Controllers.Design
                 entity.IsSnapshot = model.IsSnapshot;
                 entity.SnapshotData = model.SnapshotData;
                 entity.Data = model.Data;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

@@ -7,6 +7,7 @@ namespace ApiModel.Entities
         public string Dependencies { get; set; }
         public string Properties { get; set; }
         public string SrcFileAssetId { get; set; }
+        public string Color { get; set; }
         /// <summary>
         /// 字符型Materials,服务器不做处理,只是简单存储
         /// </summary>
@@ -43,6 +44,7 @@ namespace ApiModel.Entities
             dto.Url = FileAssetUrl;
             if (FileAsset != null)
                 dto.FileAsset = FileAsset.ToDTO();
+            dto.Color = Color;
             return dto;
         }
     }
@@ -57,6 +59,7 @@ namespace ApiModel.Entities
         public string SrcFileAssetId { get; set; }
         public string Url { get; set; }
         public string Materials { get; set; }
+        public string Color { get; set; }
         public FileAssetDTO FileAsset { get; set; }
     }
 }

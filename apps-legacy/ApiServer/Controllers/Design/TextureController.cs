@@ -80,6 +80,7 @@ namespace ApiServer.Controllers.Design
                 entity.UnCookedAssetId = model.UnCookedAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;
+                entity.Color = model.Color;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
                 return await Task.FromResult(entity);
             });
@@ -110,6 +111,7 @@ namespace ApiServer.Controllers.Design
                     entity.Icon = model.IconAssetId;
                 entity.Dependencies = model.Dependencies;
                 entity.Properties = model.Properties;
+                entity.Color = model.Color;
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);

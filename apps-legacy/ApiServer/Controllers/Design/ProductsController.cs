@@ -128,6 +128,7 @@ namespace ApiServer.Controllers
                 entity.Unit = model.Unit;
                 entity.CategoryId = model.CategoryId;
                 entity.IsPublish = model.IsPublish;
+                entity.Color = model.Color;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
 
 
@@ -171,7 +172,7 @@ namespace ApiServer.Controllers
                 entity.CategoryId = model.CategoryId;
                 entity.Description = model.Description;
                 entity.IsPublish = model.IsPublish;
-
+                entity.Color = model.Color;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
                 entity.Unit = model.Unit;
