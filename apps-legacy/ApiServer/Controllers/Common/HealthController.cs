@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Apps.OMS.Service.Controllers
+namespace ApiServer.Controllers
 {
     [AllowAnonymous]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class HealthController : ControllerBase
+    [Produces("application/json")]
+    [Route("api/Health")]
+    public class HealthController : Controller
     {
         [HttpGet]
         public IActionResult Get()

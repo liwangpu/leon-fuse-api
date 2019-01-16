@@ -15,15 +15,15 @@ namespace Apps.Base.APIGateway
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("ocelot.json", optional: true, reloadOnChange: true)
-                .AddCommandLine(args)
-                .Build();
-
             return WebHost.CreateDefaultBuilder(args)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                 {
+                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                     //if()
+                     config.AddJsonFile($"ocelot.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
+                     config.AddCommandLine(args);
+                 })
+                 .UseStartup<Startup>()
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

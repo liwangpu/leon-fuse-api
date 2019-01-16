@@ -11,6 +11,7 @@
         public JwtSettings JwtSettings { get; set; }
         public SMTPSettings SMTPSettings { get; set; }
         public Plugins Plugins { get; set; }
+        public ConsulConfig ConsulConfig { get; set; }
     }
 
     /// <summary>
@@ -37,5 +38,17 @@
     {
         public string OrderViewer { get; set; }
         public string MediaShare { get; set; }
+    }
+
+    public class ConsulConfig
+    {
+        public NodeMember Server { get; set; }
+        public NodeMember Client { get; set; }
+    }
+
+    public class NodeMember
+    {
+        public string IP { get; set; }
+        public string Port { get; set; }
     }
 }

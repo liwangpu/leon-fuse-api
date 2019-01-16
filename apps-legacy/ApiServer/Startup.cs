@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -149,15 +150,18 @@ namespace ApiServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, IApplicationLifetime lifetime)
         {
-            var appConfig = serviceProvider.GetService<AppConfig>();
+            var settingsOptions = serviceProvider.GetService<IOptions<AppConfig>>();
+            var appConfig = settingsOptions.Value;
             var dbContext = serviceProvider.GetService<ApiDbContext>();
 
             app.UseCors("AllowAll");
             app.UseAuthentication();
 
             hostStaticFileServer(app, env);
+
+            app.RegisterConsul(lifetime, appConfig);
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
