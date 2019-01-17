@@ -29,6 +29,19 @@ namespace Apps.MoreJee.Export.Services
             var dto = await $"{Server}/Products/{id}".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetJsonAsync<ProductDTO>();
             return dto;
         }
+
+        /// <summary>
+        /// 根据Id获取产品信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="assign"></param>
+        /// <returns></returns>
+        public async Task GetById(string id, Action<ProductDTO> assign)
+        {
+            var dto = await GetById(id);
+            if (dto != null)
+                assign(dto);
+        }
         #endregion
 
         #region GetBriefById 根据Id获取产品简洁信息
@@ -44,21 +57,20 @@ namespace Apps.MoreJee.Export.Services
             var dto = await $"{Server}/Products/Brief/{id}".AllowAnyHttpStatus().GetJsonAsync<ProductDTO>();
             return dto;
         }
-        #endregion
 
-        public async Task GetById(string id, Action<ProductDTO> assign)
-        {
-            var dto = await GetById(id);
-            if (dto != null)
-                assign(dto);
-        }
-
+        /// <summary>
+        /// 根据Id获取产品信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="assign"></param>
+        /// <returns></returns>
         public async Task GetBriefById(string id, Action<ProductDTO> assign)
         {
             var dto = await GetBriefById(id);
             if (dto != null)
                 assign(dto);
         }
+        #endregion
 
     }
 }

@@ -117,7 +117,7 @@ namespace Apps.OMS.Service.Controllers
                         ditem.TotalPrice = Math.Round(it.UnitPrice * it.Num, 2, MidpointRounding.AwayFromZero);
                         ditem.AttachmentIds = it.AttachmentIds;
 
-                        await productSpecMicroService.GetById(it.ProductSpecId, (spec) =>
+                        await productSpecMicroService.GetBriefById(it.ProductSpecId, (spec) =>
                           {
                               ditem.ProductSpecId = spec.Id;
                               ditem.ProductSpecName = spec.Name;
@@ -125,7 +125,7 @@ namespace Apps.OMS.Service.Controllers
                               ditem.Icon = spec.Icon;
                           });
 
-                        await productMicroService.GetById(ditem.ProductId, (prod) =>
+                        await productMicroService.GetBriefById(ditem.ProductId, (prod) =>
                          {
                              ditem.ProductName = prod.Name;
                              ditem.ProductCategoryId = prod.CategoryId;
