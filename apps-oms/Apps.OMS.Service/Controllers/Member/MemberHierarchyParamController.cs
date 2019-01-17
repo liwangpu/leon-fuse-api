@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 
 namespace Apps.OMS.Service.Controllers
 {
+    /// <summary>
+    /// 积分参数设置控制器
+    /// </summary>
     [Authorize]
     [Route("/[controller]")]
     [ApiController]
@@ -143,7 +146,7 @@ namespace Apps.OMS.Service.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("UpdateHierarchySetting")]
-        public async Task<IActionResult> UpdateHierarchySetting([FromBody] MemberHierarchyParamSettingUpdateModels model)
+        public async Task<IActionResult> UpdateHierarchySetting([FromBody] MemberHierarchyParamSettingUpdateModel model)
         {
             var setting = await _Context.MemberHierarchySettings.Where(x => x.MemberHierarchyParamId == model.MemberHierarchyParamId && x.OrganizationId == CurrentAccountOrganizationId).FirstOrDefaultAsync();
             if (setting == null)
@@ -168,11 +171,51 @@ namespace Apps.OMS.Service.Controllers
         }
         #endregion
 
-        [HttpGet("HierarchySetting")]
+        #region GetPointExchange 获取组织订单积分兑换率
+        /// <summary>
+        /// 获取组织订单积分兑换率
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("PointExchange")]
         [ProducesResponseType(typeof(decimal), 200)]
         public async Task<IActionResult> GetPointExchange()
         {
-            return Ok(2);
+            var exchange = await _Context.OrderPointExchanges.FirstOrDefaultAsync(x => x.OrganizationId == CurrentAccountOrganizationId);
+            var rate = exchange != null ? exchange.Rate : 0;
+            return Ok(rate);
         }
+        #endregion
+
+        #region UpdatePointExchange 设置组织订单积分兑换率
+        /// <summary>
+        /// 设置组织订单积分兑换率
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut("PointExchange")]
+        [ProducesResponseType(typeof(decimal), 200)]
+        public async Task<IActionResult> UpdatePointExchange([FromBody] OrderPointExchangeUpdateModel model)
+        {
+            if (model.Rate <= 0)
+            {
+                ModelState.AddModelError("Rate", "兑换率必须大于0");
+                return BadRequest(ModelState);
+            }
+            var exchange = await _Context.OrderPointExchanges.FirstOrDefaultAsync(x => x.OrganizationId == CurrentAccountOrganizationId);
+            if (exchange == null)
+            {
+                exchange = new OrderPointExchange();
+                exchange.OrganizationId = CurrentAccountOrganizationId;
+            }
+            exchange.Rate = model.Rate;
+            if (!string.IsNullOrWhiteSpace(exchange.Id))
+                _Context.OrderPointExchanges.Update(exchange);
+            else
+                _Context.OrderPointExchanges.Add(exchange);
+            _Context.SaveChanges();
+            return Ok();
+        } 
+        #endregion
+
     }
 }
