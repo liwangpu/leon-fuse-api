@@ -34,6 +34,8 @@ services:
       - "/var/bamboo/dmzapigateway/logs:/app/logs"
     networks:
       - dmzdevnet
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - dmzconsulservice-dev
       - apps-legacy-basic-service-dev

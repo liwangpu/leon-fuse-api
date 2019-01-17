@@ -19,7 +19,6 @@ namespace Apps.Base.APIGateway
                 .ConfigureAppConfiguration((hostingContext, config) =>
                  {
                      config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                     //if()
                      config.AddJsonFile($"ocelot.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                      config.AddCommandLine(args);
                  })

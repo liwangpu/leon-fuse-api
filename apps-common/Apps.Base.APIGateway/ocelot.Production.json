@@ -92,6 +92,7 @@
     }
   ],
   "GlobalConfiguration": {
+    "dmzconsulservice-ehome": null,
     "ServiceDiscoveryProvider": {
       "Host": "dmzconsulservice-dev",
       "Port": 8500,

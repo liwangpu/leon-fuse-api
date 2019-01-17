@@ -32,6 +32,8 @@ services:
       - "5701:80"
     volumes:
       - "/var/bamboo/dmzapigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
     networks:
       - dmzdevnet
     depends_on:
@@ -103,7 +105,7 @@ services:
       # Consul
       - ConsulConfig:Server:IP=dmzconsulservice-dev
       - ConsulConfig:Server:Port=8500
-      - ConsulConfig:Client:IP=apps-legacy-basic-service-dev
+      - ConsulConfig:Client:IP=apps-oms-service-dev
       - ConsulConfig:Client:Port=80
     ports:
       - "5704:80"
@@ -112,18 +114,18 @@ services:
     depends_on:
       - dmzpostgresdb
       - dmzconsulservice-dev
-# # MoreJee Site ( For Company Development )
-#   apps-morejee-site-dev:
-#     container_name: apps-morejee-site-dev-c
-#     image: apps-morejee-site:latest
-#     environment:
-#       - APISERVER=${APIGatewayServer_Dev}
-#       - TOOLSERVER=${MoreJeeToolSite_Dev}
-#       - SECRETKEY=${SECRETKEY_Dev}
-#     ports:
-#       - "5705:4000"
-#     networks:
-#       - dmzdevnet
+# MoreJee Site ( For Company Development )
+  apps-morejee-site-dev:
+    container_name: apps-morejee-site-dev-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Dev}
+      - TOOLSERVER=${MoreJeeToolSite_Dev}
+      - SECRETKEY=${SECRETKEY_Dev}
+    ports:
+      - "5705:4000"
+    networks:
+      - dmzdevnet
 
 # MoreJee Consul ( For Company EHome )
   dmzconsulservice-ehome:
@@ -226,18 +228,18 @@ services:
     depends_on:
       - dmzpostgresdb
       - dmzconsulservice-ehome
-# # MoreJee Site ( For Company Development )
-#   apps-morejee-site-ehome:
-#     container_name: apps-morejee-site-ehome-c
-#     image: apps-morejee-site:latest
-#     environment:
-#       - APISERVER=${APIGatewayServer_EHome}
-#       - TOOLSERVER=${MoreJeeToolSite_EHome}
-#       - SECRETKEY=${SECRETKEY_EHome}
-#     ports:
-#       - "5805:4000"
-#     networks:
-#       - dmzehomenet
+# MoreJee Site ( For Company Development )
+  apps-morejee-site-ehome:
+    container_name: apps-morejee-site-ehome-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_EHome}
+      - TOOLSERVER=${MoreJeeToolSite_EHome}
+      - SECRETKEY=${SECRETKEY_EHome}
+    ports:
+      - "5805:4000"
+    networks:
+      - dmzehomenet
 
 networks:
   dmzdevnet:

@@ -93,7 +93,7 @@
   ],
   "GlobalConfiguration": {
     "ServiceDiscoveryProvider": {
-      "Host": "localhost",
+      "Host": "dmzconsulservice-dev",
       "Port": 8500,
       "Type": "Consul"
     }
