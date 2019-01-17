@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apps.OMS.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190117092528_OrderDetailChangeNumType")]
-    partial class OrderDetailChangeNumType
+    [Migration("20190117094835_AddOrder")]
+    partial class AddOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,6 +37,8 @@ namespace Apps.OMS.Service.Migrations
                     b.Property<string>("Description");
 
                     b.Property<string>("Icon");
+
+                    b.Property<string>("Mail");
 
                     b.Property<DateTime>("ModifiedTime");
 
@@ -219,6 +221,8 @@ namespace Apps.OMS.Service.Migrations
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrderNo");
 
                     b.Property<string>("OrganizationId");
 

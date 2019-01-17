@@ -9,6 +9,18 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190117073639_AddOrder.cs" />
     <Compile Remove="Migrations\20190117073639_AddOrder.Designer.cs" />
+    <Compile Remove="Migrations\20190117073905_AddOrder.cs" />
+    <Compile Remove="Migrations\20190117073905_AddOrder.Designer.cs" />
+    <Compile Remove="Migrations\20190117075732_OrderAddOrganId.cs" />
+    <Compile Remove="Migrations\20190117075732_OrderAddOrganId.Designer.cs" />
+    <Compile Remove="Migrations\20190117082252_OrderDetailAddOrganId.cs" />
+    <Compile Remove="Migrations\20190117082252_OrderDetailAddOrganId.Designer.cs" />
+    <Compile Remove="Migrations\20190117091700_OrderAddTotalNum.cs" />
+    <Compile Remove="Migrations\20190117091700_OrderAddTotalNum.Designer.cs" />
+    <Compile Remove="Migrations\20190117092143_OrderDetailIgPrice.cs" />
+    <Compile Remove="Migrations\20190117092143_OrderDetailIgPrice.Designer.cs" />
+    <Compile Remove="Migrations\20190117092528_OrderDetailChangeNumType.cs" />
+    <Compile Remove="Migrations\20190117092528_OrderDetailChangeNumType.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -37,5 +37,28 @@ namespace Apps.MoreJee.Export.Services
             if (dto != null)
                 assign(dto);
         }
+
+        #region GetBriefById 根据Id获取产品规格简洁信息
+        /// <summary>
+        /// 根据Id获取产品规格简洁信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ProductSpecDTO> GetBriefById(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return null;
+            var dto = await $"{Server}/ProductSpec/Brief/{id}".AllowAnyHttpStatus().GetJsonAsync<ProductSpecDTO>();
+            return dto;
+        }
+        #endregion
+
+
+        public async Task GetBriefById(string id, Action<ProductSpecDTO> assign)
+        {
+            var dto = await GetBriefById(id);
+            if (dto != null)
+                assign(dto);
+        }
     }
 }

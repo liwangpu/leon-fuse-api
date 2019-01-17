@@ -33,6 +33,7 @@ namespace Apps.OMS.Data.Entities
         public DateTime ModifiedTime { get; set; }
         public string Description { get; set; }
         public string OrganizationId { get; set; }
+        public string OrderNo { get; set; }
         public int TotalNum { get; set; }
         public decimal TotalPrice { get; set; }
         public string CustomerId { get; set; }

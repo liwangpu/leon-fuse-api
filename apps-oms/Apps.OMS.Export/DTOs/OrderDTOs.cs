@@ -16,6 +16,7 @@ namespace Apps.OMS.Export.DTOs
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public string OrganizationId { get; set; }
+        public string OrderNo { get; set; }
         public int TotalNum { get; set; }
         public decimal TotalPrice { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }

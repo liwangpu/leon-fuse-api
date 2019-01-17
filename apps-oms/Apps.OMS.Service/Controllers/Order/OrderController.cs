@@ -60,7 +60,7 @@ namespace Apps.OMS.Service.Controllers
                 dto.OrganizationId = entity.OrganizationId;
                 dto.TotalNum = entity.TotalNum;
                 dto.TotalPrice = entity.TotalPrice;
-
+                dto.OrderNo = entity.OrderNo;
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
@@ -79,6 +79,7 @@ namespace Apps.OMS.Service.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(OrderDTO), 200)]
         public override async Task<IActionResult> Get(string id)
@@ -100,6 +101,8 @@ namespace Apps.OMS.Service.Controllers
                 dto.OrganizationId = entity.OrganizationId;
                 dto.TotalNum = entity.TotalNum;
                 dto.TotalPrice = entity.TotalPrice;
+                dto.OrderNo = entity.OrderNo;
+
                 #region OrderDetails
                 var details = new List<OrderDetailDTO>();
                 if (entity.OrderDetails != null && entity.OrderDetails.Count > 0)

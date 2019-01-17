@@ -17,11 +17,13 @@ namespace Apps.OMS.Service.Migrations
                     Modifier = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
+                    Mail = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
                     Telephone = table.Column<string>(nullable: true),
                     Cellphone = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true)
+                    Address = table.Column<string>(nullable: true),
+                    OrganizationId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,6 +41,10 @@ namespace Apps.OMS.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: true),
+                    OrganizationId = table.Column<string>(nullable: true),
+                    OrderNo = table.Column<string>(nullable: true),
+                    TotalNum = table.Column<int>(nullable: false),
+                    TotalPrice = table.Column<decimal>(nullable: false),
                     CustomerId = table.Column<string>(nullable: true),
                     WorkFlowItemId = table.Column<string>(nullable: true),
                     SubOrderIds = table.Column<string>(nullable: true)
@@ -65,10 +71,10 @@ namespace Apps.OMS.Service.Migrations
                     CreatedTime = table.Column<DateTime>(nullable: false),
                     ModifiedTime = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: true),
+                    OrganizationId = table.Column<string>(nullable: true),
                     ProductSpecId = table.Column<string>(nullable: true),
                     Num = table.Column<int>(nullable: false),
                     UnitPrice = table.Column<decimal>(nullable: false),
-                    TotalPrice = table.Column<decimal>(nullable: false),
                     Remark = table.Column<string>(nullable: true),
                     AttachmentIds = table.Column<string>(nullable: true),
                     OrderId = table.Column<string>(nullable: true)

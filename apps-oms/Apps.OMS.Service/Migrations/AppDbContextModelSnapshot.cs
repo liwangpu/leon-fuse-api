@@ -36,6 +36,8 @@ namespace Apps.OMS.Service.Migrations
 
                     b.Property<string>("Icon");
 
+                    b.Property<string>("Mail");
+
                     b.Property<DateTime>("ModifiedTime");
 
                     b.Property<string>("Modifier");
@@ -217,6 +219,8 @@ namespace Apps.OMS.Service.Migrations
                     b.Property<string>("Modifier");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("OrderNo");
 
                     b.Property<string>("OrganizationId");
 

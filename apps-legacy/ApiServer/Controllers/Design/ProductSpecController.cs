@@ -7,6 +7,7 @@ using ApiServer.Repositories;
 using ApiServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -108,6 +109,40 @@ namespace ApiServer.Controllers
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
+        }
+        #endregion
+
+        #region GetBriefById 根据Id获取产品规格简洁的信息
+        /// <summary>
+        /// 根据Id获取产品规格简洁的信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("Brief/{id}")]
+        [ProducesResponseType(typeof(ProductSpecDTO), 200)]
+        public async Task<IActionResult> GetBriefById(string id)
+        {
+            var data = await _Repository._DbContext.ProductSpec.FirstOrDefaultAsync(x => x.Id == id);
+            if (data == null)
+                return NotFound();
+            var dto = new ProductSpecDTO();
+            dto.Id = data.Id;
+            dto.Name = data.Name;
+            dto.Description = data.Description;
+            dto.OrganizationId = data.OrganizationId;
+            dto.CreatedTime = data.CreatedTime;
+            dto.ModifiedTime = data.ModifiedTime;
+            dto.Creator = data.Creator;
+            dto.Modifier = data.Modifier;
+            dto.Price = data.Price;
+            dto.PartnerPrice = data.PartnerPrice;
+            dto.PurchasePrice = data.PurchasePrice;
+            dto.ProductId = data.ProductId;
+            if (!string.IsNullOrWhiteSpace(data.Icon))
+                dto.Icon = await _Repository._DbContext.Files.Where(x => x.Id == data.Icon).Select(x => x.Url).FirstOrDefaultAsync();
+
+            return Ok(dto);
         }
         #endregion
 

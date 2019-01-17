@@ -53,6 +53,11 @@ namespace Apps.OMS.Service.Repositories
                 data.TotalNum = data.OrderDetails.Select(x => x.Num).Sum();
                 data.TotalPrice = data.OrderDetails.Select(x => x.TotalPrice).Sum();
             }
+            //生成订单编号
+            var beginTime = new DateTime(data.CreatedTime.Year, data.CreatedTime.Month, data.CreatedTime.Day);
+            var endTime = beginTime.AddDays(1);
+            var orderCount = await _Context.Orders.Where(x => x.CreatedTime >= beginTime && x.CreatedTime < endTime).CountAsync();
+            data.OrderNo = beginTime.ToString("yyyyMMdd") + (orderCount + 1).ToString().PadLeft(5, '0');
             _Context.Orders.Add(data);
             await _Context.SaveChangesAsync();
         }

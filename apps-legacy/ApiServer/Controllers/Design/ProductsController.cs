@@ -392,6 +392,38 @@ namespace ApiServer.Controllers
 
         }
         #endregion
+
+        #region GetBriefById 根据Id获取产品简洁的信息
+        /// <summary>
+        /// 根据Id获取产品简洁的信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("Brief/{id}")]
+        [ProducesResponseType(typeof(ProductDTO), 200)]
+        public async Task<IActionResult> GetBriefById(string id)
+        {
+            var data = await _Repository._DbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (data == null)
+                return NotFound();
+            var dto = new ProductDTO();
+            dto.Id = data.Id;
+            dto.Name = data.Name;
+            dto.Description = data.Description;
+            dto.OrganizationId = data.OrganizationId;
+            dto.CreatedTime = data.CreatedTime;
+            dto.ModifiedTime = data.ModifiedTime;
+            dto.Creator = data.Creator;
+            dto.Modifier = data.Modifier;
+            dto.Unit = data.Unit;
+            dto.CategoryId = data.CategoryId;
+            if (!string.IsNullOrWhiteSpace(dto.CategoryId))
+                dto.CategoryName = await _Repository._DbContext.AssetCategories.Where(x => x.Id == dto.CategoryId).Select(x => x.Name).FirstOrDefaultAsync();
+
+            return Ok(dto);
+        }
+        #endregion
     }
 
 
