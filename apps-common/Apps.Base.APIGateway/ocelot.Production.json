@@ -81,6 +81,46 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/Order",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Orders",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Orders/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Order/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/{url}",
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/{url}",

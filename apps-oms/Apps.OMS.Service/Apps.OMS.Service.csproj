@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190117073639_AddOrder.cs" />
+    <Compile Remove="Migrations\20190117073639_AddOrder.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Consul" Version="0.7.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
@@ -21,6 +26,7 @@
     <ProjectReference Include="..\..\apps-basic\Apps.Basic.Export\Apps.Basic.Export.csproj" />
     <ProjectReference Include="..\..\apps-common\Apps.Base.Common\Apps.Base.Common.csproj" />
     <ProjectReference Include="..\..\apps-filesystem\Apps.FileSystem.Export\Apps.FileSystem.Export.csproj" />
+    <ProjectReference Include="..\..\apps-morejee\Apps.MoreJee.Export\Apps.MoreJee.Export.csproj" />
     <ProjectReference Include="..\Apps.OMS.Data\Apps.OMS.Data.csproj" />
     <ProjectReference Include="..\Apps.OMS.Export\Apps.OMS.Export.csproj" />
   </ItemGroup>

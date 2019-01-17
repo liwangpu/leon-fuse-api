@@ -28,5 +28,13 @@ namespace Apps.OMS.Service.Contexts
         public DbSet<NationalUrban> NationalUrbans { get; set; }
 
         public DbSet<OrderPointExchange> OrderPointExchanges { get; set; }
+
+        public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
+        public DbSet<OrderFlowLog> OrderFlowLogs { get; set; }
     }
 }

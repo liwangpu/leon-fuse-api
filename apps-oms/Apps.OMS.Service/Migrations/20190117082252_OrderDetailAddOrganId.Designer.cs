@@ -3,15 +3,17 @@ using System;
 using Apps.OMS.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Apps.OMS.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190117082252_OrderDetailAddOrganId")]
+    partial class OrderDetailAddOrganId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,10 +224,6 @@ namespace Apps.OMS.Service.Migrations
 
                     b.Property<string>("SubOrderIds");
 
-                    b.Property<int>("TotalNum");
-
-                    b.Property<decimal>("TotalPrice");
-
                     b.Property<string>("WorkFlowItemId");
 
                     b.HasKey("Id");
@@ -263,6 +261,8 @@ namespace Apps.OMS.Service.Migrations
                     b.Property<string>("ProductSpecId");
 
                     b.Property<string>("Remark");
+
+                    b.Property<decimal>("TotalPrice");
 
                     b.Property<decimal>("UnitPrice");
 
