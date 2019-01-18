@@ -121,6 +121,46 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/WorkFlowRule",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlowRule",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlowRule/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlowRule/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlow",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlow",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlow/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlow/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/{url}",
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/{url}",

@@ -37,5 +37,13 @@ namespace Apps.OMS.Service.Contexts
 
         public DbSet<OrderFlowLog> OrderFlowLogs { get; set; }
 
+        public DbSet<WorkFlow> WorkFlows { get; set; }
+
+        public DbSet<WorkFlowItem> WorkFlowItems { get; set; }
+
+        public DbSet<WorkFlowRule> WorkFlowRules { get; set; }
+
+        public DbSet<WorkFlowRuleDetail> WorkFlowRuleDetails { get; set; }
+
     }
 }

@@ -85,6 +85,27 @@ namespace Apps.OMS.Service
             }
             #endregion
 
+            #region 初始化工作流基础信息
+            {
+                var rules = context.WorkFlowRules.ToList();
+
+                if (rules.Where(x => x.Id == WorkFlowRuleConst.OrderWorkFlow).Count() <= 0)
+                {
+                    var rule = new WorkFlowRule();
+                    rule.Id = WorkFlowRuleConst.OrderWorkFlow;
+                    rule.Name = "订单流程";
+                    rule.Creator = AppConst.BambooAdminId;
+                    rule.Modifier = AppConst.BambooAdminId;
+                    rule.CreatedTime = DateTime.Now;
+                    rule.ModifiedTime = DateTime.Now;
+                    rule.IsInner = true;
+                    context.WorkFlowRules.Add(rule);
+                }
+
+                context.SaveChanges();
+            }
+            #endregion
+
             #region 初始化省市区信息
             {
                 var filePath = Path.Combine(backupFolder, "national-urban.json");

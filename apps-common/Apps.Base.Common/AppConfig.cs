@@ -7,6 +7,7 @@
         public JwtSettings JwtSettings { get; set; }
         public GuidSettings GuidSettings { get; set; }
         public ConsulConfig ConsulConfig { get; set; }
+        public Plugins Plugins { get; set; }
     }
 
     /// <summary>
@@ -28,6 +29,12 @@
         public int ServerId { get; set; }
         public string GuidSalt { get; set; }
         public int GuidMinLen { get; set; }
+    }
+
+    public class Plugins
+    {
+        public string OrderViewer { get; set; }
+        public string MediaShare { get; set; }
     }
 
     public class ConsulConfig

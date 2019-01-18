@@ -67,6 +67,7 @@ namespace Apps.OMS.Service.Controllers
                 dto.CustomerName = entity.CustomerName;
                 dto.CustomerPhone = entity.CustomerPhone;
                 dto.CustomerAddress = entity.CustomerAddress;
+                dto.Url = $"{_AppConfig.Plugins.OrderViewer}?order={entity.Id}";
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
@@ -112,6 +113,7 @@ namespace Apps.OMS.Service.Controllers
                 dto.CustomerName = entity.CustomerName;
                 dto.CustomerPhone = entity.CustomerPhone;
                 dto.CustomerAddress = entity.CustomerAddress;
+                dto.Url = $"{_AppConfig.Plugins.OrderViewer}?order={entity.Id}";
 
                 #region OrderDetails
                 var details = new List<OrderDetailDTO>();

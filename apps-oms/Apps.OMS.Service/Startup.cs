@@ -88,7 +88,9 @@ namespace Apps.OMS.Service
             services.AddScoped<IRepository<MemberHierarchyParam>, MemberHierarchyParamRepository>();
             services.AddScoped<IRepository<Member>, MemberRepository>();
             services.AddScoped<IRepository<Order>, OrderRepository>();
-
+            services.AddScoped<IRepository<WorkFlowRule>, WorkFlowRuleRepository>();
+            services.AddScoped<IRepository<WorkFlow>, WorkFlowRepository>();
+            
             #endregion
 
 

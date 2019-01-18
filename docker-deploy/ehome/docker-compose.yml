@@ -1,0 +1,246 @@
+version: '3.4'
+
+services:
+# MoreJee Database
+  dmzpostgresdb:
+    container_name: dmzpostgresdb-c
+    image: postgres:10.5
+    volumes:
+      - "/var/bamboo/dmzpostgresdb/data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
+    ports:
+      - "5700:5432"
+    networks:
+      - dmzdevnet
+      - dmzehomenet
+# MoreJee Consul ( For Company Development )
+  dmzconsulservice-dev:
+    image: consul:latest
+    container_name: dmzconsulservice-dev-c
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "8500:8500"
+    networks:
+      - dmzdevnet
+# MoreJee APIGateway ( For Company Development )
+  apps-apigateway-dev:
+    container_name: apps-apigateway-dev-c
+    image: apps-base-apigateway:latest
+    ports:
+      - "5701:80"
+    volumes:
+      - "/var/bamboo/dmzapigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - dmzdevnet
+    depends_on:
+      - dmzconsulservice-dev
+      - apps-legacy-basic-service-dev
+      - apps-oms-service-dev
+# MoreJee APIServer ( For Company Development )
+  apps-legacy-basic-service-dev:
+    container_name: apps-legacy-basic-service-dev-c
+    image: apps-legacy-basic-service:latest
+    volumes:
+      - "/var/bamboo/dmzapiserver/logs:/app/logs"
+      - "/var/bamboo/dmzapiserver/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Dev}
+      - JwtSettings:Audience=${JwtSettings_Audience_Dev}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Dev}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Dev}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${ServerDB_Dev};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Dev}
+      - Plugins:MediaShare=${Plugins_MediaShare_Dev}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-dev
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-legacy-basic-service-dev
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5702:80"
+    networks:
+      - dmzdevnet
+    depends_on:
+      - dmzpostgresdb
+      - apps-morejee-tool-dev
+      - dmzconsulservice-dev
+# MoreJee ToolSite ( For Company Development )
+  apps-morejee-tool-dev:
+    container_name: apps-morejee-tool-dev-c
+    image: apps-morejee-tool-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Dev}
+    ports:
+      - "5703:4000"
+    networks:
+      - dmzdevnet
+# MoreJee OMS APIServer ( For Company Development )
+  apps-oms-service-dev:
+    container_name: apps-oms-service-dev-c
+    image: apps-oms-service:latest
+    volumes:
+      - "/var/bamboo/dmzomsserver/logs:/app/logs"
+      - "/var/bamboo/dmzomsserver/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Dev}
+      - JwtSettings:Audience=${JwtSettings_Audience_Dev}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Dev}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Dev}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${OMSServerDB_Dev};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Dev}
+      - Plugins:MediaShare=${Plugins_MediaShare_Dev}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer_Dev}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-dev
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-oms-service-dev
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5704:80"
+    networks:
+      - dmzdevnet
+    depends_on:
+      - dmzpostgresdb
+      - dmzconsulservice-dev
+# MoreJee Site ( For Company Development )
+  apps-morejee-site-dev:
+    container_name: apps-morejee-site-dev-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Dev}
+      - TOOLSERVER=${MoreJeeToolSite_Dev}
+      - SECRETKEY=${SECRETKEY_Dev}
+    ports:
+      - "5705:4000"
+    networks:
+      - dmzdevnet
+
+# MoreJee Consul ( For Company EHome )
+  dmzconsulservice-ehome:
+    image: consul:latest
+    container_name: dmzconsulservice-ehome-c
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "8501:8500"
+    networks:
+      - dmzehomenet
+# MoreJee APIGateway ( For EHome )
+  apps-apigateway-ehome:
+    container_name: apps-apigateway-ehome-c
+    image: apps-base-apigateway:latest
+    ports:
+      - "5801:80"
+    volumes:
+      - "/var/bamboo/ehomeapigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=EHome
+    networks:
+      - dmzehomenet
+    depends_on:
+      - dmzconsulservice-ehome
+      - apps-legacy-basic-service-ehome
+      - apps-oms-service-ehome
+# MoreJee APIServer ( For EHome )
+  apps-legacy-basic-service-ehome:
+    container_name: apps-legacy-basic-service-ehome-c
+    image: apps-legacy-basic-service:latest
+    volumes:
+      - "/var/bamboo/ehomeapiserver/logs:/app/logs"
+      - "/var/bamboo/ehomeapiserver/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/bamboo/ehomeapiserver/Attachments:/app/wwwroot/Attachments"
+      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload" 
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_EHome}
+      - JwtSettings:Audience=${JwtSettings_Audience_EHome}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_EHome}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_EHome}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${ServerDB_EHome};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      - APIGatewayServer=apps-apigateway-ehome
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_EHome}
+      - Plugins:MediaShare=${Plugins_MediaShare_EHome}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-ehome
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-legacy-basic-service-ehome
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5802:80"
+    networks:
+      - dmzehomenet
+    depends_on:
+      - dmzpostgresdb
+      - apps-morejee-tool-ehome
+      - dmzconsulservice-ehome
+# MoreJee ToolSite ( For EHome )
+  apps-morejee-tool-ehome:
+    container_name: apps-morejee-tool-ehome-c
+    image: apps-morejee-tool-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_EHome}
+    ports:
+      - "5803:4000"
+    networks:
+      - dmzehomenet
+# MoreJee OMS APIServer ( For EHome )
+  apps-oms-service-ehome:
+    container_name: apps-oms-service-ehome-c
+    image: apps-oms-service:latest
+    volumes:
+      - "/var/bamboo/ehomeomsserver/logs:/app/logs"
+      - "/var/bamboo/ehomeomsserver/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_EHome}
+      - JwtSettings:Audience=${JwtSettings_Audience_EHome}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_EHome}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_EHome}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${OMSServerDB_EHome};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_EHome}
+      - Plugins:MediaShare=${Plugins_MediaShare_EHome}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer_EHome}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-ehome
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-oms-service-ehome
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5804:80"
+    networks:
+      - dmzehomenet
+    depends_on:
+      - dmzpostgresdb
+      - dmzconsulservice-ehome
+# MoreJee Site ( For Company Development )
+  apps-morejee-site-ehome:
+    container_name: apps-morejee-site-ehome-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_EHome}
+      - TOOLSERVER=${MoreJeeToolSite_EHome}
+      - SECRETKEY=${SECRETKEY_EHome}
+    ports:
+      - "5805:4000"
+    networks:
+      - dmzehomenet
+
+networks:
+  dmzdevnet:
+  dmzehomenet:
