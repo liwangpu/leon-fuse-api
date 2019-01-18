@@ -1,11 +1,10 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Apps.OMS.Data.Entities
+namespace Apps.Basic.Data.Entities
 {
-    public class Order : IEntity, IListView
+    public class WorkFlow : IEntity
     {
         /// <summary>
         /// Id
@@ -33,19 +32,11 @@ namespace Apps.OMS.Data.Entities
         public DateTime ModifiedTime { get; set; }
         public string Description { get; set; }
         public string OrganizationId { get; set; }
-        public string OrderNo { get; set; }
-        public int TotalNum { get; set; }
-        public decimal TotalPrice { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerAddress { get; set; }
-        public string CustomerPhone { get; set; }
-        public string CustomerId { get; set; }
-        public Customer Customer { get; set; }
-        public string WorkFlowItemId { get; set; }
-        public string SubOrderIds { get; set; }
-        public List<OrderDetail> OrderDetails { get; set; }
-        public List<OrderFlowLog> OrderFlowLogs { get; set; }
-        [NotMapped]
-        public string Icon { get; set; }
+        /// <summary>
+        /// 适用组织类型,逗号分隔
+        /// </summary>
+        public string ApplyOrgans { get; set; }
+        public List<WorkFlowItem> WorkFlowItems { get; set; }
     }
+
 }

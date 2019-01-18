@@ -36,5 +36,6 @@ namespace Apps.OMS.Service.Contexts
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
         public DbSet<OrderFlowLog> OrderFlowLogs { get; set; }
+
     }
 }

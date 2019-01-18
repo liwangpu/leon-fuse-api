@@ -56,5 +56,13 @@ namespace Apps.Basic.Service.Contexts
         /// 用户导航栏详细信息
         /// </summary>
         public DbSet<UserNavDetail> UserNavDetails { get; set; }
+
+        public DbSet<WorkFlow> WorkFlows { get; set; }
+
+        public DbSet<WorkFlowItem> WorkFlowItems { get; set; }
+
+        public DbSet<WorkFlowRule> WorkFlowRules { get; set; }
+
+        public DbSet<WorkFlowRuleDetail> WorkFlowRuleDetails { get; set; }
     }
 }

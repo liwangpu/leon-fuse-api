@@ -19,6 +19,9 @@ namespace Apps.OMS.Export.DTOs
         public string OrderNo { get; set; }
         public int TotalNum { get; set; }
         public decimal TotalPrice { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerAddress { get; set; }
+        public string CustomerPhone { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
         //public List<OrderFlowLog> OrderFlowLogs { get; set; }
     }
@@ -40,5 +43,13 @@ namespace Apps.OMS.Export.DTOs
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
         public string AttachmentIds { get; set; }
+        public List<OrderDetailAttachmentDTO> Attachments { get; set; }
+    }
+
+    public class OrderDetailAttachmentDTO
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
     }
 }

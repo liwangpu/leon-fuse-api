@@ -36,26 +36,33 @@ namespace ApiServer.Repositories
 
             var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
 
-            if (currentAcc.Type == UserRoleConst.SysAdmin)
+            if (dataOp != DataOperateEnum.Retrieve)
+            {
+                if (currentAcc.Type == UserRoleConst.SysAdmin)
+                {
+                    return query;
+                }
+                else if (currentAcc.Type == UserRoleConst.BrandAdmin)
+                {
+                    query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    return query;
+                }
+                else if (currentAcc.Type == UserRoleConst.PartnerAdmin)
+                {
+                    query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    return query;
+                }
+                else if (currentAcc.Type == UserRoleConst.SupplierAdmin)
+                {
+                    query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+                    return query;
+                }
+                else { }
+            }
+            else
             {
                 return query;
             }
-            else if (currentAcc.Type == UserRoleConst.BrandAdmin)
-            {
-                query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
-                return query;
-            }
-            else if (currentAcc.Type == UserRoleConst.PartnerAdmin)
-            {
-                query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
-                return query;
-            }
-            else if (currentAcc.Type == UserRoleConst.SupplierAdmin)
-            {
-                query = query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
-                return query;
-            }
-            else { }
 
             return await Task.FromResult(query.Where(x => x.Creator == currentAcc.Id));
         }

@@ -67,6 +67,7 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(FileAssetDTO), 200)]
         public async Task<IActionResult> Get(string id)

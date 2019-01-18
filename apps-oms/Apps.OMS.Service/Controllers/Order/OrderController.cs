@@ -3,6 +3,7 @@ using Apps.Base.Common.Attributes;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.Basic.Export.Services;
+using Apps.FileSystem.Export.Services;
 using Apps.MoreJee.Export.Services;
 using Apps.OMS.Data.Entities;
 using Apps.OMS.Export.DTOs;
@@ -11,9 +12,11 @@ using Apps.OMS.Export.Services;
 using Apps.OMS.Service.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 namespace Apps.OMS.Service.Controllers
 {
@@ -61,6 +64,9 @@ namespace Apps.OMS.Service.Controllers
                 dto.TotalNum = entity.TotalNum;
                 dto.TotalPrice = entity.TotalPrice;
                 dto.OrderNo = entity.OrderNo;
+                dto.CustomerName = entity.CustomerName;
+                dto.CustomerPhone = entity.CustomerPhone;
+                dto.CustomerAddress = entity.CustomerAddress;
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
@@ -85,8 +91,9 @@ namespace Apps.OMS.Service.Controllers
         public override async Task<IActionResult> Get(string id)
         {
             var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer);
-            var productSpecMicroService = new ProductSpecMicroService(_AppConfig.APIGatewayServer, Token);
-            var productMicroService = new ProductMicroService(_AppConfig.APIGatewayServer, Token);
+            var productSpecMicroService = new ProductSpecMicroService(_AppConfig.APIGatewayServer);
+            var productMicroService = new ProductMicroService(_AppConfig.APIGatewayServer);
+            var fileMicroServer = new FileMicroService(_AppConfig.APIGatewayServer);
 
             var toDTO = new Func<Order, Task<OrderDTO>>(async (entity) =>
             {
@@ -102,6 +109,9 @@ namespace Apps.OMS.Service.Controllers
                 dto.TotalNum = entity.TotalNum;
                 dto.TotalPrice = entity.TotalPrice;
                 dto.OrderNo = entity.OrderNo;
+                dto.CustomerName = entity.CustomerName;
+                dto.CustomerPhone = entity.CustomerPhone;
+                dto.CustomerAddress = entity.CustomerAddress;
 
                 #region OrderDetails
                 var details = new List<OrderDetailDTO>();
@@ -133,6 +143,24 @@ namespace Apps.OMS.Service.Controllers
                              ditem.ProductUnit = prod.Unit;
                              ditem.ProductDescription = prod.Description;
                          });
+
+                        if (!string.IsNullOrWhiteSpace(ditem.AttachmentIds))
+                        {
+                            var fsIdArr = ditem.AttachmentIds.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                            var fsList = new List<OrderDetailAttachmentDTO>();
+                            foreach (var fid in fsIdArr)
+                            {
+                                await fileMicroServer.GetById(fid, (fs) =>
+                                  {
+                                      var fdto = new OrderDetailAttachmentDTO();
+                                      fdto.Id = fs.Id;
+                                      fdto.Name = fs.Name;
+                                      fdto.Url = fs.Url;
+                                      fsList.Add(fdto);
+                                  });
+                            }
+                            ditem.Attachments = fsList;
+                        }
 
                         details.Add(ditem);
                     }
@@ -169,6 +197,9 @@ namespace Apps.OMS.Service.Controllers
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.OrganizationId = CurrentAccountOrganizationId;
+                entity.CustomerName = model.CustomerName;
+                entity.CustomerPhone = model.CustomerPhone;
+                entity.CustomerAddress = model.CustomerAddress;
 
                 var details = new List<OrderDetail>();
                 if (model.Content != null && model.Content.Count > 0)
@@ -196,50 +227,125 @@ namespace Apps.OMS.Service.Controllers
         }
         #endregion
 
-        #region Put 编辑订单信息
+        #region UpdateBasicInfo 更新订单基础信息
         /// <summary>
-        /// 编辑订单信息
+        /// 更新订单基础信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("BasicInfo")]
         [ValidateModel]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> Put([FromBody] OrderUpdateModel model)
+        public async Task<IActionResult> UpdateBasicInfo([FromBody] OrderBasicInfoUpdateModel model)
         {
             var mapping = new Func<Order, Task<Order>>(async (entity) =>
             {
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-
                 return await Task.FromResult(entity);
             });
             return await _PutRequest(model.Id, mapping);
         }
         #endregion
 
-        #region UpdateCustomerMessage 更新订单用户信息
+        #region UpdateCustomerInfo 更新订单客户基础信息
         /// <summary>
-        /// 更新订单用户信息
+        /// 更新订单客户基础信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [Route("UpdateCustomerMessage")]
-        [HttpPut]
+        [HttpPut("CustomerInfo")]
         [ValidateModel]
-        [ProducesResponseType(typeof(OrderDTO), 200)]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
-        public async Task<IActionResult> UpdateCustomerMessage([FromBody]OrderCustomerUpdateModel model)
+        public async Task<IActionResult> UpdateCustomerInfo([FromBody] OrderCustomerInfoUpdateModel model)
         {
             var mapping = new Func<Order, Task<Order>>(async (entity) =>
             {
-                entity.Name = model.Name;
-                entity.Description = model.Description;
-
+                entity.CustomerName = model.CustomerName;
+                entity.CustomerPhone = model.CustomerPhone;
+                entity.CustomerAddress = model.CustomerAddress;
                 return await Task.FromResult(entity);
             });
-            return await _PutRequest(model.OrderId, mapping);
+            return await _PutRequest(model.Id, mapping);
         }
         #endregion
+
+        #region UpdateOrderDetail 更新订单详细信息
+        /// <summary>
+        /// 更新订单详细信息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut("OrderDetail")]
+        [ValidateModel]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> UpdateOrderDetail([FromBody] OrderDetailEditModel model)
+        {
+            var detail = await _Context.OrderDetails.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+            if (detail == null) return NotFound();
+
+            detail.Num = model.Num;
+            detail.Remark = model.Remark;
+            if (!string.IsNullOrWhiteSpace(model.AttachIds))
+            {
+                var idArr = model.AttachIds.Trim().Split(",", StringSplitOptions.RemoveEmptyEntries);
+                detail.AttachmentIds = string.Join(",", idArr);
+            }
+            else
+                detail.AttachmentIds = string.Empty;
+            _Context.OrderDetails.Update(detail);
+            _Context.SaveChanges();
+            return NoContent();
+        }
+        #endregion
+
+
+        //#region Put 编辑订单信息
+        ///// <summary>
+        ///// 编辑订单信息
+        ///// </summary>
+        ///// <param name="model"></param>
+        ///// <returns></returns>
+        //[HttpPut]
+        //[ValidateModel]
+        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
+        //public async Task<IActionResult> Put([FromBody] OrderUpdateModel model)
+        //{
+        //    var mapping = new Func<Order, Task<Order>>(async (entity) =>
+        //    {
+        //        entity.Name = model.Name;
+        //        entity.Description = model.Description;
+        //        entity.CustomerName = model.CustomerName;
+        //        entity.CustomerPhone = model.CustomerPhone;
+        //        entity.CustomerAddress = model.CustomerAddress;
+        //        return await Task.FromResult(entity);
+        //    });
+        //    return await _PutRequest(model.Id, mapping);
+        //}
+        //#endregion
+
+        //#region UpdateCustomerMessage 更新订单用户信息
+        ///// <summary>
+        ///// 更新订单用户信息
+        ///// </summary>
+        ///// <param name="model"></param>
+        ///// <returns></returns>
+        //[Route("UpdateCustomerMessage")]
+        //[HttpPut]
+        //[ValidateModel]
+        //[ProducesResponseType(typeof(OrderDTO), 200)]
+        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
+        //public async Task<IActionResult> UpdateCustomerMessage([FromBody]OrderCustomerUpdateModel model)
+        //{
+        //    var mapping = new Func<Order, Task<Order>>(async (entity) =>
+        //    {
+        //        entity.Name = model.Name;
+        //        entity.Description = model.Description;
+
+        //        return await Task.FromResult(entity);
+        //    });
+        //    return await _PutRequest(model.OrderId, mapping);
+        //}
+        //#endregion
     }
 }

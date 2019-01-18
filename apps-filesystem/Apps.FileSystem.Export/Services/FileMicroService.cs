@@ -10,6 +10,12 @@ namespace Apps.FileSystem.Export.Services
     {
 
         #region 构造函数
+        public FileMicroService(string server)
+        : base(server)
+        {
+
+        }
+
         public FileMicroService(string server, string token)
             : base(server, token)
         {
@@ -27,8 +33,15 @@ namespace Apps.FileSystem.Export.Services
         {
             if (string.IsNullOrWhiteSpace(id))
                 return null;
-            var dto = await $"{Server}/File/{id}".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetJsonAsync<FileDTO>();
+            var dto = await $"{Server}/Files/{id}".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetJsonAsync<FileDTO>();
             return dto;
+        }
+
+        public async Task GetById(string id, Action<FileDTO> assign)
+        {
+            var dto = await GetById(id);
+            if (dto != null)
+                assign(dto);
         }
         #endregion
 

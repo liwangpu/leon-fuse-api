@@ -9,6 +9,12 @@ namespace Apps.MoreJee.Export.Services
     public class ProductSpecMicroService : MicroServiceBase
     {
         #region 构造函数
+        public ProductSpecMicroService(string server)
+        : base(server)
+        {
+
+        }
+
         public ProductSpecMicroService(string server, string token)
             : base(server, token)
         {
