@@ -67,6 +67,20 @@ namespace Apps.Basic.Export.Services
 
         #region GetNameByIds 获取资源的创建人和更新人姓名
         /// <summary>
+        /// 获取资源的创建人姓名
+        /// </summary>
+        /// <param name="creator"></param>
+        /// <param name="assign"></param>
+        /// <returns></returns>
+        public async Task GetNameByIds(string creator, Action<string> assign)
+        {
+            creator = string.IsNullOrEmpty(creator) ? string.Empty : creator;
+            var ids = $"{creator}";
+            var names = await GetNameByIds(ids);
+            assign(names[0]);
+        }
+
+        /// <summary>
         /// 获取资源的创建人和更新人姓名
         /// </summary>
         /// <param name="creator"></param>

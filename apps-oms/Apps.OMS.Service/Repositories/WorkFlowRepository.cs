@@ -1,4 +1,5 @@
 ﻿using Apps.Base.Common;
+using Apps.Base.Common.Consts;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.OMS.Data.Entities;
@@ -50,13 +51,22 @@ namespace Apps.OMS.Service.Repositories
             data.Modifier = accountId;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = data.CreatedTime;
+            data.ActiveFlag = AppConst.Active;
             _Context.WorkFlows.Add(data);
             await _Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var data = await _Context.WorkFlows.FirstOrDefaultAsync(x => x.Id == id);
+            if (data != null)
+            {
+                data.Modifier = accountId;
+                data.ModifiedTime = data.CreatedTime;
+                data.ActiveFlag = AppConst.InActive;
+                _Context.WorkFlows.Update(data);
+                await _Context.SaveChangesAsync();
+            }
         }
 
         public async Task<WorkFlow> GetByIdAsync(string id, string accountId)
@@ -73,7 +83,7 @@ namespace Apps.OMS.Service.Repositories
             //关键词过滤查询
             if (!string.IsNullOrWhiteSpace(model.Search))
                 query = query.Where(d => d.Name.Contains(model.Search));
-            var result = await query.SimplePaging(model.Page, model.PageSize, model.OrderBy, "Name", model.Desc);
+            var result = await query.Where(x => x.ActiveFlag == AppConst.Active).SimplePaging(model.Page, model.PageSize, model.OrderBy, "Name", model.Desc);
             return result;
         }
 
@@ -81,6 +91,7 @@ namespace Apps.OMS.Service.Repositories
         {
             data.Modifier = accountId;
             data.ModifiedTime = data.CreatedTime;
+            data.ActiveFlag = AppConst.Active;
             _Context.WorkFlows.Update(data);
             await _Context.SaveChangesAsync();
         }

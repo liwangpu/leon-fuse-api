@@ -5,10 +5,10 @@ using Apps.Base.Common.Models;
 using Apps.Basic.Export.Services;
 using Apps.FileSystem.Export.Services;
 using Apps.MoreJee.Export.Services;
+using Apps.OMS.Data.Consts;
 using Apps.OMS.Data.Entities;
 using Apps.OMS.Export.DTOs;
 using Apps.OMS.Export.Models;
-using Apps.OMS.Export.Services;
 using Apps.OMS.Service.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -69,6 +69,27 @@ namespace Apps.OMS.Service.Controllers
                 dto.CustomerAddress = entity.CustomerAddress;
                 dto.Url = $"{_AppConfig.Plugins.OrderViewer}?order={entity.Id}";
 
+                #region 订单状态
+                if (string.IsNullOrWhiteSpace(entity.WorkFlowItemId))
+                {
+                    var refRule = await _Context.WorkFlowRuleDetails.FirstOrDefaultAsync(x => x.OrganizationId == CurrentAccountOrganizationId && x.WorkFlowRuleId == WorkFlowRuleConst.OrderWorkFlow);
+                    if (refRule != null)
+                    {
+                        var dfItem = await _Context.WorkFlowItems.FirstOrDefaultAsync(x => x.WorkFlowId == refRule.WorkFlowId && x.FlowGrade == 0);
+                        dto.WorkFlowItemId = dfItem.Id;
+                        dto.WorkFlowItemName = dfItem.Name;
+                    }
+                }
+                else
+                {
+                    dto.WorkFlowItemId = entity.WorkFlowItemId;
+                    var dfitem = await _Context.WorkFlowItems.FirstOrDefaultAsync(x => x.Id == entity.WorkFlowItemId);
+                    if (dfitem != null)
+                        dto.WorkFlowItemName = dfitem.Name;
+
+                }
+                #endregion
+
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
@@ -114,6 +135,27 @@ namespace Apps.OMS.Service.Controllers
                 dto.CustomerPhone = entity.CustomerPhone;
                 dto.CustomerAddress = entity.CustomerAddress;
                 dto.Url = $"{_AppConfig.Plugins.OrderViewer}?order={entity.Id}";
+
+                #region 订单状态
+                if (string.IsNullOrWhiteSpace(entity.WorkFlowItemId))
+                {
+                    var refRule = await _Context.WorkFlowRuleDetails.FirstOrDefaultAsync(x => x.OrganizationId == CurrentAccountOrganizationId && x.WorkFlowRuleId == WorkFlowRuleConst.OrderWorkFlow);
+                    if (refRule != null)
+                    {
+                        var dfItem = await _Context.WorkFlowItems.FirstOrDefaultAsync(x => x.WorkFlowId == refRule.WorkFlowId && x.FlowGrade == 0);
+                        dto.WorkFlowItemId = dfItem.Id;
+                        dto.WorkFlowItemName = dfItem.Name;
+                    }
+                }
+                else
+                {
+                    dto.WorkFlowItemId = entity.WorkFlowItemId;
+                    var dfitem = await _Context.WorkFlowItems.FirstOrDefaultAsync(x => x.Id == entity.WorkFlowItemId);
+                    if (dfitem != null)
+                        dto.WorkFlowItemName = dfitem.Name;
+
+                }
+                #endregion
 
                 #region OrderDetails
                 var details = new List<OrderDetailDTO>();
@@ -170,6 +212,30 @@ namespace Apps.OMS.Service.Controllers
                 dto.OrderDetails = details;
                 #endregion
 
+                #region OrderFlowLogs
+                var logs = new List<OrderFlowLogDTO>();
+                if (entity.OrderFlowLogs != null && entity.OrderFlowLogs.Count > 0)
+                {
+                    foreach (var log in entity.OrderFlowLogs)
+                    {
+                        var logDto = new OrderFlowLogDTO();
+                        logDto.Id = log.Id;
+                        logDto.Approve = log.Approve;
+                        logDto.Remark = log.Remark;
+                        logDto.WorkFlowItemId = log.WorkFlowItemId;
+                        logDto.WorkFlowItemName = await _Context.WorkFlowItems.Where(x => x.Id == log.WorkFlowItemId).Select(x => x.Name).FirstOrDefaultAsync();
+                        logDto.Creator = log.Creator;
+                        logDto.CreatedTime = log.CreatedTime;
+                        await accountMicroService.GetNameByIds(entity.Creator, (creatorName) =>
+                        {
+                            logDto.CreatorName = creatorName;
+                        });
+                        logs.Add(logDto);
+                    }
+                }
+                dto.OrderFlowLogs = logs;
+                #endregion
+
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
                     dto.CreatorName = creatorName;
@@ -178,6 +244,26 @@ namespace Apps.OMS.Service.Controllers
                 return await Task.FromResult(dto);
             });
             return await _GetByIdRequest(id, toDTO);
+        }
+        #endregion
+
+        #region GetOrganOrderFlow 获取订单的流程信息
+        /// <summary>
+        /// 获取订单的流程信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("OrganOrderFlow")]
+        public async Task<IActionResult> GetOrganOrderFlow()
+        {
+            var refRule = await _Context.WorkFlowRuleDetails.FirstOrDefaultAsync(x => x.OrganizationId == CurrentAccountOrganizationId && x.WorkFlowRuleId == WorkFlowRuleConst.OrderWorkFlow);
+            if (refRule != null)
+            {
+                var workflow = await _Context.WorkFlows.Include(x => x.WorkFlowItems).FirstOrDefaultAsync(x => x.Id == refRule.WorkFlowId);
+                if (workflow != null)
+                    return Ok(workflow);
+
+            }
+            return NotFound();
         }
         #endregion
 
@@ -301,53 +387,87 @@ namespace Apps.OMS.Service.Controllers
         }
         #endregion
 
+        #region AuditOrder 订单审核
+        /// <summary>
+        /// 订单审核
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Route("AuditOrder")]
+        [HttpPut]
+        [ValidateModel]
+        [ProducesResponseType(typeof(OrderDTO), 200)]
+        [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        public async Task<IActionResult> AuditOrder([FromBody]OrderWorkFlowAuditEditModel model)
+        {
+            var mapping = new Func<Order, Task<Order>>(async (entity) =>
+            {
+                var logs = await _Context.OrderFlowLogs.Where(x => x.Order == entity).ToListAsync();
+                var operateLog = new OrderFlowLog();
+                operateLog.Id = GuidGen.NewGUID();
+                operateLog.Remark = model.Remark;
+                operateLog.CreatedTime = DateTime.Now;
+                operateLog.Creator = CurrentAccountId;
+                operateLog.Approve = model.Approve;
+                operateLog.WorkFlowItemId = model.WorkFlowItemId;
+                operateLog.Order = entity;
+                _Context.OrderFlowLogs.Add(operateLog);
+                await _Context.SaveChangesAsync();
+                var workFlowItem = await _Context.WorkFlowItems.Include(x => x.WorkFlow).Where(x => x.Id == model.WorkFlowItemId).FirstOrDefaultAsync();
 
-        //#region Put 编辑订单信息
-        ///// <summary>
-        ///// 编辑订单信息
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //[HttpPut]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> Put([FromBody] OrderUpdateModel model)
-        //{
-        //    var mapping = new Func<Order, Task<Order>>(async (entity) =>
-        //    {
-        //        entity.Name = model.Name;
-        //        entity.Description = model.Description;
-        //        entity.CustomerName = model.CustomerName;
-        //        entity.CustomerPhone = model.CustomerPhone;
-        //        entity.CustomerAddress = model.CustomerAddress;
-        //        return await Task.FromResult(entity);
-        //    });
-        //    return await _PutRequest(model.Id, mapping);
-        //}
-        //#endregion
+                if (workFlowItem != null)
+                {
+                    var workFlow = await _Context.WorkFlows.Include(x => x.WorkFlowItems).Where(x => x == workFlowItem.WorkFlow).FirstOrDefaultAsync();
 
-        //#region UpdateCustomerMessage 更新订单用户信息
-        ///// <summary>
-        ///// 更新订单用户信息
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //[Route("UpdateCustomerMessage")]
-        //[HttpPut]
-        //[ValidateModel]
-        //[ProducesResponseType(typeof(OrderDTO), 200)]
-        //[ProducesResponseType(typeof(ValidationResultModel), 400)]
-        //public async Task<IActionResult> UpdateCustomerMessage([FromBody]OrderCustomerUpdateModel model)
-        //{
-        //    var mapping = new Func<Order, Task<Order>>(async (entity) =>
-        //    {
-        //        entity.Name = model.Name;
-        //        entity.Description = model.Description;
+                    if (model.Approve)
+                    {
+                        var nextWorkFlowItem = workFlow.WorkFlowItems.Where(x => x.FlowGrade == workFlowItem.FlowGrade + 1).FirstOrDefault();
+                        if (nextWorkFlowItem != null)
+                            entity.WorkFlowItemId = nextWorkFlowItem.Id;
+                    }
+                    else
+                    {
+                        var lastWorkFlowItem = workFlow.WorkFlowItems.Where(x => x.FlowGrade == workFlowItem.FlowGrade - 1).FirstOrDefault();
+                        if (lastWorkFlowItem != null)
+                            entity.WorkFlowItemId = lastWorkFlowItem.Id;
+                    }
+                }
 
-        //        return await Task.FromResult(entity);
-        //    });
-        //    return await _PutRequest(model.OrderId, mapping);
-        //}
-        //#endregion
+                return await Task.FromResult(entity);
+            });
+            return await _PutRequest(model.OrderId, mapping, async (data) =>
+             {
+                 return await Get(data.Id);
+             });
+        }
+        #endregion
+
+        #region Delete 删除订单信息
+        /// <summary>
+        /// 删除订单信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(Nullable), 200)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            return await _DeleteRequest(id);
+        }
+        #endregion
+
+        #region BatchDelete 批量删除订单信息
+        /// <summary>
+        /// 批量删除订单信息
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpDelete("BatchDelete")]
+        [ProducesResponseType(typeof(Nullable), 200)]
+        public async Task<IActionResult> BatchDelete(string ids)
+        {
+            return await _BatchDeleteRequest(ids);
+        } 
+        #endregion
     }
 }

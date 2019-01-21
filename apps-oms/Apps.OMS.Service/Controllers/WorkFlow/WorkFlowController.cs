@@ -98,7 +98,7 @@ namespace Apps.OMS.Service.Controllers
                 dto.Modifier = entity.Modifier;
                 dto.CreatedTime = entity.CreatedTime;
                 dto.ModifiedTime = entity.ModifiedTime;
-
+                dto.ApplyOrgans = entity.ApplyOrgans;
                 var wfItems = new List<WorkFlowItemDTO>();
                 if (entity.WorkFlowItems != null && entity.WorkFlowItems.Count > 0)
                 {
@@ -119,7 +119,7 @@ namespace Apps.OMS.Service.Controllers
                         wfItems.Add(wfitem);
                     }
                 }
-                dto.WorkFlowItems = wfItems;
+                dto.WorkFlowItems = wfItems.OrderBy(x => x.FlowGrade).ToList();
 
                 await accountMicroService.GetNameByIds(entity.Creator, entity.Modifier, (creatorName, modifierName) =>
                 {
@@ -302,5 +302,32 @@ namespace Apps.OMS.Service.Controllers
         }
         #endregion
 
+        #region Delete 删除工作流信息
+        /// <summary>
+        /// 删除工作流信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(Nullable), 200)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            return await _DeleteRequest(id);
+        }
+        #endregion
+
+        #region BatchDelete 批量删除工作流信息
+        /// <summary>
+        /// 批量删除工作流信息
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpDelete("BatchDelete")]
+        [ProducesResponseType(typeof(Nullable), 200)]
+        public async Task<IActionResult> BatchDelete(string ids)
+        {
+            return await _BatchDeleteRequest(ids);
+        } 
+        #endregion
     }
 }

@@ -23,8 +23,10 @@ namespace Apps.OMS.Export.DTOs
         public string CustomerName { get; set; }
         public string CustomerAddress { get; set; }
         public string CustomerPhone { get; set; }
+        public string WorkFlowItemId { get; set; }
+        public string WorkFlowItemName { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
-        //public List<OrderFlowLog> OrderFlowLogs { get; set; }
+        public List<OrderFlowLogDTO> OrderFlowLogs { get; set; }
     }
 
     public class OrderDetailDTO
@@ -52,5 +54,18 @@ namespace Apps.OMS.Export.DTOs
         public string Id { get; set; }
         public string Name { get; set; }
         public string Url { get; set; }
+    }
+
+    public class OrderFlowLogDTO
+    {
+        public string Id { get; set; }
+        public bool Approve { get; set; }
+        public string Remark { get; set; }
+        public string WorkFlowItemId { get; set; }
+        public string WorkFlowItemName { get; set; }
+        public string OrderId { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public string Creator { get; set; }
+        public string CreatorName { get; set; }
     }
 }

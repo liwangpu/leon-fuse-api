@@ -49,7 +49,7 @@ namespace Apps.OMS.Export.Models
         public string CustomerAddress { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string CustomerPhone { get; set; }
-    } 
+    }
     #endregion
 
     #region OrderUpdateModel 订单创建模型
@@ -104,5 +104,15 @@ namespace Apps.OMS.Export.Models
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
         public string AttachIds { get; set; }
+    }
+
+    public class OrderWorkFlowAuditEditModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string OrderId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string WorkFlowItemId { get; set; }
+        public bool Approve { get; set; }
+        public string Remark { get; set; }
     }
 }

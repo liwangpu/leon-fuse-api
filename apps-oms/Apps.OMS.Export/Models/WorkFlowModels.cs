@@ -47,4 +47,12 @@ namespace Apps.OMS.Export.Models
         [Required(ErrorMessage = "必填信息")]
         public string WorkFlowId { get; set; }
     }
+
+    public class WorkFlowRuleDetailUpdateModel
+    {
+        [Required(ErrorMessage = "必填信息")]
+        public string WorkFlowRuleId { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string WorkFlowId { get; set; }
+    }
 }

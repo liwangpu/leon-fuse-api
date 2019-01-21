@@ -1,4 +1,5 @@
 ﻿using Apps.Base.Common;
+using Apps.Base.Common.Consts;
 using Apps.Base.Common.Interfaces;
 using Apps.Base.Common.Models;
 using Apps.OMS.Data.Entities;
@@ -48,6 +49,7 @@ namespace Apps.OMS.Service.Repositories
             data.Modifier = accountId;
             data.CreatedTime = DateTime.Now;
             data.ModifiedTime = data.CreatedTime;
+            data.ActiveFlag = AppConst.Active;
             if (data.OrderDetails != null && data.OrderDetails.Count > 0)
             {
                 data.TotalNum = data.OrderDetails.Select(x => x.Num).Sum();
@@ -64,12 +66,20 @@ namespace Apps.OMS.Service.Repositories
 
         public async Task DeleteAsync(string id, string accountId)
         {
-            throw new NotImplementedException();
+            var data = await _Context.Orders.FirstOrDefaultAsync(x => x.Id == id);
+            if (data != null)
+            {
+                data.Modifier = accountId;
+                data.ModifiedTime = data.CreatedTime;
+                data.ActiveFlag = AppConst.InActive;
+                _Context.Orders.Update(data);
+                await _Context.SaveChangesAsync();
+            }
         }
 
         public async Task<Order> GetByIdAsync(string id, string accountId)
         {
-            var entity = await _Context.Orders.Include(x => x.OrderDetails).FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _Context.Orders.Include(x => x.OrderDetails).Include(x => x.OrderFlowLogs).FirstOrDefaultAsync(x => x.Id == id);
             return entity;
         }
 
@@ -81,7 +91,7 @@ namespace Apps.OMS.Service.Repositories
             //关键词过滤查询
             if (!string.IsNullOrWhiteSpace(model.Search))
                 query = query.Where(d => d.Name.Contains(model.Search));
-            var result = await query.SimplePaging(model.Page, model.PageSize, model.OrderBy, "Name", model.Desc);
+            var result = await query.Where(x => x.ActiveFlag == AppConst.Active).SimplePaging(model.Page, model.PageSize, model.OrderBy, "Name", model.Desc);
             return result;
         }
 
@@ -89,6 +99,7 @@ namespace Apps.OMS.Service.Repositories
         {
             data.Modifier = accountId;
             data.ModifiedTime = data.CreatedTime;
+            data.ActiveFlag = AppConst.Active;
             if (data.OrderDetails != null && data.OrderDetails.Count > 0)
             {
                 data.TotalNum = data.OrderDetails.Select(x => x.Num).Sum();

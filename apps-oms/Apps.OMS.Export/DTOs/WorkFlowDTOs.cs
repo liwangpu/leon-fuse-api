@@ -16,6 +16,7 @@ namespace Apps.OMS.Export.DTOs
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
         public bool IsInner { get; set; }
+        public string WorkFlowId { get; set; }
     }
 
     public class WorkFlowDTO
@@ -29,6 +30,7 @@ namespace Apps.OMS.Export.DTOs
         public string ModifierName { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
+        public string ApplyOrgans { get; set; }
         public List<WorkFlowItemDTO> WorkFlowItems { get; set; }
     }
 

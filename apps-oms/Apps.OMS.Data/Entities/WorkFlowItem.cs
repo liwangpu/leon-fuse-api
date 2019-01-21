@@ -12,6 +12,7 @@ namespace Apps.OMS.Data.Entities
         public DateTime ModifiedTime { get; set; }
         public string Creator { get; set; }
         public string Modifier { get; set; }
+        public string WorkFlowId { get; set; }
         public WorkFlow WorkFlow { get; set; }
         public string SubWorkFlowId { get; set; }
         public string OperateRoles { get; set; }

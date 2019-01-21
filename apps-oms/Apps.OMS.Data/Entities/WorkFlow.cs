@@ -32,6 +32,7 @@ namespace Apps.OMS.Data.Entities
         public DateTime ModifiedTime { get; set; }
         public string Description { get; set; }
         public string OrganizationId { get; set; }
+        public int ActiveFlag { get; set; }
         /// <summary>
         /// 适用组织类型,逗号分隔
         /// </summary>
