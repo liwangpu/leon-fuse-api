@@ -1,0 +1,182 @@
+{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/Member",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Member",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Member/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Member/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/MemberRegistry",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/MemberRegistry",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/MemberRegistry/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/MemberRegistry/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/MemberHierarchyParam",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/MemberHierarchyParam",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/MemberHierarchyParam/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/MemberHierarchyParam/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/NationalUrban",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/NationalUrban",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/NationalUrban/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/NationalUrban/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Orders",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Orders/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/Order/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/Order/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlowRule",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlowRule",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlowRule/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlowRule/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlow",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlow",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/WorkFlow/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/WorkFlow/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzomsservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/{url}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/{url}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "ServiceName": "dmzbasicservice",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "dmzconsulservice-ehome": null,
+    "ServiceDiscoveryProvider": {
+      "Host": "dmzconsulservice-tw",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  }
+}

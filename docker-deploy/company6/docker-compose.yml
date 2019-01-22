@@ -15,6 +15,10 @@ services:
     networks:
       - dmzdevnet
       - dmzehomenet
+      - twdevnet
+
+######################################################################################
+
 # MoreJee Consul ( For Company Development )
   dmzconsulservice-dev:
     image: consul:latest
@@ -126,6 +130,8 @@ services:
       - "5705:4000"
     networks:
       - dmzdevnet
+
+######################################################################################
 
 # MoreJee Consul ( For Company EHome )
   dmzconsulservice-ehome:
@@ -241,6 +247,122 @@ services:
     networks:
       - dmzehomenet
 
+######################################################################################
+      
+# TaiWan Consul ( For TaiWan Development )
+  dmzconsulservice-tw:
+    image: consul:latest
+    container_name: dmzconsulservice-tw-c
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "8502:8500"
+    networks:
+      - twdevnet
+# TaiWan APIGateway ( For TaiWan Development )
+  apps-apigateway-tw:
+    container_name: apps-apigateway-tw-c
+    image: apps-base-apigateway:latest
+    ports:
+      - "5901:80"
+    volumes:
+      - "/var/bamboo/twapigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=TaiWan
+    networks:
+      - twdevnet
+    depends_on:
+      - dmzconsulservice-tw
+      - apps-legacy-basic-service-tw
+      - apps-oms-service-tw
+
+# TaiWan APIServer ( For TaiWan Development )
+  apps-legacy-basic-service-tw:
+    container_name: apps-legacy-basic-service-tw-c
+    image: apps-legacy-basic-service:latest
+    volumes:
+      - "/var/bamboo/twapiserver/logs:/app/logs"
+      - "/var/bamboo/twapiserver/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/bamboo/twapiserver/wwwroot/upload:/app/wwwroot/upload"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Taiwan}
+      - JwtSettings:Audience=${JwtSettings_Audience_Taiwan}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Taiwan}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Taiwan}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${ServerDB_Taiwan};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Taiwan}
+      - Plugins:MediaShare=${Plugins_MediaShare_Taiwan}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-tw
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-legacy-basic-service-tw
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5902:80"
+    networks:
+      - twdevnet
+    depends_on:
+      - dmzpostgresdb
+      - apps-morejee-tool-tw
+      - dmzconsulservice-tw
+# TaiWan ToolSite ( For TaiWan Development )
+  apps-morejee-tool-tw:
+    container_name: apps-morejee-tool-tw-c
+    image: apps-morejee-tool-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Taiwan}
+    ports:
+      - "5903:4000"
+    networks:
+      - twdevnet
+# TaiWan OMS APIServer ( For TaiWan Development )
+  apps-oms-service-tw:
+    container_name: apps-oms-service-tw-c
+    image: apps-oms-service:latest
+    volumes:
+      - "/var/bamboo/twomsserver/logs:/app/logs"
+      - "/var/bamboo/twomsserver/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Taiwan}
+      - JwtSettings:Audience=${JwtSettings_Audience_Taiwan}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Taiwan}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Taiwan}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${OMSServerDB_Taiwan};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Taiwan}
+      - Plugins:MediaShare=${Plugins_MediaShare_Taiwan}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer_Taiwan}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-tw
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-oms-service-tw
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5904:80"
+    networks:
+      - twdevnet
+    depends_on:
+      - dmzpostgresdb
+      - dmzconsulservice-tw
+# TaiWan Site ( For TaiWan Development )
+  apps-morejee-site-tw:
+    container_name: apps-morejee-site-tw-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Taiwan}
+      - TOOLSERVER=${TaiWanToolSite_Taiwan}
+      - SECRETKEY=${SECRETKEY_Taiwan}
+    ports:
+      - "5905:4000"
+    networks:
+      - twdevnet
+
 networks:
   dmzdevnet:
   dmzehomenet:
+  twdevnet:
