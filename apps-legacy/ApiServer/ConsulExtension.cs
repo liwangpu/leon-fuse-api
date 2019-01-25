@@ -18,7 +18,7 @@ namespace ApiServer
 
                 Interval = TimeSpan.FromSeconds(10),//健康检查时间间隔，或者称为心跳间隔
 
-                HTTP = $"http://{config.ConsulConfig.Client.IP}:{config.ConsulConfig.Client.Port}/api/health",//健康检查地址
+                HTTP = $"http://{config.ConsulConfig.Client.IP}:{config.ConsulConfig.Client.Port}/health",//健康检查地址
 
                 Timeout = TimeSpan.FromSeconds(5)
             };

@@ -19,7 +19,7 @@ namespace ApiServer.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("/token")]
+    [Route("/Token")]
     public class TokenController : Controller
     {
         protected readonly AppConfig _AppConfig;

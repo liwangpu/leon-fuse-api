@@ -184,7 +184,7 @@ namespace ApiServer.Models
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string IconAssetId { get; set; }
-        public string ApplyOrgans { get; set; }
+        //public string ApplyOrgans { get; set; }
     }
 
     public class UserRoleEditModel
@@ -196,7 +196,7 @@ namespace ApiServer.Models
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string IconAssetId { get; set; }
-        public string ApplyOrgans { get; set; }
+        //public string ApplyOrgans { get; set; }
     }
 
     public class MemberRegistryCreateModel

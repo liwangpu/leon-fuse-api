@@ -8,6 +8,7 @@ using ApiServer.Repositories;
 using BambooCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -106,10 +107,11 @@ namespace ApiServer.Controllers
             var mapping = new Func<UserRole, Task<UserRole>>(async (entity) =>
             {
                 var organId = await _GetCurrentUserOrganId();
+                var organType = await _Repository._DbContext.Organizations.Where(x => x.Id == organId).Select(x => x.OrganizationTypeId).FirstOrDefaultAsync();
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.ApplyOrgans = model.ApplyOrgans;
+                entity.ApplyOrgans = organType;
                 entity.OrganizationId = organId;
                 return await Task.FromResult(entity);
             });
@@ -132,10 +134,11 @@ namespace ApiServer.Controllers
             var mapping = new Func<UserRole, Task<UserRole>>(async (entity) =>
             {
                 var organId = await _GetCurrentUserOrganId();
+                var organType = await _Repository._DbContext.Organizations.Where(x => x.Id == organId).Select(x => x.OrganizationTypeId).FirstOrDefaultAsync();
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Icon = model.IconAssetId;
-                entity.ApplyOrgans = model.ApplyOrgans;
+                entity.ApplyOrgans = organType;
                 entity.OrganizationId = organId;
                 return await Task.FromResult(entity);
             });

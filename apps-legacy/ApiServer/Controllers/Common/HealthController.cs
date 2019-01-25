@@ -5,7 +5,7 @@ namespace ApiServer.Controllers
 {
     [AllowAnonymous]
     [Produces("application/json")]
-    [Route("api/Health")]
+    [Route("/[controller]")]
     public class HealthController : Controller
     {
         [HttpGet]
