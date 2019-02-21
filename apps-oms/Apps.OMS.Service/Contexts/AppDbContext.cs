@@ -45,5 +45,7 @@ namespace Apps.OMS.Service.Contexts
 
         public DbSet<WorkFlowRuleDetail> WorkFlowRuleDetails { get; set; }
 
+        public DbSet<ProductPackage> ProductPackages { get; set; }
+
     }
 }

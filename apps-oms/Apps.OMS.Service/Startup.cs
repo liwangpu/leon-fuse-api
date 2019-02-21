@@ -90,7 +90,7 @@ namespace Apps.OMS.Service
             services.AddScoped<IRepository<Order>, OrderRepository>();
             services.AddScoped<IRepository<WorkFlowRule>, WorkFlowRuleRepository>();
             services.AddScoped<IRepository<WorkFlow>, WorkFlowRepository>();
-            
+            services.AddScoped<IRepository<ProductPackage>, ProductPackageRepository>();
             #endregion
 
 
