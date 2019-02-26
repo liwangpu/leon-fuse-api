@@ -147,14 +147,21 @@ namespace Apps.OMS.Service.Repositories
                     detailPck.Num = (sum - remainder) / pck.Num;
                     sum = remainder;
                 }
-
-                //如果包装规格为最后一项,但是还有余数,需要再计算一次
-                //将零头的包装算入合并最后的包装里面
-                if (i == len - 1 && sum > 0)
+                else
                 {
-                    detailPck.Num += Math.Round((sum + 0.0m) / pck.Num, 2);
-                    sum = 0;
+                    //如果包装规格为最后一项,但是还有余数,需要再计算一次
+                    //将零头的包装算入合并最后的包装里面
+                    if (i == len - 1)
+                    {
+                        detailPck.Num += Math.Round((sum + 0.0m) / pck.Num, 2);
+                        sum = 0;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
+    
 
                 _Context.OrderDetailPackages.Add(detailPck);
             }
