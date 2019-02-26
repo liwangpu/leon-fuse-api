@@ -47,5 +47,7 @@ namespace Apps.OMS.Service.Contexts
 
         public DbSet<ProductPackage> ProductPackages { get; set; }
 
+        public DbSet<OrderDetailPackage> OrderDetailPackages { get; set; }
+
     }
 }

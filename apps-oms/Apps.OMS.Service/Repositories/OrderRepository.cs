@@ -6,6 +6,7 @@ using Apps.OMS.Data.Entities;
 using Apps.OMS.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -60,6 +61,9 @@ namespace Apps.OMS.Service.Repositories
             var endTime = beginTime.AddDays(1);
             var orderCount = await _Context.Orders.Where(x => x.CreatedTime >= beginTime && x.CreatedTime < endTime).CountAsync();
             data.OrderNo = beginTime.ToString("yyyyMMdd") + (orderCount + 1).ToString().PadLeft(5, '0');
+            //计算最优包装
+            foreach (var item in data.OrderDetails)
+                await ReCalculatePackage(item);
             _Context.Orders.Add(data);
             await _Context.SaveChangesAsync();
         }
@@ -105,8 +109,56 @@ namespace Apps.OMS.Service.Repositories
                 data.TotalNum = data.OrderDetails.Select(x => x.Num).Sum();
                 data.TotalPrice = data.OrderDetails.Select(x => x.TotalPrice).Sum();
             }
+
+
+
+
             _Context.Orders.Update(data);
             await _Context.SaveChangesAsync();
         }
+
+        /// <summary>
+        /// 重新计算产品规格的包装(需要外部调用SaveChangesAsync)
+        /// </summary>
+        /// <param name="detail"></param>
+        /// <returns></returns>
+        public async Task ReCalculatePackage(OrderDetail detail)
+        {
+            var detailPcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetail == detail).ToListAsync();
+            //先把之前的产品包装清除
+            foreach (var item in detailPcks)
+                _Context.OrderDetailPackages.Remove(item);
+            //规格包装信息
+            var pcks = await _Context.ProductPackages.Where(x => x.ProductSpecId == detail.ProductSpecId && x.ActiveFlag == AppConst.Active).OrderByDescending(x => x.Num).ToListAsync();
+            var sum = detail.Num;
+
+            for (int i = 0, len = pcks.Count; i < len && sum > 0; i++)
+            {
+                var pck = pcks[i];
+
+                var detailPck = new OrderDetailPackage();
+                detailPck.ProductPackageId = pck.Id;
+                detailPck.Id = GuidGen.NewGUID();
+                detailPck.OrderDetail = detail;
+
+                if (sum > pck.Num)
+                {
+                    var remainder = sum % pck.Num;
+                    detailPck.Num = (sum - remainder) / pck.Num;
+                    sum = remainder;
+                }
+
+                //如果包装规格为最后一项,但是还有余数,需要再计算一次
+                //将零头的包装算入合并最后的包装里面
+                if (i == len - 1 && sum > 0)
+                {
+                    detailPck.Num += Math.Round((sum + 0.0m) / pck.Num, 2);
+                    sum = 0;
+                }
+
+                _Context.OrderDetailPackages.Add(detailPck);
+            }
+        }
+
     }
 }

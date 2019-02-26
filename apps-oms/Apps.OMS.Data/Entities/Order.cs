@@ -46,6 +46,7 @@ namespace Apps.OMS.Data.Entities
         public string SubOrderIds { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
         public List<OrderFlowLog> OrderFlowLogs { get; set; }
+        //public List<OrderPackage> OrderPackages { get; set; }
         [NotMapped]
         public string Icon { get; set; }
     }

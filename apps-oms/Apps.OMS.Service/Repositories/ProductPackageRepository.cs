@@ -57,7 +57,8 @@ namespace Apps.OMS.Service.Repositories
         public async Task DeleteAsync(string id, string accountId)
         {
             var entity = await _Context.ProductPackages.FirstOrDefaultAsync(x => x.Id == id);
-            _Context.ProductPackages.Remove(entity);
+            entity.ActiveFlag = AppConst.InActive;
+            _Context.ProductPackages.Update(entity);
             await _Context.SaveChangesAsync();
         }
 

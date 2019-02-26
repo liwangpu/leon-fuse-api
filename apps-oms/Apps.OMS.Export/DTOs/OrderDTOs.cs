@@ -47,6 +47,15 @@ namespace Apps.OMS.Export.DTOs
         public string Remark { get; set; }
         public string AttachmentIds { get; set; }
         public List<OrderDetailAttachmentDTO> Attachments { get; set; }
+        public List<OrderDetailPackageDTO> Packages { get; set; }
+    }
+
+    public class OrderDetailPackageDTO
+    {
+        public string Id { get; set; }
+        public string PackageName { get; set; }
+        public int PackingUnit { get; set; }
+        public decimal Num { get; set; }
     }
 
     public class OrderDetailAttachmentDTO

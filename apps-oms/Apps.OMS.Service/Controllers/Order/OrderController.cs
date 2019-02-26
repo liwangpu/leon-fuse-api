@@ -10,6 +10,7 @@ using Apps.OMS.Data.Entities;
 using Apps.OMS.Export.DTOs;
 using Apps.OMS.Export.Models;
 using Apps.OMS.Service.Contexts;
+using Apps.OMS.Service.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -170,6 +171,24 @@ namespace Apps.OMS.Service.Controllers
                         ditem.UnitPrice = it.UnitPrice;
                         ditem.TotalPrice = Math.Round(it.UnitPrice * it.Num, 2, MidpointRounding.AwayFromZero);
                         ditem.AttachmentIds = it.AttachmentIds;
+
+                        var pckDtos = new List<OrderDetailPackageDTO>();
+                        var pcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetailId == it.Id).OrderByDescending(x => x.Num).ToListAsync();
+                        foreach (var pck in pcks)
+                        {
+                            var pckDto = new OrderDetailPackageDTO();
+                            var refPackage = await _Context.ProductPackages.FirstOrDefaultAsync(x => x.Id == pck.ProductPackageId);
+                            if (refPackage != null)
+                            {
+                                pckDto.Id = pck.Id;
+                                pckDto.PackageName = refPackage.Name;
+                                pckDto.PackingUnit = refPackage.Num;
+                                pckDto.Num = pck.Num;
+                                pckDtos.Add(pckDto);
+                            }
+
+                        }
+                        ditem.Packages = pckDtos;
 
                         await productSpecMicroService.GetBriefById(it.ProductSpecId, (spec) =>
                           {
@@ -367,8 +386,10 @@ namespace Apps.OMS.Service.Controllers
         [HttpPut("OrderDetail")]
         [ValidateModel]
         [ProducesResponseType(typeof(ValidationResultModel), 400)]
+        [ProducesResponseType(typeof(OrderDetailDTO), 200)]
         public async Task<IActionResult> UpdateOrderDetail([FromBody] OrderDetailEditModel model)
         {
+            var dto = new OrderDetailDTO();
             var detail = await _Context.OrderDetails.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
             if (detail == null) return NotFound();
 
@@ -381,9 +402,33 @@ namespace Apps.OMS.Service.Controllers
             }
             else
                 detail.AttachmentIds = string.Empty;
+            await (_Repository as OrderRepository).ReCalculatePackage(detail);
             _Context.OrderDetails.Update(detail);
             _Context.SaveChanges();
-            return NoContent();
+
+            #region 获取产品包装规格
+            {
+                var pckDtos = new List<OrderDetailPackageDTO>();
+                var pcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetailId == detail.Id).OrderByDescending(x=>x.Num).ToListAsync();
+                foreach (var pck in pcks)
+                {
+                    var pckDto = new OrderDetailPackageDTO();
+                    var refPackage = await _Context.ProductPackages.FirstOrDefaultAsync(x => x.Id == pck.ProductPackageId);
+                    if (refPackage != null)
+                    {
+                        pckDto.Id = pck.Id;
+                        pckDto.PackageName = refPackage.Name;
+                        pckDto.PackingUnit = refPackage.Num;
+                        pckDto.Num = pck.Num;
+                        pckDtos.Add(pckDto);
+                    }
+
+                }
+                dto.Packages = pckDtos;
+            }
+            #endregion
+
+            return Ok(dto);
         }
         #endregion
 
@@ -467,7 +512,7 @@ namespace Apps.OMS.Service.Controllers
         public async Task<IActionResult> BatchDelete(string ids)
         {
             return await _BatchDeleteRequest(ids);
-        } 
+        }
         #endregion
     }
 }

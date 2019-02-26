@@ -1,5 +1,6 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Apps.OMS.Data.Entities
@@ -39,6 +40,7 @@ namespace Apps.OMS.Data.Entities
         public string AttachmentIds { get; set; }
         public string OrderId { get; set; }
         public Order Order { get; set; }
+        public List<OrderDetailPackage> Packages { get; set; }
         [NotMapped]
         public decimal TotalPrice
         {

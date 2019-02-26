@@ -1,7 +1,5 @@
 ﻿using Apps.Base.Common.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Apps.OMS.Data.Entities
 {
