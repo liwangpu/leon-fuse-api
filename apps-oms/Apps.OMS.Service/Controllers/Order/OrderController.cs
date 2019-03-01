@@ -204,6 +204,7 @@ namespace Apps.OMS.Service.Controllers
                              ditem.ProductCategoryId = prod.CategoryId;
                              ditem.ProductCategoryName = prod.CategoryName;
                              ditem.ProductUnit = prod.Unit;
+                             ditem.ProductBrand = prod.Brand;
                              ditem.ProductDescription = prod.Description;
                          });
 
@@ -409,7 +410,7 @@ namespace Apps.OMS.Service.Controllers
             #region 获取产品包装规格
             {
                 var pckDtos = new List<OrderDetailPackageDTO>();
-                var pcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetailId == detail.Id).OrderByDescending(x=>x.Num).ToListAsync();
+                var pcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetailId == detail.Id).OrderByDescending(x => x.Num).ToListAsync();
                 foreach (var pck in pcks)
                 {
                     var pckDto = new OrderDetailPackageDTO();

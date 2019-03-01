@@ -123,7 +123,7 @@ namespace ApiServer.Controllers
         [ProducesResponseType(typeof(ProductSpecDTO), 200)]
         public async Task<IActionResult> GetBriefById(string id)
         {
-            var data = await _Repository._DbContext.ProductSpec.FirstOrDefaultAsync(x => x.Id == id);
+            var data = await _Repository._DbContext.ProductSpec.Include(x => x.Product).FirstOrDefaultAsync(x => x.Id == id);
             if (data == null)
                 return NotFound();
             var dto = new ProductSpecDTO();
@@ -139,6 +139,7 @@ namespace ApiServer.Controllers
             dto.PartnerPrice = data.PartnerPrice;
             dto.PurchasePrice = data.PurchasePrice;
             dto.ProductId = data.ProductId;
+            dto.Brand = data.Product.Brand;
             if (!string.IsNullOrWhiteSpace(data.Icon))
                 dto.Icon = await _Repository._DbContext.Files.Where(x => x.Id == data.Icon).Select(x => x.Url).FirstOrDefaultAsync();
 
@@ -357,6 +358,7 @@ namespace ApiServer.Controllers
                 #region 创建产品
                 product.Name = staticMesh.Name;
                 product.Icon = staticMesh.Icon;
+                product.Brand = model.Brand;
                 await _ProductRep.SatisfyCreateAsync(accid, product, ModelState);
                 if (!ModelState.IsValid)
                     return new ValidationFailedResult(ModelState);

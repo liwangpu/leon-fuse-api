@@ -40,6 +40,7 @@ namespace Apps.OMS.Export.DTOs
         public string ProductName { get; set; }
         public string ProductCategoryName { get; set; }
         public string ProductUnit { get; set; }
+        public string ProductBrand { get; set; }
         public string ProductDescription { get; set; }
         public int Num { get; set; }
         public decimal UnitPrice { get; set; }

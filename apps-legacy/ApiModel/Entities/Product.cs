@@ -15,6 +15,7 @@ namespace ApiModel.Entities
         /// </summary>
         public bool IsPublish { get; set; }
         public string Color { get; set; }
+        public string Brand { get; set; }
         /// <summary>
         /// 规格
         /// </summary>
@@ -41,6 +42,7 @@ namespace ApiModel.Entities
             dto.Unit = Unit;
             dto.IsPublish = IsPublish;
             dto.Color = Color;
+            dto.Brand = Brand;
             if (Specifications != null && Specifications.Count > 0)
             {
                 var defaultSpec = Specifications.OrderByDescending(x => x.CreatedTime).First();
@@ -60,6 +62,7 @@ namespace ApiModel.Entities
     public class ProductDTO : EntityBase, IListable
     {
         public string Color { get; set; }
+        public string Brand { get; set; }
         public string IconAssetId { get; set; }
         public decimal Price { get; set; }
         public decimal PartnerPrice { get; set; }

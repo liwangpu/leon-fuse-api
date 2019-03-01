@@ -129,6 +129,7 @@ namespace ApiServer.Controllers
                 entity.CategoryId = model.CategoryId;
                 entity.IsPublish = model.IsPublish;
                 entity.Color = model.Color;
+                entity.Brand = model.Brand;
                 entity.ResourceType = (int)ResourceTypeEnum.Organizational;
 
 
@@ -173,6 +174,7 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.IsPublish = model.IsPublish;
                 entity.Color = model.Color;
+                entity.Brand = model.Brand;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
                 entity.Unit = model.Unit;
@@ -417,6 +419,7 @@ namespace ApiServer.Controllers
             dto.Creator = data.Creator;
             dto.Modifier = data.Modifier;
             dto.Unit = data.Unit;
+            dto.Brand = data.Brand;
             dto.CategoryId = data.CategoryId;
             if (!string.IsNullOrWhiteSpace(dto.CategoryId))
                 dto.CategoryName = await _Repository._DbContext.AssetCategories.Where(x => x.Id == dto.CategoryId).Select(x => x.Name).FirstOrDefaultAsync();

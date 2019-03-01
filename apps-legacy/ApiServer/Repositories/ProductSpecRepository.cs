@@ -89,6 +89,11 @@ namespace ApiServer.Repositories
         public override async Task<ProductSpecDTO> GetByIdAsync(string id)
         {
             var res = await _GetByIdAsync(id);
+            var product = await _DbContext.Products.FirstOrDefaultAsync(x => x.Id == res.ProductId);
+            if (product != null)
+            {
+                res.Brand = product.Brand;
+            }
             if (!string.IsNullOrWhiteSpace(res.Icon))
             {
                 var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == res.Icon);

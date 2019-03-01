@@ -51,6 +51,8 @@ namespace ApiModel.Entities
 
         /**************** DTO专用容器 ****************/
         [NotMapped]
+        public string Brand { get; set; }
+        [NotMapped]
         public List<FileAsset> AlbumAsset { get; set; }
         [NotMapped]
         public List<StaticMesh> StaticMeshAsset { get; set; }
@@ -86,6 +88,7 @@ namespace ApiModel.Entities
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
             dto.Color = Color;
+            dto.Brand = Brand;
             if (AlbumAsset != null && AlbumAsset.Count > 0)
                 dto.Album = AlbumAsset.Select(x => x.ToDTO()).ToList();
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
@@ -112,6 +115,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string Slots { get; set; }
         public string Components { get; set; }
+        public string Brand { get; set; }
     }
 
     /// <summary>

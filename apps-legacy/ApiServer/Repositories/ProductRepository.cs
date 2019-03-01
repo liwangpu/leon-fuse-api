@@ -39,7 +39,7 @@ namespace ApiServer.Repositories
                 for (int nidx = data.Specifications.Count - 1; nidx >= 0; nidx--)
                 {
                     var spec = data.Specifications[nidx];
-
+                    spec.Brand = data.Brand;
                     if (!string.IsNullOrWhiteSpace(spec.Icon))
                     {
                         var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == spec.Icon);
@@ -205,7 +205,7 @@ namespace ApiServer.Repositories
                         }
                         curData.Specifications = new List<ProductSpec>() { defaultSpec };
                     }
-                       
+
                 }
             }
             return result;

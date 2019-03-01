@@ -20,6 +20,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public bool IsPublish { get; set; }
         public string Color { get; set; }
+        public string Brand { get; set; }
     }
     #endregion
 
@@ -41,6 +42,7 @@ namespace ApiServer.Models
         public string IconAssetId { get; set; }
         public bool IsPublish { get; set; }
         public string Color { get; set; }
+        public string Brand { get; set; }
     }
     #endregion
 
@@ -117,6 +119,7 @@ namespace ApiServer.Models
         [Required(ErrorMessage = "必填信息")]
         public string StaticMeshId { get; set; }
         public string ProductId { get; set; }
+        public string Brand { get; set; }
     }
     #endregion
 
