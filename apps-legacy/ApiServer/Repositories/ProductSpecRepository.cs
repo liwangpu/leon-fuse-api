@@ -26,6 +26,37 @@ namespace ApiServer.Repositories
             }
         }
 
+        public async override Task<IQueryable<ProductSpec>> _GetPermissionData(string accid, DataOperateEnum dataOp, bool withInActive = false)
+        {
+            var emptyQuery = Enumerable.Empty<ProductSpec>().AsQueryable();
+            var query = emptyQuery;
+
+            var currentAcc = await _DbContext.Accounts.Select(x => new Account() { Id = x.Id, OrganizationId = x.OrganizationId, Type = x.Type }).FirstOrDefaultAsync(x => x.Id == accid);
+            if (currentAcc == null)
+                return query;
+
+            //数据状态
+            if (withInActive)
+                query = _DbContext.Set<ProductSpec>();
+            else
+                query = _DbContext.Set<ProductSpec>().Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+
+            /*
+             * 读取,修改,删除操作
+             *      管理员:操作自己组织的创建的
+             *      用户:操作自己创建的数据
+             */
+
+
+            if (currentAcc.Type == AppConst.AccountType_BrandAdmin|| currentAcc.Type == AppConst.AccountType_BrandMember || currentAcc.Type == AppConst.AccountType_PartnerAdmin || currentAcc.Type == AppConst.AccountType_PartnerMember || currentAcc.Type == AppConst.AccountType_SupplierAdmin || currentAcc.Type == AppConst.AccountType_SupplierMember)
+            {
+                return query.Where(x => x.OrganizationId == currentAcc.OrganizationId);
+            }
+
+
+            return query.Where(x => x.Creator == accid);
+        }
+
         #region SatisfyCreateAsync 判断数据是否满足存储规范
         /// <summary>
         /// 判断数据是否满足存储规范
