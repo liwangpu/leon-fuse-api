@@ -55,8 +55,8 @@ namespace ApiServer.Controllers
                     {
                         var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
                         //如果是根节点,把所有取出,不做分类过滤
-                        if (curCategoryTree != null && curCategoryTree.LValue > 1)
-                        {
+                        //if (curCategoryTree != null && curCategoryTree.LValue > 1)
+                        //{
                             var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
                                             where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
                                             && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
@@ -64,7 +64,7 @@ namespace ApiServer.Controllers
                             query = from it in query
                                     join cat in categoryQ on it.CategoryId equals cat.ObjId
                                     select it;
-                        }
+                        //}
                     }
                     //else
                     //{
