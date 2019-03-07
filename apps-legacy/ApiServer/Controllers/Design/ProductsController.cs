@@ -57,13 +57,13 @@ namespace ApiServer.Controllers
                         //如果是根节点,把所有取出,不做分类过滤
                         //if (curCategoryTree != null && curCategoryTree.LValue > 1)
                         //{
-                            var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
-                                            where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
-                                            && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
-                                            select it;
-                            query = from it in query
-                                    join cat in categoryQ on it.CategoryId equals cat.ObjId
-                                    select it;
+                        var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
+                                        where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+                                        && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+                                        select it;
+                        query = from it in query
+                                join cat in categoryQ on it.CategoryId equals cat.ObjId
+                                select it;
                         //}
                     }
                     //else
@@ -252,7 +252,7 @@ namespace ApiServer.Controllers
             var accid = AuthMan.GetAccountId(this);
             var currentAcc = await _Repository._DbContext.Accounts.FindAsync(accid);
             var psProductQuery = await _Repository._GetPermissionData(accid, DataOperateEnum.Update);
-            var psCategoryQuery = _Repository._DbContext.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
+            //var psCategoryQuery = _Repository._DbContext.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
             var importOp = new Func<ProductAndCategoryImportCSV, Task<string>>(async (data) =>
             {
                 var mapProductCount = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).CountAsync();
@@ -260,15 +260,27 @@ namespace ApiServer.Controllers
                     return "没有找到该产品或您没有权限修改该条数据";
                 if (mapProductCount > 1)
                     return "产品名称有重复,请手动分配该产品";
-                var mapCategoryCount = await psCategoryQuery.Where(x => x.Name == data.CategoryName).CountAsync();
-                if (mapCategoryCount == 0)
-                    return "没有找到该分类,请确认分类名称是否有误";
-                if (mapCategoryCount > 1)
-                    return "分类名称有重复,请手动分配该产品";
+                //var mapCategoryCount = await psCategoryQuery.Where(x => x.Name == data.CategoryName).CountAsync();
+                //if (mapCategoryCount == 0)
+                //    return "没有找到该分类,请确认分类名称是否有误";
+                //if (mapCategoryCount > 1)
+                //    return "分类名称有重复,请手动分配该产品";
 
-                var refProduct = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).FirstAsync();
-                var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
-                refProduct.CategoryId = refCategory.Id;
+                var refProduct = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).Include(x => x.Specifications).FirstAsync();
+                //var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
+                //refProduct.CategoryId = refCategory.Id;
+                refProduct.Description = data.Description;
+                refProduct.Unit = data.Unit;
+                refProduct.Brand = data.Brand;
+
+                if (refProduct.Specifications != null && refProduct.Specifications.Count > 0)
+                {
+                    var defaultSpec = refProduct.Specifications[0];
+                    defaultSpec.Price = data.Price;
+                    defaultSpec.PartnerPrice = data.PartnerPrice;
+                    defaultSpec.PurchasePrice = data.PurchasePrice;
+                }
+
                 _Repository._DbContext.Products.Update(refProduct);
                 return await Task.FromResult(string.Empty);
             });
@@ -306,33 +318,34 @@ namespace ApiServer.Controllers
         [HttpGet]
         public Task<IActionResult> ExportData([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
         {
-            var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
-            {
-                if (classify)
-                {
-                    if (!string.IsNullOrWhiteSpace(categoryId))
-                    {
-                        var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
-                        //如果是根节点,把所有取出,不做分类过滤
-                        if (curCategoryTree != null && curCategoryTree.LValue > 1)
-                        {
-                            var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
-                                            where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
-                                            && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
-                                            select it;
-                            query = from it in query
-                                    join cat in categoryQ on it.CategoryId equals cat.ObjId
-                                    select it;
-                        }
-                    }
-                }
-                else
-                {
-                    query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
-                }
-                query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
-                return query;
-            });
+
+            //var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
+            //{
+            //    if (classify)
+            //    {
+            //        if (!string.IsNullOrWhiteSpace(categoryId))
+            //        {
+            //            var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+            //            //如果是根节点,把所有取出,不做分类过滤
+            //            //if (curCategoryTree != null && curCategoryTree.LValue > 1)
+            //            //{
+            //                var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
+            //                                where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+            //                                && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+            //                                select it;
+            //                query = from it in query
+            //                        join cat in categoryQ on it.CategoryId equals cat.ObjId
+            //                        select it;
+            //            //}
+            //        }
+            //    }
+            //    else
+            //    {
+            //        query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
+            //    }
+            //    query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+            //    return query;
+            //});
 
             var transMapping = new Func<ProductDTO, Task<ProductExportDataCSV>>(async (entity) =>
             {
@@ -340,10 +353,15 @@ namespace ApiServer.Controllers
                 csData.ProductName = entity.Name;
                 csData.CategoryName = entity.CategoryName;
                 csData.Description = entity.Description;
-                csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
-                csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
-                csData.Creator = entity.Creator;
-                csData.Modifier = entity.Modifier;
+                csData.Price = entity.Price;
+                csData.PartnerPrice = entity.PartnerPrice;
+                csData.PurchasePrice = entity.PurchasePrice;
+                csData.Unit = entity.Unit;
+                csData.Brand = entity.Brand;
+                //csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
+                //csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
+                //csData.Creator = entity.Creator;
+                //csData.Modifier = entity.Modifier;
                 return await Task.FromResult(csData);
             });
 
@@ -362,6 +380,12 @@ namespace ApiServer.Controllers
             }
             public string ProductName { get; set; }
             public string CategoryName { get; set; }
+            public string Description { get; set; }
+            public decimal Price { get; set; }
+            public decimal PartnerPrice { get; set; }
+            public decimal PurchasePrice { get; set; }
+            public string Unit { get; set; }
+            public string Brand { get; set; }
             public string ErrorMsg { get; set; }
         }
 
@@ -375,6 +399,12 @@ namespace ApiServer.Controllers
 
             public string ProductName { get; set; }
             public string CategoryName { get; set; }
+            public string Description { get; set; }
+            public decimal Price { get; set; }
+            public decimal PartnerPrice { get; set; }
+            public decimal PurchasePrice { get; set; }
+            public string Unit { get; set; }
+            public string Brand { get; set; }
         }
 
         class ProductExportDataCSV : ClassMap<ProductExportDataCSV>
@@ -387,10 +417,15 @@ namespace ApiServer.Controllers
             public string ProductName { get; set; }
             public string CategoryName { get; set; }
             public string Description { get; set; }
-            public string CreatedTime { get; set; }
-            public string ModifiedTime { get; set; }
-            public string Creator { get; set; }
-            public string Modifier { get; set; }
+            public decimal Price { get; set; }
+            public decimal PartnerPrice { get; set; }
+            public decimal PurchasePrice { get; set; }
+            public string Unit { get; set; }
+            public string Brand { get; set; }
+            //public string CreatedTime { get; set; }
+            //public string ModifiedTime { get; set; }
+            //public string Creator { get; set; }
+            //public string Modifier { get; set; }
 
         }
         #endregion

@@ -29,11 +29,11 @@ namespace ApiServer.Repositories
             services.AddScoped<IRepository<Solution, SolutionDTO>, SolutionRepository>();
             services.AddScoped<IRepository<StaticMesh, StaticMeshDTO>, StaticMeshRepository>();
             services.AddScoped<IRepository<Texture, TextureDTO>, TextureRepository>();
-            services.AddScoped<IRepository<Order, OrderDTO>, OrderRepository>();
+            //services.AddScoped<IRepository<Order, OrderDTO>, OrderRepository>();
             services.AddScoped<IRepository<ProductReplaceGroup, ProductReplaceGroupDTO>, ProductReplaceGroupRepository>();
             services.AddScoped<IRepository<UserRole, UserRoleDTO>, UserRoleRepository>();
-            services.AddScoped<IRepository<WorkFlow, WorkFlowDTO>, WorkFlowRepository>();
-            services.AddScoped<IRepository<WorkFlowRule, WorkFlowRuleDTO>, WorkFlowRuleRepository>();
+            //services.AddScoped<IRepository<WorkFlow, WorkFlowDTO>, WorkFlowRepository>();
+            //services.AddScoped<IRepository<WorkFlowRule, WorkFlowRuleDTO>, WorkFlowRuleRepository>();
             services.AddScoped<IRepository<OrganizationType, OrganizationTypeDTO>, OrganizationTypeRepository>();
             services.AddScoped<IRepository<MemberRegistry, MemberRegistryDTO>, MemberRegistryRepository>();         
         }

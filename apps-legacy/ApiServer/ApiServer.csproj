@@ -40,10 +40,7 @@
   <ItemGroup>
     <Compile Remove="Controllers\Account\MemberRegistryController.cs" />
     <Compile Remove="Controllers\Asset\MailController.cs" />
-    <Compile Remove="Controllers\Order\OrdersController.cs" />
     <Compile Remove="Controllers\UIDesigner\BSModelController.cs" />
-    <Compile Remove="Controllers\Work\WorkFlowController.cs" />
-    <Compile Remove="Controllers\Work\WorkFlowRuleController.cs" />
     <Compile Remove="Data\EntityRepository.cs" />
     <Compile Remove="Data\IEntityRepository.cs" />
     <Compile Remove="Data\RepositoryDefines.cs" />
@@ -63,6 +60,9 @@
     <Compile Remove="Migrations\20181127023245_LeonAddSnapshootToSolution20181127.cs" />
     <Compile Remove="Migrations\20181127023630_LeonAddSnapshootToSolution20181127.cs" />
     <Compile Remove="Migrations\20181203053144_LeonAddCompleteToWF20181203.cs" />
+    <Compile Remove="Repositories\OrderRepository.cs" />
+    <Compile Remove="Repositories\WorkFlowRepository.cs" />
+    <Compile Remove="Repositories\WorkFlowRuleRepository.cs" />
     <Compile Remove="Services\AccountMan.cs" />
   </ItemGroup>
 
@@ -109,11 +109,6 @@
     <Content Update="wwwroot\AppBackup\user-navs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\Order\" />
-    <Folder Include="Controllers\Work\" />
   </ItemGroup>
 
   <ProjectExtensions>
