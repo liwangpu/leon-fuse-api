@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190308090411_CategoryAddTag")]
+    partial class CategoryAddTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,8 +147,6 @@ namespace ApiServer.Migrations
                     b.Property<int>("DisplayIndex");
 
                     b.Property<string>("Icon");
-
-                    b.Property<bool>("Isolate");
 
                     b.Property<DateTime>("ModifiedTime");
 

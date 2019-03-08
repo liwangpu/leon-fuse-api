@@ -107,9 +107,14 @@ namespace ApiServer.Controllers
 
             //root node parentid == "".
             List<AssetCategory> rootlist = await _Repository._DbContext.AssetCategories.Where(d => d.ParentId == "" && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
+            List<AssetCategory> isolateRootlist = await _Repository._DbContext.AssetCategories.Where(d => d.Isolate == true && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
+            rootlist.AddRange(isolateRootlist);
             foreach (var root in rootlist)
             {
-                AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(root.Type, organId);
+                //AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(root.Type, organId);
+                //if (cat != null)
+                //    pack.Categories.Add(cat);
+                AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryIsolateAsync(root.Id, organId);
                 if (cat != null)
                     pack.Categories.Add(cat);
             }
@@ -162,6 +167,8 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
                 entity.CustomData = model.CustomData;
+                entity.Tag = model.Tag;
+                entity.Isolate = model.Isolate;
                 if (!string.IsNullOrWhiteSpace(model.ParentId))
                     entity.Type = (await _Repository._DbContext.AssetCategories.FirstAsync(d => d.Id == model.ParentId)).Type;
                 else
@@ -195,6 +202,8 @@ namespace ApiServer.Controllers
                 entity.Description = model.Description;
                 entity.ParentId = model.ParentId;
                 entity.CustomData = model.CustomData;
+                entity.Tag = model.Tag;
+                entity.Isolate = model.Isolate;
                 entity.OrganizationId = model.OrganizationId;
                 return entity;
             });

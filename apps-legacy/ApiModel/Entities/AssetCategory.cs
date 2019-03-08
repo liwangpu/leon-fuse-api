@@ -11,6 +11,8 @@ namespace ApiModel.Entities
         public string ParentId { get; set; }
         public int DisplayIndex { get; set; }
         public string CustomData { get; set; }
+        public string Tag { get; set; }
+        public bool Isolate { get; set; }
         public AssetCategoryDTO ToDTO()
         {
             AssetCategoryDTO dto = new AssetCategoryDTO();
@@ -22,6 +24,8 @@ namespace ApiModel.Entities
             dto.Icon = Icon;
             dto.Type = Type;
             dto.CustomData = CustomData;
+            dto.Tag = Tag;
+            dto.Isolate = Isolate;
             dto.DisplayIndex = DisplayIndex;
             dto.OrganizationId = OrganizationId;
             dto.Creator = Creator;
@@ -51,6 +55,8 @@ namespace ApiModel.Entities
         /// </summary>
         public int DisplayIndex { get; set; }
         public string CustomData { get; set; }
+        public string Tag { get; set; }
+        public bool Isolate { get; set; }
         public List<AssetCategoryDTO> Children { get; set; }
     }
 

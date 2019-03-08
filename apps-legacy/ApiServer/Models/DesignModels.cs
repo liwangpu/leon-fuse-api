@@ -750,6 +750,8 @@ namespace ApiServer.Models
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
         public string CustomData { get; set; }
+        public string Tag { get; set; }
+        public bool Isolate { get; set; }
     }
 
     public class AssetCategoryEditModel : EntityEditModel
@@ -757,6 +759,8 @@ namespace ApiServer.Models
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
         public string CustomData { get; set; }
+        public string Tag { get; set; }
+        public bool Isolate { get; set; }
     }
 
     public class ProductReplaceGroupCreateModel : EntityCreateModel

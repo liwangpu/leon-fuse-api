@@ -37,6 +37,54 @@ namespace ApiServer.Repositories
         }
 
 
+        public async Task<AssetCategoryDTO> GetCategoryIsolateAsync(string rootCategoryId, string organId)
+        {
+
+            var rootCategoryTreeNode = await _DbContext.AssetCategoryTrees.FirstAsync(x => x.ObjId == rootCategoryId);
+            var templist = new List<AssetCategory>();
+
+            #region 查看根节点下节点有没有需要独立出来的
+            {
+                var tmpQ = from cat in _DbContext.AssetCategories
+                           join tree in _DbContext.AssetCategoryTrees on cat.Id equals tree.ObjId
+                           where tree.OrganizationId == organId && tree.NodeType == rootCategoryTreeNode.NodeType && tree.LValue >= rootCategoryTreeNode.LValue && tree.RValue <= rootCategoryTreeNode.RValue
+                           select cat;
+
+                templist = await tmpQ.ToListAsync();
+
+                //只有根节点才去讨论说里面的子节点要不要独立出来,所以只有根节点需要去除独立节点里的分类
+                if (rootCategoryTreeNode.LValue == 1)
+                {
+                    var isolateCats = await tmpQ.Where(x => x.Isolate).ToListAsync();
+                    foreach (var isolateCat in isolateCats)
+                    {
+                        var isolateNode = await _DbContext.AssetCategoryTrees.FirstAsync(x => x.ObjId == isolateCat.Id);
+                        var excludeIds = await _DbContext.AssetCategoryTrees.Where(x => x.OrganizationId == organId && x.NodeType == isolateNode.NodeType && x.LValue >= isolateNode.LValue && x.RValue <= isolateNode.RValue).Select(x => x.ObjId).ToListAsync();
+                        foreach (var excludeId in excludeIds)
+                        {
+                            for (var idx = templist.Count - 1; idx >= 0; idx--)
+                            {
+                                if (templist[idx].Id == excludeId)
+                                    templist.RemoveAt(idx);
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            var list = new LinkedList<AssetCategory>();
+            foreach (var item in templist)
+            {
+                list.AddLast(item);
+            }
+            var root = await _DbContext.AssetCategories.FirstAsync(x => x.Id == rootCategoryId);
+            var dto = root.ToDTO();
+            FindChildren(list, dto);
+
+            return dto;
+        }
+
         /// <summary>
         ///  获取所有分类，已经整理为树结构
         /// </summary>
