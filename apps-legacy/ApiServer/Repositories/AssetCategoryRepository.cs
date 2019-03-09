@@ -93,8 +93,21 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public async Task<AssetCategoryDTO> GetCategoryAsync(string type, string organId)
         {
+            //之所以采用这个方式,是因为tree表里面没有active标记,不清楚分类节点是否已经属于删除状态
+            var rootCatTreeNodeQ = from tree in _DbContext.AssetCategoryTrees
+                                   join cat in _DbContext.AssetCategories on tree.ObjId equals cat.Id
+                                   where cat.ActiveFlag == AppConst.I_DataState_Active && cat.OrganizationId == organId && tree.NodeType == type && tree.LValue == 1
+                                   select tree;
+            var rootCatTreeNode = await rootCatTreeNodeQ.FirstAsync();
 
-            List<AssetCategory> templist = await _DbContext.AssetCategories.Where(d => d.Type == type && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
+            var tmpQ = from cat in _DbContext.AssetCategories
+                       join tree in _DbContext.AssetCategoryTrees on cat.Id equals tree.ObjId
+                       where tree.OrganizationId == organId && tree.NodeType == rootCatTreeNode.NodeType && tree.LValue >= rootCatTreeNode.LValue && tree.RValue <= rootCatTreeNode.RValue
+                       select cat;
+
+            var templist = await tmpQ.ToListAsync();
+
+
             LinkedList<AssetCategory> list = new LinkedList<AssetCategory>();
             foreach (var item in templist)
             {
@@ -142,7 +155,21 @@ namespace ApiServer.Repositories
         /// <returns></returns>
         public async Task<List<AssetCategoryDTO>> GetFlatCategory(string type, string organId)
         {
-            return await (_AssetCategoryTreeRepository as AssetCategoryTreeRepository).GetFlatCategory(type, organId);
+            //return await (_AssetCategoryTreeRepository as AssetCategoryTreeRepository).GetFlatCategory(type, organId);
+            //之所以采用这个方式,是因为tree表里面没有active标记,不清楚分类节点是否已经属于删除状态
+            var rootCatTreeNodeQ = from tree in _DbContext.AssetCategoryTrees
+                                   join cat in _DbContext.AssetCategories on tree.ObjId equals cat.Id
+                                   where cat.ActiveFlag == AppConst.I_DataState_Active && cat.OrganizationId == organId && tree.NodeType == type && tree.LValue == 1
+                                   select tree;
+            var rootCatTreeNode = await rootCatTreeNodeQ.FirstAsync();
+
+            var tmpQ = from cat in _DbContext.AssetCategories
+                       join tree in _DbContext.AssetCategoryTrees on cat.Id equals tree.ObjId
+                       where tree.OrganizationId == organId && tree.NodeType == rootCatTreeNode.NodeType && tree.LValue >= rootCatTreeNode.LValue && tree.RValue <= rootCatTreeNode.RValue
+                       select cat;
+
+            var templist = await tmpQ.ToListAsync();
+            return templist.Select(x => x.ToDTO()).ToList();
         }
 
         /// <summary>
