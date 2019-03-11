@@ -6,7 +6,6 @@ using Apps.OMS.Data.Entities;
 using Apps.OMS.Service.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -130,40 +129,36 @@ namespace Apps.OMS.Service.Repositories
                 _Context.OrderDetailPackages.Remove(item);
             //规格包装信息
             var pcks = await _Context.ProductPackages.Where(x => x.ProductSpecId == detail.ProductSpecId && x.ActiveFlag == AppConst.Active).OrderByDescending(x => x.Num).ToListAsync();
+
+            var packageCount = pcks.Count;
+            var packageIndex = 0;
             var sum = detail.Num;
 
-            for (int i = 0, len = pcks.Count; i < len && sum > 0; i++)
+            while (sum > 0)
             {
-                var pck = pcks[i];
-
+                var pck = pcks[packageIndex];
                 var detailPck = new OrderDetailPackage();
                 detailPck.ProductPackageId = pck.Id;
                 detailPck.Id = GuidGen.NewGUID();
                 detailPck.OrderDetail = detail;
-
-                if (sum > pck.Num)
+                //如果是最后一个包装,不管够不够整除包装,也要装起来,小数也不要紧
+                if (packageIndex == packageCount - 1)
                 {
-                    var remainder = sum % pck.Num;
-                    detailPck.Num = (sum - remainder) / pck.Num;
-                    sum = remainder;
+                    detailPck.Num = Math.Round((sum + 0.0m) / pck.Num, 2);
+                    sum = 0;
+                    _Context.OrderDetailPackages.Add(detailPck);
                 }
                 else
                 {
-                    //如果包装规格为最后一项,但是还有余数,需要再计算一次
-                    //将零头的包装算入合并最后的包装里面
-                    if (i == len - 1)
+                    if (sum >= pck.Num)
                     {
-                        detailPck.Num += Math.Round((sum + 0.0m) / pck.Num, 2);
-                        sum = 0;
+                        var remainder = sum % pck.Num;
+                        detailPck.Num = (sum - remainder) / pck.Num;
+                        sum = remainder;
+                        _Context.OrderDetailPackages.Add(detailPck);
                     }
-                    else
-                    {
-                        continue;
-                    }
+                    packageIndex++;
                 }
-    
-
-                _Context.OrderDetailPackages.Add(detailPck);
             }
         }
 

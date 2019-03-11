@@ -47,7 +47,7 @@ namespace ApiServer.Repositories
             {
                 var tmpQ = from cat in _DbContext.AssetCategories
                            join tree in _DbContext.AssetCategoryTrees on cat.Id equals tree.ObjId
-                           where tree.OrganizationId == organId && tree.NodeType == rootCategoryTreeNode.NodeType && tree.LValue >= rootCategoryTreeNode.LValue && tree.RValue <= rootCategoryTreeNode.RValue
+                           where tree.OrganizationId == organId && tree.NodeType == rootCategoryTreeNode.NodeType && tree.LValue >= rootCategoryTreeNode.LValue && tree.RValue <= rootCategoryTreeNode.RValue&&cat.ActiveFlag==AppConst.I_DataState_Active
                            select cat;
 
                 templist = await tmpQ.ToListAsync();
