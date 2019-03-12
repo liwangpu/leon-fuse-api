@@ -134,7 +134,7 @@ namespace Apps.OMS.Service.Repositories
             var packageIndex = 0;
             var sum = detail.Num;
 
-            while (sum > 0)
+            while (sum > 0 && packageCount > 0)
             {
                 var pck = pcks[packageIndex];
                 var detailPck = new OrderDetailPackage();

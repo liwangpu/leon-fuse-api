@@ -14,8 +14,8 @@ services:
       context: .
       dockerfile: apps-legacy/ApiServer/Dockerfile
 
-  apps-oms-service:
-    image: apps-oms-service:latest
-    build:
-      context: .
-      dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
+  # apps-oms-service:
+  #   image: apps-oms-service:latest
+  #   build:
+  #     context: .
+  #     dockerfile: apps-oms/Apps.OMS.Service/Dockerfile

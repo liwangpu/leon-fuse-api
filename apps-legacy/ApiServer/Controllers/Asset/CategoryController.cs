@@ -107,16 +107,16 @@ namespace ApiServer.Controllers
 
             //root node parentid == "".
             List<AssetCategory> rootlist = await _Repository._DbContext.AssetCategories.Where(d => d.ParentId == "" && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
-            List<AssetCategory> isolateRootlist = await _Repository._DbContext.AssetCategories.Where(d => d.Isolate == true && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
-            rootlist.AddRange(isolateRootlist);
+            //List<AssetCategory> isolateRootlist = await _Repository._DbContext.AssetCategories.Where(d => d.Isolate == true && d.OrganizationId == organId && d.ActiveFlag == AppConst.I_DataState_Active).ToListAsync();
+            //rootlist.AddRange(isolateRootlist);
             foreach (var root in rootlist)
             {
-                //AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(root.Type, organId);
-                //if (cat != null)
-                //    pack.Categories.Add(cat);
-                AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryIsolateAsync(root.Id, organId);
+                AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryAsync(root.Type, organId);
                 if (cat != null)
                     pack.Categories.Add(cat);
+                //AssetCategoryDTO cat = await (_Repository as AssetCategoryRepository).GetCategoryIsolateAsync(root.Id, organId);
+                //if (cat != null)
+                //    pack.Categories.Add(cat);
             }
             return pack;
         }
