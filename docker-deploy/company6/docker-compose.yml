@@ -362,6 +362,120 @@ services:
     networks:
       - twdevnet
 
+######################################################################################
+
+# MoreJee Consul ( For Leon )
+  dmzconsulservice-leon:
+    image: consul:latest
+    container_name: dmzconsulservice-leon-c
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "8503:8500"
+    networks:
+      - dmzdevnet
+# MoreJee APIGateway ( For Leon )
+  apps-apigateway-leon:
+    container_name: apps-apigateway-leon-c
+    image: apps-base-apigateway:latest
+    ports:
+      - "5731:80"
+    volumes:
+      - "/var/bamboo/leonapigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Leon
+    networks:
+      - dmzdevnet
+    depends_on:
+      - dmzconsulservice-leon
+      - apps-legacy-basic-service-leon
+      - apps-oms-service-leon
+# MoreJee APIServer ( For Leon )
+  apps-legacy-basic-service-leon:
+    container_name: apps-legacy-basic-service-leon-c
+    image: apps-legacy-basic-service:latest
+    volumes:
+      - "/var/bamboo/leonapiserver/logs:/app/logs"
+      - "/var/bamboo/leonapiserver/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Leon}
+      - JwtSettings:Audience=${JwtSettings_Audience_Leon}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Leon}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Leon}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${ServerDB_Leon};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Leon}
+      - Plugins:MediaShare=${Plugins_MediaShare_Leon}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-leon
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-legacy-basic-service-leon
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5732:80"
+    networks:
+      - dmzdevnet
+    depends_on:
+      - dmzpostgresdb
+      - apps-morejee-tool-leon
+      - dmzconsulservice-leon
+# MoreJee ToolSite ( For Leon )
+  apps-morejee-tool-leon:
+    container_name: apps-morejee-tool-leon-c
+    image: apps-morejee-tool-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Leon}
+    ports:
+      - "5733:4000"
+    networks:
+      - dmzdevnet
+# MoreJee OMS APIServer ( For Leon )
+  apps-oms-service-leon:
+    container_name: apps-oms-service-leon-c
+    image: apps-oms-service:latest
+    volumes:
+      - "/var/bamboo/dmzomsserver/logs:/app/logs"
+      - "/var/bamboo/dmzomsserver/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_Leon}
+      - JwtSettings:Audience=${JwtSettings_Audience_Leon}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_Leon}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Leon}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${OMSServerDB_Leon};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_Leon}
+      - Plugins:MediaShare=${Plugins_MediaShare_Leon}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer_Leon}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-leon
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-oms-service-leon
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "5734:80"
+    networks:
+      - dmzdevnet
+    depends_on:
+      - dmzpostgresdb
+      - dmzconsulservice-leon
+# MoreJee Site ( For Leon )
+  apps-morejee-site-leon:
+    container_name: apps-morejee-site-leon-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_Leon}
+      - TOOLSERVER=${MoreJeeToolSite_Leon}
+      - SECRETKEY=${SECRETKEY_Leon}
+    ports:
+      - "5735:4000"
+    networks:
+      - dmzdevnet
+
 networks:
   dmzdevnet:
   dmzehomenet:
