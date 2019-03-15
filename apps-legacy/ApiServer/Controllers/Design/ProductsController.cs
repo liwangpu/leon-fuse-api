@@ -12,9 +12,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -249,60 +252,145 @@ namespace ApiServer.Controllers
         [HttpPut]
         public async Task<IActionResult> ImportProductAndCategory(IFormFile file)
         {
-            var accid = AuthMan.GetAccountId(this);
-            var currentAcc = await _Repository._DbContext.Accounts.FindAsync(accid);
-            var psProductQuery = await _Repository._GetPermissionData(accid, DataOperateEnum.Update);
-            //var psCategoryQuery = _Repository._DbContext.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
-            var importOp = new Func<ProductAndCategoryImportCSV, Task<string>>(async (data) =>
+
+
+
+
+
+
+            //var accid = AuthMan.GetAccountId(this);
+            //var currentAcc = await _Repository._DbContext.Accounts.FindAsync(accid);
+            //var psProductQuery = await _Repository._GetPermissionData(accid, DataOperateEnum.Update);
+            ////var psCategoryQuery = _Repository._DbContext.AssetCategories.Where(x => x.Type == AppConst.S_Category_Product && x.ActiveFlag == AppConst.I_DataState_Active && x.OrganizationId == currentAcc.OrganizationId);
+            //var importOp = new Func<ProductAndCategoryImportCSV, Task<string>>(async (data) =>
+            //{
+            //    var mapProductCount = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).CountAsync();
+            //    if (mapProductCount == 0)
+            //        return "没有找到该产品或您没有权限修改该条数据";
+            //    if (mapProductCount > 1)
+            //        return "产品名称有重复,请手动分配该产品";
+            //    //var mapCategoryCount = await psCategoryQuery.Where(x => x.Name == data.CategoryName).CountAsync();
+            //    //if (mapCategoryCount == 0)
+            //    //    return "没有找到该分类,请确认分类名称是否有误";
+            //    //if (mapCategoryCount > 1)
+            //    //    return "分类名称有重复,请手动分配该产品";
+
+            //    var refProduct = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).Include(x => x.Specifications).FirstAsync();
+            //    //var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
+            //    //refProduct.CategoryId = refCategory.Id;
+            //    refProduct.Description = data.Description;
+            //    refProduct.Unit = data.Unit;
+            //    refProduct.Brand = data.Brand;
+
+            //    if (refProduct.Specifications != null && refProduct.Specifications.Count > 0)
+            //    {
+            //        var defaultSpec = refProduct.Specifications[0];
+            //        defaultSpec.Price = data.Price;
+            //        defaultSpec.PartnerPrice = data.PartnerPrice;
+            //        defaultSpec.PurchasePrice = data.PurchasePrice;
+            //    }
+
+            //    _Repository._DbContext.Products.Update(refProduct);
+            //    return await Task.FromResult(string.Empty);
+            //});
+
+            //var doneOp = new Action(async () =>
+            //{
+            //    await _Repository._DbContext.SaveChangesAsync();
+            //});
+            //return await _ImportRequest(file, importOp, doneOp);
+            var fs = new MemoryStream();
+            file.CopyTo(fs);
+            using (var package = new ExcelPackage(fs))
             {
-                var mapProductCount = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).CountAsync();
-                if (mapProductCount == 0)
-                    return "没有找到该产品或您没有权限修改该条数据";
-                if (mapProductCount > 1)
-                    return "产品名称有重复,请手动分配该产品";
-                //var mapCategoryCount = await psCategoryQuery.Where(x => x.Name == data.CategoryName).CountAsync();
-                //if (mapCategoryCount == 0)
-                //    return "没有找到该分类,请确认分类名称是否有误";
-                //if (mapCategoryCount > 1)
-                //    return "分类名称有重复,请手动分配该产品";
-
-                var refProduct = await psProductQuery.Where(x => x.Name.Trim() == data.ProductName.Trim()).Include(x => x.Specifications).FirstAsync();
-                //var refCategory = await psCategoryQuery.Where(x => x.Name.Trim() == data.CategoryName.Trim()).FirstAsync();
-                //refProduct.CategoryId = refCategory.Id;
-                refProduct.Description = data.Description;
-                refProduct.Unit = data.Unit;
-                refProduct.Brand = data.Brand;
-
-                if (refProduct.Specifications != null && refProduct.Specifications.Count > 0)
+                var workbox = package.Workbook;
+                var sheet1 = workbox.Worksheets[0];
+                for (int row = 2, len = sheet1.Dimension.End.Row; row <= len; row++)
                 {
-                    var defaultSpec = refProduct.Specifications[0];
-                    defaultSpec.Price = data.Price;
-                    defaultSpec.PartnerPrice = data.PartnerPrice;
-                    defaultSpec.PurchasePrice = data.PurchasePrice;
+                    //原始值
+                    var productIdObj = sheet1.Cells[row, 1].Value;
+                    var productNameObj = sheet1.Cells[row, 2].Value;
+                    var productCategoryNameObj = sheet1.Cells[row, 3].Value;
+                    var productDescriptionObj = sheet1.Cells[row, 4].Value;
+                    var productPriceObj = sheet1.Cells[row, 5].Value;
+                    var productPartnerPriceObj = sheet1.Cells[row, 6].Value;
+                    var productPurchasePriceObj = sheet1.Cells[row, 7].Value;
+                    var productUnitObj = sheet1.Cells[row, 8].Value;
+                    var productBrandObj = sheet1.Cells[row, 9].Value;
+
+                    //原始值转化
+                    string productId = productIdObj != null ? productIdObj.ToString().Trim() : string.Empty;
+                    string productName = productNameObj != null ? productNameObj.ToString().Trim() : string.Empty;
+                    string productCategoryName = productCategoryNameObj != null ? productCategoryNameObj.ToString().Trim() : string.Empty;
+                    string productDescription = productDescriptionObj != null ? productDescriptionObj.ToString().Trim() : string.Empty;
+                    string productUnit = productUnitObj != null ? productUnitObj.ToString().Trim() : string.Empty;
+                    string productBrand = productBrandObj != null ? productBrandObj.ToString().Trim() : string.Empty;
+                    decimal productPrice = 0;
+                    decimal productPartnerPrice = 0;
+                    decimal productPurchasePrice = 0;
+
+                    ////
+                    if (productPriceObj != null)
+                        decimal.TryParse(productPriceObj.ToString().Trim(), out productPrice);
+                    if (productPartnerPriceObj != null)
+                        decimal.TryParse(productPartnerPriceObj.ToString().Trim(), out productPartnerPrice);
+                    if (productPurchasePriceObj != null)
+                        decimal.TryParse(productPurchasePriceObj.ToString().Trim(), out productPurchasePrice);
+
+                    if (string.IsNullOrWhiteSpace(productId)) continue;
+                    var product = _Repository._DbContext.Products.Include(x => x.Specifications).FirstOrDefault(x => x.Id == productId.ToString());
+                    if (product == null) continue;
+                    product.Description = productDescription;
+                    product.Unit = productUnit;
+                    product.Brand = productBrand;
+                    if (product.Specifications != null && product.Specifications.Count > 0)
+                    {
+                        product.Specifications[0].Price = productPrice;
+                        product.Specifications[0].PartnerPrice = productPartnerPrice;
+                        product.Specifications[0].PurchasePrice = productPurchasePrice;
+                    }
+
+                    _Repository._DbContext.Products.Update(product);
+
                 }
+            }
 
-                _Repository._DbContext.Products.Update(refProduct);
-                return await Task.FromResult(string.Empty);
-            });
+            await _Repository._DbContext.SaveChangesAsync();
 
-            var doneOp = new Action(async () =>
-            {
-                await _Repository._DbContext.SaveChangesAsync();
-            });
-            return await _ImportRequest(file, importOp, doneOp);
+            return Ok();
         }
         #endregion
 
-        #region ProductAndCategoryImportTemplate 导出根据CSV批量分类产品模版
+        #region ProductAndCategoryImportTemplate 导出批量分类产品模版
         /// <summary>
-        /// 导出根据CSV批量分类产品模版
+        /// 导出批量分类产品模版
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("ProductAndCategoryImportTemplate")]
         public IActionResult ProductAndCategoryImportTemplate()
         {
-            return _ExportCSVTemplateRequest<ProductAndCategoryExportCSV>();
+            var memorystream = new MemoryStream();
+            using (var package = new ExcelPackage())
+            {
+                var workbox = package.Workbook;
+                var sheet1 = workbox.Worksheets.Add("产品信息");
+                sheet1.Cells[1, 1].Value = "ID";
+                sheet1.Cells[1, 2].Value = "名称";
+                sheet1.Cells[1, 3].Value = "分类";
+                sheet1.Cells[1, 4].Value = "描述";
+                sheet1.Cells[1, 5].Value = "零售价";
+                sheet1.Cells[1, 6].Value = "渠道价";
+                sheet1.Cells[1, 7].Value = "进货价";
+                sheet1.Cells[1, 8].Value = "单位";
+                sheet1.Cells[1, 9].Value = "品牌";
+
+                package.SaveAs(memorystream);
+                memorystream.Position = 0;
+            }
+
+            return new FileStreamResult(memorystream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") { FileDownloadName = "产品导入模版.xlsx" };
         }
         #endregion
 
@@ -316,56 +404,104 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [Route("Export")]
         [HttpGet]
-        public Task<IActionResult> ExportData([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
+        public async Task<IActionResult> ExportData([FromQuery] PagingRequestModel model, string categoryId = "", bool classify = true)
         {
 
-            //var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
+            ////var advanceQuery = new Func<IQueryable<Product>, Task<IQueryable<Product>>>(async (query) =>
+            ////{
+            ////    if (classify)
+            ////    {
+            ////        if (!string.IsNullOrWhiteSpace(categoryId))
+            ////        {
+            ////            var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
+            ////            //如果是根节点,把所有取出,不做分类过滤
+            ////            //if (curCategoryTree != null && curCategoryTree.LValue > 1)
+            ////            //{
+            ////                var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
+            ////                                where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
+            ////                                && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
+            ////                                select it;
+            ////                query = from it in query
+            ////                        join cat in categoryQ on it.CategoryId equals cat.ObjId
+            ////                        select it;
+            ////            //}
+            ////        }
+            ////    }
+            ////    else
+            ////    {
+            ////        query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
+            ////    }
+            ////    query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
+            ////    return query;
+            ////});
+
+            //var transMapping = new Func<ProductDTO, Task<ProductExportDataCSV>>(async (entity) =>
             //{
-            //    if (classify)
-            //    {
-            //        if (!string.IsNullOrWhiteSpace(categoryId))
-            //        {
-            //            var curCategoryTree = await _Repository._DbContext.AssetCategoryTrees.FirstOrDefaultAsync(x => x.ObjId == categoryId);
-            //            //如果是根节点,把所有取出,不做分类过滤
-            //            //if (curCategoryTree != null && curCategoryTree.LValue > 1)
-            //            //{
-            //                var categoryQ = from it in _Repository._DbContext.AssetCategoryTrees
-            //                                where it.NodeType == curCategoryTree.NodeType && it.OrganizationId == curCategoryTree.OrganizationId
-            //                                && it.LValue >= curCategoryTree.LValue && it.RValue <= curCategoryTree.RValue
-            //                                select it;
-            //                query = from it in query
-            //                        join cat in categoryQ on it.CategoryId equals cat.ObjId
-            //                        select it;
-            //            //}
-            //        }
-            //    }
-            //    else
-            //    {
-            //        query = query.Where(x => string.IsNullOrWhiteSpace(x.CategoryId));
-            //    }
-            //    query = query.Where(x => x.ActiveFlag == AppConst.I_DataState_Active);
-            //    return query;
+            //    var csData = new ProductExportDataCSV();
+            //    csData.ProductName = entity.Name;
+            //    csData.CategoryName = entity.CategoryName;
+            //    csData.Description = entity.Description;
+            //    csData.Price = entity.Price;
+            //    csData.PartnerPrice = entity.PartnerPrice;
+            //    csData.PurchasePrice = entity.PurchasePrice;
+            //    csData.Unit = entity.Unit;
+            //    csData.Brand = entity.Brand;
+            //    //csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
+            //    //csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
+            //    //csData.Creator = entity.Creator;
+            //    //csData.Modifier = entity.Modifier;
+            //    return await Task.FromResult(csData);
             //});
 
-            var transMapping = new Func<ProductDTO, Task<ProductExportDataCSV>>(async (entity) =>
-            {
-                var csData = new ProductExportDataCSV();
-                csData.ProductName = entity.Name;
-                csData.CategoryName = entity.CategoryName;
-                csData.Description = entity.Description;
-                csData.Price = entity.Price;
-                csData.PartnerPrice = entity.PartnerPrice;
-                csData.PurchasePrice = entity.PurchasePrice;
-                csData.Unit = entity.Unit;
-                csData.Brand = entity.Brand;
-                //csData.CreatedTime = entity.CreatedTime.ToString("yyyy-MM-dd hh:mm:ss");
-                //csData.ModifiedTime = entity.ModifiedTime.ToString("yyyy-MM-dd hh:mm:ss");
-                //csData.Creator = entity.Creator;
-                //csData.Modifier = entity.Modifier;
-                return await Task.FromResult(csData);
-            });
+            //return _ExportDataRequest(model, transMapping);
 
-            return _ExportDataRequest(model, transMapping);
+
+
+            var accid = AuthMan.GetAccountId(this);
+            model.PageSize = int.MaxValue;
+            var res = await _Repository.SimplePagedQueryAsync(model, accid);
+            var result = RepositoryBase<Product, ProductDTO>.PageQueryDTOTransfer(res);
+
+            var memorystream = new MemoryStream();
+            using (var package = new ExcelPackage())
+            {
+                var workbox = package.Workbook;
+                var sheet1 = workbox.Worksheets.Add("产品信息");
+                sheet1.Cells[1, 1].Value = "ID";
+                sheet1.Cells[1, 2].Value = "名称";
+                sheet1.Cells[1, 3].Value = "分类";
+                sheet1.Cells[1, 4].Value = "描述";
+                sheet1.Cells[1, 5].Value = "零售价";
+                sheet1.Cells[1, 6].Value = "渠道价";
+                sheet1.Cells[1, 7].Value = "进货价";
+                sheet1.Cells[1, 8].Value = "单位";
+                sheet1.Cells[1, 9].Value = "品牌";
+                if (result != null && result.Data != null)
+                {
+                    for (int idx = 0, len = result.Data.Count(); idx < len; idx++)
+                    {
+                        var row = idx + 2;
+                        var item = result.Data[idx];
+                        sheet1.Cells[row, 1].Value = item.Id;
+                        sheet1.Cells[row, 2].Value = item.Name;
+                        sheet1.Cells[row, 3].Value = item.CategoryName;
+                        sheet1.Cells[row, 4].Value = item.Description;
+                        sheet1.Cells[row, 5].Value = item.Price;
+                        sheet1.Cells[row, 6].Value = item.PartnerPrice;
+                        sheet1.Cells[row, 7].Value = item.PurchasePrice;
+                        sheet1.Cells[row, 8].Value = item.Unit;
+                        sheet1.Cells[row, 9].Value = item.Brand;
+                    }
+                }
+                package.SaveAs(memorystream);
+                memorystream.Position = 0;
+            }
+
+            return new FileStreamResult(memorystream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") { FileDownloadName = "产品信息.xlsx" };
+
+
+            //return Ok();
+
         }
 
         #endregion
