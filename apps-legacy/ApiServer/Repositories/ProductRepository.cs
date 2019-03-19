@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 
@@ -180,37 +181,77 @@ namespace ApiServer.Repositories
                 {
                     var curData = result.Data[idx];
 
-                    if (!string.IsNullOrWhiteSpace(curData.Icon))
+                    //if (!string.IsNullOrWhiteSpace(curData.Icon))
+                    //{
+                    //    var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
+                    //    if (fs != null)
+                    //    {
+                    //        curData.IconFileAssetUrl = fs.Url;
+                    //    }
+                    //}
+
+                    //if (!string.IsNullOrWhiteSpace(curData.CategoryId))
+                    //    curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
+
+                    //var defaultSpec = await _DbContext.ProductSpec.Where(x => x.ProductId == curData.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();
+                    //if (defaultSpec != null)
+                    //{
+                    //    if (!string.IsNullOrWhiteSpace(defaultSpec.Icon))
+                    //    {
+                    //        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == defaultSpec.Icon);
+                    //        if (fs != null)
+                    //        {
+                    //            defaultSpec.IconFileAssetUrl = fs.Url;
+                    //        }
+                    //    }
+                    //    curData.Specifications = new List<ProductSpec>() { defaultSpec };
+                    //}
+
+
+                    var defaultSpec = await _DbContext.ProductSpec.Where(x => x.ProductId == curData.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).Select(x => new ProductSpec()
                     {
-                        var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == curData.Icon);
-                        if (fs != null)
-                        {
-                            curData.IconFileAssetUrl = fs.Url;
-                        }
-                    }
+                        Id = x.Id,
+                        Name = x.Name,
+                        Price = x.Price,
+                        PartnerPrice = x.PartnerPrice,
+                        PurchasePrice = x.PurchasePrice,
+                        Icon = x.Icon
+                    }).FirstOrDefaultAsync();
 
-                    if (!string.IsNullOrWhiteSpace(curData.CategoryId))
-                        curData.AssetCategory = await _DbContext.AssetCategories.FindAsync(curData.CategoryId);
-
-                    var defaultSpec = await _DbContext.ProductSpec.Where(x => x.ProductId == curData.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).FirstOrDefaultAsync();
                     if (defaultSpec != null)
                     {
                         if (!string.IsNullOrWhiteSpace(defaultSpec.Icon))
                         {
-                            var fs = await _DbContext.Files.FirstOrDefaultAsync(x => x.Id == defaultSpec.Icon);
-                            if (fs != null)
-                            {
-                                defaultSpec.IconFileAssetUrl = fs.Url;
-                            }
+                            var iconUrl = await _DbContext.Files.Where(x => x.Id == defaultSpec.Icon).Select(x => x.Url).FirstOrDefaultAsync();
+                            defaultSpec.IconFileAssetUrl = iconUrl;
+                            curData.IconFileAssetUrl = iconUrl;
                         }
                         curData.Specifications = new List<ProductSpec>() { defaultSpec };
                     }
-
                 }
             }
             return result;
         }
         #endregion
+
+        public override Expression<Func<Product, Product>> PagedSelectExpression()
+        {
+            return x => new Product()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                CategoryId = x.CategoryId,
+                Unit = x.Unit,
+                Brand = x.Brand,
+                OrganizationId = x.OrganizationId,
+                Color = x.Color,
+                Creator = x.Creator,
+                Modifier = x.Modifier,
+                CreatedTime = x.CreatedTime,
+                ModifiedTime = x.ModifiedTime
+            };
+        }
 
         public override async Task UpdateAsync(string accid, Product data)
         {
