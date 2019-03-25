@@ -207,6 +207,9 @@ namespace ApiServer.Repositories
                     //    curData.Specifications = new List<ProductSpec>() { defaultSpec };
                     //}
 
+                    if (!string.IsNullOrWhiteSpace(curData.CategoryId))
+                        curData.AssetCategory = await _DbContext.AssetCategories.Where(x => x.Id == curData.CategoryId).Select(x => new AssetCategory() { Id = x.Id, Name = x.Name }).FirstOrDefaultAsync();
+
 
                     var defaultSpec = await _DbContext.ProductSpec.Where(x => x.ProductId == curData.Id && x.ActiveFlag == AppConst.I_DataState_Active).OrderByDescending(x => x.CreatedTime).Select(x => new ProductSpec()
                     {
