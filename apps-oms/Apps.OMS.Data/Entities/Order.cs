@@ -41,11 +41,14 @@ namespace Apps.OMS.Data.Entities
         public string CustomerAddress { get; set; }
         public string CustomerPhone { get; set; }
         public string CustomerId { get; set; }
+        public string SolutionId { get; set; }
+        public string Data { get; set; }
         public Customer Customer { get; set; }
         public string WorkFlowItemId { get; set; }
         public string SubOrderIds { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
         public List<OrderFlowLog> OrderFlowLogs { get; set; }
+        public List<OrderDetailCustomizedProduct> CustomizedProducts { get; set; }
         //public List<OrderPackage> OrderPackages { get; set; }
         [NotMapped]
         public string Icon { get; set; }

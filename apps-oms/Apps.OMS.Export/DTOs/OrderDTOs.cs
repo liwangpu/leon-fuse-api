@@ -25,8 +25,11 @@ namespace Apps.OMS.Export.DTOs
         public string CustomerPhone { get; set; }
         public string WorkFlowItemId { get; set; }
         public string WorkFlowItemName { get; set; }
+        public string Data { get; set; }
+        public string SolutionId { get; set; }
         public List<OrderDetailDTO> OrderDetails { get; set; }
         public List<OrderFlowLogDTO> OrderFlowLogs { get; set; }
+        public List<OrderDetailCustomizedProductDTO> CustomizedProducts { get; set; }
     }
 
     public class OrderDetailDTO
@@ -47,8 +50,17 @@ namespace Apps.OMS.Export.DTOs
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
         public string AttachmentIds { get; set; }
+        public string Room { get; set; }
+        public string Owner { get; set; }
         public List<OrderDetailAttachmentDTO> Attachments { get; set; }
         public List<OrderDetailPackageDTO> Packages { get; set; }
+    }
+
+    public class OrderDetailCustomizedProductDTO
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Icon { get; set; }
     }
 
     public class OrderDetailPackageDTO

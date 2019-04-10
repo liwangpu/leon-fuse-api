@@ -123,6 +123,7 @@ namespace Apps.OMS.Service.Controllers
                 var dto = new OrderDTO();
                 dto.Id = entity.Id;
                 dto.Name = entity.Name;
+
                 dto.Description = entity.Description;
                 dto.Creator = entity.Creator;
                 dto.Modifier = entity.Modifier;
@@ -135,6 +136,8 @@ namespace Apps.OMS.Service.Controllers
                 dto.CustomerName = entity.CustomerName;
                 dto.CustomerPhone = entity.CustomerPhone;
                 dto.CustomerAddress = entity.CustomerAddress;
+                dto.Data = entity.Data;
+                dto.SolutionId = entity.SolutionId;
                 dto.Url = $"{_AppConfig.Plugins.OrderViewer}?order={entity.Id}";
 
                 #region 订单状态
@@ -171,6 +174,8 @@ namespace Apps.OMS.Service.Controllers
                         ditem.UnitPrice = it.UnitPrice;
                         ditem.TotalPrice = Math.Round(it.UnitPrice * it.Num, 2, MidpointRounding.AwayFromZero);
                         ditem.AttachmentIds = it.AttachmentIds;
+                        ditem.Room = it.Room;
+                        ditem.Owner = it.Owner;
 
                         var pckDtos = new List<OrderDetailPackageDTO>();
                         var pcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetailId == it.Id).OrderByDescending(x => x.Num).ToListAsync();
@@ -230,6 +235,22 @@ namespace Apps.OMS.Service.Controllers
                     }
                 }
                 dto.OrderDetails = details;
+                #endregion
+
+                #region CustomizedProduct
+                var customizedProducts = new List<OrderDetailCustomizedProductDTO>();
+                if (entity.CustomizedProducts != null & entity.CustomizedProducts.Count > 0)
+                {
+                    foreach (var it in entity.CustomizedProducts)
+                    {
+                        var ditem = new OrderDetailCustomizedProductDTO();
+                        ditem.Id = it.Id;
+                        ditem.Name = it.Name;
+                        ditem.Icon = it.Icon;
+                        customizedProducts.Add(ditem);
+                    }
+                }
+                dto.CustomizedProducts = customizedProducts;
                 #endregion
 
                 #region OrderFlowLogs
@@ -308,6 +329,8 @@ namespace Apps.OMS.Service.Controllers
                 entity.CustomerName = model.CustomerName;
                 entity.CustomerPhone = model.CustomerPhone;
                 entity.CustomerAddress = model.CustomerAddress;
+                entity.SolutionId = model.SolutionId;
+                entity.Data = model.Data;
 
                 var details = new List<OrderDetail>();
                 if (model.Content != null && model.Content.Count > 0)
@@ -320,6 +343,8 @@ namespace Apps.OMS.Service.Controllers
                         detail.Num = item.Num;
                         detail.UnitPrice = item.UnitPrice;
                         detail.Remark = item.Remark;
+                        detail.Room = item.Room;
+                        detail.Owner = item.Owner;
                         detail.CreatedTime = DateTime.Now;
                         detail.ModifiedTime = detail.CreatedTime;
                         detail.Creator = CurrentAccountId;
@@ -329,6 +354,22 @@ namespace Apps.OMS.Service.Controllers
                     });
                 }
                 entity.OrderDetails = details;
+
+                var customizedProducts = new List<OrderDetailCustomizedProduct>();
+                if (model.CustomizedProduct != null && model.CustomizedProduct.Count > 0)
+                {
+                    model.CustomizedProduct.ForEach(item =>
+                    {
+                        var customiedProd = new OrderDetailCustomizedProduct();
+                        customiedProd.Id = GuidGen.NewGUID();
+                        customiedProd.Name = item.Name;
+                        customiedProd.Icon = item.Icon;
+                        customizedProducts.Add(customiedProd);
+                    });
+                }
+                entity.CustomizedProducts = customizedProducts;
+
+
                 return await Task.FromResult(entity);
             });
             return await _PostRequest(mapping);

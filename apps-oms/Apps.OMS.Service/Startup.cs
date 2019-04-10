@@ -4,7 +4,6 @@ using Apps.Base.Common.MiddleWares;
 using Apps.OMS.Data.Entities;
 using Apps.OMS.Service.Contexts;
 using Apps.OMS.Service.Repositories;
-using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -11,12 +11,16 @@ namespace Apps.OMS.Export.Models
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
+        [Required(ErrorMessage = "必填信息")]
+        public string SolutionId { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }
         public string CustomerName { get; set; }
         public string CustomerAddress { get; set; }
         public string CustomerPhone { get; set; }
+        public string Data { get; set; }
         public List<OrderDetailCreateModel> Content { get; set; }
+        public List<CustomizedProduct> CustomizedProduct { get; set; }
     }
     #endregion
 
@@ -92,6 +96,14 @@ namespace Apps.OMS.Export.Models
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public string Remark { get; set; }
+        public string Room { get; set; }
+        public string Owner { get; set; }
+    }
+
+    public class CustomizedProduct
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
     }
 
     public class OrderDetailEditModel

@@ -82,7 +82,7 @@ namespace Apps.OMS.Service.Repositories
 
         public async Task<Order> GetByIdAsync(string id, string accountId)
         {
-            var entity = await _Context.Orders.Include(x => x.OrderDetails).Include(x => x.OrderFlowLogs).FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _Context.Orders.Include(x => x.OrderDetails).Include(x=>x.CustomizedProducts).Include(x => x.OrderFlowLogs).FirstOrDefaultAsync(x => x.Id == id);
             return entity;
         }
 

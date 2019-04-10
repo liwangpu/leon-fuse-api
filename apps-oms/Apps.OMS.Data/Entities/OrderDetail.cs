@@ -37,6 +37,8 @@ namespace Apps.OMS.Data.Entities
         public int Num { get; set; }
         public decimal UnitPrice { get; set; }
         public string Remark { get; set; }
+        public string Room { get; set; }
+        public string Owner { get; set; }
         public string AttachmentIds { get; set; }
         public string OrderId { get; set; }
         public Order Order { get; set; }
