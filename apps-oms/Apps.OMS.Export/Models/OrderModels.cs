@@ -11,7 +11,6 @@ namespace Apps.OMS.Export.Models
     {
         [StringLength(50, MinimumLength = 1, ErrorMessage = "长度必须为1-50个字符")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "必填信息")]
         public string SolutionId { get; set; }
         [StringLength(200, ErrorMessage = "长度必须为0-200个字符")]
         public string Description { get; set; }

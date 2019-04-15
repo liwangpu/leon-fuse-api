@@ -1,0 +1,131 @@
+version: '3.4'
+
+services:
+# Database
+  dmzpostgresdb-ym:
+    container_name: dmzpostgresdb-ym-c
+    image: postgres:10.5
+    volumes:
+      - "/var/yuanmin/dmzpostgresdb/data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
+    ports:
+      - "9700:5432"
+    networks:
+      - yuanminnet
+
+# MoreJee Consul ( For YuanMin Development )
+  dmzconsulservice-ym:
+    image: consul:1.4.4
+    container_name: dmzconsulservice-ym-c
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "9699:8500"
+    networks:
+      - yuanminnet
+# MoreJee APIGateway ( For YuanMin Development )
+  apps-apigateway-ym:
+    container_name: apps-apigateway-ym-c
+    image: apps-base-apigateway:latest
+    ports:
+      - "9701:80"
+    volumes:
+      - "/var/yuanmin/dmzapigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=YuanMin
+    networks:
+      - yuanminnet
+    depends_on:
+      - dmzconsulservice-ym
+      - apps-legacy-basic-service-ym
+      - apps-oms-service-ym
+# MoreJee APIServer ( For YuanMin Development )
+  apps-legacy-basic-service-ym:
+    container_name: apps-legacy-basic-service-ym-c
+    image: apps-legacy-basic-service:latest
+    volumes:
+      - "/var/yuanmin/dmzapiserver/logs:/app/logs"
+      - "/var/yuanmin/dmzapiserver/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/yuanmin/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_YM}
+      - JwtSettings:Audience=${JwtSettings_Audience_YM}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_YM}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_YM}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb-ym;Port=5432;Database=${ServerDB_YM};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_YM}
+      - Plugins:MediaShare=${Plugins_MediaShare_YM}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-ym
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-legacy-basic-service-ym
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "9702:80"
+    networks:
+      - yuanminnet
+    depends_on:
+      - dmzpostgresdb-ym
+      - apps-morejee-tool-ym
+      - dmzconsulservice-ym
+# MoreJee ToolSite ( For YuanMin Development )
+  apps-morejee-tool-ym:
+    container_name: apps-morejee-tool-ym-c
+    image: apps-morejee-tool-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_YM}
+    ports:
+      - "9703:4000"
+    networks:
+      - yuanminnet
+# MoreJee OMS APIServer ( For YuanMin Development )
+  apps-oms-service-ym:
+    container_name: apps-oms-service-ym-c
+    image: apps-oms-service:latest
+    volumes:
+      - "/var/yuanmin/dmzomsserver/logs:/app/logs"
+      - "/var/yuanmin/dmzomsserver/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer_YM}
+      - JwtSettings:Audience=${JwtSettings_Audience_YM}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey_YM}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_YM}
+      # ConnectionString
+      - ConnectionString=Server=dmzpostgresdb-ym;Port=5432;Database=${OMSServerDB_YM};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer_YM}
+      - Plugins:MediaShare=${Plugins_MediaShare_YM}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer_YM}
+      # Consul
+      - ConsulConfig:Server:IP=dmzconsulservice-ym
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=apps-oms-service-ym
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "9704:80"
+    networks:
+      - yuanminnet
+    depends_on:
+      - dmzpostgresdb-ym
+      - dmzconsulservice-ym
+# MoreJee Site ( For YuanMin Development )
+  apps-morejee-site-ym:
+    container_name: apps-morejee-site-ym-c
+    image: apps-morejee-site:latest
+    environment:
+      - APISERVER=${APIGatewayServer_YM}
+      - TOOLSERVER=${MoreJeeToolSite_YM}
+      - SECRETKEY=${SECRETKEY_YM}
+    ports:
+      - "9705:4000"
+    networks:
+      - yuanminnet
+
+networks:
+  yuanminnet:
