@@ -111,6 +111,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\AppBackup\" />
+  </ItemGroup>
+
   <ProjectExtensions>
     <VisualStudio><UserProperties appsettings_1Development_1json__JSONSchema="" /></VisualStudio>
   </ProjectExtensions>

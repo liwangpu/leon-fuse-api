@@ -1,131 +1,140 @@
 version: '3.4'
 
 services:
-# Database
-  dmzpostgresdb-ym:
-    container_name: dmzpostgresdb-ym-c
+
+# 1.app infrastructure
+# 1.1 postgres db
+  app-infrastructure-database:
+    container_name: app-infrastructure-database-c
     image: postgres:10.5
     volumes:
-      - "/var/yuanmin/dmzpostgresdb/data:/var/lib/postgresql/data"
+      - "/var/morejee/app-infrastructure-database/data:/var/lib/postgresql/data"
     environment:
       - POSTGRES_USER=${PostgresDB_User}
       - POSTGRES_PASSWORD=${PostgresDB_Password}
     ports:
-      - "9700:5432"
+      - "9501:5432"
     networks:
-      - yuanminnet
-
-# MoreJee Consul ( For YuanMin Development )
-  dmzconsulservice-ym:
+      - morejeenet
+    restart: always
+# 1.2 consul
+  app-infrastructure-consul:
+    container_name: app-infrastructure-consul-c
     image: consul:1.4.4
-    container_name: dmzconsulservice-ym-c
     command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
     ports:
-      - "9699:8500"
+      - "9502:8500"
     networks:
-      - yuanminnet
-# MoreJee APIGateway ( For YuanMin Development )
-  apps-apigateway-ym:
-    container_name: apps-apigateway-ym-c
-    image: apps-base-apigateway:latest
+      - morejeenet
+    restart: always
+# 1.3 APIGateway
+  app-infrastructure-apigateway:
+    container_name: app-infrastructure-apigateway-c
+    image: ${DockerHub_Registry}/app-infrastructure-apigateway:${DockerImage_Tag}
     ports:
-      - "9701:80"
+      - "9503:80"
     volumes:
-      - "/var/yuanmin/dmzapigateway/logs:/app/logs"
+      - "d:/morejee/app-infrastructure-apigateway/logs:/app/logs"
     environment:
-      - ASPNETCORE_ENVIRONMENT=YuanMin
+      - ASPNETCORE_ENVIRONMENT=Production
     networks:
-      - yuanminnet
+      - morejeenet
     depends_on:
-      - dmzconsulservice-ym
-      - apps-legacy-basic-service-ym
-      - apps-oms-service-ym
-# MoreJee APIServer ( For YuanMin Development )
-  apps-legacy-basic-service-ym:
-    container_name: apps-legacy-basic-service-ym-c
-    image: apps-legacy-basic-service:latest
+      - app-infrastructure-consul
+    restart: always
+# 2. app microservices
+# 2.1 basic ms
+  app-microservice-basic-api:
+    container_name: app-microservice-basic-api-c
+    image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
     volumes:
-      - "/var/yuanmin/dmzapiserver/logs:/app/logs"
-      - "/var/yuanmin/dmzapiserver/AppBackup:/app/wwwroot/AppBackup"
-      - "/var/yuanmin/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+      - "d:/morejee/app-microservice-basic-api/logs:/app/logs"
+      - "d:/morejee/app-microservice-basic-api/AppBackup:/app/wwwroot/AppBackup"
+      - "d:/morejee/app-microservice-basic-api/wwwroot/upload:/app/wwwroot/upload"
     environment:
       # JwtSettings
-      - JwtSettings:Issuer=${JwtSettings_Issuer_YM}
-      - JwtSettings:Audience=${JwtSettings_Audience_YM}
-      - JwtSettings:SecretKey=${JwtSettings_SecretKey_YM}
-      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_YM}
+      - JwtSettings:Issuer=${JwtSettings_Issuer}
+      - JwtSettings:Audience=${JwtSettings_Audience}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay}
       # ConnectionString
-      - ConnectionString=Server=dmzpostgresdb-ym;Port=5432;Database=${ServerDB_YM};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
-      # Plugins
-      - Plugins:OrderViewer=${Plugins_OrderViewer_YM}
-      - Plugins:MediaShare=${Plugins_MediaShare_YM}
-      # Consul
-      - ConsulConfig:Server:IP=dmzconsulservice-ym
-      - ConsulConfig:Server:Port=8500
-      - ConsulConfig:Client:IP=apps-legacy-basic-service-ym
-      - ConsulConfig:Client:Port=80
-    ports:
-      - "9702:80"
-    networks:
-      - yuanminnet
-    depends_on:
-      - dmzpostgresdb-ym
-      - apps-morejee-tool-ym
-      - dmzconsulservice-ym
-# MoreJee ToolSite ( For YuanMin Development )
-  apps-morejee-tool-ym:
-    container_name: apps-morejee-tool-ym-c
-    image: apps-morejee-tool-site:latest
-    environment:
-      - APISERVER=${APIGatewayServer_YM}
-    ports:
-      - "9703:4000"
-    networks:
-      - yuanminnet
-# MoreJee OMS APIServer ( For YuanMin Development )
-  apps-oms-service-ym:
-    container_name: apps-oms-service-ym-c
-    image: apps-oms-service:latest
-    volumes:
-      - "/var/yuanmin/dmzomsserver/logs:/app/logs"
-      - "/var/yuanmin/dmzomsserver/AppBackup:/app/wwwroot/AppBackup"
-    environment:
-      # JwtSettings
-      - JwtSettings:Issuer=${JwtSettings_Issuer_YM}
-      - JwtSettings:Audience=${JwtSettings_Audience_YM}
-      - JwtSettings:SecretKey=${JwtSettings_SecretKey_YM}
-      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_YM}
-      # ConnectionString
-      - ConnectionString=Server=dmzpostgresdb-ym;Port=5432;Database=${OMSServerDB_YM};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
-      # Plugins
-      - Plugins:OrderViewer=${Plugins_OrderViewer_YM}
-      - Plugins:MediaShare=${Plugins_MediaShare_YM}
+      - ConnectionString=Server=app-infrastructure-database;Port=5432;Database=${BasicServerDB};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
       # APIGateway
-      - APIGatewayServer=${APIGatewayServer_YM}
+      - APIGatewayServer=${APIGatewayServer}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer}
+      - Plugins:MediaShare=${Plugins_MediaShare}
       # Consul
-      - ConsulConfig:Server:IP=dmzconsulservice-ym
+      - ConsulConfig:Server:IP=app-infrastructure-consul
       - ConsulConfig:Server:Port=8500
-      - ConsulConfig:Client:IP=apps-oms-service-ym
+      - ConsulConfig:Client:IP=app-microservice-basic-api
       - ConsulConfig:Client:Port=80
     ports:
-      - "9704:80"
+      - "9511:80"
     networks:
-      - yuanminnet
+      - morejeenet
     depends_on:
-      - dmzpostgresdb-ym
-      - dmzconsulservice-ym
-# MoreJee Site ( For YuanMin Development )
-  apps-morejee-site-ym:
-    container_name: apps-morejee-site-ym-c
-    image: apps-morejee-site:latest
+      - app-infrastructure-database
+      - app-infrastructure-apigateway
+    restart: always
+# 2.2 oms ms
+  app-microservice-oms-api:
+    container_name: app-microservice-oms-api-c
+    image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
+    volumes:
+      - "d:/morejee/app-microservice-oms-api/logs:/app/logs"
+      - "d:/morejee/app-microservice-oms-api/AppBackup:/app/wwwroot/AppBackup"
     environment:
-      - APISERVER=${APIGatewayServer_YM}
-      - TOOLSERVER=${MoreJeeToolSite_YM}
-      - SECRETKEY=${SECRETKEY_YM}
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer}
+      - JwtSettings:Audience=${JwtSettings_Audience}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay}
+      # ConnectionString
+      - ConnectionString=Server=app-infrastructure-database;Port=5432;Database=${OMSServerDB};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer}
+      - Plugins:MediaShare=${Plugins_MediaShare}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer}
+      # Consul
+      - ConsulConfig:Server:IP=app-infrastructure-consul
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=app-microservice-oms-api
+      - ConsulConfig:Client:Port=80
     ports:
-      - "9705:4000"
+      - "9512:80"
     networks:
-      - yuanminnet
+      - morejeenet
+    depends_on:
+      - app-infrastructure-database
+      - app-infrastructure-apigateway
+    restart: always
+# 3 app site
+# 3.1 morejee site
+  app-site-morejee:
+    container_name: app-site-morejee-c
+    image: ${DockerHub_Registry}/app-site-morejee:${DockerImage_Tag}
+    environment:
+      - APISERVER=${APIGatewayServer}
+      - TOOLSERVER=${MoreJeeToolSite}
+      - SECRETKEY=${SECRETKEY}
+    ports:
+      - "9521:4000"
+    networks:
+      - morejeenet
+    restart: always
+# 3.2 tool site
+  app-site-morejee-tool:
+    container_name: app-site-morejee-tool-c
+    image: ${DockerHub_Registry}/app-site-morejee-tool:${DockerImage_Tag}
+    environment:
+      - APISERVER=${APIGatewayServer}
+    ports:
+      - "9522:4000"
+    networks:
+      - morejeenet
+    restart: always
 
 networks:
-  yuanminnet:
+  morejeenet:
