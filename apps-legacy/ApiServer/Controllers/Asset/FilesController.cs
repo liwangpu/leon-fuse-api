@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Linq;
@@ -75,6 +76,32 @@ namespace ApiServer.Controllers
             return await _GetByIdRequest(id);
         }
         #endregion
+
+        /// <summary>
+        /// 根据MD5获取文件信息
+        /// </summary>
+        /// <param name="md5"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("MD5/{md5}")]
+        [ProducesResponseType(typeof(FileAssetDTO), 200)]
+        public async Task<IActionResult> GetByMD5(string md5)
+        {
+            var dto = new FileAssetDTO();
+            var file = await _Repository._DbContext.Files.FirstOrDefaultAsync(x => x.Md5 == md5.ToLower());
+            if (file == null)
+                return NotFound();
+            dto.Id = file.Id;
+            dto.Name = file.Name;
+            dto.Url = file.Url;
+            dto.Size = file.Size;
+            dto.FileExt = file.FileExt;
+            dto.LocalPath = file.LocalPath;
+            dto.Icon = file.Icon;
+            dto.FileState = file.FileState;
+            dto.Md5 = file.Md5;
+            return Ok(dto);
+        }
 
         #region Post 创建资源文件信息
         /// <summary>
@@ -216,7 +243,7 @@ namespace ApiServer.Controllers
             var account = await _Repository._DbContext.Accounts.FindAsync(AppConst.BambooAdminId);
 
             return await SaveUpload(saveFile, account);
-        } 
+        }
         #endregion
 
         #region private SaveUpload 真实保存上传文件过程

@@ -27,12 +27,35 @@ namespace DataTransferHelper
 
         static async Task TransferData()
         {
-            var list = new List<string>();
-            list = null;
-
-            foreach (var it in list)
+            var morejeeOrganId = "MGUZMA909KQEMJ";
+            var noryaOrganId = "9VUA395Z0WEN38";
+            using (var srcDb = new SrcContext())
+            using (var destDb = new DestContext())
             {
+                //var srcCats = srcDb.AssetCategories.ToList();
+                //foreach (var item in srcCats)
+                //{
+                //    if (item.OrganizationId == morejeeOrganId)
+                //        item.OrganizationId = noryaOrganId;
+                //    destDb.AssetCategories.Add(item);
+                //    destDb.SaveChanges();
+                //}
 
+
+
+                var srcCatTrees = srcDb.AssetCategoryTrees.ToList();
+                foreach (var item in srcCatTrees)
+                {
+                    if (item.OrganizationId == morejeeOrganId)
+                        item.OrganizationId = noryaOrganId;
+                    if (item.RootOrganizationId == morejeeOrganId)
+                        item.RootOrganizationId = noryaOrganId;
+
+                    destDb.AssetCategoryTrees.Add(item);
+                    destDb.SaveChanges();
+                }
+
+                var a = 1;
             }
 
             #region MyRegion

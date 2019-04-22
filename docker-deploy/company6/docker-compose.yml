@@ -396,7 +396,7 @@ services:
     volumes:
       - "/var/bamboo/leonapiserver/logs:/app/logs"
       - "/var/bamboo/leonapiserver/AppBackup:/app/wwwroot/AppBackup"
-      - "/var/bamboo/dmzapiserver/wwwroot/upload:/app/wwwroot/upload"
+      - "/var/bamboo/leonapiserver/wwwroot/upload:/app/wwwroot/upload"
     environment:
       # JwtSettings
       - JwtSettings:Issuer=${JwtSettings_Issuer_Leon}
@@ -404,7 +404,7 @@ services:
       - JwtSettings:SecretKey=${JwtSettings_SecretKey_Leon}
       - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Leon}
       # ConnectionString
-      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=${ServerDB_Leon};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_for_norya;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
       # Plugins
       - Plugins:OrderViewer=${Plugins_OrderViewer_Leon}
       - Plugins:MediaShare=${Plugins_MediaShare_Leon}

@@ -183,14 +183,15 @@ namespace DataTransferHelper.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=1990;Database=dmz_ehome;User Id=postgres;Password=root");
+            //optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=1990;Database=dmz_ehome;User Id=postgres;Password=root");
+            optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=5700;Database=dmz_for_norya;User Id=postgres;Password=root");
             //optionsBuilder.UseNpgsql(@"Server=localhost;Port=5432;Database=dmz_ehome;User Id=postgres;Password=root");
         }
 
         protected override void OnModelCreating(ModelBuilder b)
         {
-            b.Entity<PermissionItem>().HasIndex(d => new { d.AccountId, d.ResId, d.ResType });
-            b.Entity<ResourcePermission>().HasIndex(d => new { d.OrganizationId, d.ResType });
+            //b.Entity<PermissionItem>().HasIndex(d => new { d.AccountId, d.ResId, d.ResType });
+            //b.Entity<ResourcePermission>().HasIndex(d => new { d.OrganizationId, d.ResType });
         }
     }
 }

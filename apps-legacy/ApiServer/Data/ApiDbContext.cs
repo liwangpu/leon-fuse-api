@@ -212,6 +212,7 @@ namespace ApiServer.Data
         {
             b.Entity<PermissionItem>().HasIndex(d => new { d.AccountId, d.ResId, d.ResType });
             b.Entity<ResourcePermission>().HasIndex(d => new { d.OrganizationId, d.ResType });
+            b.Entity<FileAsset>().HasIndex(d => new { d.Md5 });
         }
     }
 }

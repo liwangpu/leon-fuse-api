@@ -36,7 +36,9 @@ namespace ApiServer.Repositories
                         for (int idx = data.UserNavDetails.Count - 1; idx >= 0; idx--)
                         {
                             var item = data.UserNavDetails[idx];
-                            var refNav = navItems.Where(x => x.Id == item.RefNavigationId).First();
+                            var refNav = navItems.Where(x => x.Id == item.RefNavigationId).FirstOrDefault();
+                            if (refNav == null)
+                                continue;
                             item.Title = refNav.Title;
                             item.Name = refNav.Name;
                             item.Url = refNav.Url;
@@ -50,6 +52,7 @@ namespace ApiServer.Repositories
                             {
                                 var excludeArr = item.ExcludeQueryParams.Split(",");
                                 var fullArr = refNav.QueryParams.Split(",");
+
                                 var destArr = fullArr.Where(x => !excludeArr.Contains(x)).ToList();
                                 item.QueryParams = string.Join(',', destArr);
                             }
