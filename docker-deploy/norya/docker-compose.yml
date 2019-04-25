@@ -34,7 +34,7 @@ services:
     ports:
       - "9503:80"
     volumes:
-      - "d:/morejee/app-infrastructure-apigateway/logs:/app/logs"
+      - "/var/morejee/app-infrastructure-apigateway/logs:/app/logs"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     networks:
@@ -48,9 +48,9 @@ services:
     container_name: app-microservice-basic-api-c
     image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
     volumes:
-      - "d:/morejee/app-microservice-basic-api/logs:/app/logs"
-      - "d:/morejee/app-microservice-basic-api/AppBackup:/app/wwwroot/AppBackup"
-      - "d:/morejee/app-microservice-basic-api/wwwroot/upload:/app/wwwroot/upload"
+      - "/var/morejee/app-microservice-basic-api/logs:/app/logs"
+      - "/var/morejee/app-microservice-basic-api/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/morejee/app-microservice-basic-api/wwwroot/upload:/app/wwwroot/upload"
     environment:
       # JwtSettings
       - JwtSettings:Issuer=${JwtSettings_Issuer}
@@ -82,8 +82,8 @@ services:
     container_name: app-microservice-oms-api-c
     image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
     volumes:
-      - "d:/morejee/app-microservice-oms-api/logs:/app/logs"
-      - "d:/morejee/app-microservice-oms-api/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/morejee/app-microservice-oms-api/logs:/app/logs"
+      - "/var/morejee/app-microservice-oms-api/AppBackup:/app/wwwroot/AppBackup"
     environment:
       # JwtSettings
       - JwtSettings:Issuer=${JwtSettings_Issuer}
