@@ -404,7 +404,7 @@ services:
       - JwtSettings:SecretKey=${JwtSettings_SecretKey_Leon}
       - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay_Leon}
       # ConnectionString
-      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_for_norya;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      - ConnectionString=Server=dmzpostgresdb;Port=5432;Database=dmz_leon;User Id=${PostgresDB_User};Password=${PostgresDB_Password}
       # Plugins
       - Plugins:OrderViewer=${Plugins_OrderViewer_Leon}
       - Plugins:MediaShare=${Plugins_MediaShare_Leon}
