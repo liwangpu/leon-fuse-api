@@ -746,7 +746,7 @@ namespace ApiServer.Models
     {
         [Required(ErrorMessage = "必填信息")]
         public string Type { get; set; }
-        [Required(ErrorMessage = "必填信息")]
+        //[Required(ErrorMessage = "必填信息")]
         public string ParentId { get; set; }
         public string OrganizationId { get; set; }
         public string CustomData { get; set; }

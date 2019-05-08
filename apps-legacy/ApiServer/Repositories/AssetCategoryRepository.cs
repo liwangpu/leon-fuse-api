@@ -380,8 +380,25 @@ namespace ApiServer.Repositories
                     oTree.ParentId = pNode.Id;
                     await _AssetCategoryTreeRepository.AddChildNode(oTree);
                 }
+                else
+                {
+                    var oTree = new AssetCategoryTree();
+                    oTree.NodeType = data.Type;
+                    oTree.Name = data.Name;
+                    oTree.ObjId = data.Id;
+                    oTree.LValue = 1;
+                    oTree.RValue = 2;
+                    oTree.OrganizationId = data.OrganizationId;
+                    oTree.RootOrganizationId = data.OrganizationId;
+                    _DbContext.AssetCategoryTrees.Add(oTree);
+                    await _DbContext.SaveChangesAsync();
+                }
             }
             #endregion
+
+
+
+
         }
         #endregion
     }

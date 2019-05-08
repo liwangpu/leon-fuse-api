@@ -28,32 +28,35 @@ namespace DataTransferHelper
         static async Task TransferData()
         {
             var morejeeOrganId = "MGUZMA909KQEMJ";
-            var noryaOrganId = "9VUA395Z0WEN38";
+            var yuanminOrganId = "5VUWWM8G76E641";
             using (var srcDb = new SrcContext())
             using (var destDb = new DestContext())
             {
-                //var srcCats = srcDb.AssetCategories.ToList();
+                //var srcCats = srcDb.AssetCategories.Where(x => x.OrganizationId == morejeeOrganId && x.Type != "product").ToList();
                 //foreach (var item in srcCats)
                 //{
                 //    if (item.OrganizationId == morejeeOrganId)
-                //        item.OrganizationId = noryaOrganId;
+                //        item.OrganizationId = yuanminOrganId;
                 //    destDb.AssetCategories.Add(item);
                 //    destDb.SaveChanges();
                 //}
 
 
 
-                var srcCatTrees = srcDb.AssetCategoryTrees.ToList();
-                foreach (var item in srcCatTrees)
-                {
-                    if (item.OrganizationId == morejeeOrganId)
-                        item.OrganizationId = noryaOrganId;
-                    if (item.RootOrganizationId == morejeeOrganId)
-                        item.RootOrganizationId = noryaOrganId;
+                //var srcCatTrees = srcDb.AssetCategoryTrees.Where(x => x.OrganizationId == morejeeOrganId && x.NodeType != "product").ToList();
+                //foreach (var item in srcCatTrees)
+                //{
+                //    if (item.OrganizationId == morejeeOrganId)
+                //        item.OrganizationId = yuanminOrganId;
+                //    if (item.RootOrganizationId == morejeeOrganId)
+                //        item.RootOrganizationId = yuanminOrganId;
 
-                    destDb.AssetCategoryTrees.Add(item);
-                    destDb.SaveChanges();
-                }
+                //    destDb.AssetCategoryTrees.Add(item);
+                //    destDb.SaveChanges();
+                //}
+
+
+
 
                 var a = 1;
             }

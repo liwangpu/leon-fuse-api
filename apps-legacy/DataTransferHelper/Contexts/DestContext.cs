@@ -183,9 +183,9 @@ namespace DataTransferHelper.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=1990;Database=dmz_ehome;User Id=postgres;Password=root");
-            optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=5700;Database=dmz_for_norya;User Id=postgres;Password=root");
-            //optionsBuilder.UseNpgsql(@"Server=localhost;Port=5432;Database=dmz_ehome;User Id=postgres;Password=root");
+            optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=5700;Database=dmz_leon;User Id=postgres;Password=root");
+            //optionsBuilder.UseNpgsql(@"Server=192.168.1.6;Port=5700;Database=dmz_for_norya;User Id=postgres;Password=root");
+            //optionsBuilder.UseNpgsql(@"Server=localhost;Port=5432;Database=tem_leon2;User Id=postgres;Password=root");
         }
 
         protected override void OnModelCreating(ModelBuilder b)
