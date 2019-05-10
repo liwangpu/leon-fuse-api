@@ -137,6 +137,16 @@ services:
     networks:
       - dmzdevnet
     restart: always
+
+# MoreJee Site ( For Company Development )
+  apps-morejee-oms-tool-dev-tmp:
+    container_name: apps-morejee-oms-tool-dev-tmp-c
+    image: morejee-oms-tool-tmp:latest
+    ports:
+      - "5706:3000"
+    networks:
+      - dmzdevnet
+    restart: always
 ######################################################################################
 
 # # MoreJee Consul ( For Company EHome )
