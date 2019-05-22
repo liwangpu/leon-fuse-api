@@ -1,0 +1,140 @@
+version: '3.4'
+
+services:
+
+# 1.app infrastructure
+# 1.1 postgres db
+  app-infrastructure-database:
+    container_name: app-infrastructure-database-c
+    image: postgres:10.5
+    volumes:
+      - "/var/morejee/app-infrastructure-database/data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
+    ports:
+      - "9501:5432"
+    networks:
+      - morejeenet
+    restart: always
+# 1.2 consul
+  app-infrastructure-consul:
+    container_name: app-infrastructure-consul-c
+    image: consul:1.4.4
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "9502:8500"
+    networks:
+      - morejeenet
+    restart: always
+# 1.3 APIGateway
+  app-infrastructure-apigateway:
+    container_name: app-infrastructure-apigateway-c
+    image: ${DockerHub_Registry}/app-infrastructure-apigateway:${DockerImage_Tag}
+    ports:
+      - "9503:80"
+    volumes:
+      - "/var/morejee/app-infrastructure-apigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - morejeenet
+    depends_on:
+      - app-infrastructure-consul
+    restart: always
+# 2. app microservices
+# 2.1 basic ms
+  app-microservice-basic-api:
+    container_name: app-microservice-basic-api-c
+    image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
+    volumes:
+      - "/var/morejee/app-microservice-basic-api/logs:/app/logs"
+      - "/var/morejee/app-microservice-basic-api/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/morejee/app-microservice-basic-api/wwwroot/upload:/app/wwwroot/upload"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer}
+      - JwtSettings:Audience=${JwtSettings_Audience}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay}
+      # ConnectionString
+      - ConnectionString=Server=app-infrastructure-database;Port=5432;Database=${BasicServerDB};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer}
+      - Plugins:MediaShare=${Plugins_MediaShare}
+      # Consul
+      - ConsulConfig:Server:IP=app-infrastructure-consul
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=app-microservice-basic-api
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "9511:80"
+    networks:
+      - morejeenet
+    depends_on:
+      - app-infrastructure-database
+      - app-infrastructure-apigateway
+    restart: always
+# 2.2 oms ms
+  app-microservice-oms-api:
+    container_name: app-microservice-oms-api-c
+    image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
+    volumes:
+      - "/var/morejee/app-microservice-oms-api/logs:/app/logs"
+      - "/var/morejee/app-microservice-oms-api/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer}
+      - JwtSettings:Audience=${JwtSettings_Audience}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay}
+      # ConnectionString
+      - ConnectionString=Server=app-infrastructure-database;Port=5432;Database=${OMSServerDB};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer}
+      - Plugins:MediaShare=${Plugins_MediaShare}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer}
+      # Consul
+      - ConsulConfig:Server:IP=app-infrastructure-consul
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=app-microservice-oms-api
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "9512:80"
+    networks:
+      - morejeenet
+    depends_on:
+      - app-infrastructure-database
+      - app-infrastructure-apigateway
+    restart: always
+# 3 app site
+# 3.1 morejee site
+  app-site-morejee:
+    container_name: app-site-morejee-c
+    image: ${DockerHub_Registry}/app-site-morejee:${DockerImage_Tag}
+    environment:
+      - APISERVER=${APIGatewayServer}
+      - TOOLSERVER=${MoreJeeToolSite}
+      - SECRETKEY=${SECRETKEY}
+    ports:
+      - "9521:4000"
+    networks:
+      - morejeenet
+    restart: always
+# 3.2 tool site
+  app-site-morejee-tool:
+    container_name: app-site-morejee-tool-c
+    image: ${DockerHub_Registry}/app-site-morejee-tool:${DockerImage_Tag}
+    environment:
+      - APISERVER=${APIGatewayServer}
+    ports:
+      - "9522:4000"
+    networks:
+      - morejeenet
+    restart: always
+
+networks:
+  morejeenet:
