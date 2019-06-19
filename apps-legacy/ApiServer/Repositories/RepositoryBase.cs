@@ -70,11 +70,11 @@ namespace ApiServer.Repositories
         {
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var accids = await _DbContext.Accounts.Where(x => x.Name.Contains(search) || x.Id == search).Select(x => x.Id).ToListAsync();
-                if (accids.Count > 0)
-                    query = query.Where(d => d.Name.Contains(search) || accids.Contains(d.Creator));
-                else
-                    query = query.Where(d => d.Name.Contains(search));
+                //var accids = await _DbContext.Accounts.Where(x => x.Name.ToLower().Contains(search.ToLower()) ).Select(x => x.Id).ToListAsync();
+                //if (accids.Count > 0)
+                //    query = query.Where(d => d.Name.Contains(search) || accids.Contains(d.Creator));
+                //else
+                    query = query.Where(d => d.Name.ToLower().Contains(search.ToLower()));
             }
             return query;
         }

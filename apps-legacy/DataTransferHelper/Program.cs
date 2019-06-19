@@ -11,6 +11,7 @@ namespace DataTransferHelper
 {
     class Program
     {
+        static int CategoryLValue = 1;
         static void Main(string[] args)
         {
             try
@@ -27,39 +28,76 @@ namespace DataTransferHelper
 
         static async Task TransferData()
         {
-            var morejeeOrganId = "MGUZMA909KQEMJ";
-            var yuanminOrganId = "5VUWWM8G76E641";
-            using (var srcDb = new SrcContext())
-            using (var destDb = new DestContext())
-            {
-                //var srcCats = srcDb.AssetCategories.Where(x => x.OrganizationId == morejeeOrganId && x.Type != "product").ToList();
-                //foreach (var item in srcCats)
-                //{
-                //    if (item.OrganizationId == morejeeOrganId)
-                //        item.OrganizationId = yuanminOrganId;
-                //    destDb.AssetCategories.Add(item);
-                //    destDb.SaveChanges();
-                //}
+
+            #region 重建分类树
+            //using (var destDb = new DestContext())
+            //{
+            //    var allCats = await destDb.AssetCategories.Where(x => x.Type == "PanelComponent" && x.OrganizationId == "9VUA395Z0WEN38").ToListAsync();
+            //    var allCatTrees = await destDb.AssetCategoryTrees.Where(x => x.NodeType == "PanelComponent" && x.OrganizationId == "9VUA395Z0WEN38").ToListAsync();
+
+            //    ////删除软删除的分类以及节点
+            //    //{
+            //    //    var notActiveCats = allCats.Where(x => x.ActiveFlag == 0).ToList();
+            //    //    var objIds = notActiveCats.Select(x => x.Id).ToList();
+            //    //    var notActiveCatTrees = allCatTrees.Where(x => objIds.Contains(x.ObjId)).ToList();
+            //    //    foreach (var it in notActiveCats)
+            //    //        destDb.AssetCategories.Remove(it);
+            //    //    foreach (var it in notActiveCatTrees)
+            //    //        destDb.AssetCategoryTrees.Remove(it);
+            //    //    await destDb.SaveChangesAsync();
+            //    //}
+
+
+            //    var rootCat = allCats.Where(x => string.IsNullOrWhiteSpace(x.ParentId)).First();
+            //    CalcuLR(rootCat, allCats, allCatTrees);
+
+            //    for (var idx = allCatTrees.Count - 1; idx >= 0; idx--)
+            //    {
+            //        var it = allCatTrees[idx];
+            //        destDb.AssetCategoryTrees.Update(it);
+            //    }
+
+            //    await destDb.SaveChangesAsync();
+
+            //} 
+            #endregion
+
+
+            #region aaa
+            //var morejeeOrganId = "MGUZMA909KQEMJ";
+            //var yuanminOrganId = "5VUWWM8G76E641";
+            //using (var srcDb = new SrcContext())
+            //using (var destDb = new DestContext())
+            //{
+            //    //var srcCats = srcDb.AssetCategories.Where(x => x.OrganizationId == morejeeOrganId && x.Type != "product").ToList();
+            //    //foreach (var item in srcCats)
+            //    //{
+            //    //    if (item.OrganizationId == morejeeOrganId)
+            //    //        item.OrganizationId = yuanminOrganId;
+            //    //    destDb.AssetCategories.Add(item);
+            //    //    destDb.SaveChanges();
+            //    //}
 
 
 
-                //var srcCatTrees = srcDb.AssetCategoryTrees.Where(x => x.OrganizationId == morejeeOrganId && x.NodeType != "product").ToList();
-                //foreach (var item in srcCatTrees)
-                //{
-                //    if (item.OrganizationId == morejeeOrganId)
-                //        item.OrganizationId = yuanminOrganId;
-                //    if (item.RootOrganizationId == morejeeOrganId)
-                //        item.RootOrganizationId = yuanminOrganId;
+            //    //var srcCatTrees = srcDb.AssetCategoryTrees.Where(x => x.OrganizationId == morejeeOrganId && x.NodeType != "product").ToList();
+            //    //foreach (var item in srcCatTrees)
+            //    //{
+            //    //    if (item.OrganizationId == morejeeOrganId)
+            //    //        item.OrganizationId = yuanminOrganId;
+            //    //    if (item.RootOrganizationId == morejeeOrganId)
+            //    //        item.RootOrganizationId = yuanminOrganId;
 
-                //    destDb.AssetCategoryTrees.Add(item);
-                //    destDb.SaveChanges();
-                //}
-
-
+            //    //    destDb.AssetCategoryTrees.Add(item);
+            //    //    destDb.SaveChanges();
+            //    //}
 
 
-                var a = 1;
-            }
+
+
+            //    var a = 1;
+            //} 
+            #endregion
 
             #region MyRegion
             ////await SolutionTransfer.Transfer("MGUZMA909KQEMJ", "PPUJPG33399YP0");
@@ -575,6 +613,31 @@ namespace DataTransferHelper
             //    #endregion
             //} 
             #endregion
+        }
+
+        static void CalcuLR(AssetCategory parent, List<AssetCategory> cats, List<AssetCategoryTree> trees)
+        {
+            AssetCategoryTree parentTree = new AssetCategoryTree();
+            for (var idx = trees.Count - 1; idx >= 0; idx--)
+            {
+                var it = trees[idx];
+                if (it.ObjId == parent.Id)
+                {
+                    parentTree = it;
+                    break;
+                }
+            }
+
+            parentTree.LValue = CategoryLValue++;
+
+            var childCats = cats.Where(x => x.ParentId == parent.Id).ToList();
+
+            foreach (var it in childCats)
+            {
+                CalcuLR(it, cats, trees);
+            }
+
+            parentTree.RValue = CategoryLValue++;
         }
     }
 }
