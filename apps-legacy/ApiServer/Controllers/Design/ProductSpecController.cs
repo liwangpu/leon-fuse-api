@@ -104,6 +104,7 @@ namespace ApiServer.Controllers
                 entity.StaticMeshIds = model.StaticMeshIds;
                 entity.Slots = model.Slots;
                 entity.Color = model.Color;
+                entity.TPID = model.TPID;
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);
@@ -138,6 +139,7 @@ namespace ApiServer.Controllers
             dto.Price = data.Price;
             dto.PartnerPrice = data.PartnerPrice;
             dto.PurchasePrice = data.PurchasePrice;
+            dto.TPID = data.TPID;
             dto.ProductId = data.ProductId;
             dto.Brand = data.Product.Brand;
             if (!string.IsNullOrWhiteSpace(data.Icon))

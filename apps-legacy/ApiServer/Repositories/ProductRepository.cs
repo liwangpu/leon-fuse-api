@@ -218,7 +218,8 @@ namespace ApiServer.Repositories
                         Price = x.Price,
                         PartnerPrice = x.PartnerPrice,
                         PurchasePrice = x.PurchasePrice,
-                        Icon = x.Icon
+                        Icon = x.Icon,
+                        TPID=x.TPID
                     }).FirstOrDefaultAsync();
 
                     if (defaultSpec != null)

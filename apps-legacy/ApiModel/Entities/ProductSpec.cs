@@ -43,6 +43,7 @@ namespace ApiModel.Entities
         /// </summary>
         public string Slots { get; set; }
         public string Color { get; set; }
+
         /// <summary>
         /// 所在产品的ID
         /// </summary>

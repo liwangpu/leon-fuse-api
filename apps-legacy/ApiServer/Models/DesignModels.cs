@@ -94,6 +94,7 @@ namespace ApiServer.Models
         public string Slots { get; set; }
         public string StaticMeshIds { get; set; }
         public string Color { get; set; }
+        public string TPID { get; set; }
     }
     #endregion
 

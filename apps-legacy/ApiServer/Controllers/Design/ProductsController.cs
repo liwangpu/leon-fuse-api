@@ -316,7 +316,7 @@ namespace ApiServer.Controllers
                     var productPurchasePriceObj = sheet1.Cells[row, 7].Value;
                     var productUnitObj = sheet1.Cells[row, 8].Value;
                     var productBrandObj = sheet1.Cells[row, 9].Value;
-
+                    var productTPIDObj = sheet1.Cells[row, 10].Value;
                     //原始值转化
                     string productId = productIdObj != null ? productIdObj.ToString().Trim() : string.Empty;
                     string productName = productNameObj != null ? productNameObj.ToString().Trim() : string.Empty;
@@ -324,6 +324,7 @@ namespace ApiServer.Controllers
                     string productDescription = productDescriptionObj != null ? productDescriptionObj.ToString().Trim() : string.Empty;
                     string productUnit = productUnitObj != null ? productUnitObj.ToString().Trim() : string.Empty;
                     string productBrand = productBrandObj != null ? productBrandObj.ToString().Trim() : string.Empty;
+                    string productTPID = productTPIDObj != null ? productTPIDObj.ToString().Trim() : string.Empty;
                     decimal productPrice = 0;
                     decimal productPartnerPrice = 0;
                     decimal productPurchasePrice = 0;
@@ -347,6 +348,7 @@ namespace ApiServer.Controllers
                         product.Specifications[0].Price = productPrice;
                         product.Specifications[0].PartnerPrice = productPartnerPrice;
                         product.Specifications[0].PurchasePrice = productPurchasePrice;
+                        product.Specifications[0].TPID = productTPID;
                     }
 
                     _Repository._DbContext.Products.Update(product);
@@ -475,6 +477,7 @@ namespace ApiServer.Controllers
                 sheet1.Cells[1, 7].Value = "进货价";
                 sheet1.Cells[1, 8].Value = "单位";
                 sheet1.Cells[1, 9].Value = "品牌";
+                sheet1.Cells[1, 10].Value = "品号";
                 if (result != null && result.Data != null)
                 {
                     for (int idx = 0, len = result.Data.Count(); idx < len; idx++)
@@ -490,6 +493,7 @@ namespace ApiServer.Controllers
                         sheet1.Cells[row, 7].Value = item.PurchasePrice;
                         sheet1.Cells[row, 8].Value = item.Unit;
                         sheet1.Cells[row, 9].Value = item.Brand;
+                        sheet1.Cells[row, 10].Value = item.TPID;
                     }
                 }
                 package.SaveAs(memorystream);

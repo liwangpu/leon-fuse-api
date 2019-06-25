@@ -52,6 +52,7 @@ namespace Apps.OMS.Export.DTOs
         public string AttachmentIds { get; set; }
         public string Room { get; set; }
         public string Owner { get; set; }
+        public string TPID { get; set; }
         public List<OrderDetailAttachmentDTO> Attachments { get; set; }
         public List<OrderDetailPackageDTO> Packages { get; set; }
     }

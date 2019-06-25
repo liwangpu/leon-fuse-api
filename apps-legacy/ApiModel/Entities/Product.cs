@@ -50,6 +50,7 @@ namespace ApiModel.Entities
                 dto.PartnerPrice = defaultSpec.PartnerPrice;
                 dto.PurchasePrice = defaultSpec.PurchasePrice;
                 dto.Specifications = Specifications.Select(x => x.ToDTO()).ToList();
+                dto.TPID = defaultSpec.TPID;
             }
             dto.Icon = IconFileAssetUrl;
             dto.IconAssetId = Icon;
@@ -71,6 +72,7 @@ namespace ApiModel.Entities
         public string Icon { get; set; }
         public string Unit { get; set; }
         public bool IsPublish { get; set; }
+        public string TPID { get; set; }
     }
 
 }
