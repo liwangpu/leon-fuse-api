@@ -130,8 +130,18 @@ services:
     image: ${DockerHub_Registry}/app-site-morejee-tool:${DockerImage_Tag}
     environment:
       - APISERVER=${APIGatewayServer}
+      - OMSTOOLSERVER=${MoreJeeOMSToolSite}
     ports:
       - "9522:4000"
+    networks:
+      - morejeenet
+    restart: always
+# 3.3 oms tool site
+  app-site-morejee-oms-tool:
+    container_name: app-site-morejee-oms-tool-c
+    image: ${DockerHub_Registry}/app-site-morejee-oms-tool:${DockerImage_Tag}
+    ports:
+      - "9523:3000"
     networks:
       - morejeenet
     restart: always
