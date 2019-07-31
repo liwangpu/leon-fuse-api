@@ -109,7 +109,7 @@ namespace Apps.OMS.Service
             app.Use(AuthorizeMiddleWare.Authorize(apiGateway));
             #endregion
 
-            app.RegisterConsul(lifetime, appConfig);
+            //app.RegisterConsul(lifetime, appConfig);
             app.UseMvc();
 
             #region App Init

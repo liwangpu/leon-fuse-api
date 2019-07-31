@@ -6,9 +6,10 @@ services:
 # 1.1 postgres db
   app-infrastructure-database:
     container_name: app-infrastructure-database-c
-    image: postgres:10.5
+    image: ${DockerHub_Registry}/app-infrastructure-database:${DockerImage_Tag}
     volumes:
       - "/var/morejee/app-infrastructure-database/data:/var/lib/postgresql/data"
+      - "/var/morejee/app-infrastructure-database/dbBackup:/var/lib/postgresql/dbBackup"
     environment:
       - POSTGRES_USER=${PostgresDB_User}
       - POSTGRES_PASSWORD=${PostgresDB_Password}
@@ -119,7 +120,6 @@ services:
       - APISERVER=${APIGatewayServer}
       - TOOLSERVER=${MoreJeeToolSite}
       - SECRETKEY=${SECRETKEY}
-      - OMSORDER2EXCELTOOLSERVER=${MoreJeeOMSToolSite}
     ports:
       - "9521:4000"
     networks:
@@ -146,7 +146,6 @@ services:
     networks:
       - morejeenet
     restart: always
-
 
 networks:
   morejeenet:
