@@ -63,7 +63,7 @@ namespace Apps.OMS.Service.Controllers
                 dto.ModifiedTime = entity.ModifiedTime;
                 dto.OrganizationId = entity.OrganizationId;
                 dto.TotalNum = entity.TotalNum;
-                dto.TotalPrice = entity.TotalPrice;
+                dto.TotalPrice = Math.Round(entity.TotalPrice, 2, MidpointRounding.AwayFromZero);
                 dto.OrderNo = entity.OrderNo;
                 dto.CustomerName = entity.CustomerName;
                 dto.CustomerPhone = entity.CustomerPhone;
@@ -131,7 +131,7 @@ namespace Apps.OMS.Service.Controllers
                 dto.ModifiedTime = entity.ModifiedTime;
                 dto.OrganizationId = entity.OrganizationId;
                 dto.TotalNum = entity.TotalNum;
-                dto.TotalPrice = entity.TotalPrice;
+                //dto.TotalPrice = entity.TotalPrice;
                 dto.OrderNo = entity.OrderNo;
                 dto.CustomerName = entity.CustomerName;
                 dto.CustomerPhone = entity.CustomerPhone;
@@ -165,18 +165,19 @@ namespace Apps.OMS.Service.Controllers
                 var details = new List<OrderDetailDTO>();
                 if (entity.OrderDetails != null && entity.OrderDetails.Count > 0)
                 {
+                    decimal totalPrice = 0;
                     foreach (var it in entity.OrderDetails)
                     {
                         var ditem = new OrderDetailDTO();
                         ditem.Id = it.Id;
                         ditem.Remark = it.Remark;
                         ditem.Num = it.Num;
-                        ditem.UnitPrice = it.UnitPrice;
+                        ditem.UnitPrice = Math.Round(it.UnitPrice, 2, MidpointRounding.AwayFromZero);
                         ditem.TotalPrice = Math.Round(it.UnitPrice * it.Num, 2, MidpointRounding.AwayFromZero);
                         ditem.AttachmentIds = it.AttachmentIds;
                         ditem.Room = it.Room;
                         ditem.Owner = it.Owner;
-
+                        totalPrice += ditem.TotalPrice;
                         var pckDtos = new List<OrderDetailPackageDTO>();
                         var pcks = await _Context.OrderDetailPackages.Where(x => x.OrderDetailId == it.Id).OrderByDescending(x => x.Num).ToListAsync();
                         foreach (var pck in pcks)
@@ -234,6 +235,7 @@ namespace Apps.OMS.Service.Controllers
 
                         details.Add(ditem);
                     }
+                    dto.TotalPrice = totalPrice;
                 }
                 dto.OrderDetails = details;
                 #endregion
@@ -342,7 +344,8 @@ namespace Apps.OMS.Service.Controllers
                         detail.Id = GuidGen.NewGUID();
                         detail.ProductSpecId = item.ProductSpecId;
                         detail.Num = item.Num;
-                        detail.UnitPrice = item.UnitPrice;
+                        //detail.UnitPrice = item.UnitPrice;
+                        detail.UnitPrice = Math.Round(item.UnitPrice, 2, MidpointRounding.AwayFromZero);
                         detail.Remark = item.Remark;
                         detail.Room = item.Room;
                         detail.Owner = item.Owner;
