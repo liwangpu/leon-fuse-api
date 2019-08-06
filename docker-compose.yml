@@ -2,9 +2,9 @@ version: '3.4'
 
 services:
 
-  # app-infrastructure-database:
-  #   image: ${DockerHub_Registry}/app-infrastructure-database:${DockerImage_Tag}
-  #   build: ./apps-database
+  app-infrastructure-database:
+    image: ${DockerHub_Registry}/app-infrastructure-database:${DockerImage_Tag}
+    build: ./apps-database
 
   # apps-base-apigateway:
   #   image: apps-base-apigateway:latest
@@ -24,11 +24,11 @@ services:
   #     context: .
   #     dockerfile: apps-legacy/ApiServer/Dockerfile
 
-  app-microservice-oms-api:
-    image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
-    build:
-      context: .
-      dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
+  # app-microservice-oms-api:
+  #   image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
+  #   build:
+  #     context: .
+  #     dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
 
   # basic-api-dev:
   #   image: apps-legacy-basic-service:latest
