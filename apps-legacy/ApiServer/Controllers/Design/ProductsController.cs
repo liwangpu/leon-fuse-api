@@ -306,6 +306,9 @@ namespace ApiServer.Controllers
                 var sheet1 = workbox.Worksheets[0];
                 for (int row = 2, len = sheet1.Dimension.End.Row; row <= len; row++)
                 {
+
+
+
                     //原始值
                     var productIdObj = sheet1.Cells[row, 1].Value;
                     var productNameObj = sheet1.Cells[row, 2].Value;
@@ -317,6 +320,13 @@ namespace ApiServer.Controllers
                     var productUnitObj = sheet1.Cells[row, 8].Value;
                     var productBrandObj = sheet1.Cells[row, 9].Value;
                     var productTPIDObj = sheet1.Cells[row, 10].Value;
+
+
+                    //if (productIdObj.ToString() == "8WUY8K7A5NW0JE")
+                    //{
+
+                    //}
+
                     //原始值转化
                     string productId = productIdObj != null ? productIdObj.ToString().Trim() : string.Empty;
                     string productName = productNameObj != null ? productNameObj.ToString().Trim() : string.Empty;
@@ -343,8 +353,10 @@ namespace ApiServer.Controllers
                     product.Description = productDescription;
                     product.Unit = productUnit;
                     product.Brand = productBrand;
+                    product.Name = productName;
                     if (product.Specifications != null && product.Specifications.Count > 0)
                     {
+                        product.Specifications[0].Name = productName;
                         product.Specifications[0].Price = productPrice;
                         product.Specifications[0].PartnerPrice = productPartnerPrice;
                         product.Specifications[0].PurchasePrice = productPurchasePrice;
