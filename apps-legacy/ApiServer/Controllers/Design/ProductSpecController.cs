@@ -104,6 +104,10 @@ namespace ApiServer.Controllers
                 entity.StaticMeshIds = model.StaticMeshIds;
                 entity.Slots = model.Slots;
                 entity.Color = model.Color;
+                entity.Depth = model.Depth;
+                entity.Width = model.Width;
+                entity.Height = model.Height;
+
                 if (!string.IsNullOrWhiteSpace(model.IconAssetId))
                     entity.Icon = model.IconAssetId;
                 return await Task.FromResult(entity);
@@ -140,6 +144,9 @@ namespace ApiServer.Controllers
             dto.PurchasePrice = data.PurchasePrice;
             dto.ProductId = data.ProductId;
             dto.Brand = data.Product.Brand;
+            dto.Depth = data.Depth;
+            dto.Width = data.Width;
+            dto.Height = data.Height;
             if (!string.IsNullOrWhiteSpace(data.Icon))
                 dto.Icon = await _Repository._DbContext.Files.Where(x => x.Id == data.Icon).Select(x => x.Url).FirstOrDefaultAsync();
 

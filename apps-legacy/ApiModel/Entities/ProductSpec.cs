@@ -49,6 +49,10 @@ namespace ApiModel.Entities
         public string ProductId { get; set; }
         public Product Product { get; set; }
 
+        public decimal Depth { get; set; }
+        public decimal Width { get; set; }
+        public decimal Height { get; set; }
+
         /**************** DTO专用容器 ****************/
         [NotMapped]
         public string Brand { get; set; }
@@ -89,6 +93,9 @@ namespace ApiModel.Entities
             dto.IconAssetId = Icon;
             dto.Color = Color;
             dto.Brand = Brand;
+            dto.Depth = Depth;
+            dto.Width = Width;
+            dto.Height = Height;
             if (AlbumAsset != null && AlbumAsset.Count > 0)
                 dto.Album = AlbumAsset.Select(x => x.ToDTO()).ToList();
             if (StaticMeshAsset != null && StaticMeshAsset.Count > 0)
@@ -116,6 +123,9 @@ namespace ApiModel.Entities
         public string Slots { get; set; }
         public string Components { get; set; }
         public string Brand { get; set; }
+        public decimal Depth { get; set; }
+        public decimal Width { get; set; }
+        public decimal Height { get; set; }
     }
 
     /// <summary>

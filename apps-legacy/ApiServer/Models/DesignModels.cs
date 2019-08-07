@@ -94,6 +94,9 @@ namespace ApiServer.Models
         public string Slots { get; set; }
         public string StaticMeshIds { get; set; }
         public string Color { get; set; }
+        public decimal Depth { get; set; }
+        public decimal Width { get; set; }
+        public decimal Height { get; set; }
     }
     #endregion
 

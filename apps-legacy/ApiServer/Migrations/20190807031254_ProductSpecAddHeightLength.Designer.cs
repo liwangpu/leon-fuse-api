@@ -11,9 +11,10 @@ using System;
 namespace ApiServer.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190807031254_ProductSpecAddHeightLength")]
+    partial class ProductSpecAddHeightLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1169,13 +1170,13 @@ namespace ApiServer.Migrations
 
                     b.Property<string>("Creator");
 
-                    b.Property<decimal>("Depth");
-
                     b.Property<string>("Description");
 
                     b.Property<decimal>("Height");
 
                     b.Property<string>("Icon");
+
+                    b.Property<decimal>("Length");
 
                     b.Property<DateTime>("ModifiedTime");
 

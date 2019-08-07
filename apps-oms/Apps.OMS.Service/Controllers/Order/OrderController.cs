@@ -201,6 +201,9 @@ namespace Apps.OMS.Service.Controllers
                               ditem.ProductSpecName = spec.Name;
                               ditem.ProductId = spec.ProductId;
                               ditem.Icon = spec.Icon;
+                              ditem.ProductSpecDepth = spec.Depth;
+                              ditem.ProductSpecWidth = spec.Width;
+                              ditem.ProductSpecHeight = spec.Height;
                           });
 
                         await productMicroService.GetBriefById(ditem.ProductId, (prod) =>

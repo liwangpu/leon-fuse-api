@@ -52,6 +52,9 @@ namespace Apps.OMS.Export.DTOs
         public string AttachmentIds { get; set; }
         public string Room { get; set; }
         public string Owner { get; set; }
+        public decimal ProductSpecDepth { get; set; }
+        public decimal ProductSpecWidth { get; set; }
+        public decimal ProductSpecHeight { get; set; }
         public List<OrderDetailAttachmentDTO> Attachments { get; set; }
         public List<OrderDetailPackageDTO> Packages { get; set; }
     }
