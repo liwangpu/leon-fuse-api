@@ -132,6 +132,7 @@ services:
     image: ${DockerHub_Registry}/app-site-morejee-tool:${DockerImage_Tag}
     environment:
       - APISERVER=${APIGatewayServer}
+      - OMSTOOLSERVER=${MoreJeeOMSToolSiteOfCustomer}
     ports:
       - "9522:4000"
     networks:
