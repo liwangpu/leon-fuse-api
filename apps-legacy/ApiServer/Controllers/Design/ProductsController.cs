@@ -3,12 +3,14 @@ using ApiModel.Entities;
 using ApiModel.Enums;
 using ApiServer.Controllers.Common;
 using ApiServer.Filters;
+using ApiServer.Libraries;
 using ApiServer.Models;
 using ApiServer.Repositories;
 using ApiServer.Services;
 using BambooCore;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,12 +28,17 @@ namespace ApiServer.Controllers
     [Route("/[controller]")]
     public class ProductsController : ResourceController<Product, ProductDTO>
     {
+        private readonly ISettingRepository settingRepository;
+        private readonly IHostingEnvironment env;
+
         public override int ResType => ResourceTypeConst.Product;
 
         #region 构造函数
-        public ProductsController(IRepository<Product, ProductDTO> repository)
+        public ProductsController(IRepository<Product, ProductDTO> repository, ISettingRepository settingRepository, IHostingEnvironment env)
             : base(repository)
         {
+            this.settingRepository = settingRepository;
+            this.env = env;
         }
         #endregion
 
@@ -614,12 +621,89 @@ namespace ApiServer.Controllers
         }
         #endregion
 
+        #region UploadProductConfiguration 上传产品配置表
+        /// <summary>
+        /// 上传产品配置表
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Route("ProductConfiguration")]
+        [HttpPost]
+        public async Task<IActionResult> UploadProductConfiguration(IFormFile file)
+        {
+            if (file == null)
+                return BadRequest();
 
+            var configPath = Path.Combine(env.WebRootPath, "upload", "产品配置.xlsx");
 
+            using (FileStream fs = System.IO.File.Create(configPath))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
 
+            var dic = new Dictionary<string, string>();
+            using (var package = new ExcelPackage(new FileInfo(configPath)))
+            {
+                var accessoriesSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == "五金配件");
+                if (accessoriesSheet != null)
+                {
+                    var setting = new SettingsItem
+                    {
+                        Key = "Accessories",
+                        Value = accessoriesSheet.ContentToString()
+                    };
+                    await settingRepository.CreateOrUpdateAsync(setting);
+                }
 
+                var panelMergeSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == "合并表");
+                if (panelMergeSheet != null)
+                {
+                    var setting = new SettingsItem
+                    {
+                        Key = "PanelMerge",
+                        Value = panelMergeSheet.ContentToString()
+                    };
+                    await settingRepository.CreateOrUpdateAsync(setting);
+                }
 
+                var panelProductCategorySheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == "柜子类型");
+                if (panelProductCategorySheet != null)
+                {
+                    var setting = new SettingsItem
+                    {
+                        Key = "PanelProductCategory",
+                        Value = panelProductCategorySheet.ContentToString()
+                    };
+                    await settingRepository.CreateOrUpdateAsync(setting);
+                }
 
+                var panelProductsSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == "风格表");
+                if (panelProductsSheet != null)
+                {
+                    var setting = new SettingsItem
+                    {
+                        Key = "PanelProducts",
+                        Value = panelProductsSheet.ContentToString()
+                    };
+                    await settingRepository.CreateOrUpdateAsync(setting);
+                }
+
+                var panelReplaceProductsSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == "替换表");
+                if (panelReplaceProductsSheet != null)
+                {
+                    var setting = new SettingsItem
+                    {
+                        Key = "PanelReplaceProducts",
+                        Value = panelReplaceProductsSheet.ContentToString()
+                    };
+                    await settingRepository.CreateOrUpdateAsync(setting);
+                }
+            }
+
+            return NoContent();
+        }
+        #endregion
 
     }
 }

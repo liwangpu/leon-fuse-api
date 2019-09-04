@@ -125,6 +125,11 @@ namespace ApiServer
                 Directory.CreateDirectory(uploadPath);
             }
 
+            var appBackupPath = Path.Combine(env.WebRootPath, "AppBackup");
+            if (Directory.Exists(appBackupPath) == false)
+                Directory.CreateDirectory(appBackupPath);
+
+
             // default wwwroot directory
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -161,7 +166,7 @@ namespace ApiServer
 
             hostStaticFileServer(app, env);
 
-            //app.RegisterConsul(lifetime, appConfig);
+            app.RegisterConsul(lifetime, appConfig);
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -181,7 +186,7 @@ namespace ApiServer
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Damaozhu API V1");
-            }); 
+            });
             #endregion
 
             #region App Init
