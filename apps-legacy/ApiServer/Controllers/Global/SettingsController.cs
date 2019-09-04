@@ -1,10 +1,10 @@
 ﻿using ApiModel.Entities;
+using ApiServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiServer.Controllers.Global
 {
@@ -12,57 +12,49 @@ namespace ApiServer.Controllers.Global
     [Route("/[controller]")]
     public class SettingsController : Controller
     {
-        Data.ApiDbContext context;
+        private readonly ISettingRepository settingRepository;
 
-        public SettingsController(Data.ApiDbContext context)
+        public SettingsController(ISettingRepository settingRepository)
         {
-            this.context = context;
+            this.settingRepository = settingRepository;
         }
 
-        [HttpGet]
-        public IEnumerable<SettingsItem> Get()
-        {
-            return context.Settings;
-        }
 
         [HttpGet("{key}")]
-        public string Get(string key)
+        public async Task<IActionResult> Get(string key)
         {
-            return Services.SiteConfig.Instance.GetItem(key, context);
+            var entity = await settingRepository.GetByKey(key);
+            if (entity == null) return NotFound();
+            return Ok(entity.Value);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]SettingsItem value)
+        public async Task<IActionResult> Post([FromBody]SettingCreateCommand data)
         {
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
 
-            await Services.SiteConfig.Instance.SetItem(value.Key, value.Value, context);
+            await settingRepository.CreateOrUpdateAsync(data.ToEntity());
             return Ok();
         }
 
-        [HttpPut("{key}")]
-        public async Task Put(string key, [FromBody]string value)
+        public class SettingCreateCommand
         {
-            if (value == null)
-                value = "";
-            await Services.SiteConfig.Instance.SetItem(key, value, context);
+            [Required]
+            public string Key { get; set; }
+            [Required]
+            public string Value { get; set; }
+
+            public SettingsItem ToEntity()
+            {
+                return new SettingsItem
+                {
+                    Key = Key,
+                    Value = Value
+                };
+            }
         }
 
-        [HttpDelete("{key}")]
-        public async Task<IActionResult> Delete(string key)
-        {
-            bool bOk =await Services.SiteConfig.Instance.DeleteItem(key, context);
-            if (bOk)
-                return Ok();
-            return NotFound();
-        }
-
-        [Route("Reload")]
-        [HttpPost]
-        public void Reload()
-        {
-            Services.SiteConfig.Instance.ReloadSettingsFromDb(context);
-        }
     }
 }

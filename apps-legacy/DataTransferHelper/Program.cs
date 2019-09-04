@@ -29,38 +29,24 @@ namespace DataTransferHelper
         static async Task TransferData()
         {
 
-            #region 重建分类树
-            //using (var destDb = new DestContext())
-            //{
-            //    var allCats = await destDb.AssetCategories.Where(x => x.Type == "PanelComponent" && x.OrganizationId == "9VUA395Z0WEN38").ToListAsync();
-            //    var allCatTrees = await destDb.AssetCategoryTrees.Where(x => x.NodeType == "PanelComponent" && x.OrganizationId == "9VUA395Z0WEN38").ToListAsync();
-
-            //    ////删除软删除的分类以及节点
-            //    //{
-            //    //    var notActiveCats = allCats.Where(x => x.ActiveFlag == 0).ToList();
-            //    //    var objIds = notActiveCats.Select(x => x.Id).ToList();
-            //    //    var notActiveCatTrees = allCatTrees.Where(x => objIds.Contains(x.ObjId)).ToList();
-            //    //    foreach (var it in notActiveCats)
-            //    //        destDb.AssetCategories.Remove(it);
-            //    //    foreach (var it in notActiveCatTrees)
-            //    //        destDb.AssetCategoryTrees.Remove(it);
-            //    //    await destDb.SaveChangesAsync();
-            //    //}
+            #region demo
+            using (var destDb = new DestContext())
+            {
+                var catIds = new List<string> { "ZRCNG7JQAR026Q", "JQCN5659NX0GX1", "KEC9M6GZQV39VV" };
+                var totals = destDb.Set<AssetCategory>().Where(x => x.Type == "PanelProduct").Count();
 
 
-            //    var rootCat = allCats.Where(x => string.IsNullOrWhiteSpace(x.ParentId)).First();
-            //    CalcuLR(rootCat, allCats, allCatTrees);
 
-            //    for (var idx = allCatTrees.Count - 1; idx >= 0; idx--)
-            //    {
-            //        var it = allCatTrees[idx];
-            //        destDb.AssetCategoryTrees.Update(it);
-            //    }
 
-            //    await destDb.SaveChangesAsync();
-
-            //} 
+            }
             #endregion
+
+
+
+
+
+
+
 
 
             #region aaa
@@ -613,6 +599,44 @@ namespace DataTransferHelper
             //    #endregion
             //} 
             #endregion
+        }
+
+        /// <summary>
+        /// 重建分类树
+        /// </summary>
+        /// <returns></returns>
+        static async Task RebuildCategoryTree()
+        {
+            using (var destDb = new DestContext())
+            {
+                var allCats = await destDb.AssetCategories.Where(x => x.Type == "PanelComponent" && x.OrganizationId == "9VUA395Z0WEN38").ToListAsync();
+                var allCatTrees = await destDb.AssetCategoryTrees.Where(x => x.NodeType == "PanelComponent" && x.OrganizationId == "9VUA395Z0WEN38").ToListAsync();
+
+                ////删除软删除的分类以及节点
+                //{
+                //    var notActiveCats = allCats.Where(x => x.ActiveFlag == 0).ToList();
+                //    var objIds = notActiveCats.Select(x => x.Id).ToList();
+                //    var notActiveCatTrees = allCatTrees.Where(x => objIds.Contains(x.ObjId)).ToList();
+                //    foreach (var it in notActiveCats)
+                //        destDb.AssetCategories.Remove(it);
+                //    foreach (var it in notActiveCatTrees)
+                //        destDb.AssetCategoryTrees.Remove(it);
+                //    await destDb.SaveChangesAsync();
+                //}
+
+
+                var rootCat = allCats.Where(x => string.IsNullOrWhiteSpace(x.ParentId)).First();
+                CalcuLR(rootCat, allCats, allCatTrees);
+
+                for (var idx = allCatTrees.Count - 1; idx >= 0; idx--)
+                {
+                    var it = allCatTrees[idx];
+                    destDb.AssetCategoryTrees.Update(it);
+                }
+
+                await destDb.SaveChangesAsync();
+
+            }
         }
 
         static void CalcuLR(AssetCategory parent, List<AssetCategory> cats, List<AssetCategoryTree> trees)

@@ -161,7 +161,7 @@ namespace ApiServer
 
             hostStaticFileServer(app, env);
 
-            app.RegisterConsul(lifetime, appConfig);
+            //app.RegisterConsul(lifetime, appConfig);
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
