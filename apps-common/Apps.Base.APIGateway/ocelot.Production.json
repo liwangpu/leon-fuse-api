@@ -174,7 +174,7 @@
   "GlobalConfiguration": {
     "dmzconsulservice-ehome": null,
     "ServiceDiscoveryProvider": {
-      "Host": "dmzconsulservice-dev",
+      "Host": "app-infrastructure-consul",
       "Port": 8500,
       "Type": "Consul"
     }
