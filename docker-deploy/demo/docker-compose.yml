@@ -6,7 +6,7 @@ services:
 # 1.1 postgres db
   app-infrastructure-database:
     container_name: app-infrastructure-database-${ContainerSuffix}
-    image: ${DockerHub_Registry}/app-infrastructure-database:${DockerImage_Tag}
+    image: postgres:10.5
     volumes:
       - "/var/${VolumeBaseDirectory}/app-infrastructure-database/data:/var/lib/postgresql/data"
       - "/var/${VolumeBaseDirectory}/app-infrastructure-database/dbBackup:/var/lib/postgresql/dbBackup"
