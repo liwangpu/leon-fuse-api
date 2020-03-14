@@ -49,7 +49,7 @@ namespace Apps.OMS.Service.Controllers
         [ProducesResponseType(typeof(PagedData<OrderDTO>), 200)]
         public async Task<IActionResult> Get([FromQuery] PagingRequestModel model)
         {
-            var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer);
+            var accountMicroService = new AccountMicroService(_AppConfig.APIGatewayServer, Token);
 
             var toDTO = new Func<Order, Task<OrderDTO>>(async (entity) =>
             {
@@ -98,7 +98,17 @@ namespace Apps.OMS.Service.Controllers
                 });
                 return await Task.FromResult(dto);
             });
-            return await _PagingRequest(model, toDTO);
+            var user = await accountMicroService.GetProfile();
+            var advanceQuery = new Func<IQueryable<Order>, Task<IQueryable<Order>>>(async (query) =>
+            {
+                query = query.Where(x => x.OrganizationId == user.OrganizationId);
+                if (user.RoleId == "brandmember")
+                {
+                    query = query.Where(x => x.Creator == user.Id);
+                }
+                return query.OrderByDescending(x=>x.ModifiedTime);
+            });
+            return await _PagingRequest(model, toDTO, advanceQuery);
         }
         #endregion
 

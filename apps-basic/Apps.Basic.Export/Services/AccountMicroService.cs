@@ -24,6 +24,12 @@ namespace Apps.Basic.Export.Services
         }
         #endregion
 
+        public async Task<AccountDTO> GetProfile()
+        {
+            var dto = await $"{Server}/Account/profile".WithOAuthBearerToken(Token).AllowAnyHttpStatus().GetJsonAsync<AccountDTO>();
+            return dto;
+        }
+
         #region GetById 根据Id获取用户信息
         /// <summary>
         /// 根据Id获取用户信息

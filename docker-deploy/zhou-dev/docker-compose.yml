@@ -1,0 +1,151 @@
+version: '3.4'
+
+services:
+
+# 1.app infrastructure
+# 1.1 postgres db
+  app-infrastructure-database:
+    container_name: app-infrastructure-database-${ContainerSuffix}
+    image: ${DockerHub_Registry}/app-infrastructure-database:${DockerImage_Tag}
+    volumes:
+      - "/var/${VolumeBaseDirectory}/app-infrastructure-database/data:/var/lib/postgresql/data"
+      - "/var/${VolumeBaseDirectory}/app-infrastructure-database/dbBackup:/var/lib/postgresql/dbBackup"
+    environment:
+      - POSTGRES_USER=${PostgresDB_User}
+      - POSTGRES_PASSWORD=${PostgresDB_Password}
+    ports:
+      - "${ApplicationStartPortPrefix}01:5432"
+    networks:
+      - morejeenet
+    restart: always
+# 1.2 consul
+  app-infrastructure-consul:
+    container_name: app-infrastructure-consul-${ContainerSuffix}
+    image: consul:1.4.4
+    command: agent -dev -client=0.0.0.0 -bind=0.0.0.0
+    ports:
+      - "${ApplicationStartPortPrefix}02:8500"
+    networks:
+      - morejeenet
+    restart: always
+# 1.3 APIGateway
+  app-infrastructure-apigateway:
+    container_name: app-infrastructure-apigateway-${ContainerSuffix}
+    image: ${DockerHub_Registry}/app-infrastructure-apigateway:${DockerImage_Tag}
+    ports:
+      - "${ApplicationStartPortPrefix}03:80"
+    volumes:
+      - "/var/${VolumeBaseDirectory}/app-infrastructure-apigateway/logs:/app/logs"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - morejeenet
+    depends_on:
+      - app-infrastructure-consul
+    restart: always
+# 2. app microservices
+# 2.1 basic ms
+  app-microservice-basic-api:
+    container_name: app-microservice-basic-api-${ContainerSuffix}
+    image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
+    volumes:
+      - "/var/${VolumeBaseDirectory}/app-microservice-basic-api/logs:/app/logs"
+      - "/var/${VolumeBaseDirectory}/app-microservice-basic-api/AppBackup:/app/wwwroot/AppBackup"
+      - "/var/${VolumeBaseDirectory}/app-microservice-basic-api/wwwroot/upload:/app/wwwroot/upload"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer}
+      - JwtSettings:Audience=${JwtSettings_Audience}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay}
+      # ConnectionString
+      - ConnectionString=Server=app-infrastructure-database;Port=5432;Database=${BasicServerDB};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer}
+      - Plugins:MediaShare=${Plugins_MediaShare}
+      # Consul
+      - ConsulConfig:Server:IP=app-infrastructure-consul
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=app-microservice-basic-api
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "${ApplicationStartPortPrefix}11:80"
+    networks:
+      - morejeenet
+    depends_on:
+      - app-infrastructure-database
+      - app-infrastructure-apigateway
+    restart: always
+# 2.2 oms ms
+  app-microservice-oms-api:
+    container_name: app-microservice-oms-api-${ContainerSuffix}
+    image: registry.cn-shanghai.aliyuncs.com/leon-pu/app-microservice-oms-api:zhou
+    volumes:
+      - "/var/${VolumeBaseDirectory}/app-microservice-oms-api/logs:/app/logs"
+      - "/var/${VolumeBaseDirectory}/app-microservice-oms-api/AppBackup:/app/wwwroot/AppBackup"
+    environment:
+      # JwtSettings
+      - JwtSettings:Issuer=${JwtSettings_Issuer}
+      - JwtSettings:Audience=${JwtSettings_Audience}
+      - JwtSettings:SecretKey=${JwtSettings_SecretKey}
+      - JwtSettings:ExpiresDay=${JwtSettings_ExpiresDay}
+      # ConnectionString
+      - ConnectionString=Server=app-infrastructure-database;Port=5432;Database=${OMSServerDB};User Id=${PostgresDB_User};Password=${PostgresDB_Password}
+      # Plugins
+      - Plugins:OrderViewer=${Plugins_OrderViewer}
+      - Plugins:MediaShare=${Plugins_MediaShare}
+      # APIGateway
+      - APIGatewayServer=${APIGatewayServer}
+      # Consul
+      - ConsulConfig:Server:IP=app-infrastructure-consul
+      - ConsulConfig:Server:Port=8500
+      - ConsulConfig:Client:IP=app-microservice-oms-api
+      - ConsulConfig:Client:Port=80
+    ports:
+      - "${ApplicationStartPortPrefix}12:80"
+    networks:
+      - morejeenet
+    depends_on:
+      - app-infrastructure-database
+      - app-infrastructure-apigateway
+    restart: always
+# 3 app site
+# 3.1 morejee site
+  app-site-morejee:
+    container_name: app-site-morejee-${ContainerSuffix}
+    image: ${DockerHub_Registry}/app-site-morejee:${DockerImage_Tag}
+    environment:
+      - APISERVER=${APIGatewayServer}
+      - TOOLSERVER=${MoreJeeToolSite}
+      - SECRETKEY=${SECRETKEY}
+    ports:
+      - "${ApplicationStartPortPrefix}21:4000"
+    networks:
+      - morejeenet
+    restart: always
+# 3.2 tool site
+  app-site-morejee-tool:
+    container_name: app-site-morejee-tool-${ContainerSuffix}
+    image: ${DockerHub_Registry}/app-site-morejee-tool:${DockerImage_Tag}
+    environment:
+      - APISERVER=${APIGatewayServer}
+      - OMSTOOLSERVER=${MoreJeeOMSToolSite}
+    ports:
+      - "${ApplicationStartPortPrefix}22:4000"
+    networks:
+      - morejeenet
+    restart: always
+# 3.3 oms tool site
+  app-site-morejee-oms-tool:
+    container_name: app-site-morejee-oms-tool-${ContainerSuffix}
+    image: ${DockerHub_Registry}/app-site-morejee-oms-tool:${DockerImage_Tag}
+    ports:
+      - "${ApplicationStartPortPrefix}23:3000"
+    networks:
+      - morejeenet
+    restart: always
+
+networks:
+  morejeenet:
