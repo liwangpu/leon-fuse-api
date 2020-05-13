@@ -138,12 +138,19 @@ namespace ApiServer.Repositories
                 }
                 else
                 {
-                    var permissionIdQ = _DbContext.ResourcePermissions.Where(x => x.OrganizationId == currentAcc.OrganizationId && x.ResType == ResType && x.OpRetrieve == 1);
+                    var curOrgan = await _DbContext.Organizations.Where(x => x.Id == currentAcc.OrganizationId).FirstOrDefaultAsync();
+                    if (string.IsNullOrWhiteSpace(curOrgan.ParentId))
+                    {
+                        return query.Take(0);
+                    }
+                    //var permissionIdQ = _DbContext.ResourcePermissions.Where(x => x.OrganizationId == currentAcc.OrganizationId && x.ResType == ResType && x.OpRetrieve == 1);
 
-                    query = from it in query
-                            join ps in permissionIdQ on it.Id equals ps.ResId
-                            select it;
-                    return query;
+                    //query = from it in query
+                    //        join ps in permissionIdQ on it.Id equals ps.ResId
+                    //        select it;
+                    //return query;
+
+                    return query.Where(x => x.OrganizationId == curOrgan.ParentId);
                 }
             }
             else
@@ -219,7 +226,7 @@ namespace ApiServer.Repositories
                         PartnerPrice = x.PartnerPrice,
                         PurchasePrice = x.PurchasePrice,
                         Icon = x.Icon,
-                        TPID=x.TPID
+                        TPID = x.TPID
                     }).FirstOrDefaultAsync();
 
                     if (defaultSpec != null)

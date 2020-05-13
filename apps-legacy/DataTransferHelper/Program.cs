@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ApiModel.Entities;
 using Newtonsoft.Json;
+using ApiModel.Consts;
+
 namespace DataTransferHelper
 {
     class Program
@@ -16,7 +18,7 @@ namespace DataTransferHelper
         {
             try
             {
-                TransferData().GetAwaiter().GetResult();
+                FixAccountUserType().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -24,6 +26,64 @@ namespace DataTransferHelper
             }
             Console.WriteLine("数据迁移完毕...");
             Console.Read();
+        }
+
+        static async Task FixAccountUserType()
+        {
+            using (var destDb = new DestContext())
+            {
+                var organs = await destDb.Organizations.ToListAsync();
+                var accounts = await destDb.Accounts.ToListAsync();
+                foreach (var acc in accounts)
+                {
+                    var organ = organs.Where(x => x.Id == acc.OrganizationId).First();
+                    if (organ.OrganizationTypeId == OrganTyeConst.Partner)
+                    {
+                        if (acc.Type.Contains("admin"))
+                        {
+                            acc.Type = UserRoleConst.PartnerAdmin;
+                        }
+                        else if (acc.Type.Contains("member"))
+                        {
+                            acc.Type = UserRoleConst.PartnerMember;
+                        }
+                        else
+                        {
+                            acc.Type = UserRoleConst.PartnerMember;
+                        }
+                        destDb.Accounts.Update(acc);
+                    }
+                }
+                await destDb.SaveChangesAsync();
+
+                //    var partners = await destDb.Organizations.Where(x => x.OrganizationTypeId == "partner").ToListAsync();
+                //    foreach (var p in partners)
+                //    {
+                //        var accounts = await destDb.Accounts.Where(a => a.OrganizationId == p.Id).ToListAsync();
+                //        foreach (var acc in accounts)
+                //        {
+                //            //if (acc.Id == p.OwnerId && acc.Type != UserRoleConst.PartnerAdmin)
+                //            //{
+                //            //    acc.Type = UserRoleConst.PartnerAdmin;
+                //            //}
+
+                //            if (acc.Type.Contains("admin"))
+                //            {
+                //                acc.Type = UserRoleConst.PartnerAdmin;
+                //            }
+                //            else if (acc.Type.Contains("member"))
+                //            {
+                //                acc.Type = UserRoleConst.PartnerMember;
+                //            }
+                //            else
+                //            {
+                //                acc.Type = UserRoleConst.PartnerMember;
+                //            }
+                //            destDb.Accounts.Update(acc);
+                //        }
+                //    }
+                //    await destDb.SaveChangesAsync();
+            }
         }
 
         static async Task TransferData()

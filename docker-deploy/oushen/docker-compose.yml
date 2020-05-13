@@ -47,7 +47,7 @@ services:
 # 2.1 basic ms
   app-microservice-basic-api:
     container_name: app-microservice-basic-api-${ContainerSuffix}
-    image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
+    image: ${DockerHub_Registry}/app-microservice-basic-api:oushen
     volumes:
       - "/var/${VolumeBaseDirectory}/app-microservice-basic-api/logs:/app/logs"
       - "/var/${VolumeBaseDirectory}/app-microservice-basic-api/AppBackup:/app/wwwroot/AppBackup"

@@ -12,17 +12,17 @@ services:
   #     context: .
   #     dockerfile: apps-common/Apps.Base.APIGateway/Dockerfile
 
-  # app-microservice-basic-api:
-  #   image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
-  #   build:
-  #     context: .
-  #     dockerfile: apps-legacy/ApiServer/Dockerfile
-
-  app-microservice-oms-api:
-    image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
+  app-microservice-basic-api:
+    image: ${DockerHub_Registry}/app-microservice-basic-api:${DockerImage_Tag}
     build:
       context: .
-      dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
+      dockerfile: apps-legacy/ApiServer/Dockerfile
+
+  # app-microservice-oms-api:
+  #   image: ${DockerHub_Registry}/app-microservice-oms-api:${DockerImage_Tag}
+  #   build:
+  #     context: .
+  #     dockerfile: apps-oms/Apps.OMS.Service/Dockerfile
 
   # basic-api-dev:
   #   image: apps-legacy-basic-service:latest
